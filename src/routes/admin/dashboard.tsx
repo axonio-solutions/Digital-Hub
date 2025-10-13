@@ -5,5 +5,5 @@ export const Route = createFileRoute('/admin/dashboard')({
 })
 
 function RouteComponent() {
-  return <div>Hello /admin/dashboard/</div>
+  return <div>Hello /admin/dashboard/:</div>
 }
