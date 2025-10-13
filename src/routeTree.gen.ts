@@ -10,12 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthLoginRouteImport } from './routes/auth/login'
-import { Route as AdminOrdersRouteImport } from './routes/admin/orders'
-import { Route as AdminListingsRouteImport } from './routes/admin/listings'
-import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
-import { Route as DigitalHubProductsIndexRouteImport } from './routes/digital-hub/products/index'
-import { Route as DigitalHubProductsIdRouteImport } from './routes/digital-hub/products/$id'
+import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AdminOrdersRouteImport } from './routes/_admin/orders'
+import { Route as AdminListingsRouteImport } from './routes/_admin/listings'
+import { Route as AdminDashboardRouteImport } from './routes/_admin/dashboard'
+import { Route as DigitalHubProductsIndexRouteImport } from './routes/_digital-hub/products/index'
+import { Route as DigitalHubProductsIdRouteImport } from './routes/_digital-hub/products/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,92 +23,92 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/auth/login',
-  path: '/auth/login',
+  id: '/_auth/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminOrdersRoute = AdminOrdersRouteImport.update({
-  id: '/admin/orders',
-  path: '/admin/orders',
+  id: '/_admin/orders',
+  path: '/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminListingsRoute = AdminListingsRouteImport.update({
-  id: '/admin/listings',
-  path: '/admin/listings',
+  id: '/_admin/listings',
+  path: '/listings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/admin/dashboard',
-  path: '/admin/dashboard',
+  id: '/_admin/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DigitalHubProductsIndexRoute = DigitalHubProductsIndexRouteImport.update({
-  id: '/digital-hub/products/',
-  path: '/digital-hub/products/',
+  id: '/_digital-hub/products/',
+  path: '/products/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DigitalHubProductsIdRoute = DigitalHubProductsIdRouteImport.update({
-  id: '/digital-hub/products/$id',
-  path: '/digital-hub/products/$id',
+  id: '/_digital-hub/products/$id',
+  path: '/products/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/listings': typeof AdminListingsRoute
-  '/admin/orders': typeof AdminOrdersRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/digital-hub/products/$id': typeof DigitalHubProductsIdRoute
-  '/digital-hub/products': typeof DigitalHubProductsIndexRoute
+  '/dashboard': typeof AdminDashboardRoute
+  '/listings': typeof AdminListingsRoute
+  '/orders': typeof AdminOrdersRoute
+  '/login': typeof AuthLoginRoute
+  '/products/$id': typeof DigitalHubProductsIdRoute
+  '/products': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/listings': typeof AdminListingsRoute
-  '/admin/orders': typeof AdminOrdersRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/digital-hub/products/$id': typeof DigitalHubProductsIdRoute
-  '/digital-hub/products': typeof DigitalHubProductsIndexRoute
+  '/dashboard': typeof AdminDashboardRoute
+  '/listings': typeof AdminListingsRoute
+  '/orders': typeof AdminOrdersRoute
+  '/login': typeof AuthLoginRoute
+  '/products/$id': typeof DigitalHubProductsIdRoute
+  '/products': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/listings': typeof AdminListingsRoute
-  '/admin/orders': typeof AdminOrdersRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/digital-hub/products/$id': typeof DigitalHubProductsIdRoute
-  '/digital-hub/products/': typeof DigitalHubProductsIndexRoute
+  '/_admin/dashboard': typeof AdminDashboardRoute
+  '/_admin/listings': typeof AdminListingsRoute
+  '/_admin/orders': typeof AdminOrdersRoute
+  '/_auth/login': typeof AuthLoginRoute
+  '/_digital-hub/products/$id': typeof DigitalHubProductsIdRoute
+  '/_digital-hub/products/': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin/dashboard'
-    | '/admin/listings'
-    | '/admin/orders'
-    | '/auth/login'
-    | '/digital-hub/products/$id'
-    | '/digital-hub/products'
+    | '/dashboard'
+    | '/listings'
+    | '/orders'
+    | '/login'
+    | '/products/$id'
+    | '/products'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin/dashboard'
-    | '/admin/listings'
-    | '/admin/orders'
-    | '/auth/login'
-    | '/digital-hub/products/$id'
-    | '/digital-hub/products'
+    | '/dashboard'
+    | '/listings'
+    | '/orders'
+    | '/login'
+    | '/products/$id'
+    | '/products'
   id:
     | '__root__'
     | '/'
-    | '/admin/dashboard'
-    | '/admin/listings'
-    | '/admin/orders'
-    | '/auth/login'
-    | '/digital-hub/products/$id'
-    | '/digital-hub/products/'
+    | '/_admin/dashboard'
+    | '/_admin/listings'
+    | '/_admin/orders'
+    | '/_auth/login'
+    | '/_digital-hub/products/$id'
+    | '/_digital-hub/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -130,45 +130,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/login': {
-      id: '/auth/login'
-      path: '/auth/login'
-      fullPath: '/auth/login'
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/orders': {
-      id: '/admin/orders'
-      path: '/admin/orders'
-      fullPath: '/admin/orders'
+    '/_admin/orders': {
+      id: '/_admin/orders'
+      path: '/orders'
+      fullPath: '/orders'
       preLoaderRoute: typeof AdminOrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/listings': {
-      id: '/admin/listings'
-      path: '/admin/listings'
-      fullPath: '/admin/listings'
+    '/_admin/listings': {
+      id: '/_admin/listings'
+      path: '/listings'
+      fullPath: '/listings'
       preLoaderRoute: typeof AdminListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/dashboard': {
-      id: '/admin/dashboard'
-      path: '/admin/dashboard'
-      fullPath: '/admin/dashboard'
+    '/_admin/dashboard': {
+      id: '/_admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/digital-hub/products/': {
-      id: '/digital-hub/products/'
-      path: '/digital-hub/products'
-      fullPath: '/digital-hub/products'
+    '/_digital-hub/products/': {
+      id: '/_digital-hub/products/'
+      path: '/products'
+      fullPath: '/products'
       preLoaderRoute: typeof DigitalHubProductsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/digital-hub/products/$id': {
-      id: '/digital-hub/products/$id'
-      path: '/digital-hub/products/$id'
-      fullPath: '/digital-hub/products/$id'
+    '/_digital-hub/products/$id': {
+      id: '/_digital-hub/products/$id'
+      path: '/products/$id'
+      fullPath: '/products/$id'
       preLoaderRoute: typeof DigitalHubProductsIdRouteImport
       parentRoute: typeof rootRouteImport
     }

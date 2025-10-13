@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { products } from "@/routes/digital-hub/products/products"
+import { products } from "@/routes/_digital-hub/products/products"
 import { Link } from "@tanstack/react-router"
 
 export default function ProductsPage() {

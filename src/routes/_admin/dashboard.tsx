@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { ChartAreaInteractive } from '@/components/admin/dashboard-layout-components/chart-area-interactive'
 import { DataTable } from '@/components/admin/dashboard-layout-components/data-table'
 import { SectionCards } from '@/components/admin/dashboard-layout-components/section-cards'
-export const Route = createFileRoute('/admin/dashboard')({
+export const Route = createFileRoute('/_admin/dashboard')({
   component: RouteComponent,
 })
 

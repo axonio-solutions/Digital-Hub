@@ -1,7 +1,7 @@
 import ProductsPage from '@/components/products/products-components/ProductPage'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/digital-hub/products/')({
+export const Route = createFileRoute('/_digital-hub/products/')({
   component: RouteComponent,
 })
 

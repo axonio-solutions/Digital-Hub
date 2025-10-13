@@ -10,7 +10,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 
 
 import { products } from "./products"
-export const Route = createFileRoute('/digital-hub/products/$id')({
+export const Route = createFileRoute('/_digital-hub/products/$id')({
   component: RouteComponent,
 })
 
