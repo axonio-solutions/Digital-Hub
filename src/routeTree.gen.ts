@@ -10,48 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ClientIndexRouteImport } from './routes/client/index'
-import { Route as AuthIndexRouteImport } from './routes/auth/index'
-import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as ClientDashboadRouteImport } from './routes/client/dashboad'
-import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AdminOrdersRouteImport } from './routes/admin/orders'
 import { Route as AdminListingsRouteImport } from './routes/admin/listings'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as DigitalHubProductsIndexRouteImport } from './routes/digital-hub/products/index'
+import { Route as DigitalHubProductsIdRouteImport } from './routes/digital-hub/products/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ClientIndexRoute = ClientIndexRouteImport.update({
-  id: '/client/',
-  path: '/client/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthIndexRoute = AuthIndexRouteImport.update({
-  id: '/auth/',
-  path: '/auth/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClientDashboadRoute = ClientDashboadRouteImport.update({
-  id: '/client/dashboad',
-  path: '/client/dashboad',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: '/auth/register',
-  path: '/auth/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/admin/orders',
+  path: '/admin/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminListingsRoute = AdminListingsRouteImport.update({
@@ -64,40 +42,44 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/admin/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DigitalHubProductsIndexRoute = DigitalHubProductsIndexRouteImport.update({
+  id: '/digital-hub/products/',
+  path: '/digital-hub/products/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DigitalHubProductsIdRoute = DigitalHubProductsIdRouteImport.update({
+  id: '/digital-hub/products/$id',
+  path: '/digital-hub/products/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/listings': typeof AdminListingsRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/auth/login': typeof AuthLoginRoute
-  '/auth/register': typeof AuthRegisterRoute
-  '/client/dashboad': typeof ClientDashboadRoute
-  '/admin': typeof AdminIndexRoute
-  '/auth': typeof AuthIndexRoute
-  '/client': typeof ClientIndexRoute
+  '/digital-hub/products/$id': typeof DigitalHubProductsIdRoute
+  '/digital-hub/products': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/listings': typeof AdminListingsRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/auth/login': typeof AuthLoginRoute
-  '/auth/register': typeof AuthRegisterRoute
-  '/client/dashboad': typeof ClientDashboadRoute
-  '/admin': typeof AdminIndexRoute
-  '/auth': typeof AuthIndexRoute
-  '/client': typeof ClientIndexRoute
+  '/digital-hub/products/$id': typeof DigitalHubProductsIdRoute
+  '/digital-hub/products': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/listings': typeof AdminListingsRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/auth/login': typeof AuthLoginRoute
-  '/auth/register': typeof AuthRegisterRoute
-  '/client/dashboad': typeof ClientDashboadRoute
-  '/admin/': typeof AdminIndexRoute
-  '/auth/': typeof AuthIndexRoute
-  '/client/': typeof ClientIndexRoute
+  '/digital-hub/products/$id': typeof DigitalHubProductsIdRoute
+  '/digital-hub/products/': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -105,46 +87,38 @@ export interface FileRouteTypes {
     | '/'
     | '/admin/dashboard'
     | '/admin/listings'
+    | '/admin/orders'
     | '/auth/login'
-    | '/auth/register'
-    | '/client/dashboad'
-    | '/admin'
-    | '/auth'
-    | '/client'
+    | '/digital-hub/products/$id'
+    | '/digital-hub/products'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin/dashboard'
     | '/admin/listings'
+    | '/admin/orders'
     | '/auth/login'
-    | '/auth/register'
-    | '/client/dashboad'
-    | '/admin'
-    | '/auth'
-    | '/client'
+    | '/digital-hub/products/$id'
+    | '/digital-hub/products'
   id:
     | '__root__'
     | '/'
     | '/admin/dashboard'
     | '/admin/listings'
+    | '/admin/orders'
     | '/auth/login'
-    | '/auth/register'
-    | '/client/dashboad'
-    | '/admin/'
-    | '/auth/'
-    | '/client/'
+    | '/digital-hub/products/$id'
+    | '/digital-hub/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminListingsRoute: typeof AdminListingsRoute
+  AdminOrdersRoute: typeof AdminOrdersRoute
   AuthLoginRoute: typeof AuthLoginRoute
-  AuthRegisterRoute: typeof AuthRegisterRoute
-  ClientDashboadRoute: typeof ClientDashboadRoute
-  AdminIndexRoute: typeof AdminIndexRoute
-  AuthIndexRoute: typeof AuthIndexRoute
-  ClientIndexRoute: typeof ClientIndexRoute
+  DigitalHubProductsIdRoute: typeof DigitalHubProductsIdRoute
+  DigitalHubProductsIndexRoute: typeof DigitalHubProductsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -156,46 +130,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/client/': {
-      id: '/client/'
-      path: '/client'
-      fullPath: '/client'
-      preLoaderRoute: typeof ClientIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/': {
-      id: '/auth/'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/': {
-      id: '/admin/'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client/dashboad': {
-      id: '/client/dashboad'
-      path: '/client/dashboad'
-      fullPath: '/client/dashboad'
-      preLoaderRoute: typeof ClientDashboadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/register': {
-      id: '/auth/register'
-      path: '/auth/register'
-      fullPath: '/auth/register'
-      preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth/login': {
       id: '/auth/login'
       path: '/auth/login'
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/admin/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/listings': {
@@ -212,6 +158,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/digital-hub/products/': {
+      id: '/digital-hub/products/'
+      path: '/digital-hub/products'
+      fullPath: '/digital-hub/products'
+      preLoaderRoute: typeof DigitalHubProductsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/digital-hub/products/$id': {
+      id: '/digital-hub/products/$id'
+      path: '/digital-hub/products/$id'
+      fullPath: '/digital-hub/products/$id'
+      preLoaderRoute: typeof DigitalHubProductsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -219,12 +179,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminListingsRoute: AdminListingsRoute,
+  AdminOrdersRoute: AdminOrdersRoute,
   AuthLoginRoute: AuthLoginRoute,
-  AuthRegisterRoute: AuthRegisterRoute,
-  ClientDashboadRoute: ClientDashboadRoute,
-  AdminIndexRoute: AdminIndexRoute,
-  AuthIndexRoute: AuthIndexRoute,
-  ClientIndexRoute: ClientIndexRoute,
+  DigitalHubProductsIdRoute: DigitalHubProductsIdRoute,
+  DigitalHubProductsIndexRoute: DigitalHubProductsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

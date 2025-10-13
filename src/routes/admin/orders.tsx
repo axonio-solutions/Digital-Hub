@@ -1,12 +1,13 @@
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/admin/listings')({
+export const Route = createFileRoute('/admin/orders')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  return <DashboardLayout>
-           listings
-           </DashboardLayout>
+  return  <DashboardLayout>
+             <div>Hello "/admin/orders"!</div>
+             </DashboardLayout>
+  
 }
