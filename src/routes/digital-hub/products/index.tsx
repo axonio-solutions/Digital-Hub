@@ -5,6 +5,6 @@ export const Route = createFileRoute('/digital-hub/products/')({
   component: RouteComponent,
 })
 
-function RouteComponent() {
+function RouteComponent() { 
   return <ProductsPage />
 }
