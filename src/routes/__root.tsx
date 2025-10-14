@@ -18,7 +18,7 @@ import { getSupabaseServerClient } from '@/lib/supabaseServerClient'
 interface MyRouterContext {
   queryClient: QueryClient
 }
-
+//root
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ context, location }) => {
     const supabase = getSupabaseServerClient();
