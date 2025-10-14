@@ -54,7 +54,7 @@ export default function ProductsPage() {
           <div className="flex items-center justify-between gap-4">
             {/* Logo */}
             <div className="flex items-center gap-8">
-              <h1 className="text-2xl font-bold text-balance">ShopHub</h1>
+              <h1 className="text-2xl font-bold text-balance">Digital-Hub</h1>
 
               {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center gap-6">
