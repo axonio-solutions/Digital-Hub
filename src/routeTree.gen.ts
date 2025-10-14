@@ -15,6 +15,7 @@ import { Route as AdminOrdersRouteImport } from './routes/_admin/orders'
 import { Route as AdminListingsRouteImport } from './routes/_admin/listings'
 import { Route as AdminDashboardRouteImport } from './routes/_admin/dashboard'
 import { Route as DigitalHubProductsIndexRouteImport } from './routes/_digital-hub/products/index'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as DigitalHubProductsIdRouteImport } from './routes/_digital-hub/products/$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -47,6 +48,11 @@ const DigitalHubProductsIndexRoute = DigitalHubProductsIndexRouteImport.update({
   path: '/products/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DigitalHubProductsIdRoute = DigitalHubProductsIdRouteImport.update({
   id: '/_digital-hub/products/$id',
   path: '/products/$id',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/orders': typeof AdminOrdersRoute
   '/login': typeof AuthLoginRoute
   '/products/$id': typeof DigitalHubProductsIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/products': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/orders': typeof AdminOrdersRoute
   '/login': typeof AuthLoginRoute
   '/products/$id': typeof DigitalHubProductsIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/products': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/_admin/orders': typeof AdminOrdersRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_digital-hub/products/$id': typeof DigitalHubProductsIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/_digital-hub/products/': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/login'
     | '/products/$id'
+    | '/api/auth/$'
     | '/products'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/login'
     | '/products/$id'
+    | '/api/auth/$'
     | '/products'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/_admin/orders'
     | '/_auth/login'
     | '/_digital-hub/products/$id'
+    | '/api/auth/$'
     | '/_digital-hub/products/'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   AdminOrdersRoute: typeof AdminOrdersRoute
   AuthLoginRoute: typeof AuthLoginRoute
   DigitalHubProductsIdRoute: typeof DigitalHubProductsIdRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   DigitalHubProductsIndexRoute: typeof DigitalHubProductsIndexRoute
 }
 
@@ -165,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DigitalHubProductsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_digital-hub/products/$id': {
       id: '/_digital-hub/products/$id'
       path: '/products/$id'
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminOrdersRoute: AdminOrdersRoute,
   AuthLoginRoute: AuthLoginRoute,
   DigitalHubProductsIdRoute: DigitalHubProductsIdRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   DigitalHubProductsIndexRoute: DigitalHubProductsIndexRoute,
 }
 export const routeTree = rootRouteImport
