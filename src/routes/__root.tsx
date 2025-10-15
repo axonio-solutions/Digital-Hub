@@ -13,30 +13,23 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
-import { getSupabaseServerClient } from '@/lib/supabaseServerClient'
+import { getSession } from '@/utils/auth'
 
 interface MyRouterContext {
   queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  beforeLoad: async ({ context, location }) => {
-    const supabase = getSupabaseServerClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
+   beforeLoad: async ({ location }) => {
+    const session = await getSession()
+    console.log(session)
     if (!session && location.pathname !== '/login') {
       throw redirect({
         to: '/login',
-        search: {
-          redirect: location.href,
-        },
-      });
+        search: { redirect: location.href },
+      })
     }
-
-    // You can also pass the session to the route context if needed
-    return { session };
+    return { session }
   },
   head: () => ({
     meta: [
