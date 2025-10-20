@@ -22,6 +22,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useQuery } from "@tanstack/react-query"
+import { getSession } from "@/utils/auth"
 
 const data = {
   user: {
@@ -100,6 +102,12 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const { data: session, isLoading } = useQuery({
+    queryKey: ['session'],
+    queryFn: () => getSession(),
+  })
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -121,7 +129,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter> 
-        <NavUser user={data.user} />
+        {!isLoading && session && <NavUser user={session.data?.user} />}
       </SidebarFooter>
     </Sidebar>
   )
