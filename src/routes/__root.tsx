@@ -21,15 +21,15 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
    beforeLoad: async ({ location }) => {
-    const session = await getSession()
-    console.log(session)
-    if (!session && location.pathname !== '/login') {
+    const {data} = await getSession()
+    console.log(data)
+    if (!data && location.pathname !== '/login') {
       throw redirect({
         to: '/login',
         search: { redirect: location.href },
       })
     }
-    return { session }
+    return { data }
   },
   head: () => ({
     meta: [

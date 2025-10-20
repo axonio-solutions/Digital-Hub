@@ -1,9 +1,16 @@
 // app/utils/auth.ts
-import { getSupabaseServerClient } from '@/lib/supabaseServerClient'
+import { auth } from '@/lib/auth';
 import { createServerFn } from '@tanstack/react-start'
+import { getRequest } from '@tanstack/react-start/server';
 
 export const getSession = createServerFn().handler(async () => {
-  const supabase = getSupabaseServerClient()
-  const { data: { session } } = await supabase.auth.getSession()
-  return session
+  const request = getRequest();
+    const data = await auth.api.getSession({
+      headers : request.headers as Headers ,
+      query : {
+        disableCookieCache : true,
+      }
+    })
+
+    return {data}
 })
