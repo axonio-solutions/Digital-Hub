@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 
 export const loginFn = createServerFn({
   method: "POST",
@@ -19,3 +20,16 @@ export const loginFn = createServerFn({
 
     return response;
   });
+
+
+export const getUser = createServerFn({method : "POST"}).handler(async ()=>{
+  const request = getRequest();
+      const data = await auth.api.getSession({
+        headers : request.headers as Headers ,
+        query : {
+          disableCookieCache : true,
+        }
+      })
+  
+      return data?.user
+})

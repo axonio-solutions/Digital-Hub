@@ -29,10 +29,32 @@ import {
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "@tanstack/react-router"
+import { useAuthSuspense } from "@/features/auth/hooks/use-auth"
 
-export function NavUser({user}) {
+
+const getInitials = (name: string) => {
+	if (!name) return "";
+	return name
+		.split(" ")
+		.map((part) => part[0])
+		.join("")
+		.toUpperCase()
+		.substring(0, 2);
+};
+
+export function NavUser() {
   const { isMobile } = useSidebar()
   const router = useRouter()
+
+  const  {data : user} = useAuthSuspense()
+
+  if(!user ){
+    return null
+  }
+
+  const userInitials = getInitials(user.name || "")
+
+
 
   return (
     <SidebarMenu>
@@ -44,8 +66,8 @@ export function NavUser({user}) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
+                <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -65,8 +87,8 @@ export function NavUser({user}) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
+                  <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
