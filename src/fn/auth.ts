@@ -1,4 +1,6 @@
+import { loginSchema } from "@/features/validation/schemas";
 import { auth } from "@/lib/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 
@@ -6,7 +8,8 @@ export const loginFn = createServerFn({
   method: "POST",
   response: "raw",
   // ✅ Add your validator here
-  validator: (data: { email: string; password: string }) => data,
+ // validator: (data: { email: string; password: string }) => data,
+ validator : zodResolver(loginSchema)
 })
   .handler(async ({ data }) => {
     const response = await auth.api.signInEmail({
