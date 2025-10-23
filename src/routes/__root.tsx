@@ -14,23 +14,19 @@ import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { getSession } from '@/utils/auth'
+import { Toaster } from 'sonner'
+import { authQueries } from '@/features/auth/queries/auth-queries'
 
 interface MyRouterContext {
   queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-   beforeLoad: async ({ location }) => {
-    const {data} = await getSession()
-    console.log(data)
-    if (!data && location.pathname !== '/login') {
-      throw redirect({
-        to: '/login',
-        search: { redirect: location.href },
-      })
-    }
-    return { data }
-  },
+   beforeLoad: async ({ context }) => {
+		const user = await context.queryClient.ensureQueryData(authQueries.user());
+    
+		return { user };
+	},
   head: () => ({
     meta: [
       {
@@ -64,6 +60,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         
         {children}
+         <Toaster position="bottom-right" />
         <TanStackDevtools
           config={{
             position: 'bottom-right',

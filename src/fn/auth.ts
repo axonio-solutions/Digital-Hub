@@ -33,6 +33,10 @@ export const getUser = createServerFn({method : "POST"}).handler(async ()=>{
           disableCookieCache : true,
         }
       })
+
+      if (!data || !data?.user) {
+		return null;
+	}
   
       return data?.user
 })
