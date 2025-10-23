@@ -7,14 +7,32 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { loginSchema } from "@/features/validation/schemas";
 import { LoginFormData } from "@/features/validation/types";
+import z from "zod";
 
 
 export function useLogin (){
     const router = useRouter()
     const loginMutation = useMutation({
-        mutationFn : loginFn,
-        onSuccess : async (ctx)=>{
+        mutationFn : async(data : z.infer<typeof loginSchema>)=>{
+            
+            const res = await loginFn(data); // Better Auth login
+
+      // ✅ Handle unauthorized
+      if (res.status === 401) {
+        throw new Error("Invalid email or password");
+      }
+
+      // ✅ Handle other errors
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || "Login failed");
+      }
+
+      return res;
+    },
+        onSuccess : async ()=>{
             await router.invalidate()
+            toast.success("Welcome Back")
             return router.navigate({
                 to: "/dashboard"
             })
