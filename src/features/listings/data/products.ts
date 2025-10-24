@@ -1,0 +1,22 @@
+export const products = [
+  { "id": "PROD-001", "name": "Spotify Premium Account (3 Months)", "price": 12.99, "category": "music", "status": "available", "platform": "spotify" },
+  { "id": "PROD-002", "name": "Netflix UHD Subscription (1 Month)", "price": 8.99, "category": "video", "status": "available", "platform": "netflix" },
+  { "id": "PROD-003", "name": "Steam Game: Cyberpunk 2077", "price": 24.50, "category": "gaming", "status": "sold", "platform": "steam" },
+  { "id": "PROD-004", "name": "Adobe Photoshop License (1 Year)", "price": 49.99, "category": "software", "status": "available", "platform": "adobe" },
+  { "id": "PROD-005", "name": "Microsoft Office 365 Key", "price": 39.99, "category": "software", "status": "available", "platform": "microsoft" },
+  { "id": "PROD-006", "name": "PlayStation Plus Subscription (1 Year)", "price": 29.99, "category": "gaming", "status": "sold", "platform": "playstation" },
+  { "id": "PROD-007", "name": "Xbox Game Pass Ultimate (1 Month)", "price": 11.49, "category": "gaming", "status": "available", "platform": "xbox" },
+  { "id": "PROD-008", "name": "Spotify Family Plan (1 Month)", "price": 14.99, "category": "music", "status": "reserved", "platform": "spotify" },
+  { "id": "PROD-009", "name": "Netflix Shared Account (4K)", "price": 9.99, "category": "video", "status": "pending", "platform": "netflix" },
+  { "id": "PROD-010", "name": "Steam Wallet Code $20", "price": 18.50, "category": "gaming", "status": "available", "platform": "steam" },
+  { "id": "PROD-011", "name": "Epic Games Account with GTA V", "price": 15.00, "category": "gaming", "status": "sold", "platform": "epicgames" },
+  { "id": "PROD-012", "name": "Microsoft Windows 11 Pro Key", "price": 19.99, "category": "software", "status": "available", "platform": "microsoft" },
+  { "id": "PROD-013", "name": "Steam Account with 10 Random Games", "price": 10.99, "category": "gaming", "status": "available", "platform": "steam" },
+  { "id": "PROD-014", "name": "Spotify Duo Plan (1 Month)", "price": 8.49, "category": "music", "status": "available", "platform": "spotify" },
+  { "id": "PROD-015", "name": "Netflix Premium Account (1 Year)", "price": 59.99, "category": "video", "status": "reserved", "platform": "netflix" },
+  { "id": "PROD-016", "name": "PlayStation Account with FIFA 23", "price": 22.00, "category": "gaming", "status": "available", "platform": "playstation" },
+  { "id": "PROD-017", "name": "Adobe Illustrator License (6 Months)", "price": 29.99, "category": "software", "status": "pending", "platform": "adobe" },
+  { "id": "PROD-018", "name": "Epic Games Account with Fortnite Skins", "price": 12.50, "category": "gaming", "status": "sold", "platform": "epicgames" },
+  { "id": "PROD-019", "name": "Microsoft Visual Studio Pro Key", "price": 45.00, "category": "software", "status": "available", "platform": "microsoft" },
+  { "id": "PROD-020", "name": "Netflix 4K Shared Slot (1 Month)", "price": 6.99, "category": "video", "status": "available", "platform": "netflix" }
+]

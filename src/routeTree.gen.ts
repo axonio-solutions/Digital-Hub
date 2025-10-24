@@ -12,12 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as AdminOrdersRouteImport } from './routes/_admin/orders'
-import { Route as AdminListingsRouteImport } from './routes/_admin/listings'
-import { Route as AdminDashboardRouteImport } from './routes/_admin/dashboard'
+import { Route as AdminDashboardRouteRouteImport } from './routes/_admin/dashboard/route'
 import { Route as DigitalHubProductsIndexRouteImport } from './routes/_digital-hub/products/index'
+import { Route as AdminDashboardIndexRouteImport } from './routes/_admin/dashboard/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as DigitalHubProductsIdRouteImport } from './routes/_digital-hub/products/$id'
+import { Route as AdminDashboardOrdersRouteImport } from './routes/_admin/dashboard/orders'
+import { Route as AdminDashboardListingsRouteImport } from './routes/_admin/dashboard/listings'
 
 const AdminRoute = AdminRouteImport.update({
   id: '/_admin',
@@ -33,17 +34,7 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminOrdersRoute = AdminOrdersRouteImport.update({
-  id: '/orders',
-  path: '/orders',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminListingsRoute = AdminListingsRouteImport.update({
-  id: '/listings',
-  path: '/listings',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDashboardRoute = AdminDashboardRouteImport.update({
+const AdminDashboardRouteRoute = AdminDashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AdminRoute,
@@ -52,6 +43,11 @@ const DigitalHubProductsIndexRoute = DigitalHubProductsIndexRouteImport.update({
   id: '/_digital-hub/products/',
   path: '/products/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDashboardIndexRoute = AdminDashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminDashboardRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -63,37 +59,49 @@ const DigitalHubProductsIdRoute = DigitalHubProductsIdRouteImport.update({
   path: '/products/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDashboardOrdersRoute = AdminDashboardOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AdminDashboardRouteRoute,
+} as any)
+const AdminDashboardListingsRoute = AdminDashboardListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => AdminDashboardRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof AdminDashboardRoute
-  '/listings': typeof AdminListingsRoute
-  '/orders': typeof AdminOrdersRoute
+  '/dashboard': typeof AdminDashboardRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
+  '/dashboard/listings': typeof AdminDashboardListingsRoute
+  '/dashboard/orders': typeof AdminDashboardOrdersRoute
   '/products/$id': typeof DigitalHubProductsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/': typeof AdminDashboardIndexRoute
   '/products': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof AdminDashboardRoute
-  '/listings': typeof AdminListingsRoute
-  '/orders': typeof AdminOrdersRoute
   '/login': typeof AuthLoginRoute
+  '/dashboard/listings': typeof AdminDashboardListingsRoute
+  '/dashboard/orders': typeof AdminDashboardOrdersRoute
   '/products/$id': typeof DigitalHubProductsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard': typeof AdminDashboardIndexRoute
   '/products': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_admin': typeof AdminRouteWithChildren
-  '/_admin/dashboard': typeof AdminDashboardRoute
-  '/_admin/listings': typeof AdminListingsRoute
-  '/_admin/orders': typeof AdminOrdersRoute
+  '/_admin/dashboard': typeof AdminDashboardRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
+  '/_admin/dashboard/listings': typeof AdminDashboardListingsRoute
+  '/_admin/dashboard/orders': typeof AdminDashboardOrdersRoute
   '/_digital-hub/products/$id': typeof DigitalHubProductsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_admin/dashboard/': typeof AdminDashboardIndexRoute
   '/_digital-hub/products/': typeof DigitalHubProductsIndexRoute
 }
 export interface FileRouteTypes {
@@ -101,32 +109,34 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
-    | '/listings'
-    | '/orders'
     | '/login'
+    | '/dashboard/listings'
+    | '/dashboard/orders'
     | '/products/$id'
     | '/api/auth/$'
+    | '/dashboard/'
     | '/products'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/dashboard'
-    | '/listings'
-    | '/orders'
     | '/login'
+    | '/dashboard/listings'
+    | '/dashboard/orders'
     | '/products/$id'
     | '/api/auth/$'
+    | '/dashboard'
     | '/products'
   id:
     | '__root__'
     | '/'
     | '/_admin'
     | '/_admin/dashboard'
-    | '/_admin/listings'
-    | '/_admin/orders'
     | '/_auth/login'
+    | '/_admin/dashboard/listings'
+    | '/_admin/dashboard/orders'
     | '/_digital-hub/products/$id'
     | '/api/auth/$'
+    | '/_admin/dashboard/'
     | '/_digital-hub/products/'
   fileRoutesById: FileRoutesById
 }
@@ -162,25 +172,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_admin/orders': {
-      id: '/_admin/orders'
-      path: '/orders'
-      fullPath: '/orders'
-      preLoaderRoute: typeof AdminOrdersRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/_admin/listings': {
-      id: '/_admin/listings'
-      path: '/listings'
-      fullPath: '/listings'
-      preLoaderRoute: typeof AdminListingsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/_admin/dashboard': {
       id: '/_admin/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof AdminDashboardRouteImport
+      preLoaderRoute: typeof AdminDashboardRouteRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_digital-hub/products/': {
@@ -189,6 +185,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/products'
       preLoaderRoute: typeof DigitalHubProductsIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_admin/dashboard/': {
+      id: '/_admin/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AdminDashboardIndexRouteImport
+      parentRoute: typeof AdminDashboardRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -204,19 +207,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DigitalHubProductsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_admin/dashboard/orders': {
+      id: '/_admin/dashboard/orders'
+      path: '/orders'
+      fullPath: '/dashboard/orders'
+      preLoaderRoute: typeof AdminDashboardOrdersRouteImport
+      parentRoute: typeof AdminDashboardRouteRoute
+    }
+    '/_admin/dashboard/listings': {
+      id: '/_admin/dashboard/listings'
+      path: '/listings'
+      fullPath: '/dashboard/listings'
+      preLoaderRoute: typeof AdminDashboardListingsRouteImport
+      parentRoute: typeof AdminDashboardRouteRoute
+    }
   }
 }
 
+interface AdminDashboardRouteRouteChildren {
+  AdminDashboardListingsRoute: typeof AdminDashboardListingsRoute
+  AdminDashboardOrdersRoute: typeof AdminDashboardOrdersRoute
+  AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
+}
+
+const AdminDashboardRouteRouteChildren: AdminDashboardRouteRouteChildren = {
+  AdminDashboardListingsRoute: AdminDashboardListingsRoute,
+  AdminDashboardOrdersRoute: AdminDashboardOrdersRoute,
+  AdminDashboardIndexRoute: AdminDashboardIndexRoute,
+}
+
+const AdminDashboardRouteRouteWithChildren =
+  AdminDashboardRouteRoute._addFileChildren(AdminDashboardRouteRouteChildren)
+
 interface AdminRouteChildren {
-  AdminDashboardRoute: typeof AdminDashboardRoute
-  AdminListingsRoute: typeof AdminListingsRoute
-  AdminOrdersRoute: typeof AdminOrdersRoute
+  AdminDashboardRouteRoute: typeof AdminDashboardRouteRouteWithChildren
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminDashboardRoute: AdminDashboardRoute,
-  AdminListingsRoute: AdminListingsRoute,
-  AdminOrdersRoute: AdminOrdersRoute,
+  AdminDashboardRouteRoute: AdminDashboardRouteRouteWithChildren,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
