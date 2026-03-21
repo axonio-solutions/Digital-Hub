@@ -1,4 +1,6 @@
+// @ts-ignore
 import { config } from 'dotenv';
+// @ts-ignore
 import { defineConfig } from 'drizzle-kit';
 
 config({ path: '.env' });

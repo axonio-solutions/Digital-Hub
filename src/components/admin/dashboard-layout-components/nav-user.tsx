@@ -10,7 +10,6 @@ import {
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
 } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -112,7 +111,7 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={async ()=>{
-              await authClient.signOut({
+              await (authClient as any).signOut({
                 fetchOptions : {
                   onSuccess : ()=>{
                     router.navigate({

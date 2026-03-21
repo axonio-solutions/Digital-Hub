@@ -9,19 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AdminRouteImport } from './routes/_admin'
+import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthedCompleteRegistrationRouteImport } from './routes/_authed/complete-registration'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as AdminDashboardRouteRouteImport } from './routes/_admin/dashboard/route'
-import { Route as DigitalHubProductsIndexRouteImport } from './routes/_digital-hub/products/index'
-import { Route as AdminDashboardIndexRouteImport } from './routes/_admin/dashboard/index'
+import { Route as AuthedDashboardRouteRouteImport } from './routes/_authed/dashboard/route'
+import { Route as AuthedDashboardIndexRouteImport } from './routes/_authed/dashboard/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as DigitalHubProductsIdRouteImport } from './routes/_digital-hub/products/$id'
-import { Route as AdminDashboardOrdersRouteImport } from './routes/_admin/dashboard/orders'
-import { Route as AdminDashboardListingsRouteImport } from './routes/_admin/dashboard/listings'
+import { Route as AuthedDashboardUsersIndexRouteImport } from './routes/_authed/dashboard/users/index'
+import { Route as AuthedDashboardRequestsIndexRouteImport } from './routes/_authed/dashboard/requests/index'
+import { Route as AuthedDashboardQuotesIndexRouteImport } from './routes/_authed/dashboard/quotes/index'
+import { Route as AuthedDashboardProfileIndexRouteImport } from './routes/_authed/dashboard/profile/index'
+import { Route as AuthedDashboardOffersIndexRouteImport } from './routes/_authed/dashboard/offers/index'
+import { Route as AuthedDashboardMarketplaceIndexRouteImport } from './routes/_authed/dashboard/marketplace/index'
+import { Route as AuthedDashboardHistoryIndexRouteImport } from './routes/_authed/dashboard/history/index'
+import { Route as AuthedDashboardGarageIndexRouteImport } from './routes/_authed/dashboard/garage/index'
+import { Route as AuthedDashboardAuditIndexRouteImport } from './routes/_authed/dashboard/audit/index'
+import { Route as AuthedDashboardAdminSellersRouteImport } from './routes/_authed/dashboard/admin/sellers'
+import { Route as AuthedDashboardAdminBuyersRouteImport } from './routes/_authed/dashboard/admin/buyers'
 
-const AdminRoute = AdminRouteImport.update({
-  id: '/_admin',
+const AuthedRoute = AuthedRouteImport.update({
+  id: '/_authed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -29,80 +37,156 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedCompleteRegistrationRoute =
+  AuthedCompleteRegistrationRouteImport.update({
+    id: '/complete-registration',
+    path: '/complete-registration',
+    getParentRoute: () => AuthedRoute,
+  } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/_auth/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminDashboardRouteRoute = AdminDashboardRouteRouteImport.update({
+const AuthedDashboardRouteRoute = AuthedDashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => AdminRoute,
+  getParentRoute: () => AuthedRoute,
 } as any)
-const DigitalHubProductsIndexRoute = DigitalHubProductsIndexRouteImport.update({
-  id: '/_digital-hub/products/',
-  path: '/products/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminDashboardIndexRoute = AdminDashboardIndexRouteImport.update({
+const AuthedDashboardIndexRoute = AuthedDashboardIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AdminDashboardRouteRoute,
+  getParentRoute: () => AuthedDashboardRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DigitalHubProductsIdRoute = DigitalHubProductsIdRouteImport.update({
-  id: '/_digital-hub/products/$id',
-  path: '/products/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminDashboardOrdersRoute = AdminDashboardOrdersRouteImport.update({
-  id: '/orders',
-  path: '/orders',
-  getParentRoute: () => AdminDashboardRouteRoute,
-} as any)
-const AdminDashboardListingsRoute = AdminDashboardListingsRouteImport.update({
-  id: '/listings',
-  path: '/listings',
-  getParentRoute: () => AdminDashboardRouteRoute,
-} as any)
+const AuthedDashboardUsersIndexRoute =
+  AuthedDashboardUsersIndexRouteImport.update({
+    id: '/users/',
+    path: '/users/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
+const AuthedDashboardRequestsIndexRoute =
+  AuthedDashboardRequestsIndexRouteImport.update({
+    id: '/requests/',
+    path: '/requests/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
+const AuthedDashboardQuotesIndexRoute =
+  AuthedDashboardQuotesIndexRouteImport.update({
+    id: '/quotes/',
+    path: '/quotes/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
+const AuthedDashboardProfileIndexRoute =
+  AuthedDashboardProfileIndexRouteImport.update({
+    id: '/profile/',
+    path: '/profile/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
+const AuthedDashboardOffersIndexRoute =
+  AuthedDashboardOffersIndexRouteImport.update({
+    id: '/offers/',
+    path: '/offers/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
+const AuthedDashboardMarketplaceIndexRoute =
+  AuthedDashboardMarketplaceIndexRouteImport.update({
+    id: '/marketplace/',
+    path: '/marketplace/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
+const AuthedDashboardHistoryIndexRoute =
+  AuthedDashboardHistoryIndexRouteImport.update({
+    id: '/history/',
+    path: '/history/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
+const AuthedDashboardGarageIndexRoute =
+  AuthedDashboardGarageIndexRouteImport.update({
+    id: '/garage/',
+    path: '/garage/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
+const AuthedDashboardAuditIndexRoute =
+  AuthedDashboardAuditIndexRouteImport.update({
+    id: '/audit/',
+    path: '/audit/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
+const AuthedDashboardAdminSellersRoute =
+  AuthedDashboardAdminSellersRouteImport.update({
+    id: '/admin/sellers',
+    path: '/admin/sellers',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
+const AuthedDashboardAdminBuyersRoute =
+  AuthedDashboardAdminBuyersRouteImport.update({
+    id: '/admin/buyers',
+    path: '/admin/buyers',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof AdminDashboardRouteRouteWithChildren
+  '/dashboard': typeof AuthedDashboardRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
-  '/dashboard/listings': typeof AdminDashboardListingsRoute
-  '/dashboard/orders': typeof AdminDashboardOrdersRoute
-  '/products/$id': typeof DigitalHubProductsIdRoute
+  '/complete-registration': typeof AuthedCompleteRegistrationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/dashboard/': typeof AdminDashboardIndexRoute
-  '/products': typeof DigitalHubProductsIndexRoute
+  '/dashboard/': typeof AuthedDashboardIndexRoute
+  '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
+  '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
+  '/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
+  '/dashboard/garage/': typeof AuthedDashboardGarageIndexRoute
+  '/dashboard/history/': typeof AuthedDashboardHistoryIndexRoute
+  '/dashboard/marketplace/': typeof AuthedDashboardMarketplaceIndexRoute
+  '/dashboard/offers/': typeof AuthedDashboardOffersIndexRoute
+  '/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
+  '/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
+  '/dashboard/requests/': typeof AuthedDashboardRequestsIndexRoute
+  '/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
-  '/dashboard/listings': typeof AdminDashboardListingsRoute
-  '/dashboard/orders': typeof AdminDashboardOrdersRoute
-  '/products/$id': typeof DigitalHubProductsIdRoute
+  '/complete-registration': typeof AuthedCompleteRegistrationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/dashboard': typeof AdminDashboardIndexRoute
-  '/products': typeof DigitalHubProductsIndexRoute
+  '/dashboard': typeof AuthedDashboardIndexRoute
+  '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
+  '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
+  '/dashboard/audit': typeof AuthedDashboardAuditIndexRoute
+  '/dashboard/garage': typeof AuthedDashboardGarageIndexRoute
+  '/dashboard/history': typeof AuthedDashboardHistoryIndexRoute
+  '/dashboard/marketplace': typeof AuthedDashboardMarketplaceIndexRoute
+  '/dashboard/offers': typeof AuthedDashboardOffersIndexRoute
+  '/dashboard/profile': typeof AuthedDashboardProfileIndexRoute
+  '/dashboard/quotes': typeof AuthedDashboardQuotesIndexRoute
+  '/dashboard/requests': typeof AuthedDashboardRequestsIndexRoute
+  '/dashboard/users': typeof AuthedDashboardUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_admin': typeof AdminRouteWithChildren
-  '/_admin/dashboard': typeof AdminDashboardRouteRouteWithChildren
+  '/_authed': typeof AuthedRouteWithChildren
+  '/_authed/dashboard': typeof AuthedDashboardRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
-  '/_admin/dashboard/listings': typeof AdminDashboardListingsRoute
-  '/_admin/dashboard/orders': typeof AdminDashboardOrdersRoute
-  '/_digital-hub/products/$id': typeof DigitalHubProductsIdRoute
+  '/_authed/complete-registration': typeof AuthedCompleteRegistrationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/_admin/dashboard/': typeof AdminDashboardIndexRoute
-  '/_digital-hub/products/': typeof DigitalHubProductsIndexRoute
+  '/_authed/dashboard/': typeof AuthedDashboardIndexRoute
+  '/_authed/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
+  '/_authed/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
+  '/_authed/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
+  '/_authed/dashboard/garage/': typeof AuthedDashboardGarageIndexRoute
+  '/_authed/dashboard/history/': typeof AuthedDashboardHistoryIndexRoute
+  '/_authed/dashboard/marketplace/': typeof AuthedDashboardMarketplaceIndexRoute
+  '/_authed/dashboard/offers/': typeof AuthedDashboardOffersIndexRoute
+  '/_authed/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
+  '/_authed/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
+  '/_authed/dashboard/requests/': typeof AuthedDashboardRequestsIndexRoute
+  '/_authed/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,52 +194,74 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
-    | '/dashboard/listings'
-    | '/dashboard/orders'
-    | '/products/$id'
+    | '/complete-registration'
     | '/api/auth/$'
     | '/dashboard/'
-    | '/products'
+    | '/dashboard/admin/buyers'
+    | '/dashboard/admin/sellers'
+    | '/dashboard/audit/'
+    | '/dashboard/garage/'
+    | '/dashboard/history/'
+    | '/dashboard/marketplace/'
+    | '/dashboard/offers/'
+    | '/dashboard/profile/'
+    | '/dashboard/quotes/'
+    | '/dashboard/requests/'
+    | '/dashboard/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
-    | '/dashboard/listings'
-    | '/dashboard/orders'
-    | '/products/$id'
+    | '/complete-registration'
     | '/api/auth/$'
     | '/dashboard'
-    | '/products'
+    | '/dashboard/admin/buyers'
+    | '/dashboard/admin/sellers'
+    | '/dashboard/audit'
+    | '/dashboard/garage'
+    | '/dashboard/history'
+    | '/dashboard/marketplace'
+    | '/dashboard/offers'
+    | '/dashboard/profile'
+    | '/dashboard/quotes'
+    | '/dashboard/requests'
+    | '/dashboard/users'
   id:
     | '__root__'
     | '/'
-    | '/_admin'
-    | '/_admin/dashboard'
+    | '/_authed'
+    | '/_authed/dashboard'
     | '/_auth/login'
-    | '/_admin/dashboard/listings'
-    | '/_admin/dashboard/orders'
-    | '/_digital-hub/products/$id'
+    | '/_authed/complete-registration'
     | '/api/auth/$'
-    | '/_admin/dashboard/'
-    | '/_digital-hub/products/'
+    | '/_authed/dashboard/'
+    | '/_authed/dashboard/admin/buyers'
+    | '/_authed/dashboard/admin/sellers'
+    | '/_authed/dashboard/audit/'
+    | '/_authed/dashboard/garage/'
+    | '/_authed/dashboard/history/'
+    | '/_authed/dashboard/marketplace/'
+    | '/_authed/dashboard/offers/'
+    | '/_authed/dashboard/profile/'
+    | '/_authed/dashboard/quotes/'
+    | '/_authed/dashboard/requests/'
+    | '/_authed/dashboard/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRouteWithChildren
+  AuthedRoute: typeof AuthedRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
-  DigitalHubProductsIdRoute: typeof DigitalHubProductsIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  DigitalHubProductsIndexRoute: typeof DigitalHubProductsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_admin': {
-      id: '/_admin'
+    '/_authed': {
+      id: '/_authed'
       path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AdminRouteImport
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -165,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authed/complete-registration': {
+      id: '/_authed/complete-registration'
+      path: '/complete-registration'
+      fullPath: '/complete-registration'
+      preLoaderRoute: typeof AuthedCompleteRegistrationRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_auth/login': {
       id: '/_auth/login'
       path: '/login'
@@ -172,26 +285,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_admin/dashboard': {
-      id: '/_admin/dashboard'
+    '/_authed/dashboard': {
+      id: '/_authed/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof AdminDashboardRouteRouteImport
-      parentRoute: typeof AdminRoute
+      preLoaderRoute: typeof AuthedDashboardRouteRouteImport
+      parentRoute: typeof AuthedRoute
     }
-    '/_digital-hub/products/': {
-      id: '/_digital-hub/products/'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof DigitalHubProductsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_admin/dashboard/': {
-      id: '/_admin/dashboard/'
+    '/_authed/dashboard/': {
+      id: '/_authed/dashboard/'
       path: '/'
       fullPath: '/dashboard/'
-      preLoaderRoute: typeof AdminDashboardIndexRouteImport
-      parentRoute: typeof AdminDashboardRouteRoute
+      preLoaderRoute: typeof AuthedDashboardIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -200,62 +306,137 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_digital-hub/products/$id': {
-      id: '/_digital-hub/products/$id'
-      path: '/products/$id'
-      fullPath: '/products/$id'
-      preLoaderRoute: typeof DigitalHubProductsIdRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_authed/dashboard/users/': {
+      id: '/_authed/dashboard/users/'
+      path: '/users'
+      fullPath: '/dashboard/users/'
+      preLoaderRoute: typeof AuthedDashboardUsersIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
     }
-    '/_admin/dashboard/orders': {
-      id: '/_admin/dashboard/orders'
-      path: '/orders'
-      fullPath: '/dashboard/orders'
-      preLoaderRoute: typeof AdminDashboardOrdersRouteImport
-      parentRoute: typeof AdminDashboardRouteRoute
+    '/_authed/dashboard/requests/': {
+      id: '/_authed/dashboard/requests/'
+      path: '/requests'
+      fullPath: '/dashboard/requests/'
+      preLoaderRoute: typeof AuthedDashboardRequestsIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
     }
-    '/_admin/dashboard/listings': {
-      id: '/_admin/dashboard/listings'
-      path: '/listings'
-      fullPath: '/dashboard/listings'
-      preLoaderRoute: typeof AdminDashboardListingsRouteImport
-      parentRoute: typeof AdminDashboardRouteRoute
+    '/_authed/dashboard/quotes/': {
+      id: '/_authed/dashboard/quotes/'
+      path: '/quotes'
+      fullPath: '/dashboard/quotes/'
+      preLoaderRoute: typeof AuthedDashboardQuotesIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
+    '/_authed/dashboard/profile/': {
+      id: '/_authed/dashboard/profile/'
+      path: '/profile'
+      fullPath: '/dashboard/profile/'
+      preLoaderRoute: typeof AuthedDashboardProfileIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
+    '/_authed/dashboard/offers/': {
+      id: '/_authed/dashboard/offers/'
+      path: '/offers'
+      fullPath: '/dashboard/offers/'
+      preLoaderRoute: typeof AuthedDashboardOffersIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
+    '/_authed/dashboard/marketplace/': {
+      id: '/_authed/dashboard/marketplace/'
+      path: '/marketplace'
+      fullPath: '/dashboard/marketplace/'
+      preLoaderRoute: typeof AuthedDashboardMarketplaceIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
+    '/_authed/dashboard/history/': {
+      id: '/_authed/dashboard/history/'
+      path: '/history'
+      fullPath: '/dashboard/history/'
+      preLoaderRoute: typeof AuthedDashboardHistoryIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
+    '/_authed/dashboard/garage/': {
+      id: '/_authed/dashboard/garage/'
+      path: '/garage'
+      fullPath: '/dashboard/garage/'
+      preLoaderRoute: typeof AuthedDashboardGarageIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
+    '/_authed/dashboard/audit/': {
+      id: '/_authed/dashboard/audit/'
+      path: '/audit'
+      fullPath: '/dashboard/audit/'
+      preLoaderRoute: typeof AuthedDashboardAuditIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
+    '/_authed/dashboard/admin/sellers': {
+      id: '/_authed/dashboard/admin/sellers'
+      path: '/admin/sellers'
+      fullPath: '/dashboard/admin/sellers'
+      preLoaderRoute: typeof AuthedDashboardAdminSellersRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
+    '/_authed/dashboard/admin/buyers': {
+      id: '/_authed/dashboard/admin/buyers'
+      path: '/admin/buyers'
+      fullPath: '/dashboard/admin/buyers'
+      preLoaderRoute: typeof AuthedDashboardAdminBuyersRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
     }
   }
 }
 
-interface AdminDashboardRouteRouteChildren {
-  AdminDashboardListingsRoute: typeof AdminDashboardListingsRoute
-  AdminDashboardOrdersRoute: typeof AdminDashboardOrdersRoute
-  AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
+interface AuthedDashboardRouteRouteChildren {
+  AuthedDashboardIndexRoute: typeof AuthedDashboardIndexRoute
+  AuthedDashboardAdminBuyersRoute: typeof AuthedDashboardAdminBuyersRoute
+  AuthedDashboardAdminSellersRoute: typeof AuthedDashboardAdminSellersRoute
+  AuthedDashboardAuditIndexRoute: typeof AuthedDashboardAuditIndexRoute
+  AuthedDashboardGarageIndexRoute: typeof AuthedDashboardGarageIndexRoute
+  AuthedDashboardHistoryIndexRoute: typeof AuthedDashboardHistoryIndexRoute
+  AuthedDashboardMarketplaceIndexRoute: typeof AuthedDashboardMarketplaceIndexRoute
+  AuthedDashboardOffersIndexRoute: typeof AuthedDashboardOffersIndexRoute
+  AuthedDashboardProfileIndexRoute: typeof AuthedDashboardProfileIndexRoute
+  AuthedDashboardQuotesIndexRoute: typeof AuthedDashboardQuotesIndexRoute
+  AuthedDashboardRequestsIndexRoute: typeof AuthedDashboardRequestsIndexRoute
+  AuthedDashboardUsersIndexRoute: typeof AuthedDashboardUsersIndexRoute
 }
 
-const AdminDashboardRouteRouteChildren: AdminDashboardRouteRouteChildren = {
-  AdminDashboardListingsRoute: AdminDashboardListingsRoute,
-  AdminDashboardOrdersRoute: AdminDashboardOrdersRoute,
-  AdminDashboardIndexRoute: AdminDashboardIndexRoute,
+const AuthedDashboardRouteRouteChildren: AuthedDashboardRouteRouteChildren = {
+  AuthedDashboardIndexRoute: AuthedDashboardIndexRoute,
+  AuthedDashboardAdminBuyersRoute: AuthedDashboardAdminBuyersRoute,
+  AuthedDashboardAdminSellersRoute: AuthedDashboardAdminSellersRoute,
+  AuthedDashboardAuditIndexRoute: AuthedDashboardAuditIndexRoute,
+  AuthedDashboardGarageIndexRoute: AuthedDashboardGarageIndexRoute,
+  AuthedDashboardHistoryIndexRoute: AuthedDashboardHistoryIndexRoute,
+  AuthedDashboardMarketplaceIndexRoute: AuthedDashboardMarketplaceIndexRoute,
+  AuthedDashboardOffersIndexRoute: AuthedDashboardOffersIndexRoute,
+  AuthedDashboardProfileIndexRoute: AuthedDashboardProfileIndexRoute,
+  AuthedDashboardQuotesIndexRoute: AuthedDashboardQuotesIndexRoute,
+  AuthedDashboardRequestsIndexRoute: AuthedDashboardRequestsIndexRoute,
+  AuthedDashboardUsersIndexRoute: AuthedDashboardUsersIndexRoute,
 }
 
-const AdminDashboardRouteRouteWithChildren =
-  AdminDashboardRouteRoute._addFileChildren(AdminDashboardRouteRouteChildren)
+const AuthedDashboardRouteRouteWithChildren =
+  AuthedDashboardRouteRoute._addFileChildren(AuthedDashboardRouteRouteChildren)
 
-interface AdminRouteChildren {
-  AdminDashboardRouteRoute: typeof AdminDashboardRouteRouteWithChildren
+interface AuthedRouteChildren {
+  AuthedDashboardRouteRoute: typeof AuthedDashboardRouteRouteWithChildren
+  AuthedCompleteRegistrationRoute: typeof AuthedCompleteRegistrationRoute
 }
 
-const AdminRouteChildren: AdminRouteChildren = {
-  AdminDashboardRouteRoute: AdminDashboardRouteRouteWithChildren,
+const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedDashboardRouteRoute: AuthedDashboardRouteRouteWithChildren,
+  AuthedCompleteRegistrationRoute: AuthedCompleteRegistrationRoute,
 }
 
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+const AuthedRouteWithChildren =
+  AuthedRoute._addFileChildren(AuthedRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRouteWithChildren,
+  AuthedRoute: AuthedRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
-  DigitalHubProductsIdRoute: DigitalHubProductsIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
-  DigitalHubProductsIndexRoute: DigitalHubProductsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

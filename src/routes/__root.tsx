@@ -1,32 +1,38 @@
 import {
+  createRootRouteWithContext,
+  Outlet,
   HeadContent,
   Scripts,
-  createRootRouteWithContext,
-  redirect,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import * as React from 'react'
+
+// 1. Import the unified DevTools wrapper
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
+// 2. Import the *Panel* versions (not the floating default ones)
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
-
-import appCss from '../styles.css?url'
-
-import type { QueryClient } from '@tanstack/react-query'
-import { getSession } from '@/utils/auth'
-import { Toaster } from 'sonner'
+import type { MyRouterContext } from '@/types/router'
+import { DefaultNotFound } from './components/errors/-default-not-found'
 import { authQueries } from '@/features/auth/queries/auth-queries'
-
-interface MyRouterContext {
-  queryClient: QueryClient
-}
+import styles from '../styles.css?url'
+import { Toaster } from '@/components/ui/sonner'
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-   beforeLoad: async ({ context }) => {
-		const user = await context.queryClient.ensureQueryData(authQueries.user());
-    
-		return { user };
-	},
+  beforeLoad: async ({ context }) => {
+    try {
+      const user = await context.queryClient.ensureQueryData(authQueries.user());
+      return {
+        user
+      };
+    } catch (error) {
+      console.error("Auth Session Error:", error);
+      return {
+        user: null
+      };
+    }
+  },
   head: () => ({
     meta: [
       {
@@ -37,18 +43,46 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Digital Hub - Marketplace',
       },
     ],
     links: [
       {
         rel: 'stylesheet',
-        href: appCss,
+        href: styles,
       },
     ],
   }),
+  component: () => {
+    return (
+      <RootDocument>
+        <Outlet />
+        <Toaster />
 
-  shellComponent: RootDocument,
+        {/* Render the unified devtools button with tabs for each plugin */}
+        <TanStackDevtools
+          config={{ position: 'bottom-right' }}
+          plugins={[
+            {
+              name: 'Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+            {
+              name: 'Query',
+              render: <ReactQueryDevtoolsPanel />,
+            },
+          ]}
+        />
+
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `console.log("DevTools Render Context - DEV:", ${import.meta.env.DEV ? 'true' : 'false'}, "MODE:", "${import.meta.env.MODE}");`
+          }}
+        />
+      </RootDocument>
+    );
+  },
+  notFoundComponent: DefaultNotFound,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -57,22 +91,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
-        
+      <body className="antialiased min-h-screen bg-background text-foreground">
         {children}
-         <Toaster position="bottom-right" />
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
         <Scripts />
       </body>
     </html>

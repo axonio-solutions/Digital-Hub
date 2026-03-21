@@ -1,52 +1,143 @@
 import { betterAuth } from "better-auth";
-import { reactStartCookies } from "better-auth/react-start";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
-import { admin } from "better-auth/plugins";
-
+import * as schema from "@/db/schema";
+import { admin, customSession } from "better-auth/plugins";
 
 export const auth = betterAuth({
-     database: drizzleAdapter(db, {
-		provider: "pg",
-		usePlural: true,
-	}),
-    emailAndPassword: { 
-    enabled: true, 
-  }, 
-    plugins: [reactStartCookies() , admin()] // make sure this is the last plugin in the array
-})
-
-
-async function createInitialAdmin() {
-  try {
-    const ctx = await auth.$context;
-    
-    // Check if admin user already exists
-    const existingAdmin = await ctx.adapter.findOne({
-      model: "user",
-      where: [{
-        field: "email",
-        value: "admin@digital-hub.com"
-      }]
-    });
-    if (existingAdmin) {
-      console.log("Admin user already exists");
-      return;
-    }
-    // Create admin user using Better Auth's API
-    const newUser = await auth.api.createUser({
-      body: {
-        email: "admin@digital-hub.com",
-        password: "Digitalhub",
-        name: "Admin",
-        role: "admin",
+  database: drizzleAdapter(db, {
+    schema,
+    provider: "pg",
+    usePlural: true,
+  }),
+  emailAndPassword: {
+    enabled: true,
+    autoSignIn: false,
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 60 * 24, // 1 day
+    },
+  },
+  user: {
+    deleteUser: {
+      enabled: true,
+    },
+    additionalFields: {
+      user_type: {
+        type: "string",
+        required: false,
+        input: true,
       },
-    });
-    console.log("Admin user created successfully:", newUser);
-  } catch (error) {
-    console.error("Failed to create admin user:", error);
+      account_status: {
+        type: "string",
+        required: false,
+        input: false,
+      },
+      phone: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      storeName: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      wilaya: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      whatsappNumber: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      address: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      city: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      companyAddress: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      commercialRegister: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+    },
+  },
+  plugins: [
+    admin(),
+    customSession(async ({ user, session }) => {
+      return {
+        user,
+        session,
+      };
+    }),
+  ],
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          // Map user_type to the secure role field during registration
+          // This safely allows 'buyer' and 'seller' roles without allowing 'admin'
+          if (user.user_type === "buyer" || user.user_type === "seller") {
+            return {
+              data: {
+                ...user,
+                role: user.user_type
+              }
+            };
+          }
+          return { data: user };
+        }
+      }
+    }
   }
+});
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  role?: string | null;
+  banned?: boolean | null;
+  banReason?: string | null;
+  banExpires?: Date | null;
+  user_type?: string | null;
+  account_status?: string | null;
+  phone?: string | null;
+  storeName?: string | null;
+  companyAddress?: string | null;
+  commercialRegister?: string | null;
+  address?: string | null;
+  city?: string | null;
+  wilaya?: string | null;
+  whatsappNumber?: string | null;
+  preferredLanguage?: string | null;
+  isDeactivated?: boolean | null;
 }
-// Call the function to create admin user on startup
-createInitialAdmin();
+
+export type Auth = typeof auth;
+export type Session = typeof auth.$Infer.Session.session;
+// Use the manually defined User interface for better DX and consistency
+// export type User = typeof auth.$Infer.Session.user;
+
 

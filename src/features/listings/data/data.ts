@@ -1,4 +1,4 @@
-import { CheckCircle, Circle, CircleOff, HelpCircle, Timer, MonitorSmartphone, Gamepad2, Music, Video } from "lucide-react"
+import { CheckCircle, CircleOff, HelpCircle, Timer, MonitorSmartphone, Gamepad2, Music, Video } from "lucide-react"
 
 export const categories = [
   { value: "account", label: "Account", icon: MonitorSmartphone },

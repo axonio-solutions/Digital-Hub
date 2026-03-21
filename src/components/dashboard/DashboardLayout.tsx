@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/sidebar"
 
 
-export default function DashboardLayout({children}) {
+export default function DashboardLayout({ children }: { readonly children: React.ReactNode }) {
   return (
     <SidebarProvider
       style={

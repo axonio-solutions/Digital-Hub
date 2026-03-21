@@ -1,7 +1,7 @@
 
 import { columns } from "./columns"
 import { DataTable } from "@/components/ui/data-table/data-table"
-import { productSchema } from "./data/schema"
+
 
 
 import { products } from "./data/products"
