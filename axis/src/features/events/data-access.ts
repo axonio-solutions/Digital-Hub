@@ -1,13 +1,13 @@
+import { and } from "drizzle-orm";
+import type { CreateMatchInput } from "@/features/events/types";
+import type { EditMatchEntry } from "./schema";
 import { db, eq } from "@/db";
 import {
-	events,
 	eventAreas,
 	eventPackages,
+	events,
 	footballMatches,
 } from "@/db/schema";
-import type { CreateMatchInput } from "@/features/events/types";
-import { and } from "drizzle-orm";
-import type { EditMatchEntry } from "./schema";
 
 export async function getMatchEvents(cafeId: string) {
 	try {

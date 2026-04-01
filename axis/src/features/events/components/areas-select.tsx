@@ -1,11 +1,11 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { FormField, FormMessage } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
-import { seatingAreasQueries } from "@/features/spaces/components/seating-areas/seating-areas.queries";
 import { IconAlertCircle, IconLoader } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import type { UseFormReturn } from "react-hook-form";
 import type { AreaItem, CreateMatchFormData } from "../schema";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { FormField, FormMessage } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { seatingAreasQueries } from "@/features/spaces/components/seating-areas/seating-areas.queries";
 
 interface AreasSelectProps {
 	form: UseFormReturn<CreateMatchFormData>;
@@ -59,7 +59,7 @@ export function AreasSelect({ form }: AreasSelectProps) {
 											(a) => a.id === area.id,
 										);
 
-										let newSelection: AreaItem[];
+										let newSelection: Array<AreaItem>;
 										if (isSelected) {
 											newSelection = field.value.filter(
 												(a) => a.id !== area.id,

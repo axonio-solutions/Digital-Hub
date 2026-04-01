@@ -1,6 +1,6 @@
-import { auth } from "@/lib/auth";
 import { createMiddleware } from "@tanstack/react-start";
 import { getWebRequest, setResponseStatus } from "@tanstack/react-start/server";
+import { auth } from "@/lib/auth";
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
 	const req = getWebRequest();

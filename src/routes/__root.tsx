@@ -1,8 +1,8 @@
 import {
-  createRootRouteWithContext,
-  Outlet,
   HeadContent,
+  Outlet,
   Scripts,
+  createRootRouteWithContext,
 } from '@tanstack/react-router'
 import * as React from 'react'
 
@@ -13,24 +13,25 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 
-import type { MyRouterContext } from '@/types/router'
-import { DefaultNotFound } from './components/errors/-default-not-found'
-import { authQueries } from '@/features/auth/queries/auth-queries'
 import styles from '../styles.css?url'
+import { DefaultNotFound } from './components/errors/-default-not-found'
+import type { MyRouterContext } from '@/types/router'
+import { authQueries } from '@/features/auth/queries/auth-queries'
 import { Toaster } from '@/components/ui/sonner'
+import { useNotifications } from '@/features/notifications/hooks/use-notifications'
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ context }) => {
     try {
-      const user = await context.queryClient.ensureQueryData(authQueries.user());
+      const user = await context.queryClient.ensureQueryData(authQueries.user())
       return {
-        user
-      };
+        user,
+      }
     } catch (error) {
-      console.error("Auth Session Error:", error);
+      console.error('Auth Session Error:', error)
       return {
-        user: null
-      };
+        user: null,
+      }
     }
   },
   head: () => ({
@@ -51,13 +52,34 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         rel: 'stylesheet',
         href: styles,
       },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.googleapis.com',
+      },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: '',
+      },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap',
+      },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap',
+      },
     ],
   }),
   component: () => {
+    const { user } = Route.useRouteContext()
+    // Subscribe to real-time notifications
+    useNotifications(user?.id)
+
     return (
       <RootDocument>
         <Outlet />
-        <Toaster />
+        <Toaster position="bottom-right" closeButton />
 
         {/* Render the unified devtools button with tabs for each plugin */}
         <TanStackDevtools
@@ -76,11 +98,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
         <script
           dangerouslySetInnerHTML={{
-            __html: `console.log("DevTools Render Context - DEV:", ${import.meta.env.DEV ? 'true' : 'false'}, "MODE:", "${import.meta.env.MODE}");`
+            __html: `console.log("DevTools Render Context - DEV:", ${import.meta.env.DEV ? 'true' : 'false'}, "MODE:", "${import.meta.env.MODE}");`,
           }}
         />
       </RootDocument>
-    );
+    )
   },
   notFoundComponent: DefaultNotFound,
 })

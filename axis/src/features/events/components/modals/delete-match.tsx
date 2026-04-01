@@ -2,6 +2,10 @@ import * as React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { IconAlertCircle } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { eventsQueries } from "../../queries";
+import type { MatchEventTableRow } from "../../schema";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -15,10 +19,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { deleteMatchEventFn } from "@/fn/events";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { eventsQueries } from "../../queries";
-import type { MatchEventTableRow } from "../../schema";
 
 interface DeleteMatchDialogProps {
 	matchData: MatchEventTableRow | null;

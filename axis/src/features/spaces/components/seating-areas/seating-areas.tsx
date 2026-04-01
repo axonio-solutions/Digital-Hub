@@ -1,15 +1,16 @@
-import NumberInputWithMinsPlusButtons from "@/components/inputs/number-input-with-mins-plus-buttons";
-import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
-import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import {  useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { DeleteAreaDialog } from "./delete-area-modal";
+import { seatingAreasQueries } from "./seating-areas.queries";
+import type { Area, AreaFormValues } from "./seating-areas.types";
+import { areaSchema, type updateAreaSchema } from "./seating-areas.validations";
+import type {SubmitHandler} from "react-hook-form";
+import type { z } from "zod";
+import { createSeatingAreaFn, updateSeatingAreaFn } from "@/fn/seating-areas";
 import {
 	Table,
 	TableBody,
@@ -18,18 +19,18 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { createSeatingAreaFn, updateSeatingAreaFn } from "@/fn/seating-areas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import type { z } from "zod";
-import { DeleteAreaDialog } from "./delete-area-modal";
-import { seatingAreasQueries } from "./seating-areas.queries";
-import type { Area, AreaFormValues } from "./seating-areas.types";
-import { areaSchema, type updateAreaSchema } from "./seating-areas.validations";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
+import NumberInputWithMinsPlusButtons from "@/components/inputs/number-input-with-mins-plus-buttons";
 
 const DEFAULT_FORM_VALUES: AreaFormValues = {
 	name_ar: "",
@@ -55,13 +56,13 @@ export const AreaManagementForm = () => {
 			createSeatingAreaFn({ data: values }),
 		onMutate: async (newArea) => {
 			await queryClient.cancelQueries(seatingAreasQueries.list());
-			const previousAreas = queryClient.getQueryData<Area[]>(
+			const previousAreas = queryClient.getQueryData<Array<Area>>(
 				seatingAreasQueries.list().queryKey,
 			);
 
 			queryClient.setQueryData(
 				seatingAreasQueries.list().queryKey,
-				(old: Area[] = []) => {
+				(old: Array<Area> = []) => {
 					const optimisticArea = {
 						id: `temp-id-${Date.now()}`,
 						name_ar: newArea.name_ar,
@@ -97,7 +98,7 @@ export const AreaManagementForm = () => {
 			updateSeatingAreaFn({ data: updates }),
 		onMutate: async (updatedArea) => {
 			await queryClient.cancelQueries(seatingAreasQueries.list());
-			const previousAreas = queryClient.getQueryData<Area[]>(
+			const previousAreas = queryClient.getQueryData<Array<Area>>(
 				seatingAreasQueries.list().queryKey,
 			);
 

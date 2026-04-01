@@ -1,9 +1,9 @@
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { AuthCard } from "@/features/auth/components/auth-card";
 import { AuthFooter } from "@/features/auth/components/auth-footer";
 import { AuthLayout } from "@/features/auth/components/auth-layout";
 import CompleteRegistrationForm from "@/features/auth/components/forms/complete-registration";
 import { AUTH_ROUTES } from "@/features/auth/constants/config";
-import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authed/complete-registration")({
 	beforeLoad({ context }) {

@@ -1,7 +1,7 @@
+import { createFileRoute } from "@tanstack/react-router";
 import Footer from "@/components/footer";
 import { Navigation } from "@/components/navbar";
 import { CafeDetailsSection } from "@/features/coffee-shops/components/cafe-details-section";
-import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/coffee-shops/$slug")({
 	component: RouteComponent,

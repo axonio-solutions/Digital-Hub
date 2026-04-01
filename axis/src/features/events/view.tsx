@@ -4,6 +4,9 @@ import {
 	IconListCheck,
 } from "@tabler/icons-react";
 
+import { useState } from "react";
+import { EventsTable } from "./components/events-table";
+import { MatchesTable } from "./components/matches-table";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -14,9 +17,6 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { useState } from "react";
-import { EventsTable } from "./components/events-table";
-import { MatchesTable } from "./components/matches-table";
 
 const matchesData = [
 	{

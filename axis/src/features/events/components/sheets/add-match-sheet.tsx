@@ -3,9 +3,24 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { IconPlus } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { SUPPORTED_LEAGUES } from "../../constants";
+import { formatArabicDateTime } from "../../helpers";
+import { eventsQueries } from "../../queries";
+import {
+	
+	
+	
+	createMatchSchema
+} from "../../schema";
+import { AreasSelect } from "../areas-select";
+import { CapacityPriceInputs } from "../capacity-price-inputs";
+import { LeagueSelect } from "../league-select";
+import { MatchSelect } from "../match-select";
+import { PackagesSelect } from "../packages-select";
+import type {CreateMatchFormData, MatchDetails, MatchEventTableRow} from "../../schema";
+import { createFootballMatchFn } from "@/fn/events";
 import {
 	Sheet,
 	SheetContent,
@@ -15,23 +30,9 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@/components/ui/sheet";
-import { createFootballMatchFn } from "@/fn/events";
-import { IconPlus } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { SUPPORTED_LEAGUES } from "../../constants";
-import { formatArabicDateTime } from "../../helpers";
-import { eventsQueries } from "../../queries";
-import {
-	type CreateMatchFormData,
-	type MatchDetails,
-	type MatchEventTableRow,
-	createMatchSchema,
-} from "../../schema";
-import { AreasSelect } from "../areas-select";
-import { CapacityPriceInputs } from "../capacity-price-inputs";
-import { LeagueSelect } from "../league-select";
-import { MatchSelect } from "../match-select";
-import { PackagesSelect } from "../packages-select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 
 export const PRO_LEAGUE_ID = SUPPORTED_LEAGUES.find(
 	(country) => country.country === "Saudi-Arabia",

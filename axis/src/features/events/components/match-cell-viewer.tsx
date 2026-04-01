@@ -1,5 +1,5 @@
-import type { Match } from "./matches-table";
 import { MatchDetailsSheet } from "./sheets/match-details-sheet";
+import type { Match } from "./matches-table";
 
 interface MatchCellViewerProps {
 	item: Match;

@@ -1,3 +1,6 @@
+import { createServerFn } from "@tanstack/react-start";
+import type { CreateMatchInput } from "@/features/events/types";
+import type { isReturnStatement } from "typescript";
 import { authMiddleware } from "@/features/auth/guards/auth";
 import {
 	createFootballMatchSchema,
@@ -5,15 +8,12 @@ import {
 	editMatchSchema,
 	matchEventTableSchema,
 } from "@/features/events/schema";
-import type { CreateMatchInput } from "@/features/events/types";
 import {
 	createFootballMatchUseCase,
 	deleteMatchEventUseCase,
 	getMatchEventsUseCase,
 	updateMatchEventUseCase,
 } from "@/features/events/use-cases";
-import { createServerFn } from "@tanstack/react-start";
-import type { isReturnStatement } from "typescript";
 
 export const fetchMatchEventsFn = createServerFn({
 	method: "GET",

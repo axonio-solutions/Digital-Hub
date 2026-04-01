@@ -11,10 +11,10 @@ import {
 	IconTrash,
 } from "@tabler/icons-react";
 import {
-	type ColumnDef,
-	type ColumnFiltersState,
-	type SortingState,
-	type VisibilityState,
+	
+	
+	
+	
 	flexRender,
 	getCoreRowModel,
 	getFacetedRowModel,
@@ -22,10 +22,14 @@ import {
 	getFilteredRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
-	useReactTable,
+	useReactTable
 } from "@tanstack/react-table";
 import * as React from "react";
 import { z } from "zod";
+import { DeleteReservationDialog } from "./modals/delete-reservation";
+import { EditReservationSheet } from "./sheets/edit-reservation";
+import { TableCellViewer } from "./table-cell-viewer";
+import type {ColumnDef, ColumnFiltersState, SortingState, VisibilityState} from "@tanstack/react-table";
 
 import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
 import { Badge } from "@/components/ui/badge";
@@ -54,9 +58,6 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { DeleteReservationDialog } from "./modals/delete-reservation";
-import { EditReservationSheet } from "./sheets/edit-reservation";
-import { TableCellViewer } from "./table-cell-viewer";
 
 // Reservations Schema
 export const schema = z.object({
@@ -73,7 +74,7 @@ export const schema = z.object({
 export function CafeReservationsTable({
 	data: initialData,
 }: {
-	data: z.infer<typeof schema>[];
+	data: Array<z.infer<typeof schema>>;
 }) {
 	const [data, setData] = React.useState(() => initialData);
 	const [rowSelection, setRowSelection] = React.useState({});
@@ -115,7 +116,7 @@ export function CafeReservationsTable({
 	};
 
 	// Reservations Columns
-	const columns: ColumnDef<z.infer<typeof schema>>[] = [
+	const columns: Array<ColumnDef<z.infer<typeof schema>>> = [
 		{
 			id: "select",
 			header: ({ table }) => (

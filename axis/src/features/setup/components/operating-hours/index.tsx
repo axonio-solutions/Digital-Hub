@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { updateCafeOperatingHoursFn } from "@/fn/cafe";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { operatingHoursQueries } from "./lib/queries";
-import type { OperatingHoursData, OperatingHoursFormData } from "./lib/types";
 import { DAY_TRANSLATIONS } from "./lib/types";
 import TimeInput from "./time-select";
+import type { OperatingHoursData, OperatingHoursFormData } from "./lib/types";
+import { updateCafeOperatingHoursFn } from "@/fn/cafe";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 
 const defaultOperatingHours: OperatingHoursData = {
 	SUNDAY: {

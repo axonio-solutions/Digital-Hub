@@ -5,7 +5,7 @@ import {
   } from "./cafe-categories.data-access";
   import type { CafeCategory } from "./cafe-categories.types";
   
-  export async function getAllCafeCategoriesUseCase(): Promise<CafeCategory[]> {
+  export async function getAllCafeCategoriesUseCase(): Promise<Array<CafeCategory>> {
     try {
       return await getAllCafeCategories();
     } catch (error) {
@@ -16,7 +16,7 @@ import {
   
   export async function getCafeCategoriesUseCase(
     cafeId: string
-  ): Promise<string[]> {
+  ): Promise<Array<string>> {
     try {
       return await getCafeCategories(cafeId);
     } catch (error) {

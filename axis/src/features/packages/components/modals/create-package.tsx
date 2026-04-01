@@ -1,7 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
+import { IconBox, IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { packagesQueries } from "../../packages-queries";
+import { packageFormSchema } from "../../packages.validation";
+import type {SubmitHandler} from "react-hook-form";
 
+import type {
+	PackageFormValues,
+	PackageItem,
+	PackageWithItems,
+} from "../../packages.types";
 import { Icons } from "@/components/icons";
 import NumberInputWithMinsPlusButtons from "@/components/inputs/number-input-with-mins-plus-buttons";
 import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
@@ -26,16 +37,6 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { createPackageFn } from "@/fn/packages";
-import { IconBox, IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { packagesQueries } from "../../packages-queries";
-import type {
-	PackageFormValues,
-	PackageItem,
-	PackageWithItems,
-} from "../../packages.types";
-import { packageFormSchema } from "../../packages.validation";
 
 interface CreatePackageDialogProps {
 	isOpen: boolean;
@@ -100,7 +101,7 @@ export function CreatePackageDialog({
 			createPackageFn({ data: updates }),
 		onMutate: async (newPackage) => {
 			await queryClient.cancelQueries(packagesQueries.list());
-			const previousPackages = queryClient.getQueryData<PackageWithItems[]>(
+			const previousPackages = queryClient.getQueryData<Array<PackageWithItems>>(
 				packagesQueries.list().queryKey,
 			);
 			queryClient.setQueryData(packagesQueries.list().queryKey, (old = []) => {

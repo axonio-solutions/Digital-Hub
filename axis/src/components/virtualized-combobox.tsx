@@ -1,3 +1,6 @@
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { Check, ChevronsUpDown } from "lucide-react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Command,
@@ -13,9 +16,6 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { Check, ChevronsUpDown } from "lucide-react";
-import * as React from "react";
 
 type Option = {
 	value: string;
@@ -24,7 +24,7 @@ type Option = {
 
 interface VirtualizedCommandProps {
 	height: string;
-	options: Option[];
+	options: Array<Option>;
 	placeholder: string;
 	selectedOption: string;
 	onSelectOption?: (option: string) => void;
@@ -40,7 +40,7 @@ const VirtualizedCommand = ({
 	disabled = false,
 }: VirtualizedCommandProps) => {
 	const [filteredOptions, setFilteredOptions] =
-		React.useState<Option[]>(options);
+		React.useState<Array<Option>>(options);
 	const [focusedIndex, setFocusedIndex] = React.useState(0);
 	const [isKeyboardNavActive, setIsKeyboardNavActive] = React.useState(false);
 
@@ -193,7 +193,7 @@ const VirtualizedCommand = ({
 };
 
 interface VirtualizedComboboxProps {
-	options: string[];
+	options: Array<string>;
 	searchPlaceholder?: string;
 	width?: string;
 	height?: string;

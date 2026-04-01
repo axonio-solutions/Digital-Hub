@@ -1,6 +1,6 @@
 import { motion, useAnimation } from "motion/react";
-import type { HTMLAttributes } from "react";
 import { forwardRef, useEffect } from "react";
+import type { HTMLAttributes } from "react";
 
 // biome-ignore lint/complexity/noBannedTypes: <explanation>
 export type FlaskIconHandle = {};

@@ -1,13 +1,14 @@
-import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
-	type ColumnDef,
-	type Table as TableType,
-	flexRender,
+	
+	
+	flexRender
 } from "@tanstack/react-table";
 import { useEffect } from "react";
 import { eventsQueries } from "../queries";
+import type {ColumnDef, Table as TableType} from "@tanstack/react-table";
 import type { MatchEventTableRow } from "../schema";
+import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 export function MatchesTableContent({
 	table,
@@ -15,8 +16,8 @@ export function MatchesTableContent({
 	onDataChange,
 }: {
 	table: TableType<MatchEventTableRow>;
-	columns: ColumnDef<MatchEventTableRow, unknown>[];
-	onDataChange: (data: MatchEventTableRow[]) => void;
+	columns: Array<ColumnDef<MatchEventTableRow, unknown>>;
+	onDataChange: (data: Array<MatchEventTableRow>) => void;
 }) {
 	const { data } = useSuspenseQuery(eventsQueries.matchEvents());
 

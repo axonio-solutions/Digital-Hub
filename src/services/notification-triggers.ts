@@ -1,0 +1,224 @@
+import { db } from '@/db'
+import { 
+  notificationPreferences, 
+  quotes, 
+  sparePartRequests, 
+  users,
+  sellerBrands,
+  sellerCategories
+} from '@/db/schema'
+import { eq, and, or, count } from 'drizzle-orm'
+import { NotificationService } from './notification-service'
+
+/**
+ * Higher-level triggers that map business events to notifications
+ */
+export class NotificationTriggers {
+  
+  // --- Buyer Triggers ---
+
+  static async onQuoteCreated(quoteId: string, tx?: any) {
+    const client = tx || db
+    const quote = await client.query.quotes.findFirst({
+      where: eq(quotes.id, quoteId),
+      with: { request: true }
+    })
+    if (!quote || !quote.request) return
+
+    const [rowCount] = await client
+      .select({ value: count() })
+      .from(quotes)
+      .where(eq(quotes.requestId, quote.requestId))
+
+    if (rowCount.value === 1) {
+      await NotificationService.send({
+        userId: quote.request.buyerId,
+        type: 'FIRST_QUOTE',
+        title: 'First Quote Received!',
+        message: `Good news! Your first offer for ${quote.request.partName} is here.`,
+        referenceId: quote.requestId,
+        linkUrl: `/dashboard/requests/${quote.requestId}`,
+      }, tx)
+    } else if (rowCount.value === 3) {
+      await NotificationService.send({
+        userId: quote.request.buyerId,
+        type: 'MILESTONE_3_QUOTES',
+        title: '3 Quotes Milestone!',
+        message: `You now have 3 competitive quotes for your ${quote.request.partName}. Time to compare!`,
+        referenceId: quote.requestId,
+        linkUrl: `/dashboard/requests/${quote.requestId}`,
+        isPriority: true,
+      }, tx)
+    } else {
+      await NotificationService.send({
+        userId: quote.request.buyerId,
+        type: 'NEW_QUOTE',
+        title: 'New Offer Received',
+        message: `A seller has submitted a new offer for ${quote.request.partName}.`,
+        referenceId: quote.requestId,
+        linkUrl: `/dashboard/requests/${quote.requestId}`,
+      }, tx)
+    }
+  }
+
+  static async onQuoteUpdated(quoteId: string, tx?: any) {
+    const client = tx || db
+    const quote = await client.query.quotes.findFirst({
+      where: eq(quotes.id, quoteId),
+      with: { request: true }
+    })
+    if (!quote || !quote.request) return
+
+    await NotificationService.send({
+      userId: quote.request.buyerId,
+      type: 'QUOTE_STATUS_CHANGE',
+      title: 'Quote Updated',
+      message: `A seller has updated their quote for ${quote.request.partName}.`,
+      referenceId: quote.requestId,
+      linkUrl: `/dashboard/requests/${quote.requestId}`,
+    }, tx)
+  }
+
+  // --- Seller Triggers ---
+
+  static async onNewRequest(requestId: string, tx?: any) {
+    const client = tx || db
+    const request = await client.query.sparePartRequests.findFirst({
+      where: eq(sparePartRequests.id, requestId),
+    })
+    if (!request) return
+
+    // Find all sellers who match this brand/category or have "ALL_BRANDS" scope
+    const sellersToNotify = await client
+      .selectDistinct({ id: users.id })
+      .from(users)
+      .innerJoin(notificationPreferences, eq(users.id, notificationPreferences.userId))
+      .leftJoin(sellerBrands, eq(users.id, sellerBrands.sellerId))
+      .leftJoin(sellerCategories, eq(users.id, sellerCategories.sellerId))
+      .where(
+        and(
+          eq(users.role, 'seller'),
+          eq(notificationPreferences.sellerAlertFrequency, 'IMMEDIATE'),
+          or(
+            eq(notificationPreferences.sellerBrandScope, 'ALL_BRANDS'),
+            eq(sellerBrands.brandId, request.brandId as any),
+            eq(sellerCategories.categoryId, request.categoryId as any)
+          )
+        )
+      )
+
+    for (const seller of sellersToNotify) {
+      await NotificationService.send({
+        userId: seller.id,
+        type: 'NEW_LEAD',
+        title: 'New Lead: ' + request.partName,
+        message: `A buyer is looking for ${request.partName} (${request.vehicleBrand}). Check it out!`,
+        referenceId: request.id,
+        linkUrl: `/dashboard/marketplace/${request.id}`,
+      }, tx)
+    }
+  }
+
+  static async onQuoteAccepted(quoteId: string, tx?: any) {
+    const client = tx || db
+    const quote = await client.query.quotes.findFirst({
+      where: eq(quotes.id, quoteId),
+      with: { request: true }
+    })
+    if (!quote) return
+
+    await NotificationService.send({
+      userId: quote.sellerId,
+      type: 'QUOTE_WON',
+      title: 'You Won the Deal!',
+      message: `Your quote for ${quote.request.partName} was accepted. Check your orders.`,
+      referenceId: quote.requestId,
+      linkUrl: `/dashboard/orders`,
+      isPriority: true,
+    }, tx)
+  }
+
+  static async onQuoteRejected(quoteId: string, tx?: any) {
+    const client = tx || db
+    const quote = await client.query.quotes.findFirst({
+      where: eq(quotes.id, quoteId),
+      with: { request: true }
+    })
+    if (!quote) return
+
+    await NotificationService.send({
+      userId: quote.sellerId,
+      type: 'QUOTE_STATUS_CHANGE',
+      title: 'Offer Updated',
+      message: `Your offer for ${quote.request.partName} was not selected.`,
+      referenceId: quote.requestId,
+      linkUrl: `/dashboard/quotes`,
+    }, tx)
+  }
+
+  static async onQuoteUnrejected(quoteId: string, tx?: any) {
+    const client = tx || db
+    const quote = await client.query.quotes.findFirst({
+      where: eq(quotes.id, quoteId),
+      with: { request: true }
+    })
+    if (!quote) return
+
+    await NotificationService.send({
+      userId: quote.sellerId,
+      type: 'QUOTE_STATUS_CHANGE',
+      title: 'Offer Restored',
+      message: `Your offer for ${quote.request.partName} is back in consideration.`,
+      referenceId: quote.requestId,
+      linkUrl: `/dashboard/quotes`,
+    }, tx)
+  }
+
+  static async onQuoteRevoked(quoteId: string, tx?: any) {
+    const client = tx || db
+    const quote = await client.query.quotes.findFirst({
+      where: eq(quotes.id, quoteId),
+      with: { request: true }
+    })
+    if (!quote) return
+
+    await NotificationService.send({
+      userId: quote.sellerId,
+      type: 'QUOTE_STATUS_CHANGE',
+      title: 'Order Status Change',
+      message: `The acceptance of your offer for ${quote.request.partName} has been revoked.`,
+      referenceId: quote.requestId,
+      linkUrl: `/dashboard/quotes`,
+    }, tx)
+  }
+
+  static async onAccountApproved(userId: string, tx?: any) {
+    await NotificationService.send({
+      userId,
+      type: 'ACCOUNT_APPROVED',
+      title: 'Store Approved!',
+      message: 'Your seller account has been reviewed and approved. You can now start bidding!',
+      linkUrl: `/dashboard/seller`,
+      isPriority: true,
+    }, tx)
+  }
+
+  // --- Admin Triggers ---
+
+  static async onSpamFlagged(requestId: string) {
+    // Notify Admin users
+    const admins = await db.query.users.findMany({
+      where: eq(users.role, 'admin')
+    })
+
+    for (const admin of admins) {
+      await NotificationService.send({
+        userId: admin.id,
+        type: 'SPAM_FLAG',
+        title: 'Spam Alert',
+        message: `Request #${requestId.slice(0, 8)} has been flagged as spam.`,
+        linkUrl: `/admin/dashboard/requests`,
+      })
+    }
+  }
+}

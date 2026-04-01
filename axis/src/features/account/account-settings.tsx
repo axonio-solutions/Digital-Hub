@@ -1,19 +1,5 @@
-import { PasswordInputWithStrength } from "@/components/inputs/password-input-with-strength";
-import { PhoneInput } from "@/components/inputs/phone-input";
 // src/features/account/account-settings.tsx
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { accountDetailsFn, changePasswordFn } from "@/fn/account-details";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -24,13 +10,28 @@ import { useAuthSuspense } from "../auth/hooks/use-auth";
 import { authQueries } from "../auth/queries/auth-queries";
 import Section from "../spaces/components/section";
 import {
-	type AccountDetailsFormValues,
-	type PasswordResetFormValues,
+	
+	
 	accountDetailsSchema,
-	passwordResetSchema,
+	passwordResetSchema
 } from "./account.validations";
 import { DeactivateAccountDialog } from "./components/deactivate-account-dialog";
 import { DeleteAccountDialog } from "./components/delete-account-dialog";
+import type {AccountDetailsFormValues, PasswordResetFormValues} from "./account.validations";
+import { accountDetailsFn, changePasswordFn } from "@/fn/account-details";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { PhoneInput } from "@/components/inputs/phone-input";
+import { PasswordInputWithStrength } from "@/components/inputs/password-input-with-strength";
 
 export const AccountSettings = () => {
 	const [isDeactivateOpen, setIsDeactivateOpen] = useState(false);

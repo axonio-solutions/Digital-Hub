@@ -6,11 +6,11 @@ import {
 	getAllPackages,
 	updatePackage,
 } from "./packages.data-access";
-import type { CreatePackageInput, UpdatePackageInput } from "./packages.types";
 import {
 	createPackageSchema,
 	updatePackageSchema,
 } from "./packages.validation";
+import type { CreatePackageInput, UpdatePackageInput } from "./packages.types";
 
 export async function getAllPackagesUseCase(cafeId: string) {
 	try {
@@ -83,7 +83,7 @@ export async function deletePackageUseCase(packageId: string) {
 	}
 }
 
-export async function deleteMultiplePackagesUseCase(packageIds: string[]) {
+export async function deleteMultiplePackagesUseCase(packageIds: Array<string>) {
 	try {
 		await deleteMultiplePackages(packageIds);
 		return {

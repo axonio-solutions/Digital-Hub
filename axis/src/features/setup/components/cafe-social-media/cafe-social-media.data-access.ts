@@ -1,6 +1,6 @@
+import type { SocialMediaEntry } from "./validation";
 import { db, eq } from "@/db";
 import { cafeSocialLinks } from "@/db/schema";
-import type { SocialMediaEntry } from "./validation";
 
 export const getCafeSocialMedia = async (cafeId: string) => {
 	try {
@@ -22,7 +22,7 @@ export const getCafeSocialMedia = async (cafeId: string) => {
 
 export const updateCafeSocialMedia = async (
 	cafeId: string,
-	entries: SocialMediaEntry[],
+	entries: Array<SocialMediaEntry>,
 ) => {
 	try {
 		await db.transaction(async (tx) => {

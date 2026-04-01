@@ -1,5 +1,5 @@
-import { fetchSeatingAreasFn } from "@/fn/seating-areas";
 import { queryOptions } from "@tanstack/react-query";
+import { fetchSeatingAreasFn } from "@/fn/seating-areas";
 
 export const seatingAreasQueries = {
 	all: ["areas"],

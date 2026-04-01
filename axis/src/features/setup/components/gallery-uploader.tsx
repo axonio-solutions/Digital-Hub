@@ -1,6 +1,3 @@
-import { Icons } from "@/components/icons";
-import { Button } from "@/components/ui/button";
-import { formatBytes, useFileUpload } from "@/hooks/use-file-upload";
 import {
 	IconAlertCircle,
 	IconPhoto,
@@ -10,6 +7,9 @@ import {
 	IconUpload,
 } from "@tabler/icons-react";
 import { useState } from "react";
+import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { formatBytes, useFileUpload } from "@/hooks/use-file-upload";
 
 type UploadProgress = {
 	fileId: string;
@@ -27,16 +27,16 @@ type FileMetadata = {
 };
 
 type GalleryUploaderProps = {
-	initialImages?: { id: string; image_url: string }[];
-	onUploadComplete?: (files: any[]) => void;
+	initialImages?: Array<{ id: string; image_url: string }>;
+	onUploadComplete?: (files: Array<any>) => void;
 	maxFiles?: number;
 	maxSizeMB?: number;
 	title?: string;
 };
 
 const convertToFileMetadata = (
-	images: { id: string; image_url: string }[],
-): FileMetadata[] => {
+	images: Array<{ id: string; image_url: string }>,
+): Array<FileMetadata> => {
 	return images.map((img, index) => ({
 		name: `image-${index + 1}.jpg`,
 		size: 1500000 + index * 100000,
@@ -57,7 +57,7 @@ export const GalleryUploader = ({
 
 	const initialFiles = convertToFileMetadata(initialImages);
 
-	const [uploadProgress, setUploadProgress] = useState<UploadProgress[]>([]);
+	const [uploadProgress, setUploadProgress] = useState<Array<UploadProgress>>([]);
 	const [isUploading, setIsUploading] = useState(false);
 
 	const [

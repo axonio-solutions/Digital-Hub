@@ -1,10 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import type * as React from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import {
+	IconCalendar,
+	IconClock,
+	IconEdit,
+	IconMapPin,
+	IconPhone,
+	IconUser,
+	IconUsers,
+} from "@tabler/icons-react";
+import type * as React from "react";
 
+import type { schema } from "../cafe-reservations-table";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -34,16 +44,6 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import {
-	IconCalendar,
-	IconClock,
-	IconEdit,
-	IconMapPin,
-	IconPhone,
-	IconUser,
-	IconUsers,
-} from "@tabler/icons-react";
-import type { schema } from "../cafe-reservations-table";
 
 // Define form schema for editing reservations
 const reservationFormSchema = z.object({

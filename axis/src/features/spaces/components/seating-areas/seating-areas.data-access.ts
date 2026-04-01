@@ -1,6 +1,6 @@
+import type { AreaInput, UpdateArea } from "./seating-areas.types";
 import { db, eq } from "@/db";
 import { areas } from "@/db/schema";
-import type { AreaInput, UpdateArea } from "./seating-areas.types";
 
 export const getSeatingAreas = async (cafeId: string) => {
 	try {

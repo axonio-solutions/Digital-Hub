@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import { cloneElement, useCallback, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 interface AnimatedIcons {
 	startAnimation: () => void;

@@ -1,10 +1,10 @@
+import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/features/auth/guards/auth";
 import {
 	getCafeSocialMediaUseCase,
 	updateCafeSocialMediaUseCase,
 } from "@/features/setup/components/cafe-social-media/cafe-social-media.use-cases";
 import { socialMediaSchema } from "@/features/setup/components/cafe-social-media/validation";
-import { createServerFn } from "@tanstack/react-start";
 
 export const fetchCafeSocialMediaFn = createServerFn({
 	method: "GET",

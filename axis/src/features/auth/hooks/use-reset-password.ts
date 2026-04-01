@@ -1,5 +1,3 @@
-import { resetPasswordFn } from "@/fn/auth";
-import { useMutation } from "@/hooks/use-mutation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
@@ -7,6 +5,8 @@ import { toast } from "sonner";
 import { AUTH_ROUTES } from "../constants/config";
 import { createValidationSchemas } from "../validation";
 import type { ResetPasswordFormData } from "../validation/types";
+import { useMutation } from "@/hooks/use-mutation";
+import { resetPasswordFn } from "@/fn/auth";
 
 export function useResetPassword() {
 	const navigate = useNavigate({ from: AUTH_ROUTES.RESET_PASSWORD });

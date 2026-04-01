@@ -1,5 +1,5 @@
-import { fetchMatchEventsFn } from "@/fn/events";
 import { queryOptions } from "@tanstack/react-query";
+import { fetchMatchEventsFn } from "@/fn/events";
 
 export const eventsQueries = {
 	all: ["events"],

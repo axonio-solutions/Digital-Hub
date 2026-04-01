@@ -1,3 +1,8 @@
+import { Link } from "@tanstack/react-router";
+import { AtSignIcon, PhoneIcon } from "lucide-react";
+import { AUTH_ROUTES, UI_CONFIG } from "../../constants/config";
+import { useLogin } from "../../hooks/use-login";
+import OAuthButtons from "../oauth-buttons";
 import { Icons } from "@/components/icons";
 import { PasswordInputWithStrength } from "@/components/inputs/password-input-with-strength";
 import { Button } from "@/components/ui/button";
@@ -11,11 +16,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from "@tanstack/react-router";
-import { AtSignIcon, PhoneIcon } from "lucide-react";
-import { AUTH_ROUTES, UI_CONFIG } from "../../constants/config";
-import { useLogin } from "../../hooks/use-login";
-import OAuthButtons from "../oauth-buttons";
 
 export default function LoginForm() {
 	const { form, loginMethod, setLoginMethod, isPending, onSubmit } = useLogin({

@@ -1,9 +1,9 @@
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { SectionCards } from "@/components/section-cards";
 import { useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { PendingReservationsCard } from "./components/pending-reservations-card";
 import { UpcomingEventsCard } from "./components/upcoming-events-card";
+import { SectionCards } from "@/components/section-cards";
+import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 
 export const OverviewPage = () => {
   const router = useRouter();

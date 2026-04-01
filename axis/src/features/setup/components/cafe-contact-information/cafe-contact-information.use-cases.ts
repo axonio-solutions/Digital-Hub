@@ -1,5 +1,5 @@
-import type { UpdateCafeContactInformationInputs } from "../information/informations.types";
 import { updateCafeContactInformations } from "./cafe-contact-information.data-access";
+import type { UpdateCafeContactInformationInputs } from "../information/informations.types";
 
 export const updateCafeContactInformationsUseCase = async (
 	cafeContactInformations: UpdateCafeContactInformationInputs,

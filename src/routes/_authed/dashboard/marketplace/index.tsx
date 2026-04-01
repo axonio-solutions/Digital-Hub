@@ -1,6 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SellerMarketplaceHub } from '@/features/quotes/components/seller-marketplace-hub'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { MarketplaceHub } from '@/features/marketplace'
 
 export const Route = createFileRoute('/_authed/dashboard/marketplace/')({
-  component: SellerMarketplaceHub,
+  beforeLoad: ({ context }) => {
+    if (context.user?.role !== 'seller' && context.user?.role !== 'admin') {
+      throw redirect({ to: '/dashboard' })
+    }
+  },
+  component: MarketplaceHub,
 })

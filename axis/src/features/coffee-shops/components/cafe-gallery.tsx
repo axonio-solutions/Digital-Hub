@@ -1,12 +1,12 @@
 import "yet-another-react-lightbox/styles.css";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
+import { Button } from "@/components/ui/button";
 
 export default function CafeGallery({
 	cafe_images,
 }: {
-	cafe_images: string[] | undefined;
+	cafe_images: Array<string> | undefined;
 }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedIndex, setSelectedIndex] = useState(0);

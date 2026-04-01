@@ -1,3 +1,4 @@
+import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/features/auth/guards/auth";
 import { prepareCreatePackageData } from "@/features/packages/packages.helpers";
 import {
@@ -11,7 +12,6 @@ import {
 	packageFormSchema,
 	updatePackageSchema,
 } from "@/features/packages/packages.validation";
-import { createServerFn } from "@tanstack/react-start";
 
 export const fetchPackagesFn = createServerFn({
 	method: "GET",
@@ -65,7 +65,7 @@ export const deleteMultiplePackagesFn = createServerFn({
 	method: "POST",
 })
 	.middleware([authMiddleware])
-	.validator((d: string[]) => d)
+	.validator((d: Array<string>) => d)
 	.handler(async ({ data }) => {
 		return await deleteMultiplePackagesUseCase(data);
 	});

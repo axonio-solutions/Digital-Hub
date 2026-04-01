@@ -1,6 +1,10 @@
 import { useId, useState } from "react";
 import { toast } from "sonner";
 
+import { IconAlertCircle } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { seatingAreasQueries } from "./seating-areas.queries";
+import type { Area } from "./seating-areas.types";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -14,10 +18,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { deleteSeatingAreaFn } from "@/fn/seating-areas";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { seatingAreasQueries } from "./seating-areas.queries";
-import type { Area } from "./seating-areas.types";
 
 interface DeleteMatchDialogProps {
 	data: Area;
@@ -40,13 +40,13 @@ export function DeleteAreaDialog({
 		mutationFn: (areaId: string) => deleteSeatingAreaFn({ data: areaId }),
 		onMutate: async (areaId) => {
 			await queryClient.cancelQueries(seatingAreasQueries.list());
-			const previousAreas = queryClient.getQueryData<Area[]>(
+			const previousAreas = queryClient.getQueryData<Array<Area>>(
 				seatingAreasQueries.list().queryKey,
 			);
 
 			queryClient.setQueryData(
 				seatingAreasQueries.list().queryKey,
-				(old: Area[] = []) => old.filter((area) => area.id !== areaId),
+				(old: Array<Area> = []) => old.filter((area) => area.id !== areaId),
 			);
 
 			toast.success("تم حذف المنطقة بنجاح");

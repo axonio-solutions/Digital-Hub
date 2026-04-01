@@ -1,5 +1,6 @@
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
+import { SaudiRiyalSymbol } from "./saudi_riyal_symbol";
 import { Badge } from "@/components/ui/badge";
 import {
 	Card,
@@ -9,7 +10,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { SaudiRiyalSymbol } from "./saudi_riyal_symbol";
 
 export function SectionCards() {
 	return (

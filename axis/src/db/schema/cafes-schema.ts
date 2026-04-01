@@ -1,4 +1,3 @@
-import type { CafeAmenities } from "@/features/setup/components/information/informations.validation";
 import { relations, sql } from "drizzle-orm";
 import {
 	check,
@@ -16,6 +15,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { authenticatedRole } from "drizzle-orm/supabase";
 import { users } from "./auth-schema";
+import type { CafeAmenities } from "@/features/setup/components/information/informations.validation";
 
 const userId = sql`public.user_id()`;
 

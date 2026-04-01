@@ -1,7 +1,7 @@
-import { AUTH_COOKIE_NAME } from "@/features/auth/constants/config";
-import type { Database } from "@/types/database";
-import { clientEnvs } from "@/utils/env";
 import { createBrowserClient } from "@supabase/ssr";
+import type { Database } from "@/types/database";
+import { AUTH_COOKIE_NAME } from "@/features/auth/constants/config";
+import { clientEnvs } from "@/utils/env";
 
 export function getSupabaseBrowserClient() {
 	return createBrowserClient<Database>(

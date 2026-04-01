@@ -1,13 +1,13 @@
 export interface APIResponse<T> {
 	get: string;
 	parameters: Record<string, string>;
-	errors: string[];
+	errors: Array<string>;
 	results: number;
 	paging: {
 		current: number;
 		total: number;
 	};
-	response: T[];
+	response: Array<T>;
 }
 
 export interface FixtureResponse {

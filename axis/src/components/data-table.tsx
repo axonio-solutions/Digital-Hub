@@ -11,10 +11,10 @@ import {
 	IconTrendingUp,
 } from "@tabler/icons-react";
 import {
-	type ColumnDef,
-	type ColumnFiltersState,
-	type SortingState,
-	type VisibilityState,
+	
+	
+	
+	
 	flexRender,
 	getCoreRowModel,
 	getFacetedRowModel,
@@ -22,21 +22,23 @@ import {
 	getFilteredRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
-	useReactTable,
+	useReactTable
 } from "@tanstack/react-table";
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { toast } from "sonner";
 import { z } from "zod";
+import type {ColumnDef, ColumnFiltersState, SortingState, VisibilityState} from "@tanstack/react-table";
 
-import { Badge } from "@/components/ui/badge";
+import type {ChartConfig} from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
 import {
-	type ChartConfig,
+	
 	ChartContainer,
 	ChartTooltip,
-	ChartTooltipContent,
+	ChartTooltipContent
 } from "@/components/ui/chart";
+import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Drawer,
@@ -88,7 +90,7 @@ export const schema = z.object({
 });
 
 
-const columns: ColumnDef<z.infer<typeof schema>>[] = [
+const columns: Array<ColumnDef<z.infer<typeof schema>>> = [
 	{
 		id: "select",
 		header: ({ table }) => (
@@ -261,7 +263,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
 export function DataTable({
 	data: initialData,
 }: {
-	data: z.infer<typeof schema>[];
+	data: Array<z.infer<typeof schema>>;
 }) {
 	const [data, setData] = React.useState(() => initialData);
 	const [rowSelection, setRowSelection] = React.useState({});

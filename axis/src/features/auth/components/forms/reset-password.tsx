@@ -1,3 +1,5 @@
+import { UI_CONFIG } from "../../constants/config";
+import { useResetPassword } from "../../hooks/use-reset-password";
 import { Icons } from "@/components/icons";
 import { PasswordInputWithStrength } from "@/components/inputs/password-input-with-strength";
 import { Button } from "@/components/ui/button";
@@ -9,8 +11,6 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { UI_CONFIG } from "../../constants/config";
-import { useResetPassword } from "../../hooks/use-reset-password";
 
 export default function ResetPasswordForm() {
 	const { form, isPending, onSubmit } = useResetPassword();

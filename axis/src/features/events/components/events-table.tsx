@@ -10,10 +10,10 @@ import {
 	IconTrash,
 } from "@tabler/icons-react";
 import {
-	type ColumnDef,
-	type ColumnFiltersState,
-	type SortingState,
-	type VisibilityState,
+	
+	
+	
+	
 	flexRender,
 	getCoreRowModel,
 	getFacetedRowModel,
@@ -21,10 +21,14 @@ import {
 	getFilteredRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
-	useReactTable,
+	useReactTable
 } from "@tanstack/react-table";
 import * as React from "react";
 import { z } from "zod";
+import { EventCellViewer } from "./event-cell-viewer";
+import { DeleteEventDialog } from "./modals/delete-event";
+import { EditEventSheet } from "./sheets/edit-event";
+import type {ColumnDef, ColumnFiltersState, SortingState, VisibilityState} from "@tanstack/react-table";
 
 import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
 import { Badge } from "@/components/ui/badge";
@@ -53,9 +57,6 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { EventCellViewer } from "./event-cell-viewer";
-import { DeleteEventDialog } from "./modals/delete-event";
-import { EditEventSheet } from "./sheets/edit-event";
 
 // Events Schema
 export const eventsSchema = z.object({
@@ -71,7 +72,7 @@ export const eventsSchema = z.object({
 export function EventsTable({
 	data: initialData,
 }: {
-	data: z.infer<typeof eventsSchema>[];
+	data: Array<z.infer<typeof eventsSchema>>;
 }) {
 	const [data, setData] = React.useState(() => initialData);
 	const [rowSelection, setRowSelection] = React.useState({});
@@ -113,7 +114,7 @@ export function EventsTable({
 	};
 
 	// Events Columns
-	const eventsColumns: ColumnDef<z.infer<typeof eventsSchema>>[] = [
+	const eventsColumns: Array<ColumnDef<z.infer<typeof eventsSchema>>> = [
 		{
 			id: "select",
 			header: ({ table }) => (

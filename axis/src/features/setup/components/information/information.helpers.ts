@@ -47,8 +47,8 @@ interface City {
 }
 
 export const preprocessLocationData = (
-	regionsData: Region[],
-	citiesData: City[],
+	regionsData: Array<Region>,
+	citiesData: Array<City>,
 ) => {
 	const citiesByRegion = regionsData.reduce(
 		(acc, region) => {
@@ -62,7 +62,7 @@ export const preprocessLocationData = (
 			acc[region.region_id.toString()] = regionCities;
 			return acc;
 		},
-		{} as Record<string, { id: string; name: string }[]>,
+		{} as Record<string, Array<{ id: string; name: string }>>,
 	);
 
 	return {

@@ -1,11 +1,11 @@
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
+import { AUTH_ROUTES } from "../constants/config";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { loginWithOAuthFn } from "@/fn/auth";
 import { useMutation } from "@/hooks/use-mutation";
 import { authClient } from "@/lib/auth-client";
-import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { AUTH_ROUTES } from "../constants/config";
 
 interface OAuthButtonsProps {
 	mode?: "signin" | "signup";

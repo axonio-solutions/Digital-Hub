@@ -1,13 +1,13 @@
+import { useId } from "react";
+import type { CafeCategory } from "./cafe-categories.types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useId } from "react";
-import type { CafeCategory } from "./cafe-categories.types";
 
 interface CafeCategoriesSelectorProps {
-	value?: string[];
-	onChange: (value: string[]) => void;
-	data?: CafeCategory[];
+	value?: Array<string>;
+	onChange: (value: Array<string>) => void;
+	data?: Array<CafeCategory>;
 	isLoading: boolean;
 }
 

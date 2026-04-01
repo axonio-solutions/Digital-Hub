@@ -1,3 +1,5 @@
+import type { UseFormReturn } from "react-hook-form";
+import type { CreateMatchFormData } from "../schema";
 import {
 	FormControl,
 	FormField,
@@ -13,8 +15,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { SUPPORTED_LEAGUES } from "@/features/events/constants";
-import type { UseFormReturn } from "react-hook-form";
-import type { CreateMatchFormData } from "../schema";
 
 interface LeagueSelectProps {
 	form: UseFormReturn<CreateMatchFormData>;

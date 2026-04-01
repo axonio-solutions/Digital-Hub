@@ -1,8 +1,8 @@
+import { eq } from "drizzle-orm";
+import { DAY_MAPPING } from "./types";
+import type { OperatingHoursData } from "./types";
 import { db } from "@/db";
 import { cafeOperatingHours } from "@/db/schema/cafes-schema";
-import { eq } from "drizzle-orm";
-import type { OperatingHoursData } from "./types";
-import { DAY_MAPPING } from "./types";
 
 export async function getCafeOperatingHours(cafeId: string) {
 	try {

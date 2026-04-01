@@ -1,3 +1,7 @@
+import { IconLoader, IconMoodWrrrFilled } from "@tabler/icons-react";
+import React from "react";
+import type { UseFormReturn } from "react-hook-form";
+import type { CreateMatchFormData } from "../schema";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
@@ -12,10 +16,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useUpcomingFixtures } from "@/features/events/hooks/use-fixtures";
-import { IconLoader, IconMoodWrrrFilled } from "@tabler/icons-react";
-import React from "react";
-import type { UseFormReturn } from "react-hook-form";
-import type { CreateMatchFormData } from "../schema";
+
+// Import Button component
+import { Button } from "@/components/ui/button";
 
 interface MatchSelectProps {
 	form: UseFormReturn<CreateMatchFormData>;
@@ -57,7 +60,7 @@ export function MatchSelect({ form, onMatchSelect }: MatchSelectProps) {
 	const groupMatchesByDate = () => {
 		if (!data?.response || data.response.length === 0) return [];
 
-		const groupedMatches: { date: Date; matches: typeof data.response }[] = [];
+		const groupedMatches: Array<{ date: Date; matches: typeof data.response }> = [];
 
 		for (const match of data.response) {
 			const matchDate = new Date(match.fixture.date);
@@ -217,6 +220,3 @@ export function MatchSelect({ form, onMatchSelect }: MatchSelectProps) {
 		/>
 	);
 }
-
-// Import Button component
-import { Button } from "@/components/ui/button";

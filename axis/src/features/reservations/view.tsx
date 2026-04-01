@@ -1,5 +1,7 @@
 import { IconBolt, IconCalendarUser, IconStack2 } from "@tabler/icons-react";
 
+import { useState } from "react";
+import { CafeReservationsTable } from "./components/cafe-reservations-table";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -10,8 +12,6 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { useState } from "react";
-import { CafeReservationsTable } from "./components/cafe-reservations-table";
 
 // Cafe reservations data
 const reservationData = [

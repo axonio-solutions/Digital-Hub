@@ -7,8 +7,18 @@ import {
 	ListBoxSection,
 	Separator,
 } from "react-aria-components";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
+import { IconTrash } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { cafesQueries } from "../information/informations.queries";
+import {
+	
+	amenitiesSchema
+} from "../information/informations.validation";
+import type {SubmitHandler} from "react-hook-form";
 
+import type {CafeAmenities} from "../information/informations.validation";
 import NumberInputWithMinsPlusButtons from "@/components/inputs/number-input-with-mins-plus-buttons";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,14 +35,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { TabsContent } from "@/components/ui/tabs";
 import Section from "@/features/spaces/components/section";
 import { updateAmenitiesFn } from "@/fn/amenties";
-import { IconTrash } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { cafesQueries } from "../information/informations.queries";
-import {
-	type CafeAmenities,
-	amenitiesSchema,
-} from "../information/informations.validation";
 
 const amenitySections = [
 	{
@@ -81,7 +83,7 @@ const AmenitiesForm = () => {
 
 	const isDirty = form.formState.isDirty;
 	const [inputValue, setInputValue] = useState<string>("");
-	const [customAmenities, setCustomAmenities] = useState<string[]>(() => {
+	const [customAmenities, setCustomAmenities] = useState<Array<string>>(() => {
 		const custom = [];
 		if (data?.amenities?.custom) {
 			for (const [key, value] of Object.entries(data.amenities.custom)) {

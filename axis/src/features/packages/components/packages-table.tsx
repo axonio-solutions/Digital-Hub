@@ -13,10 +13,10 @@ import {
 	IconTrash,
 } from "@tabler/icons-react";
 import {
-	type ColumnDef,
-	type ColumnFiltersState,
-	type SortingState,
-	type VisibilityState,
+	
+	
+	
+	
 	flexRender,
 	getCoreRowModel,
 	getFacetedRowModel,
@@ -24,8 +24,18 @@ import {
 	getFilteredRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
-	useReactTable,
+	useReactTable
 } from "@tanstack/react-table";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Suspense, useCallback, useState } from "react";
+import { toast } from "sonner";
+import { packagesQueries } from "../packages-queries";
+import { CreatePackageDialog } from "./modals/create-package";
+import { DeletePackageDialog } from "./modals/delete-package";
+import { EditPackageDialog } from "./modals/edit-package";
+import { PackageDetailsModal } from "./modals/package-details";
+import { PackageTableContent } from "./packages-table-content";
+import type {ColumnDef, ColumnFiltersState, SortingState, VisibilityState} from "@tanstack/react-table";
 
 import { Icons } from "@/components/icons";
 import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
@@ -67,19 +77,10 @@ import {
 } from "@/components/ui/table";
 import { deleteMultiplePackagesFn } from "@/fn/packages";
 import { cn } from "@/lib/utils";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Suspense, useCallback, useState } from "react";
-import { toast } from "sonner";
-import { packagesQueries } from "../packages-queries";
 import type { PackageWithItems } from "../packages.types";
-import { CreatePackageDialog } from "./modals/create-package";
-import { DeletePackageDialog } from "./modals/delete-package";
-import { EditPackageDialog } from "./modals/edit-package";
-import { PackageDetailsModal } from "./modals/package-details";
-import { PackageTableContent } from "./packages-table-content";
 
 export function PackageTable() {
-	const [data, setData] = useState<PackageWithItems[]>([]);
+	const [data, setData] = useState<Array<PackageWithItems>>([]);
 	const [rowSelection, setRowSelection] = useState({});
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -102,7 +103,7 @@ export function PackageTable() {
 
 	const queryClient = useQueryClient();
 
-	const handleOnDataChange = useCallback((newData: PackageWithItems[]) => {
+	const handleOnDataChange = useCallback((newData: Array<PackageWithItems>) => {
 		setData((prev) => {
 			if (JSON.stringify(prev) !== JSON.stringify(newData)) {
 				return newData;
@@ -142,7 +143,7 @@ export function PackageTable() {
 		setPackageToDelete(undefined);
 	};
 
-	const columns: ColumnDef<PackageWithItems>[] = [
+	const columns: Array<ColumnDef<PackageWithItems>> = [
 		{
 			id: "select",
 			header: ({ table }) => (
@@ -275,20 +276,20 @@ export function PackageTable() {
 	});
 
 	const bulkDeleteMutation = useMutation({
-		mutationFn: async (selectedPackageIds: string[]) => {
+		mutationFn: async (selectedPackageIds: Array<string>) => {
 			return await deleteMultiplePackagesFn({ data: selectedPackageIds });
 		},
 		onMutate: async (packageIds) => {
 			const count = packageIds.length;
 			await queryClient.cancelQueries(packagesQueries.list());
 
-			const previousPackages = queryClient.getQueryData<PackageWithItems[]>(
+			const previousPackages = queryClient.getQueryData<Array<PackageWithItems>>(
 				packagesQueries.list().queryKey,
 			);
 
 			queryClient.setQueryData(
 				packagesQueries.list().queryKey,
-				(old: PackageWithItems[] = []) => {
+				(old: Array<PackageWithItems> = []) => {
 					return old.filter((pkg) => !packageIds.includes(pkg.id));
 				},
 			);
@@ -565,7 +566,7 @@ export function PackageTable() {
 			{/* Edit Package Modal */}
 			{selectedPackageForEdit && (
 				<EditPackageDialog
-					packageData={selectedPackageForEdit as PackageWithItems}
+					packageData={selectedPackageForEdit}
 					isOpen={isEditModalOpen}
 					onClose={handleCloseEditModal}
 					onSuccess={() => {}}

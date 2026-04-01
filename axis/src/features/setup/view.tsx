@@ -6,7 +6,13 @@ import {
 	IconLibraryPhoto,
 } from "@tabler/icons-react";
 
-import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { AmenitiesTabContent } from "./components/amenities/amenities";
+import { ContactTabContent } from "./components/cafe-contact-information/contact";
+import { SocialTabContent } from "./components/cafe-social-media/cafe-social-media";
+import { GalleryTabContent } from "./components/gallery";
+import { InformationTabContent } from "./components/information/information";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	Select,
 	SelectContent,
@@ -14,13 +20,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
-import { AmenitiesTabContent } from "./components/amenities/amenities";
-import { ContactTabContent } from "./components/cafe-contact-information/contact";
-import { SocialTabContent } from "./components/cafe-social-media/cafe-social-media";
-import { GalleryTabContent } from "./components/gallery";
-import { InformationTabContent } from "./components/information/information";
+import { Label } from "@/components/ui/label";
 
 export const SetupView = () => {
   const [selectedView, setSelectedView] = useState("information");

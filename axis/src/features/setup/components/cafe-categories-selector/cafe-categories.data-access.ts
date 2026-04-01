@@ -1,6 +1,6 @@
+import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { cafesCategories } from "@/db/schema/cafes-schema";
-import { eq } from "drizzle-orm";
 
 export async function getAllCafeCategories() {
 	try {
@@ -20,7 +20,7 @@ export async function getAllCafeCategories() {
 	}
 }
 
-export async function getCafeCategories(cafeId: string): Promise<string[]> {
+export async function getCafeCategories(cafeId: string): Promise<Array<string>> {
 	try {
 		const result = await db
 			.select({ category_id: cafesCategories.category_id })

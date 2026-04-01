@@ -1,15 +1,16 @@
-import { Button } from "@/components/ui/button";
-import type { UseSupabaseUploadReturn } from "@/hooks/use-supabase-upload";
-import { cn } from "@/lib/utils";
 import { IconLoader } from "@tabler/icons-react";
 import { CheckCircle, File, Upload, X } from "lucide-react";
 import {
-	type PropsWithChildren,
+	
 	createContext,
 	useCallback,
-	useContext,
+	useContext
 } from "react";
 import { Icons } from "./icons";
+import type {PropsWithChildren} from "react";
+import type { UseSupabaseUploadReturn } from "@/hooks/use-supabase-upload";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export const formatBytes = (
 	bytes: number,

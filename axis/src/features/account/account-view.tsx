@@ -1,6 +1,8 @@
 // src/features/account/account-view.tsx
 import { IconBellRinging, IconUserCircle } from "@tabler/icons-react";
 
+import { useState } from "react";
+import { AccountSettings } from "./account-settings";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -10,8 +12,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
-import { AccountSettings } from "./account-settings";
 
 export const AccountView = () => {
 	const [selectedView, setSelectedView] = useState("account");

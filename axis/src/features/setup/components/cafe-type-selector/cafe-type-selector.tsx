@@ -1,13 +1,13 @@
+import { useId } from "react";
+import type { CafeType } from "./cafe-types.types";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useId } from "react";
-import type { CafeType } from "./cafe-types.types";
 
 interface CafeTypeSelectorProps {
 	value?: string;
 	onChange: (value: string) => void;
-	data?: CafeType[];
+	data?: Array<CafeType>;
 	isLoading: boolean;
 }
 

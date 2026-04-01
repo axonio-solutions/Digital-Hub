@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from 'zod'
 
 // Digital product schema
 export const productSchema = z.object({

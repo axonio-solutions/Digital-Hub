@@ -1,8 +1,8 @@
-import { serverEnvs } from "@/utils/env";
 import { createServerFn } from "@tanstack/react-start";
 import { addDays, format } from "date-fns";
 import { z } from "zod";
 import type { APIResponse, FixtureResponse } from "./types/fixtures";
+import { serverEnvs } from "@/utils/env";
 
 export const eventsKeys = {
 	all: ["events"] as const,

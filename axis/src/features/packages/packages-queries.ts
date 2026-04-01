@@ -1,5 +1,5 @@
-import { fetchPackagesFn } from "@/fn/packages";
 import { queryOptions } from "@tanstack/react-query";
+import { fetchPackagesFn } from "@/fn/packages";
 
 export const packagesQueries = {
 	all: ["packages"],

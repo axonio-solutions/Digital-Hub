@@ -1,5 +1,5 @@
 import { IconMinus, IconPlus } from "@tabler/icons-react";
-import { type ReactNode, forwardRef } from "react";
+import {  forwardRef } from "react";
 import {
 	Button,
 	Group,
@@ -7,6 +7,7 @@ import {
 	Label,
 	NumberField,
 } from "react-aria-components";
+import type {ReactNode} from "react";
 
 interface NumberInputWithMinsPlusButtonsProps {
 	value?: number;

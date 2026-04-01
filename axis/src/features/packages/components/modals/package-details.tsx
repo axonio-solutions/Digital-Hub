@@ -1,5 +1,7 @@
+import { IconCircleDashed, IconCircleDashedCheck } from "@tabler/icons-react";
 import type * as React from "react";
 
+import type { PackageWithItems } from "../../packages.types";
 import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -9,8 +11,6 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { IconCircleDashed, IconCircleDashedCheck } from "@tabler/icons-react";
-import type { PackageWithItems } from "../../packages.types";
 
 interface PackageDetailsModalProps {
 	isOpen: boolean;

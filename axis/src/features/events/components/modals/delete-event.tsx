@@ -1,8 +1,10 @@
 import * as React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { IconAlertCircle } from "@tabler/icons-react";
 import type { z } from "zod";
 
+import type { eventsSchema } from "../events-table";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -15,8 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { IconAlertCircle } from "@tabler/icons-react";
-import type { eventsSchema } from "../events-table";
 
 interface DeleteEventDialogProps {
 	event: z.infer<typeof eventsSchema> | null;

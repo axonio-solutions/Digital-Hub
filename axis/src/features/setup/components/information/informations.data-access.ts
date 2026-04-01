@@ -1,7 +1,7 @@
-import { db } from "@/db";
-import { cafes, cafesCategories } from "@/db/schema/cafes-schema";
 import { eq } from "drizzle-orm";
 import type { UpdateCafeInputs } from "./informations.types";
+import { db } from "@/db";
+import { cafes, cafesCategories } from "@/db/schema/cafes-schema";
 
 export async function getCafeInformation(cafeId: string) {
 	try {

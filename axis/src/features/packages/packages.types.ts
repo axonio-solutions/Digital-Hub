@@ -24,5 +24,5 @@ export type CreatePackageInput = z.infer<typeof createPackageSchema>;
 export type UpdatePackageInput = z.infer<typeof updatePackageSchema>;
 
 export type PackageWithItems = Pick<PackageSelect, "id" | "name" | "status"> & {
-	items: Pick<PackageItemSelect, "id" | "name" | "price">[];
+	items: Array<Pick<PackageItemSelect, "id" | "name" | "price">>;
 };

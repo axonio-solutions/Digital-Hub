@@ -1,6 +1,6 @@
+import type { UpdateCafeContactInformationInputs } from "../information/informations.types";
 import { db, eq } from "@/db";
 import { cafes } from "@/db/schema";
-import type { UpdateCafeContactInformationInputs } from "../information/informations.types";
 
 export const updateCafeContactInformations = async (
 	inputs: UpdateCafeContactInformationInputs,

@@ -6,12 +6,12 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import styles from "../styles.css?url";
 
+import type { RouterContext } from "@/types/router";
 import { Toaster } from "@/components/ui/sonner";
 import { authQueries } from "@/features/auth/queries/auth-queries";
-import type { RouterContext } from "@/types/router";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const Route = createRootRouteWithContext<RouterContext>()({
 	beforeLoad: async ({ context }) => {

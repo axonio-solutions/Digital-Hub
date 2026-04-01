@@ -1,10 +1,10 @@
-import { forgotPasswordFn } from "@/fn/auth";
-import { useMutation } from "@/hooks/use-mutation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { createValidationSchemas } from "../validation";
 import type { ForgotPasswordFormData } from "../validation/types";
+import { useMutation } from "@/hooks/use-mutation";
+import { forgotPasswordFn } from "@/fn/auth";
 
 export function useForgotPassword() {
 	const { forgotPasswordSchema } = createValidationSchemas();

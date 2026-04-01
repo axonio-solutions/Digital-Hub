@@ -1,1 +1,6 @@
-export { updateProfileSchema, accountActionSchema, type UpdateProfileInput, type AccountActionInput } from "@/types/account-schemas";
+export {
+  updateProfileSchema,
+  accountActionSchema,
+  type UpdateProfileInput,
+  type AccountActionInput,
+} from '@/types/account-schemas'

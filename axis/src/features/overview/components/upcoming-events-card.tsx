@@ -1,16 +1,3 @@
-import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
 import {
 	IconBuildingStadium,
 	IconCalendarEvent,
@@ -24,6 +11,19 @@ import {
 	IconUsers,
 } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
+import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
 // Add event type to differentiate between matches and other events
 type EventType = "match" | "event";
@@ -48,7 +48,7 @@ interface UpcomingEvent {
 
 export function UpcomingEventsCard() {
 	// Mock data for upcoming events - 2 matches and 2 other events
-	const upcomingEvents: UpcomingEvent[] = [
+	const upcomingEvents: Array<UpcomingEvent> = [
 		{
 			id: 1,
 			match: "الهلال vs النصر",

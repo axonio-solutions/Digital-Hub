@@ -1,9 +1,9 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
 import { AuthCard } from "@/features/auth/components/auth-card";
 import { AuthFooter } from "@/features/auth/components/auth-footer";
 import { AuthLayout } from "@/features/auth/components/auth-layout";
 import ResetPasswordForm from "@/features/auth/components/forms/reset-password";
-import { createFileRoute } from "@tanstack/react-router";
-import { z } from "zod";
 
 export const Route = createFileRoute("/(authentication)/reset-password")({
 	validateSearch: z.object({

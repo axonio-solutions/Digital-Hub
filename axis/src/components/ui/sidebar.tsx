@@ -1,7 +1,8 @@
 import { Slot } from "@radix-ui/react-slot";
-import { type VariantProps, cva } from "class-variance-authority";
+import {  cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
+import type {VariantProps} from "class-variance-authority";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

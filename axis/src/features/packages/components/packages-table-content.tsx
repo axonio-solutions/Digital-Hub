@@ -1,13 +1,14 @@
-import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
-	type ColumnDef,
-	type Table as TableType,
-	flexRender,
+	
+	
+	flexRender
 } from "@tanstack/react-table";
 import { useEffect } from "react";
 import { packagesQueries } from "../packages-queries";
+import type {ColumnDef, Table as TableType} from "@tanstack/react-table";
 import type { PackageWithItems } from "../packages.types";
+import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 export function PackageTableContent({
 	table,
@@ -15,8 +16,8 @@ export function PackageTableContent({
 	onDataChange,
 }: {
 	table: TableType<PackageWithItems>;
-	columns: ColumnDef<PackageWithItems, unknown>[];
-	onDataChange: (data: PackageWithItems[]) => void;
+	columns: Array<ColumnDef<PackageWithItems, unknown>>;
+	onDataChange: (data: Array<PackageWithItems>) => void;
 }) {
 	const { data } = useSuspenseQuery(packagesQueries.list());
 

@@ -1,5 +1,6 @@
+import {  jwtVerify } from "jose";
+import type {JWTPayload} from "jose";
 import { serverEnvs } from "@/utils/env";
-import { type JWTPayload, jwtVerify } from "jose";
 
 export const decodeToken = async (
 	token: string,

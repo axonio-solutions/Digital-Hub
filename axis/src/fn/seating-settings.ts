@@ -1,10 +1,10 @@
+import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/features/auth/guards/auth";
 import {
 	updateMaxCapacityUseCase,
 	updateSeatingSettingsUseCase,
 } from "@/features/spaces/components/seating-settings/seating-settings.use-cases";
 import { bookingSettingsSchema } from "@/features/spaces/components/seating-settings/validation";
-import { createServerFn } from "@tanstack/react-start";
 
 export const updateSeatingSettingsFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])

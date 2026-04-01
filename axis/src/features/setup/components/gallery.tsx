@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { GalleryUploader } from "./gallery-uploader";
 import { Card, CardContent } from "@/components/ui/card";
 import {
 	Carousel,
@@ -5,11 +7,9 @@ import {
 	CarouselDots,
 	CarouselItem,
 } from "@/components/ui/carousel";
-import { TabsContent } from "@/components/ui/tabs";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger  } from "@/components/ui/tabs";
+
 import Section from "@/features/spaces/components/section";
-import { useState } from "react";
-import { GalleryUploader } from "./gallery-uploader";
 
 const mockGalleryImages = [
 	{

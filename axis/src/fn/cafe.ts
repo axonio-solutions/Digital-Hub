@@ -1,3 +1,4 @@
+import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/features/auth/guards/auth";
 import {
 	getCafeInformationUseCase,
@@ -7,7 +8,6 @@ import {
 import { cafeInformationFormSchema } from "@/features/setup/components/information/informations.validation";
 import { fetchCafeOperatingHours, updateHours } from "@/features/setup/components/operating-hours/lib/use-cases";
 import { operatingHoursSchema } from "@/features/setup/components/operating-hours/lib/validation";
-import { createServerFn } from "@tanstack/react-start";
 
 export const fetchCafeInformationFn = createServerFn({
 	method: "GET",

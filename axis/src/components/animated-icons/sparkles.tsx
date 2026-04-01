@@ -1,6 +1,7 @@
-import { type Variants, motion } from "motion/react";
-import type { HTMLAttributes } from "react";
+import {  motion } from "motion/react";
 import { forwardRef } from "react";
+import type {Variants} from "motion/react";
+import type { HTMLAttributes } from "react";
 
 const sparkleVariants: Variants = {
 	initial: {

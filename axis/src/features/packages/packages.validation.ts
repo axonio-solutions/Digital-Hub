@@ -61,6 +61,6 @@ export function transformPackageToTableRow(
 	};
 }
 
-function calculateTotalPrice(items: PackageItemSelect[]): number {
+function calculateTotalPrice(items: Array<PackageItemSelect>): number {
 	return items.reduce((sum, item) => sum + Number(item.price), 0);
 }

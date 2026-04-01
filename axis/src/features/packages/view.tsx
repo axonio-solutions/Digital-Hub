@@ -1,5 +1,7 @@
 import { IconPackages, IconRosetteDiscount } from "@tabler/icons-react";
 
+import { useState } from "react";
+import { PackageTable } from "./components/packages-table";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -10,8 +12,6 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { useState } from "react";
-import { PackageTable } from "./components/packages-table";
 
 export const PackagesView = () => {
 	const [selectedView, setSelectedView] = useState("packages");

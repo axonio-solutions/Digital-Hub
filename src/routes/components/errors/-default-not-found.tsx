@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
-import { useLocation } from "@tanstack/react-router";
+import { Link, useLocation  } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button'
 
 // #region agent log
-const AGENT_ENDPOINT = 'http://127.0.0.1:7617/ingest/4bd9446b-0abc-45e2-99c0-ff1e9f329f69'
+const AGENT_ENDPOINT =
+  'http://127.0.0.1:7617/ingest/4bd9446b-0abc-45e2-99c0-ff1e9f329f69'
 const AGENT_SESSION_ID = '8088a9'
 const AGENT_RUN_ID = 'pre-debug'
 
@@ -43,7 +43,8 @@ export function DefaultNotFound() {
 
   agentLog({
     hypothesisId: 'H7',
-    location: 'src/routes/components/errors/-default-not-found.tsx:DefaultNotFound',
+    location:
+      'src/routes/components/errors/-default-not-found.tsx:DefaultNotFound',
     message: 'DefaultNotFound rendered',
     data: { pathname: (location as any).pathname ?? null },
   })
@@ -61,5 +62,5 @@ export function DefaultNotFound() {
         </Button>
       </div>
     </div>
-  );
+  )
 }

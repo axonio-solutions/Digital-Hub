@@ -55,8 +55,8 @@ export interface CreateMatchInput {
 	base_price: string;
 	total_capacity: number;
 	remaining_capacity: number;
-	areas: string[];
-	packages: string[];
+	areas: Array<string>;
+	packages: Array<string>;
 }
 
 export type EventInsert = InferInsertModel<typeof events>;

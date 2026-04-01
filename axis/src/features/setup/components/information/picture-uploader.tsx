@@ -6,8 +6,8 @@ import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import { useEffect, useState } from "react";
-import type { FilePondFile } from "filepond";
 import { toast } from "sonner";
+import type { FilePondFile } from "filepond";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -28,7 +28,7 @@ const generateUniqueFileName = (originalName: string): string => {
 
 export const PictureUploader = ({ initialPicture }: PictureUploaderProps) => {
   const updateMutation = useUpdateCafeBanner();
-  const [files, setFiles] = useState<FilePondFile[]>([]);
+  const [files, setFiles] = useState<Array<FilePondFile>>([]);
   const supabase = getSupabaseBrowserClient();
   const [isInitialized, setIsInitialized] = useState(false);
 

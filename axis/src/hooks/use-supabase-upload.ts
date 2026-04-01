@@ -1,16 +1,17 @@
-import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-	type FileError,
-	type FileRejection,
-	useDropzone,
+	
+	
+	useDropzone
 } from "react-dropzone";
+import type {FileError, FileRejection} from "react-dropzone";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const supabase = getSupabaseBrowserClient();
 
 interface FileWithPreview extends File {
 	preview?: string;
-	errors: readonly FileError[];
+	errors: ReadonlyArray<FileError>;
 }
 
 type UseSupabaseUploadOptions = {
@@ -31,7 +32,7 @@ type UseSupabaseUploadOptions = {
 	 *
 	 * Defaults to allowing uploading of all MIME types.
 	 */
-	allowedMimeTypes?: string[];
+	allowedMimeTypes?: Array<string>;
 	/**
 	 * Maximum upload size of each file allowed in bytes. (e.g 1000 bytes = 1 KB)
 	 */
@@ -67,10 +68,10 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
 		upsert = false,
 	} = options;
 
-	const [files, setFiles] = useState<FileWithPreview[]>([]);
+	const [files, setFiles] = useState<Array<FileWithPreview>>([]);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [errors, setErrors] = useState<{ name: string; message: string }[]>([]);
-	const [successes, setSuccesses] = useState<string[]>([]);
+	const [errors, setErrors] = useState<Array<{ name: string; message: string }>>([]);
+	const [successes, setSuccesses] = useState<Array<string>>([]);
 
 	const isSuccess = useMemo(() => {
 		if (errors.length === 0 && successes.length === 0) {
@@ -83,7 +84,7 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
 	}, [errors.length, successes.length, files.length]);
 
 	const onDrop = useCallback(
-		(acceptedFiles: File[], fileRejections: FileRejection[]) => {
+		(acceptedFiles: Array<File>, fileRejections: Array<FileRejection>) => {
 			const validFiles = acceptedFiles
 				.filter((file) => !files.find((x) => x.name === file.name))
 				.map((file) => {

@@ -1,3 +1,19 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IconAt } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {  useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { cafesQueries } from "../information/informations.queries";
+import {
+	
+	contactFormSchema
+} from "../information/informations.validation";
+import type {SubmitHandler} from "react-hook-form";
+import type {
+	CafeSelectWithCategories,
+	UpdateCafeContactInformationInputs,
+} from "../information/informations.types";
+import type {ContactFormData} from "../information/informations.validation";
 import { PhoneInput } from "@/components/inputs/phone-input";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,20 +28,6 @@ import { Input } from "@/components/ui/input";
 import { TabsContent } from "@/components/ui/tabs";
 import Section from "@/features/spaces/components/section";
 import { updateCafeContactInformationsFn } from "@/fn/cafe-contact-informations";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { IconAt } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { type SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { cafesQueries } from "../information/informations.queries";
-import type {
-	CafeSelectWithCategories,
-	UpdateCafeContactInformationInputs,
-} from "../information/informations.types";
-import {
-	type ContactFormData,
-	contactFormSchema,
-} from "../information/informations.validation";
 
 const ContactForm = () => {
 	const queryClient = useQueryClient();

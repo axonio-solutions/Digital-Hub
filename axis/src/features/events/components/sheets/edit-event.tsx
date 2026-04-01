@@ -4,6 +4,16 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import {
+	IconCalendar,
+	IconClock,
+	IconEdit,
+	IconInfoCircle,
+	IconMapPin,
+	IconTicket,
+	IconUsers,
+} from "@tabler/icons-react";
+import type { eventsSchema } from "../events-table";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -33,16 +43,6 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import {
-	IconCalendar,
-	IconClock,
-	IconEdit,
-	IconInfoCircle,
-	IconMapPin,
-	IconTicket,
-	IconUsers,
-} from "@tabler/icons-react";
-import type { eventsSchema } from "../events-table";
 
 // Define form schema for editing events
 const eventFormSchema = z.object({

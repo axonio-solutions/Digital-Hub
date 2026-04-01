@@ -10,10 +10,10 @@ import {
 	IconTrash,
 } from "@tabler/icons-react";
 import {
-	type ColumnDef,
-	type ColumnFiltersState,
-	type SortingState,
-	type VisibilityState,
+	
+	
+	
+	
 	flexRender,
 	getCoreRowModel,
 	getFacetedRowModel,
@@ -21,9 +21,18 @@ import {
 	getFilteredRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
-	useReactTable,
+	useReactTable
 } from "@tanstack/react-table";
+import { Suspense, useCallback, useState } from "react";
+import { MatchCellViewer } from "./match-cell-viewer";
+import { MatchesTableContent } from "./matches-table-content";
+import { DeleteMatchDialog } from "./modals/delete-match";
+import { AddMatchSheet } from "./sheets/add-match-sheet";
+import { EditMatchSheet } from "./sheets/edit-match-sheet";
+import { MatchDetailsSheet } from "./sheets/match-details-sheet";
+import type {ColumnDef, ColumnFiltersState, SortingState, VisibilityState} from "@tanstack/react-table";
 
+import type { MatchEventTableRow } from "../schema";
 import { Icons } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -51,17 +60,9 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { Suspense, useCallback, useState } from "react";
-import type { MatchEventTableRow } from "../schema";
-import { MatchCellViewer } from "./match-cell-viewer";
-import { MatchesTableContent } from "./matches-table-content";
-import { DeleteMatchDialog } from "./modals/delete-match";
-import { AddMatchSheet } from "./sheets/add-match-sheet";
-import { EditMatchSheet } from "./sheets/edit-match-sheet";
-import { MatchDetailsSheet } from "./sheets/match-details-sheet";
 
 export function MatchesTable() {
-	const [data, setData] = useState<MatchEventTableRow[]>([]);
+	const [data, setData] = useState<Array<MatchEventTableRow>>([]);
 	const [rowSelection, setRowSelection] = useState({});
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -108,7 +109,7 @@ export function MatchesTable() {
 		setSelectedMatch(null);
 	};
 
-	const handleOnDataChange = useCallback((newData: MatchEventTableRow[]) => {
+	const handleOnDataChange = useCallback((newData: Array<MatchEventTableRow>) => {
 		setData((prev) => {
 			if (JSON.stringify(prev) !== JSON.stringify(newData)) {
 				return newData;
@@ -117,7 +118,7 @@ export function MatchesTable() {
 		});
 	}, []);
 
-	const columns: ColumnDef<MatchEventTableRow>[] = [
+	const columns: Array<ColumnDef<MatchEventTableRow>> = [
 		{
 			id: "select",
 			header: ({ table }) => (

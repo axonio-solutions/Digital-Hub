@@ -1,7 +1,7 @@
-import type { Transition, Variants } from "motion/react";
 import { motion } from "motion/react";
-import type { HTMLAttributes } from "react";
 import { forwardRef } from "react";
+import type { Transition, Variants } from "motion/react";
+import type { HTMLAttributes } from "react";
 
 const transition: Transition = {
 	duration: 0.3,

@@ -12,7 +12,7 @@ import type {
 } from "./schema";
 import type { CreateMatchInput } from "./types";
 
-export async function getMatchEventsUseCase(cafeId: string): Promise<MatchEventTableRow[]> {
+export async function getMatchEventsUseCase(cafeId: string): Promise<Array<MatchEventTableRow>> {
 	try {
 		const data = await getMatchEvents(cafeId);
 		return data.map((e) => ({
@@ -24,7 +24,7 @@ export async function getMatchEventsUseCase(cafeId: string): Promise<MatchEventT
 				total: e.total_capacity,
 				remaining: e.remaining_capacity,
 			},
-			status: e.status as "upcoming" | "ongoing" | "completed" | "cancelled",
+			status: e.status,
 		}));
 	} catch (error) {
 		console.error("Error fetching match events:", error);

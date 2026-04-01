@@ -1,62 +1,175 @@
-import { fetchGlobalMetrics } from "@/data-access/admin";
-import { fetchAllUsers } from "@/data-access/users";
+import { fetchGlobalMetrics } from '@/data-access/admin'
+import { fetchAllUsers, toggleUserBan } from '@/data-access/users'
 import {
-    fetchUserDistributionByWilaya,
-    fetchBuyerMetrics,
-    fetchSellerMetrics,
-    fetchAdvancedSystemMetrics
-} from "@/data-access/analytics";
-import { createServerFn } from "@tanstack/react-start";
+  fetchAdvancedSystemMetrics,
+  fetchAdminDashboardStats,
+  fetchBuyerMetrics,
+  fetchDemandByCategory,
+  fetchDemandByOrigin,
+  fetchMarketHealth,
+  fetchMerchantSegmentation,
+  fetchRegionalDemand,
+  fetchRequestVolume,
+  fetchQuoteVolume,
+  fetchSellerCategoryFocus,
+  fetchSellerMetrics,
+  fetchTopBuyers,
+  fetchUserDistributionByWilaya,
+} from '@/data-access/analytics'
+import {
+  getPartCategories,
+  getVehicleBrands,
+  createPartCategory,
+  updatePartCategory,
+  deletePartCategory,
+  createVehicleBrand,
+  updateVehicleBrand,
+  deleteVehicleBrand
+} from '@/data-access/taxonomy'
+import { CategoryInput, BrandInput } from '@/features/taxonomy/validations/taxonomy'
 
 /**
  * Axis Layer 4: Use Cases for Admin
  */
 
 export async function getAdminMetricsUseCase() {
-    return await fetchGlobalMetrics();
+  return await fetchGlobalMetrics()
 }
 
 export async function getAllUsersUseCase() {
-    return await fetchAllUsers();
+  try {
+    const [users, marketData] = await Promise.all([
+      fetchAllUsers(),
+      import('@/data-access/vendors').then(m => m.getMarketPriorityMap())
+    ])
+
+    const { calculatePriorityScore } = await import('@/data-access/vendors')
+
+    return users.map(user => ({
+      ...user,
+      priorityScore: user.role === 'seller' 
+        ? calculatePriorityScore(user.sellerBrands || [], marketData.demandMap, marketData.supplyMap)
+        : null
+    }))
+  } catch (error) {
+    console.error('CRITICAL: getAllUsersUseCase FAILED:', error)
+    throw error
+  }
+}
+
+export async function toggleUserBanUseCase(userId: string, isBanned: boolean) {
+  return await toggleUserBan(userId, isBanned)
+}
+
+export async function getTaxonomyUseCase() {
+  const [categories, brands] = await Promise.all([
+    getPartCategories(),
+    getVehicleBrands(),
+  ])
+
+  return {
+    categories,
+    brands,
+  }
+}
+
+export async function createCategoryUseCase(data: CategoryInput) {
+  return await createPartCategory(data)
+}
+
+export async function updateCategoryUseCase(id: string, data: Partial<CategoryInput>) {
+  return await updatePartCategory(id, data)
+}
+
+export async function deleteCategoryUseCase(id: string) {
+  return await deletePartCategory(id)
+}
+
+export async function createBrandUseCase(data: BrandInput) {
+  return await createVehicleBrand(data)
+}
+
+export async function updateBrandUseCase(id: string, data: Partial<BrandInput>) {
+  return await updateVehicleBrand(id, data)
+}
+
+export async function deleteBrandUseCase(id: string) {
+  return await deleteVehicleBrand(id)
 }
 
 export async function getBuyerAnalyticsUseCase() {
-    const metrics = await fetchBuyerMetrics();
-    const distribution = await fetchUserDistributionByWilaya("buyer");
-    return { metrics, distribution };
+  const [
+    metrics,
+    distribution,
+    demandByCategory,
+    demandByOrigin,
+    regionalDemand,
+    requestVolume,
+    topBuyers,
+  ] = await Promise.all([
+    fetchBuyerMetrics(),
+    fetchUserDistributionByWilaya('buyer'),
+    fetchDemandByCategory(),
+    fetchDemandByOrigin(),
+    fetchRegionalDemand(),
+    fetchRequestVolume(),
+    fetchTopBuyers(),
+  ])
+
+  return {
+    metrics,
+    distribution,
+    demandByCategory,
+    demandByOrigin,
+    regionalDemand,
+    requestVolume,
+    topBuyers,
+  }
 }
 
 export async function getSellerAnalyticsUseCase() {
-    const metrics = await fetchSellerMetrics();
-    const distribution = await fetchUserDistributionByWilaya("seller");
-    return { metrics, distribution };
+  const [metrics, distribution, segments, demandByCategory, quoteVolume] = await Promise.all([
+    fetchSellerMetrics(),
+    fetchUserDistributionByWilaya('seller'),
+    fetchMerchantSegmentation(),
+    fetchSellerCategoryFocus(),
+    fetchQuoteVolume()
+  ])
+  
+  return { 
+    metrics, 
+    distribution, 
+    segments, 
+    demandByCategory,
+    requestVolume: quoteVolume 
+  }
 }
 
 export async function getAdvancedSystemMetricsUseCase() {
-    return await fetchAdvancedSystemMetrics();
+  const [systemMetrics, requestVolume, marketHealth] = await Promise.all([
+    fetchAdvancedSystemMetrics(),
+    fetchRequestVolume(),
+    fetchMarketHealth(),
+  ])
+
+  return {
+    ...systemMetrics,
+    requestVolume,
+    marketHealth,
+  }
 }
 
-export const getAllUsersServerFn = createServerFn({ method: "GET" })
-    .handler(async () => {
-        return await getAllUsersUseCase();
-    });
+export async function getAdminDashboardStatsUseCase() {
+  return await fetchAdminDashboardStats()
+}
 
-export const getAdminMetricsServerFn = createServerFn({ method: "GET" })
-    .handler(async () => {
-        return await getAdminMetricsUseCase();
-    });
+export async function activateSellerUseCase(userId: string) {
+  const { updateUserStatus } = await import('@/data-access/users')
+  const { NotificationTriggers } = await import('@/services/notification-triggers')
 
-export const getBuyerAnalyticsServerFn = createServerFn({ method: "GET" })
-    .handler(async () => {
-        return await getBuyerAnalyticsUseCase();
-    });
+  await updateUserStatus(userId, 'active')
 
-export const getSellerAnalyticsServerFn = createServerFn({ method: "GET" })
-    .handler(async () => {
-        return await getSellerAnalyticsUseCase();
-    });
+  await NotificationTriggers.onAccountApproved(userId)
 
-export const getAdvancedSystemMetricsServerFn = createServerFn({ method: "GET" })
-    .handler(async () => {
-        return await getAdvancedSystemMetricsUseCase();
-    });
+  return { success: true }
+}

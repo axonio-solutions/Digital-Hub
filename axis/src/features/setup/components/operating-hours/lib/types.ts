@@ -10,7 +10,7 @@ export type TimeSlot = {
 
 export type DaySchedule = {
 	enabled: boolean;
-	timeSlots: TimeSlot[];
+	timeSlots: Array<TimeSlot>;
 };
 
 export type OperatingHoursData = {

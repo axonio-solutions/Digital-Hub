@@ -1,18 +1,18 @@
-import { cn } from "@/lib/utils";
-import useEmblaCarousel, {
-	type UseEmblaCarouselType,
-} from "embla-carousel-react";
+import useEmblaCarousel from "embla-carousel-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import {
-	type HTMLAttributes,
-	type KeyboardEvent,
+	
+	
 	createContext,
 	forwardRef,
 	useCallback,
 	useContext,
 	useEffect,
-	useState,
+	useState
 } from "react";
+import type {UseEmblaCarouselType} from "embla-carousel-react";
+import type {HTMLAttributes, KeyboardEvent} from "react";
+import { cn } from "@/lib/utils";
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;

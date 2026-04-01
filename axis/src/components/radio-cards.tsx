@@ -1,6 +1,6 @@
+import * as React from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import * as React from "react";
 
 interface RadioCardsOption {
 	value: string;
@@ -9,7 +9,7 @@ interface RadioCardsOption {
 }
 
 interface RadioCardsProps extends React.HTMLAttributes<HTMLDivElement> {
-	options: RadioCardsOption[];
+	options: Array<RadioCardsOption>;
 	value?: string;
 	defaultValue?: string;
 	onValueChange?: (value: string) => void;

@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 import { AUTH_ROUTES } from '@/features/auth/constants/config'
 
 export const Route = createFileRoute('/_authed')({
@@ -14,14 +14,22 @@ export const Route = createFileRoute('/_authed')({
       })
     }
 
-    // If registration is not complete, redirect to completion page
-    // but ONLY if we are not already on that page to avoid infinite loops
-    if (
-      user.user_type === 'pending' && 
-      location.pathname !== AUTH_ROUTES.COMPLETE_REGISTRATION
-    ) {
+    // Account Status Guard
+    const status = user.account_status
+    const isWaitlisted = status === 'waitlisted'
+    const isNew = !status || status === 'new'
+    
+    // 1. If new, force onboarding
+    if (isNew && location.pathname !== AUTH_ROUTES.COMPLETE_REGISTRATION) {
       throw redirect({
         to: AUTH_ROUTES.COMPLETE_REGISTRATION,
+      })
+    }
+
+    // 2. If waitlisted, force waitlist page
+    if (isWaitlisted && location.pathname !== AUTH_ROUTES.WAITLIST) {
+      throw redirect({
+        to: AUTH_ROUTES.WAITLIST,
       })
     }
   },
@@ -31,4 +39,3 @@ export const Route = createFileRoute('/_authed')({
 function AuthLayout() {
   return <Outlet />
 }
-

@@ -1,6 +1,10 @@
 import { IconBuildingCommunity, IconSettings } from "@tabler/icons-react";
 
-import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { AreaManagementForm } from "./components/seating-areas/seating-areas";
+import { SpaceSettings } from "./components/seating-settings/seating-settings";
+import Section from "./components/section";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	Select,
 	SelectContent,
@@ -8,11 +12,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
-import { AreaManagementForm } from "./components/seating-areas/seating-areas";
-import { SpaceSettings } from "./components/seating-settings/seating-settings";
-import Section from "./components/section";
+import { Label } from "@/components/ui/label";
 
 export const SpacesView = () => {
   const [selectedView, setSelectedView] = useState("areas");

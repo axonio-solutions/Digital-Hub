@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
+import type {ChartConfig} from "@/components/ui/chart";
 import {
 	Card,
 	CardAction,
@@ -10,10 +11,10 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import {
-	type ChartConfig,
+	
 	ChartContainer,
 	ChartTooltip,
-	ChartTooltipContent,
+	ChartTooltipContent
 } from "@/components/ui/chart";
 import {
 	Select,

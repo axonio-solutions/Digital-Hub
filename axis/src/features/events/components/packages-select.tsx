@@ -1,11 +1,11 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { FormField, FormMessage } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
-import { packagesQueries } from "@/features/packages/packages-queries";
 import { IconAlertCircle, IconLoader } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import type { UseFormReturn } from "react-hook-form";
 import type { CreateMatchFormData, PackageItem } from "../schema";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { FormField, FormMessage } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { packagesQueries } from "@/features/packages/packages-queries";
 
 interface PackagesSelectProps {
 	form: UseFormReturn<CreateMatchFormData>;
@@ -59,7 +59,7 @@ export function PackagesSelect({ form }: PackagesSelectProps) {
 									onClick={() => {
 										const isSelected = field.value.some((p) => p.id === pkg.id);
 
-										let newSelection: PackageItem[];
+										let newSelection: Array<PackageItem>;
 										if (isSelected) {
 											newSelection = field.value.filter((p) => p.id !== pkg.id);
 										} else {

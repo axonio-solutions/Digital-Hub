@@ -1,7 +1,7 @@
-import type { Variants } from "motion/react";
 import { motion } from "motion/react";
-import type { HTMLAttributes } from "react";
 import { forwardRef } from "react";
+import type { Variants } from "motion/react";
+import type { HTMLAttributes } from "react";
 
 const pathVariants: Variants = {
 	normal: { translateX: 0, translateY: 0 },

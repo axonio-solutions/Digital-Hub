@@ -1,5 +1,3 @@
-import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
-import { Button } from "@/components/ui/button";
 import {
 	IconAirConditioning,
 	IconBoltFilled,
@@ -17,6 +15,8 @@ import {
 } from "@tabler/icons-react";
 import CafeGallery from "./cafe-gallery";
 import { PaymentMethodsSection } from "./payment-methods-section";
+import { Button } from "@/components/ui/button";
+import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
 
 export function CafeDetailsSection({
 	address,
@@ -25,7 +25,7 @@ export function CafeDetailsSection({
 }: {
 	address: string | undefined;
 	name: string | undefined;
-	cafe_images: string[] | undefined;
+	cafe_images: Array<string> | undefined;
 }) {
 	return (
 		<section className="@container space-y-6">
@@ -248,7 +248,7 @@ interface Event {
 }
 
 export function CafeUpcomingEvents() {
-	const events: Event[] = [
+	const events: Array<Event> = [
 		{
 			id: "1",
 			homeTeam: {
@@ -293,7 +293,7 @@ export function CafeUpcomingEvents() {
 		},
 	];
 
-	const groupedEvents: Record<string, Event[]> = events.reduce(
+	const groupedEvents: Record<string, Array<Event>> = events.reduce(
 		(groups, event) => {
 			const date = event.date;
 			if (!groups[date]) {
@@ -302,7 +302,7 @@ export function CafeUpcomingEvents() {
 			groups[date].push(event);
 			return groups;
 		},
-		{} as Record<string, Event[]>,
+		{} as Record<string, Array<Event>>,
 	);
 
 	return (

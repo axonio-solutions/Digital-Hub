@@ -1,7 +1,7 @@
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { Check, Eye, EyeOff, X } from "lucide-react";
 import * as React from "react";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 interface PasswordRequirement {
 	regex: RegExp;
@@ -11,10 +11,10 @@ interface PasswordRequirement {
 interface PasswordInputWithStrengthProps
 	extends React.InputHTMLAttributes<HTMLInputElement> {
 	showStrengthIndicator?: boolean;
-	requirements?: PasswordRequirement[];
+	requirements?: Array<PasswordRequirement>;
 }
 
-const defaultRequirements: PasswordRequirement[] = [
+const defaultRequirements: Array<PasswordRequirement> = [
 	{ regex: /.{8,}/, text: "At least 8 characters" },
 	{ regex: /[0-9]/, text: "At least 1 number" },
 	{ regex: /[a-z]/, text: "At least 1 lowercase letter" },

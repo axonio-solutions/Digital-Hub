@@ -1,6 +1,6 @@
+import type { CafeAmenities } from "../information/informations.validation";
 import { db, eq } from "@/db";
 import { cafes } from "@/db/schema";
-import type { CafeAmenities } from "../information/informations.validation";
 
 export const updateAmenities = async (
 	amenities: CafeAmenities,

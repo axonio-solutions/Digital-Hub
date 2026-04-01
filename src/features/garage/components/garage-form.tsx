@@ -1,11 +1,11 @@
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { useAddVehicle } from "../hooks/use-vehicles"
-import { useAuth } from "@/features/auth/hooks/use-auth"
-import { Loader2 } from "lucide-react"
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { Loader2 } from 'lucide-react'
+import { useAddVehicle } from '../hooks/use-vehicles'
+import { useAuth } from '@/features/auth/hooks/use-auth'
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -13,13 +13,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 
 const vehicleSchema = z.object({
-  make: z.string().min(1, "Make is required"),
-  model: z.string().min(1, "Model is required"),
-  year: z.string().min(4, "Year must be 4 digits"),
+  make: z.string().min(1, 'Make is required'),
+  model: z.string().min(1, 'Model is required'),
+  year: z.string().min(4, 'Year must be 4 digits'),
   vin: z.string().optional(),
   licensePlate: z.string().optional(),
 })
@@ -32,22 +32,27 @@ interface GarageFormProps {
   isSubmitting?: boolean
 }
 
-export function GarageForm({ onSuccess, onSubmit, isSubmitting: externalIsSubmitting }: GarageFormProps) {
+export function GarageForm({
+  onSuccess,
+  onSubmit,
+  isSubmitting: externalIsSubmitting,
+}: GarageFormProps) {
   const { data: user } = useAuth()
-  const userId = user?.id || ""
+  const userId = user?.id || ''
 
   const form = useForm<VehicleFormValues>({
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
-      make: "",
-      model: "",
+      make: '',
+      model: '',
       year: new Date().getFullYear().toString(),
-      vin: "",
-      licensePlate: "",
+      vin: '',
+      licensePlate: '',
     },
   })
 
-  const { mutate: addVehicle, isPending: internalIsSubmitting } = useAddVehicle()
+  const { mutate: addVehicle, isPending: internalIsSubmitting } =
+    useAddVehicle()
   const isSubmitting = externalIsSubmitting || internalIsSubmitting
 
   function handleInternalSubmit(values: VehicleFormValues) {
@@ -56,17 +61,23 @@ export function GarageForm({ onSuccess, onSubmit, isSubmitting: externalIsSubmit
       return
     }
 
-    addVehicle({ ...values, userId }, {
-      onSuccess: () => {
-        form.reset()
-        onSuccess?.()
-      }
-    })
+    addVehicle(
+      { ...values, userId },
+      {
+        onSuccess: () => {
+          form.reset()
+          onSuccess?.()
+        },
+      },
+    )
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleInternalSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(handleInternalSubmit)}
+        className="space-y-4"
+      >
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}

@@ -1,9 +1,9 @@
 import { format } from "date-fns";
-import type { CafeOperatingHour, OperatingHoursData } from "./types";
 import { DAY_MAPPING } from "./types";
+import type { CafeOperatingHour, OperatingHoursData } from "./types";
 
 export function transformOperatingHoursToFormValues(
-	hours: CafeOperatingHour[],
+	hours: Array<CafeOperatingHour>,
 ): OperatingHoursData {
 	const defaultData: OperatingHoursData = {
 		SUNDAY: { enabled: true, timeSlots: [{ from: "09:00", to: "17:00" }] },
@@ -19,7 +19,7 @@ export function transformOperatingHoursToFormValues(
 		return defaultData;
 	}
 
-	const hoursByDay: Record<number, CafeOperatingHour[]> = {};
+	const hoursByDay: Record<number, Array<CafeOperatingHour>> = {};
 
 	for (const hour of hours) {
 		if (!hoursByDay[hour.day_of_week]) {

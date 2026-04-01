@@ -1,3 +1,15 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import {  useForm } from "react-hook-form";
+import { toast } from "sonner";
+import Section from "../section";
+import {
+	
+	bookingSettingsSchema
+} from "./validation";
+import type {SubmitHandler} from "react-hook-form";
+import type {BookingSettingsFormValues} from "./validation";
 import NumberInputWithMinsPlusButtons from "@/components/inputs/number-input-with-mins-plus-buttons";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -16,16 +28,6 @@ import {
 	updateMaxCapacityFn,
 	updateSeatingSettingsFn,
 } from "@/fn/seating-settings";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import Section from "../section";
-import {
-	type BookingSettingsFormValues,
-	bookingSettingsSchema,
-} from "./validation";
 
 const timeBlocks = [
 	{ value: "1", label: "1 ساعة" },

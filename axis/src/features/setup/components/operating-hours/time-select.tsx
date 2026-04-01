@@ -1,3 +1,5 @@
+import { useVirtualizer } from "@tanstack/react-virtual";
+import * as React from "react";
 import {
 	Select,
 	SelectContent,
@@ -6,8 +8,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import * as React from "react";
 
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
 	const hours = Math.floor(i / 2);

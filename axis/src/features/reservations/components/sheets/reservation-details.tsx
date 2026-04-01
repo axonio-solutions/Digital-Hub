@@ -1,6 +1,19 @@
+import {
+	IconCalendar,
+	IconClock,
+	IconCreditCard,
+	IconMapPin,
+	IconPhone,
+	IconProgress,
+	IconProgressCheck,
+	IconProgressX,
+	IconUser,
+	IconUsers,
+} from "@tabler/icons-react";
 import type * as React from "react";
 import type { z } from "zod";
 
+import type { schema } from "../cafe-reservations-table";
 import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,19 +28,6 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import {
-	IconCalendar,
-	IconClock,
-	IconCreditCard,
-	IconMapPin,
-	IconPhone,
-	IconProgress,
-	IconProgressCheck,
-	IconProgressX,
-	IconUser,
-	IconUsers,
-} from "@tabler/icons-react";
-import type { schema } from "../cafe-reservations-table";
 
 interface ReservationDetailsSheetProps {
 	reservation: z.infer<typeof schema>;

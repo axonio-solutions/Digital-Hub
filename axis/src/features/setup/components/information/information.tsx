@@ -1,20 +1,3 @@
-import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { TabsContent } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { VirtualizedCombobox } from "@/components/virtualized-combobox";
-import citiesLite from "@/data/cities_lite.json";
-import regionsData from "@/data/regions_lite.json";
-import Section from "@/features/spaces/components/section";
 import { updateCafeInformationFn } from "@/fn/cafe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -38,6 +21,23 @@ import type {
 } from "./informations.types";
 import { cafeInformationFormSchema } from "./informations.validation";
 import { PictureUploader } from "./picture-uploader";
+import Section from "@/features/spaces/components/section";
+import regionsData from "@/data/regions_lite.json";
+import citiesLite from "@/data/cities_lite.json";
+import { VirtualizedCombobox } from "@/components/virtualized-combobox";
+import { Textarea } from "@/components/ui/textarea";
+import { TabsContent } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 
 const CafeInformationForm = () => {
 	const { data: cafeDetails, isLoading: loadingCafeDetails } = useQuery(

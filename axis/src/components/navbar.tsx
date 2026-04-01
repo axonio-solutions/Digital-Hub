@@ -1,11 +1,11 @@
-import { AUTH_ROUTES } from "@/features/auth/constants/config";
-import useScroll from "@/hooks/use-scroll";
-import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { Globe, Menu, X } from "lucide-react";
 import React from "react";
 import { PlatformLogo } from "../../public/platform-logo";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
+import useScroll from "@/hooks/use-scroll";
+import { AUTH_ROUTES } from "@/features/auth/constants/config";
 
 export function Navigation() {
 	const scrolled = useScroll(15);

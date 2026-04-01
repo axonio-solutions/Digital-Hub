@@ -1,7 +1,7 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { cafesQueries } from "@/features/setup/components/information/informations.queries";
 import { seatingAreasQueries } from "@/features/spaces/components/seating-areas/seating-areas.queries";
 import { SpacesView } from "@/features/spaces/view";
-import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authed/dashboard/management/spaces")({
 	loader : ({context})=>{

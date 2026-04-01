@@ -1,3 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
+import type { UseFormReturn } from "react-hook-form";
+import type { CreateMatchFormData } from "../schema";
 import NumberInputWithMinsPlusButtons from "@/components/inputs/number-input-with-mins-plus-buttons";
 import {
 	FormField,
@@ -6,9 +9,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { seatingAreasQueries } from "@/features/spaces/components/seating-areas/seating-areas.queries";
-import { useQuery } from "@tanstack/react-query";
-import type { UseFormReturn } from "react-hook-form";
-import type { CreateMatchFormData } from "../schema";
 
 interface CapacityPriceInputsProps {
 	form: UseFormReturn<CreateMatchFormData>;

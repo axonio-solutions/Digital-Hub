@@ -1,3 +1,7 @@
+import { IconAlertCircle } from "@tabler/icons-react";
+import { useRouter } from "@tanstack/react-router";
+import { useId, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -13,10 +17,6 @@ import { Label } from "@/components/ui/label";
 import { AUTH_ROUTES } from "@/features/auth/constants/config";
 import { useAuthSuspense } from "@/features/auth/hooks/use-auth";
 import { authClient } from "@/lib/auth-client";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { useRouter } from "@tanstack/react-router";
-import { useId, useState } from "react";
-import { toast } from "sonner";
 
 interface DeleteAccountDialogProps {
 	isOpen: boolean;

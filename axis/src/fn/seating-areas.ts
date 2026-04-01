@@ -1,3 +1,4 @@
+import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/features/auth/guards/auth";
 import {
 	createSeatingAreaUseCase,
@@ -9,7 +10,6 @@ import {
 	areaSchema,
 	updateAreaSchema,
 } from "@/features/spaces/components/seating-areas/seating-areas.validations";
-import { createServerFn } from "@tanstack/react-start";
 
 export const fetchSeatingAreasFn = createServerFn({ method: "GET" })
 	.middleware([authMiddleware])

@@ -1,7 +1,7 @@
-import { db } from "@/db";
-import { packageItems, packages } from "@/db/schema/packages-schema";
 import { eq, inArray } from "drizzle-orm";
 import type { CreatePackageInput, UpdatePackageInput } from "./packages.types";
+import { db } from "@/db";
+import { packageItems, packages } from "@/db/schema/packages-schema";
 
 export async function getAllPackages(cafeId: string) {
 	try {
@@ -97,7 +97,7 @@ export async function updatePackage(input: UpdatePackageInput) {
 			const itemsToDelete = input.items
 				.filter((item) => item._delete && item.id)
 				.map((item) => item.id)
-				.filter(Boolean) as string[];
+				.filter(Boolean) as Array<string>;
 
 			if (itemsToDelete.length > 0) {
 				await tx
@@ -174,7 +174,7 @@ export async function deletePackage(packageId: string): Promise<void> {
 }
 
 export async function deleteMultiplePackages(
-	packageIds: string[],
+	packageIds: Array<string>,
 ): Promise<void> {
 	try {
 		await db.delete(packages).where(inArray(packages.id, packageIds));

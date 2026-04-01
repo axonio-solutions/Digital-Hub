@@ -7,4 +7,3 @@ export interface MyRouterContext {
   user: Awaited<ReturnType<typeof getUser>>
   session: Session | null
 }
-

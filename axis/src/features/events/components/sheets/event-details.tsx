@@ -1,6 +1,18 @@
+import {
+	IconCalendar,
+	IconClock,
+	IconInfoCircle,
+	IconMapPin,
+	IconProgress,
+	IconProgressCheck,
+	IconProgressX,
+	IconTicket,
+	IconUsers,
+} from "@tabler/icons-react";
 import type * as React from "react";
 import type { z } from "zod";
 
+import type { eventsSchema } from "../events-table";
 import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,18 +27,6 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import {
-	IconCalendar,
-	IconClock,
-	IconInfoCircle,
-	IconMapPin,
-	IconProgress,
-	IconProgressCheck,
-	IconProgressX,
-	IconTicket,
-	IconUsers,
-} from "@tabler/icons-react";
-import type { eventsSchema } from "../events-table";
 
 interface EventDetailsSheetProps {
 	event: z.infer<typeof eventsSchema>;

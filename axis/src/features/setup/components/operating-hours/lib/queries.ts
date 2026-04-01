@@ -1,5 +1,5 @@
-import { fetchCafeOperatingHoursFn } from "@/fn/cafe";
 import { queryOptions } from "@tanstack/react-query";
+import { fetchCafeOperatingHoursFn } from "@/fn/cafe";
 
 export const operatingHoursQueries = {
 	all: ["cafe"],

@@ -10,6 +10,8 @@ count.txt
 .output
 .vinxi
 todos.json
-
+axis
 # Local Netlify folder
 .netlify
+tmp/
+tmp_run_enum_migration.js

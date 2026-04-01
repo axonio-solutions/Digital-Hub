@@ -1,8 +1,8 @@
 // cafe-categories.server.ts
+import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/features/auth/guards/auth";
 import { getAllCafeCategoriesUseCase, getCafeCategoriesUseCase } from "@/features/setup/components/cafe-categories-selector/cafe-categories.use-cases";
 
-import { createServerFn } from "@tanstack/react-start";
 
 export const fetchAllCafeCategoriesFn = createServerFn({
   method: "GET",

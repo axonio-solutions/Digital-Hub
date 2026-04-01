@@ -1,13 +1,14 @@
-import { getCafeIdForUser } from "@/data-access/cafes";
-import { db } from "@/db";
-import { clientEnvs, serverEnvs } from "@/utils/env";
-import { type BetterAuthOptions, betterAuth } from "better-auth";
+import {  betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { admin, customSession } from "better-auth/plugins";
 import EmailVerification from "./emails/email-verification";
 import PasswordReset from "./emails/reset-password";
 import { resend } from "./resend";
+import type {BetterAuthOptions} from "better-auth";
+import { clientEnvs, serverEnvs } from "@/utils/env";
+import { db } from "@/db";
+import { getCafeIdForUser } from "@/data-access/cafes";
 
 const options = {
 	database: drizzleAdapter(db, {

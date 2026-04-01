@@ -1,3 +1,7 @@
+import { Link } from "@tanstack/react-router";
+import { AtSignIcon, MoveLeftIcon } from "lucide-react";
+import { AUTH_ROUTES } from "../../constants/config";
+import { useForgotPassword } from "../../hooks/use-forgot-password";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,10 +13,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Link } from "@tanstack/react-router";
-import { AtSignIcon, MoveLeftIcon } from "lucide-react";
-import { AUTH_ROUTES } from "../../constants/config";
-import { useForgotPassword } from "../../hooks/use-forgot-password";
 
 export default function ForgotPasswordForm() {
 	const { form, isPending, onSubmit } = useForgotPassword();

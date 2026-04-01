@@ -1,5 +1,5 @@
-import { fetchCafeSocialMediaFn } from "@/fn/cafe-social-media";
 import { queryOptions } from "@tanstack/react-query";
+import { fetchCafeSocialMediaFn } from "@/fn/cafe-social-media";
 
 export const cafeSocialMediaQueries = {
 	all: ["cafe"],

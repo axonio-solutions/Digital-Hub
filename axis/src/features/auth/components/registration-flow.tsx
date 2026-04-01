@@ -1,11 +1,11 @@
-import { AuthCard } from "@/features/auth/components/auth-card";
-import { useRegistrationContext } from "@/features/auth/components/registration-provider";
 import { FormProvider } from "react-hook-form";
 import { useRegistration } from "../hooks/use-registration";
 import { AuthFooter } from "./auth-footer";
 import { AuthLayout } from "./auth-layout";
 import RegisterForm from "./forms/register";
 import { RegistrationSuccess } from "./registration-success";
+import { useRegistrationContext } from "@/features/auth/components/registration-provider";
+import { AuthCard } from "@/features/auth/components/auth-card";
 
 interface RegistrationFlowProps {
 	title: string;

@@ -1,3 +1,5 @@
+import { createServerFn } from "@tanstack/react-start";
+import { getWebRequest } from "@tanstack/react-start/server";
 import { db, eq } from "@/db";
 import { users } from "@/db/schema";
 import {
@@ -6,8 +8,6 @@ import {
 } from "@/features/account/account.validations";
 import { authMiddleware } from "@/features/auth/guards/auth";
 import { auth } from "@/lib/auth";
-import { createServerFn } from "@tanstack/react-start";
-import { getWebRequest } from "@tanstack/react-start/server";
 
 export const accountDetailsFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])

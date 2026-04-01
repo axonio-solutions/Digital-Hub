@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { Row } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from 'lucide-react'
+import type { Row } from '@tanstack/react-table'
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,16 +16,18 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 
-import { platforms } from "@/features/listings/data/data"
-import { productSchema } from "@/features/listings/data/schema"
+import { platforms } from '@/features/listings/data/data'
+import { productSchema } from '@/features/listings/data/schema'
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
 }
 
-export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TData>) {
+export function DataTableRowActions<TData>({
+  row,
+}: DataTableRowActionsProps<TData>) {
   const product = productSchema.parse(row.original)
 
   return (
@@ -50,7 +52,7 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Platform</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={product.platform ?? ""}>
+            <DropdownMenuRadioGroup value={product.platform ?? ''}>
               {platforms.map((p) => (
                 <DropdownMenuRadioItem key={p.value} value={p.value}>
                   {p.label}

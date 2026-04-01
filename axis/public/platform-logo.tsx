@@ -1,4 +1,5 @@
 import type { SVGProps } from "react";
+
 export const PlatformLogo = (props: SVGProps<SVGSVGElement>) => (
   <svg aria-hidden="true" fill="none" viewBox="0 0 200 44" {...props}>
     <mask

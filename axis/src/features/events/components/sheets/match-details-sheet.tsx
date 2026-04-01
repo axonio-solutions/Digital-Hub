@@ -1,5 +1,15 @@
+import {
+	IconCalendar,
+	IconCircleDashed,
+	IconCircleDashedCheck,
+	IconClock,
+	IconInfoCircle,
+	IconMapPin,
+	IconUsers,
+} from "@tabler/icons-react";
 import type * as React from "react";
 
+import type { EditMatchEntry } from "../../schema";
 import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,16 +20,6 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import {
-	IconCalendar,
-	IconCircleDashed,
-	IconCircleDashedCheck,
-	IconClock,
-	IconInfoCircle,
-	IconMapPin,
-	IconUsers,
-} from "@tabler/icons-react";
-import type { EditMatchEntry } from "../../schema";
 
 interface MatchDetailsSheetProps {
 	isOpen: boolean;

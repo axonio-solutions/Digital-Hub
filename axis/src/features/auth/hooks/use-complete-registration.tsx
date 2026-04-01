@@ -1,14 +1,15 @@
-import { completeRegistrationFn } from "@/fn/auth";
-import { useMutation } from "@/hooks/use-mutation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { AUTH_ROUTES } from "../constants/config";
 import { authQueries } from "../queries/auth-queries";
 import { createValidationSchemas } from "../validation";
+import type {SubmitHandler} from "react-hook-form";
 import type { CompleteRegistrationFormData } from "../validation/types";
+import { useMutation } from "@/hooks/use-mutation";
+import { completeRegistrationFn } from "@/fn/auth";
 
 export function useCompleteRegistration() {
 	const { completeRegistrationSchema } = createValidationSchemas();

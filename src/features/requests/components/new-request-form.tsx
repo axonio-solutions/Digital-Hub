@@ -1,365 +1,485 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Camera, Car, Loader2, PlusIcon, UploadCloud, XIcon, X, Plus } from 'lucide-react'
+import { Progress } from '@/components/ui/progress'
+import { cn } from '@/lib/utils'
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { PlusIcon, XIcon, Loader2, UploadCloud, Car } from "lucide-react";
-import { productFormSchema, type ProductFormData } from "../validation/product-schemas";
-import { useCreateRequest } from "../hooks/use-requests";
-import { useAuth } from "@/features/auth/hooks/use-auth";
+  productFormSchema
+} from '../validations/product-schemas'
+import { useCreateRequest, useUpdateRequest } from '../hooks/use-requests'
+import type { ProductFormData } from '../validations/product-schemas';
+import { supabase } from '@/lib/supabase-client'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useAuth } from '@/features/auth/hooks/use-auth'
+import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
 
 interface NewPartRequestFormProps {
-    onSuccess?: () => void;
-    onCancel?: () => void;
+  initialData?: any
+  onSuccess?: () => void
+  onCancel?: () => void
 }
 
-export function NewPartRequestForm({ onSuccess, onCancel }: NewPartRequestFormProps) {
-    const { data: user } = useAuth();
-    const createRequest = useCreateRequest();
+export function NewPartRequestForm({
+  initialData,
+  onSuccess,
+  onCancel,
+}: NewPartRequestFormProps) {
+  const { data: user } = useAuth()
+  const createRequest = useCreateRequest()
+  const updateRequest = useUpdateRequest()
+  const isEditing = !!initialData
+  const { data: taxonomy, isLoading: isLoadingTaxonomy } = useTaxonomy()
 
-    const [newCategory, setNewCategory] = useState("");
-    const [variations, setVariations] = useState<Array<{ type: string; value: string }>>([]);
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [selectedImages, setSelectedImages] = useState<Array<File>>([])
 
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        watch,
-        formState: { errors }
-    } = useForm<ProductFormData>({
-        resolver: zodResolver(productFormSchema) as any,
-        defaultValues: {
-            partName: "",
-            description: "",
-            status: "published",
-            vehicleBrand: "",
-            vehicleModel: "",
-            modelYear: "",
-            categories: [],
-            tags: [],
-            variations: [],
-            expectedPrice: "",
-            budgetType: "negotiable",
-            template: "default",
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<ProductFormData>({
+    resolver: zodResolver(productFormSchema) as any,
+    defaultValues: {
+      partName: initialData?.partName || '',
+      description: initialData?.notes || '',
+      status: initialData ? 'published' : 'published',
+      vehicleBrand: initialData?.vehicleBrand || '',
+      vehicleModel: initialData?.modelYear ? initialData.modelYear.split(' ')[0] : '',
+      modelYear: initialData?.modelYear ? initialData.modelYear.split(' ').slice(1).join(' ') : '',
+      categories: initialData?.category ? [initialData.category.name] : [],
+      categoryId: initialData?.categoryId || undefined,
+      brandId: initialData?.brandId || undefined,
+      tags: [],
+      variations: [],
+      expectedPrice: '',
+      budgetType: 'negotiable',
+      template: 'default',
+      imageUrls: initialData?.imageUrls || [],
+    },
+  })
+
+  const imageUrls = watch('imageUrls') || []
+
+  const handleRemoveImage = (index: number) => {
+    if (index < imageUrls.length) {
+      const newUrls = [...imageUrls]
+      newUrls.splice(index, 1)
+      setValue('imageUrls', newUrls)
+    } else {
+      const localIdx = index - imageUrls.length
+      setSelectedImages(prev => prev.filter((_, i) => i !== localIdx))
+    }
+  }
+
+  const onSubmit = async (data: any) => {
+    if (!user?.id) {
+      toast.error('You must be logged in to create or edit a request')
+      return
+    }
+
+    setIsUploading(true)
+    setUploadProgress(0)
+    const finalImageUrls = [...imageUrls]
+
+    try {
+      // 1. Batch Upload Local Images
+      if (selectedImages.length > 0) {
+        for (let i = 0; i < selectedImages.length; i++) {
+          const file = selectedImages[i]
+          const fileExt = file.name.split('.').pop()
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+          const filePath = `${user.id}/${fileName}`
+
+          const { error: uploadError } = await supabase.storage
+            .from('requests-photos')
+            .upload(filePath, file)
+
+          if (uploadError) throw uploadError
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('requests-photos')
+            .getPublicUrl(filePath)
+
+          finalImageUrls.push(publicUrl)
+          setUploadProgress(Math.round(((i + 1) / selectedImages.length) * 100))
         }
-    });
+      }
 
-    const categories = watch("categories") || [];
+      const payload = {
+        buyerId: user.id,
+        partName: data.partName,
+        categoryId: data.categoryId,
+        brandId: data.brandId,
+        vehicleBrand: data.vehicleBrand,
+        modelYear: `${data.vehicleModel} ${data.modelYear}`,
+        notes: data.description,
+        status: data.status === 'draft' ? 'draft' : 'open',
+        imageUrls: finalImageUrls,
+      }
 
-    const onSubmit = (data: any) => {
-        if (!user?.id) {
-            toast.error("You must be logged in to create a request");
-            return;
-        }
+      // 2. Persist to DB
+      if (isEditing) {
+        await (updateRequest as any).mutateAsync({ id: initialData.id, payload })
+        toast.success('Part request updated successfully!')
+      } else {
+        await (createRequest as any).mutateAsync(payload)
+        toast.success('Part request submitted successfully!')
+      }
+      
+      // Artificial grace period
+      await new Promise(resolve => setTimeout(resolve, 500))
+      onSuccess?.()
+    } catch (error: any) {
+      console.error(error)
+      toast.error(error.message || 'Failed to process request')
+    } finally {
+      setIsUploading(false)
+      setUploadProgress(0)
+    }
+  }
 
-        createRequest.mutate({
-            buyerId: user.id,
-            partName: data.partName,
-            vehicleBrand: data.vehicleBrand,
-            modelYear: `${data.vehicleModel} ${data.modelYear}`, // Combining for compatibility with existing schema if needed
-            notes: data.description,
-            // In a real app, we'd handle images and extra fields here
-        }, {
-            onSuccess: () => {
-                toast.success("Part request submitted successfully!");
-                onSuccess?.();
-            },
-            onError: (error) => {
-                toast.error("Failed to submit request: " + (error as any).message);
-            }
-        });
-    };
-
-    const addCategory = () => {
-        const currentCategories = watch("categories") || [];
-        if (newCategory && !currentCategories.includes(newCategory)) {
-            const updatedCategories = [...currentCategories, newCategory];
-            setValue("categories", updatedCategories);
-            setNewCategory("");
-        }
-    };
-
-    const removeCategory = (category: string) => {
-        const currentCategories = watch("categories") || [];
-        const updatedCategories = currentCategories.filter((c) => c !== category);
-        setValue("categories", updatedCategories);
-    };
-
-    const addVariation = () => {
-        const newVariation = { type: "Condition", value: "" };
-        const updatedVariations = [...variations, newVariation];
-        setVariations(updatedVariations);
-        setValue("variations", updatedVariations);
-    };
-
-    const removeVariation = (index: number) => {
-        const updatedVariations = variations.filter((_, i) => i !== index);
-        setVariations(updatedVariations);
-        setValue("variations", updatedVariations);
-    };
-
-    const updateVariation = (index: number, field: "type" | "value", value: string) => {
-        const updatedVariations = variations.map((variation, i) =>
-            i === index ? { ...variation, [field]: value } : variation
-        );
-        setVariations(updatedVariations);
-        setValue("variations", updatedVariations);
-    };
-
-    return (
-        <div className="mx-auto max-w-full space-y-8">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                    {/* Left Column - Main Content */}
-                    <div className="space-y-4 lg:col-span-2">
-                        {/* General Section */}
-                        <Card className="shadow-none border-muted-foreground/20">
-                            <CardHeader>
-                                <CardTitle className="text-lg">Part Information</CardTitle>
-                                <CardDescription>Specify what part you need and add details.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div className="space-y-2">
-                                    <Label htmlFor="partName">
-                                        Part Name <span className="text-red-500">*</span>
-                                    </Label>
-                                    <Input id="partName" placeholder="e.g. Brake Pads, Front Bumper" {...register("partName")} />
-                                    {errors.partName && <p className="text-sm text-red-500">{errors.partName.message}</p>}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="description">Detailed Description</Label>
-                                    <Textarea
-                                        id="description"
-                                        placeholder="Provide any specific details, OEM numbers, or special requirements."
-                                        className="min-h-[120px]"
-                                        {...register("description")}
-                                    />
-                                    {errors.description && (
-                                        <p className="text-sm text-red-500">{errors.description.message}</p>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Vehicle Details Section */}
-                        <Card className="shadow-none border-muted-foreground/20 text-md">
-                            <CardHeader>
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    <Car className="size-5" />
-                                    Vehicle Specification
-                                </CardTitle>
-                                <CardDescription>Crucial information for sellers to find the correct parts.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="vehicleBrand">Brand <span className="text-red-500">*</span></Label>
-                                        <Input id="vehicleBrand" placeholder="Toyota, VW, etc." {...register("vehicleBrand")} />
-                                        {errors.vehicleBrand && <p className="text-sm text-red-500">{errors.vehicleBrand.message}</p>}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="vehicleModel">Model <span className="text-red-500">*</span></Label>
-                                        <Input id="vehicleModel" placeholder="Camry, Golf, etc." {...register("vehicleModel")} />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="modelYear">Year <span className="text-red-500">*</span></Label>
-                                        <Input id="modelYear" placeholder="2018" {...register("modelYear")} />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="vinNumber">VIN Number (Optional)</Label>
-                                        <Input id="vinNumber" placeholder="Chassis No." {...register("vinNumber")} />
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Media Section */}
-                        <Card className="shadow-none border-muted-foreground/20">
-                            <CardHeader>
-                                <CardTitle className="text-lg">Part Reference Photos</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="rounded-lg border-2 border-dashed border-primary/20 bg-primary/5 p-8 text-center cursor-pointer hover:bg-primary/10 transition-colors">
-                                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center text-primary/60">
-                                        <UploadCloud className="size-8" />
-                                    </div>
-                                    <p className="text-primary font-medium">Drop photos here to upload</p>
-                                    <p className="text-xs text-muted-foreground mt-2">Take a photo of your old part or your vehicle's license plate.</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Variation Section */}
-                        <Card className="shadow-none border-muted-foreground/20">
-                            <CardHeader>
-                                <CardTitle className="text-lg">Extra Specifications</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-4">
-                                    <Label>Additional Attributes</Label>
-                                    {variations.map((variation, index) => (
-                                        <div key={index} className="flex items-center gap-2">
-                                            <Select
-                                                value={variation.type}
-                                                onValueChange={(value) => updateVariation(index, "type", value)}>
-                                                <SelectTrigger className="w-40">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="Condition">Condition</SelectItem>
-                                                    <SelectItem value="Origin">Part Origin</SelectItem>
-                                                    <SelectItem value="Location">Localisation</SelectItem>
-                                                    <SelectItem value="Urgency">Urgency</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <Input
-                                                placeholder="e.g. Broken but repairable"
-                                                value={variation.value}
-                                                onChange={(e) => updateVariation(index, "value", e.target.value)}
-                                                className="flex-1"
-                                            />
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="icon"
-                                                onClick={() => removeVariation(index)}>
-                                                <XIcon className="size-4" />
-                                            </Button>
-                                        </div>
-                                    ))}
-                                    <Button type="button" variant="outline" size="sm" onClick={addVariation}>
-                                        <PlusIcon className="size-4 mr-2" /> Add attribute
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Right Column - Sidebar */}
-                    <div className="space-y-4">
-                        {/* Status Section */}
-                        <Card className="shadow-none border-muted-foreground/20 bg-muted/20">
-                            <CardHeader className="pb-3 border-b border-muted">
-                                <CardTitle className="flex items-center gap-2 text-md">
-                                    Request Status
-                                    <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="pt-4 space-y-4">
-                                <Select defaultValue="published" onValueChange={(val: any) => setValue("status", val)}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="published">Immediate Broadcast</SelectItem>
-                                        <SelectItem value="draft">Save as Draft</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <p className="text-xs text-muted-foreground">"Broadcasting" sends your request to verified sellers instantly.</p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Pricing Section */}
-                        <Card className="shadow-none border-muted-foreground/20">
-                            <CardHeader>
-                                <CardTitle className="text-md">Budget Preference</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div className="space-y-2">
-                                    <Label htmlFor="expectedPrice">Target Price (DZD)</Label>
-                                    <Input id="expectedPrice" placeholder="Optional budget" {...register("expectedPrice")} />
-                                </div>
-
-                                <div className="space-y-3">
-                                    <Label className="text-xs font-semibold">Budget Flexibility</Label>
-                                    <RadioGroup defaultValue="negotiable" className="flex flex-col gap-2">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="negotiable" id="negotiable" onClick={() => setValue("budgetType", "negotiable")} />
-                                            <Label htmlFor="negotiable" className="font-normal text-sm">Negotiable</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="fixed" id="fixed" onClick={() => setValue("budgetType", "fixed")} />
-                                            <Label htmlFor="fixed" className="font-normal text-sm">Strict Budget</Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Categories Section */}
-                        <Card className="shadow-none border-muted-foreground/20">
-                            <CardHeader>
-                                <CardTitle className="text-md">Tags & Categories</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div>
-                                    <div className="flex flex-wrap gap-2">
-                                        {categories.length === 0 && <span className="text-xs text-muted-foreground italic underline">No tags added yet...</span>}
-                                        {categories.map((category) => (
-                                            <Badge
-                                                key={category}
-                                                variant="secondary"
-                                                className="bg-primary/10 text-primary border-primary/20">
-                                                <XIcon
-                                                    className="size-3 mr-1 cursor-pointer"
-                                                    onClick={() => removeCategory(category)}
-                                                />
-                                                {category}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                    <div className="mt-4 flex gap-2">
-                                        <Input
-                                            placeholder="Fast delivery..."
-                                            value={newCategory}
-                                            onChange={(e) => setNewCategory(e.target.value)}
-                                            className="flex-1 text-xs h-8"
-                                        />
-                                        <Button type="button" variant="outline" size="sm" onClick={addCategory} className="h-8 text-xs">
-                                            <PlusIcon className="size-3 mr-1" /> Add
-                                        </Button>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+  return (
+    <div className="mx-auto max-w-full space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Left Column - Main Content */}
+          <div className="space-y-6 lg:col-span-2">
+            {/* General Section */}
+            <Card className="shadow-none border-muted-foreground/20">
+              <CardHeader>
+                <CardTitle className="text-lg">Part Information</CardTitle>
+                <CardDescription>
+                  Specify what part you need and add details.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="partName">
+                    Part Name <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="partName"
+                    placeholder="e.g. Brake Pads, Front Bumper"
+                    {...register('partName')}
+                  />
+                  {errors.partName && (
+                    <p className="text-sm text-red-500">
+                      {errors.partName.message}
+                    </p>
+                  )}
                 </div>
 
-                <div className="flex justify-end gap-3 pt-6 border-t border-muted">
-                    <Button type="button" variant="ghost" onClick={onCancel} className="text-muted-foreground">
-                        Cancel
-                    </Button>
-                    <Button type="submit" className="px-8 shadow-sm" disabled={createRequest.isPending}>
-                        {createRequest.isPending ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Processing...
-                            </>
-                        ) : (
-                            "Submit Request"
-                        )}
-                    </Button>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="categoryId">Category</Label>
+                    <Select
+                      defaultValue={initialData?.categoryId}
+                      value={watch('categoryId')}
+                      onValueChange={(val) => setValue('categoryId', val)}
+                      disabled={isLoadingTaxonomy}
+                    >
+                      <SelectTrigger id="categoryId">
+                        <SelectValue placeholder={isLoadingTaxonomy ? "Loading Categories..." : "Select Category"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {taxonomy?.categories.map((c: any) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2 flex flex-col justify-end">
+                    <p className="text-[11px] text-muted-foreground italic mb-1">
+                      Choose the closest category for accurate seller matching.
+                    </p>
+                  </div>
                 </div>
-            </form>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Detailed Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Provide any specific details, OEM numbers, or special requirements."
+                    className="min-h-[120px]"
+                    {...register('description')}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Vehicle Details Section */}
+            <Card className="shadow-none border-muted-foreground/20">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Car className="size-5" />
+                  Vehicle Specification
+                </CardTitle>
+                <CardDescription>
+                  Determine vehicle compatibility here.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="brandId">
+                      Brand <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                      defaultValue={initialData?.brandId}
+                      value={watch('brandId')}
+                      onValueChange={(val) => {
+                        const brand = taxonomy?.brands.find((b: any) => b.id === val)
+                        setValue('brandId', val)
+                        setValue('vehicleBrand', brand?.brand || '')
+                      }}
+                      disabled={isLoadingTaxonomy}
+                    >
+                      <SelectTrigger id="brandId">
+                        <SelectValue placeholder={isLoadingTaxonomy ? "Loading Brands..." : "Select Brand"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {taxonomy?.brands.map((b: any) => (
+                          <SelectItem key={b.id} value={b.id}>
+                            {b.brand}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vehicleModel">
+                      Model <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="vehicleModel"
+                      placeholder="Camry, Golf, etc."
+                      {...register('vehicleModel')}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="modelYear">
+                      Year <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="modelYear"
+                      placeholder="2018"
+                      {...register('modelYear')}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vinNumber">VIN Number (Optional)</Label>
+                    <Input
+                      id="vinNumber"
+                      placeholder="Chassis No."
+                      {...register('vinNumber')}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Simplified Media Section (Grid View) */}
+            <Card className="shadow-none border-muted-foreground/20 overflow-hidden">
+              <CardHeader className="bg-muted/5 pb-4 border-b">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-1">
+                    <CardTitle className="text-lg flex items-center gap-2 font-semibold">
+                       <Camera className="size-5 text-primary" />
+                       Part Photos
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                       Add live photos of your broken parts for best results.
+                    </CardDescription>
+                  </div>
+                  {!isUploading && (
+                     <div className="relative">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                          onChange={(e) => {
+                             if (e.target.files) {
+                               setSelectedImages(prev => [...prev, ...Array.from(e.target.files!)])
+                             }
+                          }}
+                        />
+                        <Button variant="outline" size="sm" type="button" className="h-8 rounded-lg gap-2">
+                           <Plus className="size-3 mr-1" /> Add Photos
+                        </Button>
+                     </div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="p-4">
+                {isUploading && (
+                   <div className="mb-6 space-y-2 p-3 bg-secondary/20 rounded-xl border border-border/50">
+                      <div className="flex justify-between items-center px-1">
+                        <span className="text-[10px] uppercase font-bold text-primary tracking-widest">Encrypting Assets...</span>
+                        <span className="text-[10px] font-bold text-primary">{uploadProgress}%</span>
+                      </div>
+                      <Progress value={uploadProgress} variant="primary" className="h-2" />
+                   </div>
+                )}
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {imageUrls.map((url, idx) => (
+                    <div key={`url-${idx}`} className="relative aspect-square group rounded-xl overflow-hidden shadow-sm border border-border bg-muted/20">
+                      <img src={url} alt="Attached" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500" />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(idx)}
+                        className="absolute inset-x-0 bottom-0 bg-black/60 text-white py-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80 flex items-center justify-center"
+                      >
+                         <XIcon className="size-3 mr-1" /> Remove
+                      </button>
+                    </div>
+                  ))}
+                  
+                  {selectedImages.map((file, idx) => {
+                    const previewUrl = URL.createObjectURL(file)
+                    return (
+                      <div key={`local-${idx}`} className="relative aspect-square group rounded-xl overflow-hidden shadow-sm border border-primary/20 bg-primary/5">
+                        <img src={previewUrl} alt="Local" className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500" />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(imageUrls.length + idx)}
+                          className="absolute inset-x-0 bottom-0 bg-primary/80 text-white py-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/90 flex items-center justify-center"
+                        >
+                           <XIcon className="size-3 mr-1" /> Clear local
+                        </button>
+                      </div>
+                    )
+                  })}
+
+                  {/* Empty Selection Dropzone if no images */}
+                  {imageUrls.length === 0 && selectedImages.length === 0 && (
+                    <div className="col-span-full py-16 flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/20 rounded-2xl bg-muted/5 hover:bg-muted/10 transition-colors relative group">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                          onChange={(e) => {
+                             if (e.target.files) {
+                               setSelectedImages(Array.from(e.target.files))
+                             }
+                          }}
+                        />
+                        <div className="size-12 rounded-2xl bg-white dark:bg-slate-900 border border-border shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                           <UploadCloud className="size-6 text-primary" />
+                        </div>
+                        <p className="text-sm font-semibold">Select part media</p>
+                        <p className="text-[11px] text-muted-foreground mt-1">Files will be encrypted on submission</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <div className="space-y-6">
+            {/* Status Section */}
+            <Card className="shadow-none border-muted-foreground/20 bg-muted/20">
+              <CardHeader className="pb-3 border-b border-muted">
+                <CardTitle className="flex items-center gap-2 text-md font-semibold">
+                  Request Status
+                  <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4 space-y-4">
+                <Select
+                  defaultValue="published"
+                  onValueChange={(val: any) => setValue('status', val)}
+                >
+                  <SelectTrigger className="w-full h-11">
+                    <SelectValue placeholder={initialData?.status || "published"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="published">
+                      Immediate Broadcast
+                    </SelectItem>
+                    <SelectItem value="draft">Save as Draft</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  "Broadcasting" sends your request to verified sellers instantly. Sellers can then bid with price and availability.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-none border-muted-foreground/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-md font-semibold">Submission Guidelines</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-xs text-muted-foreground">
+                <div className="flex items-start gap-2">
+                   <div className="size-1.5 rounded-full bg-primary mt-1 shrink-0" />
+                   <p>Clear VIN plate photos help sellers identify OEM parts accurately.</p>
+                </div>
+                <div className="flex items-start gap-2">
+                   <div className="size-1.5 rounded-full bg-primary mt-1 shrink-0" />
+                   <p>Specify the condition (New/Used/Genunine) in the detailed description.</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-    );
+
+        <div className="flex justify-end gap-3 pt-6 border-t border-muted">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onCancel}
+            className="text-muted-foreground font-medium"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            className="px-8 shadow-md font-semibold"
+            disabled={isUploading || createRequest.isPending || updateRequest.isPending}
+          >
+            {(isUploading || createRequest.isPending || updateRequest.isPending) ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isUploading ? `Uploading ${uploadProgress}%` : 'Synchronizing...'}
+              </>
+            ) : isEditing ? 'Update Request' : 'Broadcast Request'}
+          </Button>
+        </div>
+      </form>
+    </div>
+  )
 }
+

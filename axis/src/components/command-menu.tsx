@@ -1,4 +1,4 @@
-import { type Icon, IconSearch } from "@tabler/icons-react";
+import {  IconSearch } from "@tabler/icons-react";
 import { useNavigate } from "@tanstack/react-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -9,6 +9,7 @@ import {
 	CommandItem,
 	CommandList,
 } from "./ui/command";
+import type {Icon} from "@tabler/icons-react";
 
 // Icon components
 const SearchIcon = () => <IconSearch size={16} />;
@@ -45,7 +46,7 @@ interface CommandMenuItem {
 }
 
 interface CommandMenuProps {
-	items?: CommandMenuItem[];
+	items?: Array<CommandMenuItem>;
 	trigger: React.ReactNode;
 }
 
@@ -160,7 +161,7 @@ export function CommandMenu({ items = [], trigger }: CommandMenuProps) {
 }
 
 interface HomeCommandsProps {
-	items: CommandMenuItem[];
+	items: Array<CommandMenuItem>;
 	onNavigate: (url: string) => void;
 }
 

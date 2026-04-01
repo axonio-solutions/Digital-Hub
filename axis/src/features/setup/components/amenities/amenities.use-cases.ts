@@ -1,5 +1,5 @@
-import type { CafeAmenities } from "../information/informations.validation";
 import { updateAmenities } from "./amenities.data-access";
+import type { CafeAmenities } from "../information/informations.validation";
 
 export const updateAmenitiesUseCase = async (
 	amenities: CafeAmenities,

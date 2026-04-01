@@ -1,5 +1,5 @@
-import { fetchCafeInformationFn, fetchSpaceSettingsFn } from "@/fn/cafe";
 import { queryOptions } from "@tanstack/react-query";
+import { fetchCafeInformationFn, fetchSpaceSettingsFn } from "@/fn/cafe";
 
 export const cafesQueries = {
 	all: ["cafe"],

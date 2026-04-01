@@ -1,10 +1,10 @@
-import { cn } from "@/lib/utils";
 import { BarChart3, Trophy, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { ReactNode } from "react";
 import { ChartPieIcon } from "../animated-icons/chart-pie";
 import { RocketIcon } from "../animated-icons/rocket";
 import { SparklesIcon } from "../animated-icons/sparkles";
+import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 const aboutData = [
 	{

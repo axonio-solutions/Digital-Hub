@@ -1,3 +1,4 @@
+import { useCompleteRegistration } from "../../hooks/use-complete-registration";
 import { Icons } from "@/components/icons";
 import { PhoneInput } from "@/components/inputs/phone-input";
 import { RadioCards } from "@/components/radio-cards";
@@ -10,7 +11,6 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { useCompleteRegistration } from "../../hooks/use-complete-registration";
 
 export default function CompleteRegistrationForm() {
 	const { form, isPending, onSubmit } = useCompleteRegistration();

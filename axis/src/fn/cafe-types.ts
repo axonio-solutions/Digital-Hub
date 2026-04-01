@@ -1,7 +1,7 @@
 // cafe-types.server.ts
+import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/features/auth/guards/auth";
 import { getCafeTypesUseCase } from "@/features/setup/components/cafe-type-selector/cafe-types.use-cases";
-import { createServerFn } from "@tanstack/react-start";
 
 export const fetchCafeTypesFn = createServerFn({
   method: "GET",

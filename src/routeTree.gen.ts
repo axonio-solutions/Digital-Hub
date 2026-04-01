@@ -11,11 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ExploreIndexRouteImport } from './routes/explore/index'
+import { Route as AuthedWaitlistRouteImport } from './routes/_authed/waitlist'
+import { Route as AuthedOnboardingRouteImport } from './routes/_authed/onboarding'
 import { Route as AuthedCompleteRegistrationRouteImport } from './routes/_authed/complete-registration'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthedDashboardRouteRouteImport } from './routes/_authed/dashboard/route'
 import { Route as AuthedDashboardIndexRouteImport } from './routes/_authed/dashboard/index'
+import { Route as ApiNotificationsStreamRouteImport } from './routes/api/notifications.stream'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AuthedDashboardAdminRouteRouteImport } from './routes/_authed/dashboard/admin/route'
 import { Route as AuthedDashboardUsersIndexRouteImport } from './routes/_authed/dashboard/users/index'
 import { Route as AuthedDashboardRequestsIndexRouteImport } from './routes/_authed/dashboard/requests/index'
 import { Route as AuthedDashboardQuotesIndexRouteImport } from './routes/_authed/dashboard/quotes/index'
@@ -25,7 +30,9 @@ import { Route as AuthedDashboardMarketplaceIndexRouteImport } from './routes/_a
 import { Route as AuthedDashboardHistoryIndexRouteImport } from './routes/_authed/dashboard/history/index'
 import { Route as AuthedDashboardGarageIndexRouteImport } from './routes/_authed/dashboard/garage/index'
 import { Route as AuthedDashboardAuditIndexRouteImport } from './routes/_authed/dashboard/audit/index'
+import { Route as AuthedDashboardRequestsRequestIdRouteImport } from './routes/_authed/dashboard/requests/$requestId'
 import { Route as AuthedDashboardAdminSellersRouteImport } from './routes/_authed/dashboard/admin/sellers'
+import { Route as AuthedDashboardAdminCategoriesRouteImport } from './routes/_authed/dashboard/admin/categories'
 import { Route as AuthedDashboardAdminBuyersRouteImport } from './routes/_authed/dashboard/admin/buyers'
 
 const AuthedRoute = AuthedRouteImport.update({
@@ -36,6 +43,21 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreIndexRoute = ExploreIndexRouteImport.update({
+  id: '/explore/',
+  path: '/explore/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthedWaitlistRoute = AuthedWaitlistRouteImport.update({
+  id: '/waitlist',
+  path: '/waitlist',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedOnboardingRoute = AuthedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthedRoute,
 } as any)
 const AuthedCompleteRegistrationRoute =
   AuthedCompleteRegistrationRouteImport.update({
@@ -58,11 +80,22 @@ const AuthedDashboardIndexRoute = AuthedDashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthedDashboardRouteRoute,
 } as any)
+const ApiNotificationsStreamRoute = ApiNotificationsStreamRouteImport.update({
+  id: '/api/notifications/stream',
+  path: '/api/notifications/stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedDashboardAdminRouteRoute =
+  AuthedDashboardAdminRouteRouteImport.update({
+    id: '/admin',
+    path: '/admin',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
 const AuthedDashboardUsersIndexRoute =
   AuthedDashboardUsersIndexRouteImport.update({
     id: '/users/',
@@ -117,17 +150,29 @@ const AuthedDashboardAuditIndexRoute =
     path: '/audit/',
     getParentRoute: () => AuthedDashboardRouteRoute,
   } as any)
+const AuthedDashboardRequestsRequestIdRoute =
+  AuthedDashboardRequestsRequestIdRouteImport.update({
+    id: '/requests/$requestId',
+    path: '/requests/$requestId',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
 const AuthedDashboardAdminSellersRoute =
   AuthedDashboardAdminSellersRouteImport.update({
-    id: '/admin/sellers',
-    path: '/admin/sellers',
-    getParentRoute: () => AuthedDashboardRouteRoute,
+    id: '/sellers',
+    path: '/sellers',
+    getParentRoute: () => AuthedDashboardAdminRouteRoute,
+  } as any)
+const AuthedDashboardAdminCategoriesRoute =
+  AuthedDashboardAdminCategoriesRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => AuthedDashboardAdminRouteRoute,
   } as any)
 const AuthedDashboardAdminBuyersRoute =
   AuthedDashboardAdminBuyersRouteImport.update({
-    id: '/admin/buyers',
-    path: '/admin/buyers',
-    getParentRoute: () => AuthedDashboardRouteRoute,
+    id: '/buyers',
+    path: '/buyers',
+    getParentRoute: () => AuthedDashboardAdminRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -135,10 +180,17 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthedDashboardRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/complete-registration': typeof AuthedCompleteRegistrationRoute
+  '/onboarding': typeof AuthedOnboardingRoute
+  '/waitlist': typeof AuthedWaitlistRoute
+  '/explore/': typeof ExploreIndexRoute
+  '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/notifications/stream': typeof ApiNotificationsStreamRoute
   '/dashboard/': typeof AuthedDashboardIndexRoute
   '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
+  '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
   '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
+  '/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
   '/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
   '/dashboard/garage/': typeof AuthedDashboardGarageIndexRoute
   '/dashboard/history/': typeof AuthedDashboardHistoryIndexRoute
@@ -153,10 +205,17 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/complete-registration': typeof AuthedCompleteRegistrationRoute
+  '/onboarding': typeof AuthedOnboardingRoute
+  '/waitlist': typeof AuthedWaitlistRoute
+  '/explore': typeof ExploreIndexRoute
+  '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/notifications/stream': typeof ApiNotificationsStreamRoute
   '/dashboard': typeof AuthedDashboardIndexRoute
   '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
+  '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
   '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
+  '/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
   '/dashboard/audit': typeof AuthedDashboardAuditIndexRoute
   '/dashboard/garage': typeof AuthedDashboardGarageIndexRoute
   '/dashboard/history': typeof AuthedDashboardHistoryIndexRoute
@@ -174,10 +233,17 @@ export interface FileRoutesById {
   '/_authed/dashboard': typeof AuthedDashboardRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_authed/complete-registration': typeof AuthedCompleteRegistrationRoute
+  '/_authed/onboarding': typeof AuthedOnboardingRoute
+  '/_authed/waitlist': typeof AuthedWaitlistRoute
+  '/explore/': typeof ExploreIndexRoute
+  '/_authed/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/notifications/stream': typeof ApiNotificationsStreamRoute
   '/_authed/dashboard/': typeof AuthedDashboardIndexRoute
   '/_authed/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
+  '/_authed/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
   '/_authed/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
+  '/_authed/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
   '/_authed/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
   '/_authed/dashboard/garage/': typeof AuthedDashboardGarageIndexRoute
   '/_authed/dashboard/history/': typeof AuthedDashboardHistoryIndexRoute
@@ -195,10 +261,17 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/complete-registration'
+    | '/onboarding'
+    | '/waitlist'
+    | '/explore/'
+    | '/dashboard/admin'
     | '/api/auth/$'
+    | '/api/notifications/stream'
     | '/dashboard/'
     | '/dashboard/admin/buyers'
+    | '/dashboard/admin/categories'
     | '/dashboard/admin/sellers'
+    | '/dashboard/requests/$requestId'
     | '/dashboard/audit/'
     | '/dashboard/garage/'
     | '/dashboard/history/'
@@ -213,10 +286,17 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/complete-registration'
+    | '/onboarding'
+    | '/waitlist'
+    | '/explore'
+    | '/dashboard/admin'
     | '/api/auth/$'
+    | '/api/notifications/stream'
     | '/dashboard'
     | '/dashboard/admin/buyers'
+    | '/dashboard/admin/categories'
     | '/dashboard/admin/sellers'
+    | '/dashboard/requests/$requestId'
     | '/dashboard/audit'
     | '/dashboard/garage'
     | '/dashboard/history'
@@ -233,10 +313,17 @@ export interface FileRouteTypes {
     | '/_authed/dashboard'
     | '/_auth/login'
     | '/_authed/complete-registration'
+    | '/_authed/onboarding'
+    | '/_authed/waitlist'
+    | '/explore/'
+    | '/_authed/dashboard/admin'
     | '/api/auth/$'
+    | '/api/notifications/stream'
     | '/_authed/dashboard/'
     | '/_authed/dashboard/admin/buyers'
+    | '/_authed/dashboard/admin/categories'
     | '/_authed/dashboard/admin/sellers'
+    | '/_authed/dashboard/requests/$requestId'
     | '/_authed/dashboard/audit/'
     | '/_authed/dashboard/garage/'
     | '/_authed/dashboard/history/'
@@ -252,7 +339,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthedRoute: typeof AuthedRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
+  ExploreIndexRoute: typeof ExploreIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiNotificationsStreamRoute: typeof ApiNotificationsStreamRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -270,6 +359,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/explore/': {
+      id: '/explore/'
+      path: '/explore'
+      fullPath: '/explore/'
+      preLoaderRoute: typeof ExploreIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authed/waitlist': {
+      id: '/_authed/waitlist'
+      path: '/waitlist'
+      fullPath: '/waitlist'
+      preLoaderRoute: typeof AuthedWaitlistRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/onboarding': {
+      id: '/_authed/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthedOnboardingRouteImport
+      parentRoute: typeof AuthedRoute
     }
     '/_authed/complete-registration': {
       id: '/_authed/complete-registration'
@@ -299,12 +409,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
     }
+    '/api/notifications/stream': {
+      id: '/api/notifications/stream'
+      path: '/api/notifications/stream'
+      fullPath: '/api/notifications/stream'
+      preLoaderRoute: typeof ApiNotificationsStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authed/dashboard/admin': {
+      id: '/_authed/dashboard/admin'
+      path: '/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof AuthedDashboardAdminRouteRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
     }
     '/_authed/dashboard/users/': {
       id: '/_authed/dashboard/users/'
@@ -369,27 +493,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardAuditIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
     }
+    '/_authed/dashboard/requests/$requestId': {
+      id: '/_authed/dashboard/requests/$requestId'
+      path: '/requests/$requestId'
+      fullPath: '/dashboard/requests/$requestId'
+      preLoaderRoute: typeof AuthedDashboardRequestsRequestIdRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
     '/_authed/dashboard/admin/sellers': {
       id: '/_authed/dashboard/admin/sellers'
-      path: '/admin/sellers'
+      path: '/sellers'
       fullPath: '/dashboard/admin/sellers'
       preLoaderRoute: typeof AuthedDashboardAdminSellersRouteImport
-      parentRoute: typeof AuthedDashboardRouteRoute
+      parentRoute: typeof AuthedDashboardAdminRouteRoute
+    }
+    '/_authed/dashboard/admin/categories': {
+      id: '/_authed/dashboard/admin/categories'
+      path: '/categories'
+      fullPath: '/dashboard/admin/categories'
+      preLoaderRoute: typeof AuthedDashboardAdminCategoriesRouteImport
+      parentRoute: typeof AuthedDashboardAdminRouteRoute
     }
     '/_authed/dashboard/admin/buyers': {
       id: '/_authed/dashboard/admin/buyers'
-      path: '/admin/buyers'
+      path: '/buyers'
       fullPath: '/dashboard/admin/buyers'
       preLoaderRoute: typeof AuthedDashboardAdminBuyersRouteImport
-      parentRoute: typeof AuthedDashboardRouteRoute
+      parentRoute: typeof AuthedDashboardAdminRouteRoute
     }
   }
 }
 
-interface AuthedDashboardRouteRouteChildren {
-  AuthedDashboardIndexRoute: typeof AuthedDashboardIndexRoute
+interface AuthedDashboardAdminRouteRouteChildren {
   AuthedDashboardAdminBuyersRoute: typeof AuthedDashboardAdminBuyersRoute
+  AuthedDashboardAdminCategoriesRoute: typeof AuthedDashboardAdminCategoriesRoute
   AuthedDashboardAdminSellersRoute: typeof AuthedDashboardAdminSellersRoute
+}
+
+const AuthedDashboardAdminRouteRouteChildren: AuthedDashboardAdminRouteRouteChildren =
+  {
+    AuthedDashboardAdminBuyersRoute: AuthedDashboardAdminBuyersRoute,
+    AuthedDashboardAdminCategoriesRoute: AuthedDashboardAdminCategoriesRoute,
+    AuthedDashboardAdminSellersRoute: AuthedDashboardAdminSellersRoute,
+  }
+
+const AuthedDashboardAdminRouteRouteWithChildren =
+  AuthedDashboardAdminRouteRoute._addFileChildren(
+    AuthedDashboardAdminRouteRouteChildren,
+  )
+
+interface AuthedDashboardRouteRouteChildren {
+  AuthedDashboardAdminRouteRoute: typeof AuthedDashboardAdminRouteRouteWithChildren
+  AuthedDashboardIndexRoute: typeof AuthedDashboardIndexRoute
+  AuthedDashboardRequestsRequestIdRoute: typeof AuthedDashboardRequestsRequestIdRoute
   AuthedDashboardAuditIndexRoute: typeof AuthedDashboardAuditIndexRoute
   AuthedDashboardGarageIndexRoute: typeof AuthedDashboardGarageIndexRoute
   AuthedDashboardHistoryIndexRoute: typeof AuthedDashboardHistoryIndexRoute
@@ -402,9 +558,9 @@ interface AuthedDashboardRouteRouteChildren {
 }
 
 const AuthedDashboardRouteRouteChildren: AuthedDashboardRouteRouteChildren = {
+  AuthedDashboardAdminRouteRoute: AuthedDashboardAdminRouteRouteWithChildren,
   AuthedDashboardIndexRoute: AuthedDashboardIndexRoute,
-  AuthedDashboardAdminBuyersRoute: AuthedDashboardAdminBuyersRoute,
-  AuthedDashboardAdminSellersRoute: AuthedDashboardAdminSellersRoute,
+  AuthedDashboardRequestsRequestIdRoute: AuthedDashboardRequestsRequestIdRoute,
   AuthedDashboardAuditIndexRoute: AuthedDashboardAuditIndexRoute,
   AuthedDashboardGarageIndexRoute: AuthedDashboardGarageIndexRoute,
   AuthedDashboardHistoryIndexRoute: AuthedDashboardHistoryIndexRoute,
@@ -422,11 +578,15 @@ const AuthedDashboardRouteRouteWithChildren =
 interface AuthedRouteChildren {
   AuthedDashboardRouteRoute: typeof AuthedDashboardRouteRouteWithChildren
   AuthedCompleteRegistrationRoute: typeof AuthedCompleteRegistrationRoute
+  AuthedOnboardingRoute: typeof AuthedOnboardingRoute
+  AuthedWaitlistRoute: typeof AuthedWaitlistRoute
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedDashboardRouteRoute: AuthedDashboardRouteRouteWithChildren,
   AuthedCompleteRegistrationRoute: AuthedCompleteRegistrationRoute,
+  AuthedOnboardingRoute: AuthedOnboardingRoute,
+  AuthedWaitlistRoute: AuthedWaitlistRoute,
 }
 
 const AuthedRouteWithChildren =
@@ -436,7 +596,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthedRoute: AuthedRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
+  ExploreIndexRoute: ExploreIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiNotificationsStreamRoute: ApiNotificationsStreamRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

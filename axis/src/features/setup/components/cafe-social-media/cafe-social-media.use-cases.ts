@@ -16,7 +16,7 @@ export const getCafeSocialMediaUseCase = async (cafeId: string) => {
 
 export const updateCafeSocialMediaUseCase = async (
 	cafeId: string,
-	entries: SocialMediaEntry[],
+	entries: Array<SocialMediaEntry>,
 ) => {
 	try {
 		const result = await updateCafeSocialMedia(cafeId, entries);

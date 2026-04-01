@@ -4,7 +4,7 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[]
+  | Array<Json>
 
 export type Database = {
   public: {
@@ -1021,33 +1021,33 @@ export type Database = {
       user_preferences: {
         Row: {
           additional_preferences: Json | null
-          atmosphere_preferences: string[] | null
+          atmosphere_preferences: Array<string> | null
           created_at: string | null
           id: string
           power_outlet_required: boolean | null
-          seating_preferences: string[] | null
+          seating_preferences: Array<string> | null
           updated_at: string | null
           user_id: string
           wifi_priority: boolean | null
         }
         Insert: {
           additional_preferences?: Json | null
-          atmosphere_preferences?: string[] | null
+          atmosphere_preferences?: Array<string> | null
           created_at?: string | null
           id?: string
           power_outlet_required?: boolean | null
-          seating_preferences?: string[] | null
+          seating_preferences?: Array<string> | null
           updated_at?: string | null
           user_id: string
           wifi_priority?: boolean | null
         }
         Update: {
           additional_preferences?: Json | null
-          atmosphere_preferences?: string[] | null
+          atmosphere_preferences?: Array<string> | null
           created_at?: string | null
           id?: string
           power_outlet_required?: boolean | null
-          seating_preferences?: string[] | null
+          seating_preferences?: Array<string> | null
           updated_at?: string | null
           user_id?: string
           wifi_priority?: boolean | null
@@ -1493,11 +1493,11 @@ export type Database = {
       }
       get_areas_with_tables: {
         Args: Record<PropertyKey, never>
-        Returns: {
+        Returns: Array<{
           area_id: string
           area_name: string
           table_count: number
-        }[]
+        }>
       }
       reservation_period: {
         Args: {

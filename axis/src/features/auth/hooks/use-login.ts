@@ -1,16 +1,17 @@
-import { loginFn } from "@/fn/auth";
-import { useMutation } from "@/hooks/use-mutation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { AUTH_ROUTES } from "../constants/config";
 import { createValidationSchemas } from "../validation";
+import type {SubmitHandler} from "react-hook-form";
 import type {
 	EmailLoginFormData,
 	PhoneLoginFormData,
 } from "../validation/types";
+import { useMutation } from "@/hooks/use-mutation";
+import { loginFn } from "@/fn/auth";
 
 interface UseLoginOptions {
 	onOTPSent?: () => void;

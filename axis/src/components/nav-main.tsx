@@ -1,26 +1,27 @@
-import type { Icon } from "@tabler/icons-react";
 
+import { createLink } from "@tanstack/react-router";
+import type { Icon } from "@tabler/icons-react";
+import type { VariantProps } from "class-variance-authority";
+import type { TooltipContent } from "./ui/tooltip";
+import type {sidebarMenuButtonVariants} from "@/components/ui/sidebar";
 import {
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	type sidebarMenuButtonVariants,
-	useSidebar,
+	
+	useSidebar
 } from "@/components/ui/sidebar";
-import { createLink } from "@tanstack/react-router";
-import type { VariantProps } from "class-variance-authority";
-import type { TooltipContent } from "./ui/tooltip";
 
 export function NavMain({
 		items,
 	}: {
-		items: {
+		items: Array<{
 			title: string;
 			url: string;
 			icon?: Icon;
-		}[];
+		}>;
 		isCafeOwner?: boolean;
 	}) {
 		const CustomSidebarMenuButton = (

@@ -1,28 +1,27 @@
-import { StartClient } from "@tanstack/react-start/client";
+import { StartClient } from '@tanstack/react-start/client'
 
-import { hydrateRoot } from "react-dom/client";
-import { StrictMode } from "react";
-import { createRouter } from "./router";
+import { hydrateRoot } from 'react-dom/client'
+import { StrictMode } from 'react'
+import { createRouter } from './router'
 
-console.log("src/client.tsx: Starting hydration...");
+console.log('src/client.tsx: Starting hydration...')
 
-window.addEventListener("error", (event) => {
-  console.error("GLOBAL CLIENT ERROR:", event.error);
-});
+window.addEventListener('error', (event) => {
+  console.error('GLOBAL CLIENT ERROR:', event.error)
+})
 
-window.addEventListener("unhandledrejection", (event) => {
-  console.error("UNHANDLED REJECTION:", event.reason);
-});
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('UNHANDLED REJECTION:', event.reason)
+})
 
-const router = createRouter();
+const router = createRouter()
 
-  hydrateRoot(
-    document,
-    <StrictMode>
-      {/* @ts-ignore */}
-      <StartClient router={router} />
-    </StrictMode>,
-  );
+hydrateRoot(
+  document,
+  <StrictMode>
+    {/* @ts-ignore */}
+    <StartClient router={router} />
+  </StrictMode>,
+)
 
-console.log("src/client.tsx: Hydration call completed.");
-
+console.log('src/client.tsx: Hydration call completed.')

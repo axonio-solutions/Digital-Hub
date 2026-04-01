@@ -2,6 +2,10 @@ import * as React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { IconAlertCircle } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { packagesQueries } from "../../packages-queries";
+import type { PackageWithItems } from "../../packages.types";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,10 +19,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { deletePackageFn } from "@/fn/packages";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { packagesQueries } from "../../packages-queries";
-import type { PackageWithItems } from "../../packages.types";
 
 interface DeletePackageDialogProps {
 	packageData: Pick<PackageWithItems, "id" | "name">;
@@ -43,7 +43,7 @@ export function DeletePackageDialog({
 		mutationFn: (packageId: string) => deletePackageFn({ data: packageId }),
 		onMutate: async (packageId) => {
 			await queryClient.cancelQueries(packagesQueries.list());
-			const previousPackages = queryClient.getQueryData<PackageWithItems[]>(
+			const previousPackages = queryClient.getQueryData<Array<PackageWithItems>>(
 				packagesQueries.list().queryKey,
 			);
 			queryClient.setQueryData(packagesQueries.list().queryKey, (old = []) => {

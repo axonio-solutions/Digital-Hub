@@ -1,0 +1,610 @@
+import { createFileRoute, useRouter, redirect } from '@tanstack/react-router'
+import { useState } from 'react'
+import {
+  Briefcase,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  User,
+  MapPin,
+  Phone,
+  Store,
+} from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { cn } from '@/lib/utils'
+import { WILAYAS } from '@/lib/constants/wilayas'
+import { getTaxonomyServerFn } from '@/fn/admin'
+import { useQuery } from '@tanstack/react-query'
+import { completeOnboardingFn } from '@/fn/onboarding'
+import { authQueries } from '@/features/auth/queries/auth-queries'
+import { AvatarUpload } from '@/features/upload/components/avatar-upload'
+
+export const Route = createFileRoute('/_authed/onboarding')({
+  beforeLoad: async ({ context }) => {
+    const { user } = context
+    const isPending = user?.account_status !== 'active'
+    
+    // If user is already fully onboarded, do not let them access the onboarding page again.
+    if (!isPending) {
+      throw redirect({
+        to: '/dashboard',
+      })
+    }
+  },
+  component: OnboardingFlow,
+})
+
+const steps = [
+  { id: 1, title: 'Role', description: 'Choose your account type' },
+  { id: 2, title: 'Profile', description: 'Upload your photo' },
+  { id: 3, title: 'Contact', description: 'How can we reach you?' },
+  { id: 4, title: 'Location', description: 'Where are you based?' },
+  { id: 5, title: 'Specialties', description: 'What do you sell?' },
+]
+
+function OnboardingFlow() {
+  const [currentStep, setCurrentStep] = useState(1)
+  const router = useRouter()
+  const queryClient = useQueryClient()
+  const { user } = Route.useRouteContext()
+
+  const [formData, setFormData] = useState({
+    role: (user?.role as 'buyer' | 'seller' | '') || '',
+    name: user?.name || '',
+    email: user?.email || '',
+    phoneNumber: user?.phoneNumber || '',
+    whatsappNumber: user?.whatsappNumber || '',
+    storeName: user?.storeName || '',
+    wilaya: user?.wilaya || '',
+    city: user?.city || '',
+    address: user?.address || '',
+    companyAddress: user?.companyAddress || '',
+    commercialRegister: user?.commercialRegister || '',
+    image: user?.image || '',
+    brandIds: [] as string[],
+    categoryIds: [] as string[],
+  })
+
+  const { mutate: completeOnboarding, isPending } = useMutation({
+    mutationFn: async () => {
+      return await completeOnboardingFn({
+        data: {
+          ...formData,
+          role: formData.role,
+        },
+      })
+    },
+    onSuccess: async () => {
+      toast.success('Onboarding complete!')
+      await queryClient.refetchQueries({
+        queryKey: authQueries.user().queryKey,
+      })
+      await router.invalidate()
+      
+      if (formData.role === 'buyer') {
+        window.location.href = '/dashboard'
+      } else {
+        window.location.href = '/waitlist'
+      }
+    },
+    onError: (err: any) => {
+      toast.error('Error saving profile', { description: err.message })
+    },
+  })
+
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 1:
+        return formData.role === 'buyer' || formData.role === 'seller'
+      case 2:
+        return true // Profile pic is optional
+      case 3:
+        return (
+          formData.name.length >= 2 &&
+          formData.email.includes('@') &&
+          formData.phoneNumber.length >= 8 &&
+          formData.whatsappNumber.length >= 8
+        )
+      case 4:
+        const baseValid =
+          formData.wilaya.length > 0 &&
+          formData.city.length > 0 &&
+          formData.address.length > 0
+        if (formData.role === 'seller') {
+          return baseValid && formData.storeName.length >= 2
+        }
+        return baseValid
+      default:
+        return true
+    }
+  }
+
+  const handleNext = () => {
+    const valid = isStepValid()
+    if (!valid) {
+      toast.error('Please fill all required fields correctly')
+      return
+    }
+
+    if (currentStep === 4) {
+      if (formData.role === 'buyer') {
+        completeOnboarding()
+      } else {
+        setCurrentStep(5)
+      }
+    } else if (currentStep === 5) {
+      completeOnboarding()
+    } else if (currentStep < 5) {
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1)
+    }
+  }
+
+  const stepValid = isStepValid()
+
+  const updateFormData = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-4">
+            <CardHeader className="px-0 pt-0">
+              <CardTitle className="text-xl font-bold">Choose your journey</CardTitle>
+              <CardDescription className="text-sm">
+                Are you looking to buy spare parts or sell them on the MLILA marketplace?
+              </CardDescription>
+            </CardHeader>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <AccountTypeCard
+                selected={formData.role === 'buyer'}
+                onClick={() => updateFormData('role', 'buyer')}
+                icon={<User className="h-6 w-6 text-purple-600" />}
+                title="Buyer Account"
+                description="Browse thousands of spare parts, request quotes, and manage your vehicle fleet."
+              />
+              <AccountTypeCard
+                selected={formData.role === 'seller'}
+                onClick={() => updateFormData('role', 'seller')}
+                icon={<Briefcase className="h-6 w-6 text-purple-600" />}
+                title="Seller Account"
+                description="List your inventory, receive quote requests, and grow your automotive business."
+              />
+            </div>
+          </div>
+        )
+
+      case 2:
+        return (
+          <div className="space-y-4">
+            <CardHeader className="px-0 pt-0">
+              <CardTitle className="text-xl font-bold">Profile Picture</CardTitle>
+              <CardDescription className="text-sm">
+                Adding a photo helps build trust within the marketplace.
+              </CardDescription>
+            </CardHeader>
+            <div className="flex items-center gap-6 pb-2 invisible h-0 overflow-hidden">
+              {/* Avatar upload removed to avoid duplication with parent section */}
+            </div>
+            <div className="flex flex-col items-center justify-center space-y-6 py-10">
+              <AvatarUpload
+                userId={user?.id || ''}
+                currentImage={formData.image}
+                name={formData.name}
+                onUploadComplete={(url) => updateFormData('image', url)}
+              />
+              <p className="text-sm text-muted-foreground text-center max-w-xs">
+                Upload a clear photo of yourself or your store logo to build trust with other users.
+              </p>
+            </div>
+          </div>
+        )
+
+      case 3:
+        return (
+          <div className="space-y-4">
+            <CardHeader className="px-0 pt-0">
+              <CardTitle className="text-xl font-bold">Contact Person</CardTitle>
+              <CardDescription className="text-sm">
+                Your primary contact information for coordination.
+              </CardDescription>
+            </CardHeader>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name *</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="name"
+                    className="pl-9"
+                    placeholder="Ahmed Kerroum"
+                    value={formData.name}
+                    onChange={(e) => updateFormData('name', e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="contact@mlila.dz"
+                  value={formData.email}
+                  onChange={(e) => updateFormData('email', e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber">Phone Number *</Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="phoneNumber"
+                    className="pl-9"
+                    placeholder="05xx xx xx xx"
+                    value={formData.phoneNumber}
+                    onChange={(e) => updateFormData('phoneNumber', e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="whatsappNumber">WhatsApp Number *</Label>
+                <Input
+                  id="whatsappNumber"
+                  placeholder="05xx xx xx xx"
+                  value={formData.whatsappNumber}
+                  onChange={(e) => updateFormData('whatsappNumber', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        )
+
+      case 4:
+        return (
+          <div className="space-y-4">
+            <CardHeader className="px-0 pt-0">
+              <CardTitle className="text-xl font-bold">
+                {formData.role === 'buyer' ? 'Personal Information' : 'Store Details'}
+              </CardTitle>
+              <CardDescription className="text-sm">
+                {formData.role === 'buyer'
+                  ? 'Tell us where you are located to find parts near you.'
+                  : 'Establish your business presence on the marketplace.'}
+              </CardDescription>
+            </CardHeader>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {formData.role === 'seller' && (
+                <div className="space-y-2">
+                  <Label htmlFor="storeName">Official Store Name *</Label>
+                  <div className="relative">
+                    <Store className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="storeName"
+                      className="pl-9"
+                      placeholder="Grand Auto Parts"
+                      value={formData.storeName}
+                      onChange={(e) => updateFormData('storeName', e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="wilaya">Wilaya *</Label>
+                <Select
+                  value={formData.wilaya}
+                  onValueChange={(v) => updateFormData('wilaya', v)}
+                >
+                  <SelectTrigger id="wilaya">
+                    <SelectValue placeholder="Select wilaya" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {WILAYAS.map((w) => (
+                      <SelectItem key={w.id} value={w.name}>
+                        {w.id} - {w.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="city">City *</Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="city"
+                    className="pl-9"
+                    placeholder="El Harrach"
+                    value={formData.city}
+                    onChange={(e) => updateFormData('city', e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">Full Address *</Label>
+                <Input
+                  id="address"
+                  placeholder="08 Rue des Martyrs..."
+                  value={formData.address}
+                  onChange={(e) => updateFormData('address', e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="companyAddress">Company/Home Address</Label>
+                <Input
+                  id="companyAddress"
+                  placeholder="Optional billing address"
+                  value={formData.companyAddress}
+                  onChange={(e) => updateFormData('companyAddress', e.target.value)}
+                />
+              </div>
+              {formData.role === 'seller' && (
+                <div className="space-y-2">
+                  <Label htmlFor="rcNumber">Commercial Register (optional)</Label>
+                  <Input
+                    id="rcNumber"
+                    placeholder="00B1234567"
+                    value={formData.commercialRegister}
+                    onChange={(e) => updateFormData('commercialRegister', e.target.value)}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        )
+
+      case 5:
+        return <SpecialtiesStep formData={formData} setFormData={setFormData} />
+
+      default:
+        return null
+    }
+  }
+
+  return (
+    <div className="flex min-h-svh items-center justify-center p-4 bg-muted/20">
+      <Card className="w-full max-w-5xl shadow-2xl border-none max-h-[min(90vh,700px)] flex flex-col overflow-hidden">
+        <CardHeader className="pb-4 border-b bg-white rounded-t-xl shrink-0">
+          <div className="flex items-center justify-between px-4">
+            {steps
+              .filter(s => s.id !== 5 || formData.role === 'seller')
+              .map((step, idx, arr) => (
+              <div key={step.id} className="relative flex flex-1 flex-col items-center">
+                <div
+                  className={cn(
+                    'flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 z-10',
+                    currentStep > step.id
+                      ? 'bg-purple-600 text-white shadow-md'
+                      : currentStep === step.id
+                        ? 'bg-purple-500 text-white shadow-lg ring-8 ring-purple-100'
+                        : 'bg-gray-100 text-gray-400',
+                  )}
+                >
+                  {currentStep > step.id ? <Check className="h-6 w-6" /> : step.id}
+                </div>
+                <div className={cn(
+                  'mt-4 text-center text-[10px] md:text-xs font-bold uppercase tracking-widest',
+                  currentStep >= step.id ? 'text-purple-700' : 'text-gray-400'
+                )}>
+                  {step.id === 4 && formData.role === 'buyer' ? 'Personal' : step.title}
+                </div>
+                {idx < arr.length - 1 && (
+                  <div className={cn(
+                    'absolute top-6 left-[calc(50%+24px)] h-1 w-[calc(100%-48px)] -translate-y-1/2 bg-gray-100 transition-colors duration-500',
+                    currentStep > step.id && 'bg-purple-400'
+                  )} />
+                )}
+              </div>
+            ))}
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-6 md:p-8 bg-white flex flex-col flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            {renderStepContent()}
+          </div>
+
+          <div className="mt-4 flex items-center justify-between pt-4 border-t border-gray-100/60 shrink-0">
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={currentStep === 1 || isPending}
+                className="h-11 px-6 border-2 hover:bg-gray-50 font-semibold"
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+
+              <Button
+                onClick={handleNext}
+                disabled={isPending || !stepValid}
+                className="bg-purple-600 hover:bg-purple-700 text-white min-w-40 h-11 text-base shadow-lg shadow-purple-600/20 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isPending ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <>
+                    {currentStep === 1 && !formData.role 
+                      ? 'Select a Role' 
+                      : currentStep === 4 && formData.role === 'buyer'
+                        ? 'Complete Setup'
+                        : currentStep === 5
+                          ? 'Complete Setup'
+                          : 'Continue'}
+                    <ChevronRight className="h-5 w-5 ml-2" />
+                  </>
+                )}
+              </Button>
+            </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function SpecialtiesStep({ formData, setFormData }: any) {
+  const { data: taxonomy, isLoading } = useQuery({
+    queryKey: ['taxonomy'],
+    queryFn: () => getTaxonomyServerFn(),
+  })
+
+  const toggleBrand = (id: string) => {
+    const current = formData.brandIds || []
+    if (current.includes(id)) {
+      setFormData((prev: any) => ({
+        ...prev,
+        brandIds: current.filter((i: string) => i !== id),
+      }))
+    } else {
+      setFormData((prev: any) => ({
+        ...prev,
+        brandIds: [...current, id],
+      }))
+    }
+  }
+
+  const toggleCategory = (id: string) => {
+    const current = formData.categoryIds || []
+    if (current.includes(id)) {
+      setFormData((prev: any) => ({
+        ...prev,
+        categoryIds: current.filter((i: string) => i !== id),
+      }))
+    } else {
+      setFormData((prev: any) => ({
+        ...prev,
+        categoryIds: [...current, id],
+      }))
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+        <p className="text-sm text-muted-foreground italic">Loading market specialties...</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      <CardHeader className="px-0 pt-0">
+        <CardTitle className="text-xl font-bold font-heading uppercase tracking-tight">Your Portfolio</CardTitle>
+        <CardDescription className="text-sm text-slate-500">
+          Select the vehicle brands and part categories you specialize in.
+        </CardDescription>
+      </CardHeader>
+
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Supported Vehicle Brands</Label>
+          <div className="flex flex-wrap gap-2">
+            {taxonomy?.data?.brands?.map((brand: any) => {
+              const active = formData.brandIds?.includes(brand.id)
+              return (
+                <Badge
+                  key={brand.id}
+                  variant={active ? 'default' : 'outline'}
+                  className={cn(
+                    'cursor-pointer h-8 px-4 border-2 transition-all',
+                    active
+                      ? 'bg-purple-600 border-purple-600 text-white shadow-md'
+                      : 'hover:border-purple-200 hover:bg-purple-50 text-slate-600',
+                  )}
+                  onClick={() => toggleBrand(brand.id)}
+                >
+                  {brand.brand}
+                </Badge>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Part Categories</Label>
+          <div className="flex flex-wrap gap-2">
+            {taxonomy?.data?.categories?.map((cat: any) => {
+              const active = formData.categoryIds?.includes(cat.id)
+              return (
+                <Badge
+                  key={cat.id}
+                  variant={active ? 'default' : 'outline'}
+                  className={cn(
+                    'cursor-pointer h-8 px-4 border-2 transition-all',
+                    active
+                      ? 'bg-purple-600 border-purple-600 text-white shadow-md'
+                      : 'hover:border-purple-200 hover:bg-purple-50 text-slate-600',
+                  )}
+                  onClick={() => toggleCategory(cat.id)}
+                >
+                  {cat.name}
+                </Badge>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AccountTypeCard({ selected, onClick, icon, title, description }: any) {
+  return (
+    <Card
+      className={cn(
+        'cursor-pointer transition-all duration-300 transform',
+        selected
+          ? 'bg-purple-50 border-purple-500 ring-2 ring-purple-500/20 shadow-lg -translate-y-1'
+          : 'border-border hover:border-purple-200 hover:shadow-md hover:-translate-y-0.5',
+      )}
+      onClick={onClick}
+    >
+      <CardContent className="flex flex-col items-center text-center space-y-3 p-5">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100 mb-1">
+          {icon}
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-foreground mb-1">{title}</h3>
+          <p className="text-muted-foreground text-[13px] leading-relaxed px-2">
+            {description}
+          </p>
+        </div>
+        <div className={cn(
+          "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
+          selected ? "border-purple-600 bg-purple-600" : "border-gray-200"
+        )}>
+          {selected && <Check className="h-3 w-3 text-white" />}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}

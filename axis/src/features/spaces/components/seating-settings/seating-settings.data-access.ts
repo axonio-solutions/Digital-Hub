@@ -1,6 +1,6 @@
+import type { BookingSettingsFormValues } from "./validation";
 import { db, eq } from "@/db";
 import { cafes } from "@/db/schema";
-import type { BookingSettingsFormValues } from "./validation";
 
 export const updateSeatingSettings = async (
 	cafeId: string,

@@ -7,6 +7,8 @@ import {
 	IconUserCircle,
 } from "@tabler/icons-react";
 
+import { Link, useRouter } from "@tanstack/react-router";
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
@@ -26,8 +28,6 @@ import {
 import { AUTH_ROUTES } from "@/features/auth/constants/config";
 import { useAuthSuspense } from "@/features/auth/hooks/use-auth";
 import { authClient } from "@/lib/auth-client";
-import { Link, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
 
 const getInitials = (name: string) => {
 	if (!name) return "";

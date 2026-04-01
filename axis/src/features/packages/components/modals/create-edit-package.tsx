@@ -1,6 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
+import { IconBox, IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createServerFn } from "@tanstack/react-start";
+import { getWebRequest } from "@tanstack/react-start/server";
+import { toast } from "sonner";
+import { packagesQueries } from "../../packages-queries";
+import { prepareCreatePackageData } from "../../packages.helpers";
+import { createPackageUseCase } from "../../packages.use-cases";
+import { packageFormSchema } from "../../packages.validation";
+import type {SubmitHandler} from "react-hook-form";
 
 import { Icons } from "@/components/icons";
 import NumberInputWithMinsPlusButtons from "@/components/inputs/number-input-with-mins-plus-buttons";
@@ -26,20 +36,11 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { auth } from "@/lib/auth";
-import { IconBox, IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createServerFn } from "@tanstack/react-start";
-import { getWebRequest } from "@tanstack/react-start/server";
-import { toast } from "sonner";
-import { packagesQueries } from "../../packages-queries";
-import { prepareCreatePackageData } from "../../packages.helpers";
 import type {
 	PackageFormValues,
 	PackageItem,
 	PackageWithItems,
 } from "../../packages.types";
-import { createPackageUseCase } from "../../packages.use-cases";
-import { packageFormSchema } from "../../packages.validation";
 
 export const createPackageFn = createServerFn({
 	method: "POST",
@@ -133,7 +134,7 @@ export function CreateEditPackageDialog({
 				createPackageFn({ data: updates }),
 			onMutate: async (newPackage) => {
 				await queryClient.cancelQueries(packagesQueries.list());
-				const previousPackages = queryClient.getQueryData<PackageWithItems[]>(
+				const previousPackages = queryClient.getQueryData<Array<PackageWithItems>>(
 					packagesQueries.list().queryKey,
 				);
 				queryClient.setQueryData(

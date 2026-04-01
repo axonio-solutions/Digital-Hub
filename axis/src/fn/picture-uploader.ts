@@ -1,9 +1,9 @@
 // picture-uploader.server.ts
 import { createServerFn } from "@tanstack/react-start";
+import { eq } from "drizzle-orm";
 import { authMiddleware } from "@/features/auth/guards/auth";
 import { db } from "@/db";
 import { cafes } from "@/db/schema/cafes-schema";
-import { eq } from "drizzle-orm";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 
 export const updateCafeBannerFn = createServerFn({

@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import {
 	IconBrandInstagram,
 	IconBrandLinkedin,
@@ -7,6 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { PlatformLogo } from "../../public/platform-logo";
+import { cn } from "@/lib/utils";
 
 const navigation = {
 	features: [

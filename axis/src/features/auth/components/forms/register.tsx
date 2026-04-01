@@ -1,3 +1,9 @@
+import { Link } from "@tanstack/react-router";
+import { useFormContext } from "react-hook-form";
+import { UI_CONFIG } from "../../constants/config";
+import { useRegistration } from "../../hooks/use-registration";
+import OAuthButtons from "../oauth-buttons";
+import type { RegistrationFormData } from "../../validation";
 import { Icons } from "@/components/icons";
 import { PasswordInputWithStrength } from "@/components/inputs/password-input-with-strength";
 import { PhoneInput } from "@/components/inputs/phone-input";
@@ -13,12 +19,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Link } from "@tanstack/react-router";
-import { useFormContext } from "react-hook-form";
-import { UI_CONFIG } from "../../constants/config";
-import { useRegistration } from "../../hooks/use-registration";
-import type { RegistrationFormData } from "../../validation";
-import OAuthButtons from "../oauth-buttons";
 
 export default function RegisterForm() {
 	const { isPending, onSubmit } = useRegistration();

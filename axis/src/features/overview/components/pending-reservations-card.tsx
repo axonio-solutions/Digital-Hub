@@ -1,15 +1,3 @@
-import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import {
 	IconCalendarTime,
 	IconCheck,
@@ -22,6 +10,18 @@ import {
 	IconX,
 } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
+import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface Reservation {
 	id: number;
@@ -38,7 +38,7 @@ interface Reservation {
 
 export function PendingReservationsCard() {
 	// Mock data for pending reservations - only showing pending ones
-	const pendingReservations: Reservation[] = [
+	const pendingReservations: Array<Reservation> = [
 		{
 			id: 101,
 			guestName: "أحمد محمد",

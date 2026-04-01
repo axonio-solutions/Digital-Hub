@@ -1,18 +1,18 @@
-import { db, eq } from "@/db";
-import { users } from "@/db/schema";
-import { AUTH_ROUTES } from "@/features/auth/constants/config";
-import { authMiddleware } from "@/features/auth/guards/auth";
+import { redirect } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { getWebRequest } from "@tanstack/react-start/server";
 import type {
 	CompleteRegistrationFormData,
 	ForgotPasswordFormData,
 	RegistrationFormData,
 	ResetPasswordFormData,
 } from "@/features/auth/validation";
-import { auth } from "@/lib/auth";
-import { redirect } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { getWebRequest } from "@tanstack/react-start/server";
 import type { SocialProvider } from "better-auth/social-providers";
+import { db, eq } from "@/db";
+import { users } from "@/db/schema";
+import { AUTH_ROUTES } from "@/features/auth/constants/config";
+import { authMiddleware } from "@/features/auth/guards/auth";
+import { auth } from "@/lib/auth";
 
 export const getUser = createServerFn().handler(async () => {
 	const request = getWebRequest();

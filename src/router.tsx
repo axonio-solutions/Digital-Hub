@@ -1,7 +1,7 @@
-import { createRouter as createTanstackRouter } from "@tanstack/react-router";
-import { routerWithQueryClient } from "@tanstack/react-router-with-query";
-import { QueryClient } from "@tanstack/react-query";
-import { routeTree } from "./routeTree.gen";
+import { createRouter as createTanstackRouter } from '@tanstack/react-router'
+import { routerWithQueryClient } from '@tanstack/react-router-with-query'
+import { QueryClient } from '@tanstack/react-query'
+import { routeTree } from './routeTree.gen'
 
 /**
  * Axis Layer 3: Router & Query Integration
@@ -15,27 +15,27 @@ export const createRouter = () => {
         staleTime: 1000 * 60 * 5, // 5 minutes
       },
     },
-  });
+  })
 
   const router = routerWithQueryClient(
     createTanstackRouter({
       routeTree,
-      defaultPreload: "intent",
+      defaultPreload: 'intent',
       context: { queryClient, user: null as any, session: null as any },
       scrollRestoration: true,
       // react-query will handle data fetching & caching
       defaultPreloadStaleTime: 0,
     }),
     queryClient,
-  );
+  )
 
-  return router;
-};
+  return router
+}
 
-export const getRouter = createRouter;
+export const getRouter = createRouter
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface Register {
-    router: ReturnType<typeof createRouter>;
+    router: ReturnType<typeof createRouter>
   }
 }

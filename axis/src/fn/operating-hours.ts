@@ -1,7 +1,7 @@
+import type { OperatingHoursData } from "@/features/setup/components/operating-hours/lib/types";
 import { auth } from "@/lib/auth";
 import { ServerError } from "@/lib/error";
 import { fetchCafeOperatingHours, updateHours } from "@/features/setup/components/operating-hours/lib/use-cases";
-import type { OperatingHoursData } from "@/features/setup/components/operating-hours/lib/types";
 
 /**
  * Fetches operating hours for the current cafe

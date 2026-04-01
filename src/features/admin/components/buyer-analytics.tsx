@@ -1,130 +1,315 @@
-import { useBuyerAnalytics } from "@/features/admin/hooks/use-analytics"
-import { AlgeriaMap } from "./algeria-map"
-import { Card, CardTitle } from "@/components/ui/card"
-import { Users, ShoppingBag, TrendingUp, ArrowUpRight, Map, Activity } from "lucide-react"
-import { cn } from "@/lib/utils"
+import {
+  ShoppingBag,
+  TrendingUp,
+  Timer,
+  Handshake,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { AlgeriaMap } from './algeria-map'
+import { useBuyerAnalytics } from '@/features/admin/hooks/use-analytics'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, CardAction } from '@/components/ui/card'
+import {
+  PieChart,
+  Pie,
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  BarChart,
+  Bar,
+  XAxis,
+  Cell,
+  LabelList,
+} from 'recharts'
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartStyle } from '@/components/ui/chart'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useMemo, useState } from 'react'
+
+const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6366f1']
 
 export function BuyerAnalytics() {
-    const { data: analytics, isLoading } = useBuyerAnalytics()
+  const { data: analytics, isLoading } = useBuyerAnalytics()
 
-    if (isLoading) {
-        return (
-            <div className="h-[60vh] flex flex-col items-center justify-center gap-4 animate-pulse">
-                <div className="size-16 rounded-3xl bg-blue-500/10 flex items-center justify-center">
-                    <ShoppingBag className="size-8 text-blue-500" />
-                </div>
-                <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Compiling Buyer Intel...</p>
-            </div>
-        )
-    }
+  const demandByOrigin = useMemo(() => {
+    return [...(analytics?.demandByOrigin || [])].sort((a, b) => a.count - b.count)
+  }, [analytics?.demandByOrigin])
 
-    const metrics = [
-        {
-            title: "Market Demand",
-            value: analytics?.metrics?.totalBuyers || 0,
-            sub: "Registered Nodes",
-            icon: Users,
-            color: "blue"
-        },
-        {
-            title: "Intent Volume",
-            value: analytics?.metrics?.totalRequests || 0,
-            sub: "Lifecycle Demands",
-            icon: ShoppingBag,
-            color: "indigo"
-        },
-        {
-            title: "Engagement Rate",
-            value: analytics?.metrics?.engagementRate || "0%",
-            sub: "Conversion Flow",
-            icon: TrendingUp,
-            color: "emerald"
-        }
-    ]
+  const totalOriginRequests = useMemo(() => {
+    return demandByOrigin.reduce((acc: number, curr: any) => acc + curr.count, 0)
+  }, [demandByOrigin])
 
-    return (
-        <div className="flex flex-col space-y-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="space-y-1">
-                    <h2 className="text-3xl font-black tracking-tight text-slate-900 uppercase italic">Buyer Intelligence</h2>
-                    <p className="text-muted-foreground font-medium">Detailed demand topography and consumer analytics.</p>
-                </div>
-                <div className="flex gap-3">
-                    <div className="px-5 py-2.5 bg-blue-600 rounded-2xl text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-200 flex items-center gap-2">
-                        <Activity className="size-3" /> Live Demands Feed
-                    </div>
-                </div>
-            </div>
+  const BASE_RADIUS = 70;
+  const SIZE_INCREMENT = 12;
 
-            <div className="grid gap-6 md:grid-cols-3">
-                {metrics.map((m) => (
-                    <div
-                        key={m.title}
-                        className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative overflow-hidden group"
-                    >
-                        <div className="relative z-10 flex flex-col gap-4">
-                            <div className={cn("size-12 rounded-xl flex items-center justify-center",
-                                m.color === 'blue' ? "bg-blue-50 text-blue-600 border border-blue-100" :
-                                    m.color === 'indigo' ? "bg-indigo-50 text-indigo-600 border border-indigo-100" :
-                                        "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                            )}>
-                                <m.icon className="size-6" />
-                            </div>
-                            <div>
-                                <h3 className="text-3xl font-black text-slate-900 tracking-tighter">{m.value}</h3>
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">{m.title}</p>
-                            </div>
-                            <div className="pt-2 flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-slate-500 px-2 py-0.5 bg-slate-100 rounded-full">{m.sub}</span>
-                                <ArrowUpRight className="size-3 text-blue-500" />
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+  const id = "brand-origin-chart"
 
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                <div className="lg:col-span-3">
-                    <AlgeriaMap
-                        data={analytics?.distribution || []}
-                        role="buyer"
-                        className="h-[600px]"
-                    />
-                </div>
+  const chartConfig = useMemo(() => {
+    const config: ChartConfig = {}
+    demandByOrigin.forEach((item, i) => {
+      config[`color-${i}`] = {
+        label: item.label,
+        color: CHART_COLORS[i % CHART_COLORS.length],
+      }
+    })
+    return config
+  }, [demandByOrigin])
 
-                <Card className="lg:col-span-2 border-slate-200 shadow-sm rounded-3xl bg-white overflow-hidden p-8 flex flex-col gap-6 relative">
-                    <div>
-                        <CardTitle className="text-2xl font-black tracking-tight mb-2 flex items-center gap-2 text-slate-900">
-                            <Map className="size-6 text-blue-600" /> Top Wilayas
-                        </CardTitle>
-                        <p className="text-muted-foreground text-sm font-medium leading-relaxed">Most active consumer regions ordered by registered node volume.</p>
-                    </div>
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
-                    <div className="flex-1 space-y-3 relative z-10">
-                        {analytics?.distribution?.sort((a: any, b: any) => b.count - a.count).slice(0, 6).map((item: any, idx: number) => (
-                            <div key={item.wilaya} className="flex items-center justify-between p-4 rounded-xl bg-slate-50/50 border border-slate-100 hover:bg-slate-100/50 transition-colors">
-                                <div className="flex items-center gap-4">
-                                    <span className="size-8 rounded-lg bg-white border border-slate-200 text-blue-600 flex items-center justify-center font-black text-xs shadow-sm">{idx + 1}</span>
-                                    <span className="font-extrabold tracking-tight uppercase text-[11px] text-slate-700">{item.wilaya}</span>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-lg font-black text-slate-900">{item.count}</span>
-                                    <div className="h-1.5 w-16 bg-slate-200 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-blue-600"
-                                            style={{ width: `${(item.count / analytics.distribution[0].count) * 100}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+  const activeData = useMemo(() => {
+    if (activeIndex === null || !analytics?.requestVolume) return null;
+    return analytics.requestVolume[activeIndex];
+  }, [activeIndex, analytics?.requestVolume]);
 
-                    <div className="p-4 rounded-2xl bg-blue-50 border border-blue-100 text-blue-700 text-[10px] font-bold leading-normal uppercase tracking-wider">
-                        Geographic data is synchronized hourly via regional telecom identifiers.
-                    </div>
-                </Card>
-            </div>
+  if (isLoading) {
+    return <BuyerAnalyticsSkeleton />;
+  }
+
+  return (
+    <div className="flex flex-col gap-8 max-w-[1600px] mx-auto w-full pb-20 pt-4 animate-in fade-in duration-700">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-6 md:px-10">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white uppercase leading-none">
+            Buyer Intelligence
+          </h2>
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Real-Time Demand Analytics & Market Forecasting</span>
+            <span className="h-[1px] w-8 bg-slate-200 dark:bg-slate-800" />
+          </div>
         </div>
-    )
+
+        <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-5 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+          <div className="size-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
+          <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider leading-none">
+            {analytics?.metrics?.totalRequests || 0} Inquiries Tracked
+          </span>
+        </div>
+      </div>
+
+      {/* Stats Overview - Premium Section Cards Style */}
+      <div className="grid grid-cols-1 gap-4 px-6 md:px-10 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs sm:grid-cols-2 lg:grid-cols-4">
+        {/* Avg Offers */}
+        <Card className="@container/card">
+          <CardHeader>
+            <CardDescription>Avg Offers</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-blue-600 dark:text-blue-500">
+              {analytics?.metrics?.avgOffersPerRequest || '0'}
+            </CardTitle>
+          </CardHeader>
+          <CardFooter className="flex-col items-start gap-1.5 text-sm">
+            <div className="line-clamp-1 flex gap-2 font-medium">
+              Market Liquidity
+            </div>
+            <div className="text-muted-foreground">Average offers per inquiry</div>
+          </CardFooter>
+        </Card>
+
+        {/* Conversion */}
+        <Card className="@container/card">
+          <CardHeader>
+            <CardDescription>Conversion Rate</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-emerald-600 dark:text-emerald-500">
+              {analytics?.metrics?.conversionRate || '0%'}
+            </CardTitle>
+          </CardHeader>
+          <CardFooter className="flex-col items-start gap-1.5 text-sm">
+            <div className="line-clamp-1 flex gap-2 font-medium">
+              Fulfillment Success
+            </div>
+            <div className="text-muted-foreground">Requests with matched quotes</div>
+          </CardFooter>
+        </Card>
+
+        {/* Response Time */}
+        <Card className="@container/card">
+          <CardHeader>
+            <CardDescription>Response Time</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-orange-600 dark:text-orange-500">
+              {analytics?.metrics?.avgResponseTime || '0m'}
+            </CardTitle>
+          </CardHeader>
+          <CardFooter className="flex-col items-start gap-1.5 text-sm">
+            <div className="line-clamp-1 flex gap-2 font-medium">
+              Market Velocity
+            </div>
+            <div className="text-muted-foreground">Average speed to first quote</div>
+          </CardFooter>
+        </Card>
+
+        {/* Buyer Pool */}
+        <Card className="@container/card">
+          <CardHeader>
+            <CardDescription>Buyer Pool</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-purple-600 dark:text-purple-500">
+              {analytics?.metrics?.totalBuyers?.toLocaleString() || '0'}
+            </CardTitle>
+          </CardHeader>
+          <CardFooter className="flex-col items-start gap-1.5 text-sm">
+            <div className="line-clamp-1 flex gap-2 font-medium">
+              Network Scale
+            </div>
+            <div className="text-muted-foreground">Verified platform buyers</div>
+          </CardFooter>
+        </Card>
+      </div>
+
+      {/* Analytical Insights */}
+      <div className="grid grid-cols-12 gap-8 px-6 md:px-10">
+        <Card className="col-span-12 md:col-span-6 bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col group transition-all duration-300 hover:shadow-md overflow-hidden">
+          <CardHeader className="items-center pb-0">
+            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-primary/30 underline-offset-8">Demand Velocity</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 pb-0 px-2">
+            <ChartContainer
+              config={{
+                count: { label: "Requests", color: "hsl(var(--primary))" }
+              }}
+              className="mx-auto aspect-square max-h-[350px] w-full"
+            >
+              <RadarChart
+                data={analytics?.demandByCategory || []}
+                margin={{ top: 10, right: 20, bottom: 10, left: 20 }}
+                cx="50%"
+                cy="50%"
+                outerRadius="75%"
+              >
+                <defs>
+                  <linearGradient id="radar-gradient-buyer" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <PolarGrid className="fill-slate-100/50 dark:fill-slate-800/50" />
+                <PolarAngleAxis
+                  dataKey="label"
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontWeight: "bold" }}
+                />
+                <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
+                <Radar
+                   name="Demand"
+                   dataKey="count"
+                   stroke="#3b82f6"
+                   strokeWidth={2}
+                   fill="url(#radar-gradient-buyer)"
+                   fillOpacity={1}
+                />
+              </RadarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-12 md:col-span-6 bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col group transition-all duration-300 hover:shadow-md overflow-hidden" id={id}>
+          <ChartStyle id={id} config={chartConfig} />
+          <CardHeader className="items-center pb-0">
+            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-primary/30 underline-offset-8">Brand Origin</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 pb-0 px-2">
+            <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[350px]">
+              <PieChart>
+                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel nameKey="label" />} />
+                {demandByOrigin.map((entry, index) => (
+                  <Pie
+                    key={`pie-${index}`}
+                    data={[entry]}
+                    nameKey="label"
+                    innerRadius={50}
+                    outerRadius={BASE_RADIUS + index * SIZE_INCREMENT}
+                    dataKey="count"
+                    cornerRadius={6}
+                    startAngle={(demandByOrigin.slice(0, index).reduce((sum, d) => sum + d.count, 0) / totalOriginRequests) * 360}
+                    endAngle={(demandByOrigin.slice(0, index + 1).reduce((sum, d) => sum + d.count, 0) / totalOriginRequests) * 360}
+                  >
+                    <Cell fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                    <LabelList dataKey="label" position="outside" offset={16} stroke="none" fontSize={10} fontWeight="bold" fill="currentColor" />
+                  </Pie>
+                ))}
+              </PieChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] shadow-sm flex flex-col group transition-all duration-300 hover:shadow-md overflow-hidden">
+          <CardHeader className="pb-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <CardTitle className="text-xl font-bold text-slate-900 dark:text-white uppercase leading-none">Request Velocity</CardTitle>
+                <CardDescription className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
+                  {activeData ? `${activeData.date}: ${activeData.count} Requests` : "30-Day Market Throughout"}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="flex-1 pb-6 px-10">
+            <ChartContainer config={{ count: { label: "Inquiries", color: "#3b82f6" } }} className="h-72 w-full mt-4">
+              <BarChart data={analytics?.requestVolume || []} onMouseLeave={() => setActiveIndex(null)} margin={{ left: 10, right: 10, top: 20, bottom: 0 }}>
+                <XAxis dataKey="date" tickLine={false} tickMargin={10} axisLine={false} className="text-[9px] font-bold text-slate-400 uppercase" />
+                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                <Bar dataKey="count" radius={4} fill="#3b82f6">
+                  {(analytics?.requestVolume || []).map((_, index) => (
+                    <Cell key={`cell-${index}`} fillOpacity={activeIndex === null ? 1 : activeIndex === index ? 1 : 0.2} onMouseEnter={() => setActiveIndex(index)} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="px-6 md:px-10">
+        <div className="bg-white dark:bg-slate-950/50 shadow-sm border border-slate-200 dark:border-slate-800 p-12 rounded-[2.5rem] relative overflow-hidden group">
+          <div className="flex justify-between items-start mb-12">
+            <div className="space-y-1">
+              <h3 className="font-bold text-2xl text-slate-900 dark:text-white uppercase leading-none">Buyer Network Distribution</h3>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Regional concentration mapped across Wilayas</p>
+            </div>
+          </div>
+          <div className="relative flex items-center justify-center bg-slate-50/5 dark:bg-slate-900/5 rounded-3xl overflow-hidden min-h-[650px]">
+             <AlgeriaMap data={analytics?.distribution || []} role="buyer" className="h-full w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function BuyerAnalyticsSkeleton() {
+  return (
+    <div className="flex flex-col gap-8 max-w-[1600px] mx-auto w-full pb-20 pt-4 animate-pulse">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-6 md:px-10">
+        <div className="space-y-2">
+          <Skeleton className="h-10 w-64 rounded-lg" />
+          <Skeleton className="h-4 w-96 rounded-lg" />
+        </div>
+        <Skeleton className="h-12 w-48 rounded-2xl" />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 px-6 md:px-10 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Card key={i} className="@container/card">
+            <CardHeader>
+              <Skeleton className="h-4 w-[100px]" />
+              <Skeleton className="h-8 w-[80px]" />
+            </CardHeader>
+            <CardFooter className="flex-col items-start gap-2">
+              <Skeleton className="h-4 w-[140px]" />
+              <Skeleton className="h-3 w-[180px]" />
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-12 gap-8 px-6 md:px-10">
+        <Skeleton className="col-span-12 md:col-span-6 h-[450px] rounded-[2rem]" />
+        <Skeleton className="col-span-12 md:col-span-6 h-[450px] rounded-[2rem]" />
+        <Skeleton className="col-span-12 h-[450px] rounded-[2rem]" />
+      </div>
+    </div>
+  );
 }

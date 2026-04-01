@@ -1,11 +1,11 @@
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import type { FilePondFile } from "filepond";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import { useState } from "react";
 import { FilePond, registerPlugin } from "react-filepond";
+import type { FilePondFile } from "filepond";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
 
@@ -18,7 +18,7 @@ interface PictureUploaderProps {
 }
 
 const PictureUploader = ({ initialPicture, type }: PictureUploaderProps) => {
-	const [files, setFiles] = useState<File[]>([]);
+	const [files, setFiles] = useState<Array<File>>([]);
 
 	// Mock upload handler
 	const handleUpload = (
@@ -65,7 +65,7 @@ const PictureUploader = ({ initialPicture, type }: PictureUploaderProps) => {
 			<div className="w-full sm:w-40 min-w-0">
 				<FilePond
 					files={files}
-					onupdatefiles={(fileItems: FilePondFile[]) => {
+					onupdatefiles={(fileItems: Array<FilePondFile>) => {
 						setFiles(fileItems.map((f: FilePondFile) => f.file as File));
 					}}
 					allowMultiple={false}

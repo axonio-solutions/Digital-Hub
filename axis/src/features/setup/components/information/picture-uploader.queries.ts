@@ -1,7 +1,7 @@
 // picture-uploader.queries.ts
-import { updateCafeBannerFn } from "@/fn/picture-uploader";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cafesQueries } from "./informations.queries";
+import { updateCafeBannerFn } from "@/fn/picture-uploader";
 
 export const useUpdateCafeBanner = () => {
   const queryClient = useQueryClient();

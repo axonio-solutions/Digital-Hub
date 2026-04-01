@@ -10,6 +10,18 @@ import {
 } from "@tabler/icons-react";
 import { useForm } from "react-hook-form";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { toast } from "sonner";
+import { cafeSocialMediaQueries } from "./cafe-social-media.queries";
+import { DEFAULT_SOCIAL_MEDIA_VALUES, SOCIAL_PLATFORMS } from "./constants";
+import {
+	
+	
+	
+	socialFormSchema
+} from "./validation";
+import type {SocialMediaEntry, SocialMediaFormData, SocialMediaPlatform} from "./validation";
 import { Icons as GlobalIcons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,17 +36,6 @@ import { TabsContent } from "@/components/ui/tabs";
 import Section from "@/features/spaces/components/section";
 import { updateCafeSocialMediaFn } from "@/fn/cafe-social-media";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
-import { toast } from "sonner";
-import { cafeSocialMediaQueries } from "./cafe-social-media.queries";
-import { DEFAULT_SOCIAL_MEDIA_VALUES, SOCIAL_PLATFORMS } from "./constants";
-import {
-	type SocialMediaEntry,
-	type SocialMediaFormData,
-	type SocialMediaPlatform,
-	socialFormSchema,
-} from "./validation";
 
 const Icons = {
 	IconBrandInstagram,
@@ -49,7 +50,7 @@ const Icons = {
 
 export const transformFormDataToEntries = (
 	formData: SocialMediaFormData,
-): SocialMediaEntry[] => {
+): Array<SocialMediaEntry> => {
 	return Object.entries(formData)
 		.filter(([_, handle]) => Boolean(handle?.trim()))
 		.map(([platform, handle], index) => {
