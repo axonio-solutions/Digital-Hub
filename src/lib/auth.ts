@@ -21,6 +21,8 @@ export const auth = betterAuth({
     provider: 'pg',
     usePlural: true,
   }),
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL,
   logger: {
     level: 'error',
   },
