@@ -6,6 +6,6 @@ import {
 import type { auth } from './auth'
 
 export const authClient = createAuthClient({
-  baseURL: import.meta.env.VITE_APP_URL || 'http://localhost:5173',
+  baseURL: import.meta.env.VITE_APP_URL || '',
   plugins: [customSessionClient<typeof auth>(), phoneNumberClient()],
 })
