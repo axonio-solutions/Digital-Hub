@@ -30,6 +30,7 @@ i18n
     detection: {
       order: ['path', 'cookie', 'localStorage', 'navigator'],
       lookupFromPathIndex: 0,
+      caches: ['cookie', 'localStorage'],
     },
   })
 
