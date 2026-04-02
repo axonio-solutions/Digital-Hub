@@ -19,6 +19,7 @@ import type { MyRouterContext } from '@/types/router'
 import { authQueries } from '@/features/auth/queries/auth-queries'
 import { Toaster } from '@/components/ui/sonner'
 import { useNotifications } from '@/features/notifications/hooks/use-notifications'
+import { ThemeProvider } from '@/components/theme-provider'
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ context }) => {
@@ -112,9 +113,29 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const storageKey = "mlila-ui-theme";
+                  const theme = localStorage.getItem(storageKey);
+                  const supportDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches === true;
+                  const addDark = theme === "dark" || (theme !== "light" && supportDarkMode);
+                  
+                  if (addDark) {
+                    document.documentElement.classList.add("dark");
+                  } else {
+                    document.documentElement.classList.remove("dark");
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body className="antialiased min-h-screen bg-background text-foreground">
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
         <Scripts />
       </body>
     </html>
