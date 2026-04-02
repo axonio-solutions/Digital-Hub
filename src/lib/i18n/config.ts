@@ -6,40 +6,14 @@ export const defaultNS = 'common'
 export const fallbackLng = 'en'
 export const languages = ['en', 'fr', 'ar']
 
+import enCommon from './locales/en.json'
+import frCommon from './locales/fr.json'
+import arCommon from './locales/ar.json'
+
 export const resources = {
-  en: {
-    common: {
-      welcome: 'Welcome to MLILA',
-      search: 'Search for parts...',
-      login: 'Login',
-      signup: 'Sign Up',
-      explore: 'Explore',
-      howItWorks: 'How it Works',
-      faq: 'FAQ',
-    },
-  },
-  fr: {
-    common: {
-      welcome: 'Bienvenue sur MLILA',
-      search: 'Rechercher des pièces...',
-      login: 'Connexion',
-      signup: "S'inscrire",
-      explore: 'Explorer',
-      howItWorks: 'Comment ça marche',
-      faq: 'FAQ',
-    },
-  },
-  ar: {
-    common: {
-      welcome: 'مرحبًا بك في مليلة',
-      search: 'ابحث عن قطع الغيار...',
-      login: 'تسجيل الدخول',
-      signup: 'إنشاء حساب',
-      explore: 'استكشاف',
-      howItWorks: 'كيف يعمل',
-      faq: 'الأسئلة الشائعة',
-    },
-  },
+  en: { common: enCommon },
+  fr: { common: frCommon },
+  ar: { common: arCommon },
 } as const
 
 i18n

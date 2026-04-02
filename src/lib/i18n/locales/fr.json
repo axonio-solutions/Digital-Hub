@@ -1,0 +1,31 @@
+{
+  "welcome": "Bienvenue sur MLILA Digital Hub",
+  "search": "Rechercher des pièces, des commandes ou de la documentation...",
+  "login": "Connexion",
+  "signup": "S'inscrire",
+  "explore": "Explorer le Marché",
+  "howItWorks": "Comment ça marche",
+  "faq": "Foire aux Questions",
+  "dashboard": {
+    "title": "Tableau de Bord",
+    "overview": "Aperçu",
+    "stats": "Statistiques",
+    "recentActivity": "Activité Récente"
+  },
+  "nav": {
+    "home": "Accueil",
+    "marketplace": "Marché",
+    "orders": "Commandes",
+    "billing": "Facturation",
+    "settings": "Paramètres",
+    "notifications": "Notifications"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer Nouveau",
+    "logout": "Déconnexion"
+  }
+}
