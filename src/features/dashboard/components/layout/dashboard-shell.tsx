@@ -93,6 +93,7 @@ function DynamicBreadcrumb() {
 }
 
 import { AppSidebar } from './app-sidebar'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 interface DashboardShellProps {
   children: React.ReactNode
@@ -133,6 +134,7 @@ export function DashboardShell({ children, sidebarContent }: DashboardShellProps
             </div>
           </div>
           <div className="flex items-center gap-2 md:gap-4">
+            <ThemeToggle />
             <NotificationDropdown
               notifications={notifications}
               unreadCount={unreadCount}

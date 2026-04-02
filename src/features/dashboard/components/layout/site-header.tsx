@@ -25,24 +25,25 @@ export function SiteHeader() {
     <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-white dark:bg-card px-4 lg:px-8 border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-300">
       <div className="flex w-full items-center gap-4">
         <SidebarTrigger className="-ml-1 size-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" />
-        
+
         <Separator
           orientation="vertical"
           className="mx-2 h-6 border-slate-200 dark:border-slate-800"
         />
-        
+
         {/* Search Bar (Placeholder for high-fidelity) */}
         <div className="hidden md:flex relative max-w-sm w-full group">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-          <Input 
-            placeholder="Search dashboard..." 
-            className="pl-10 h-10 w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl focus-visible:ring-primary focus-visible:border-primary/50 text-sm italic" 
+          <Input
+            placeholder="Search dashboard..."
+            className="pl-10 h-10 w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl focus-visible:ring-primary focus-visible:border-primary/50 text-sm italic"
           />
         </div>
 
         <div className="ml-auto flex items-center gap-3">
+          <ThemeToggle />
           {/* Notifications */}
-          <NotificationDropdown 
+          <NotificationDropdown
             notifications={notifications}
             unreadCount={unreadCount}
             onMarkRead={(id) => markAsRead(id)}
