@@ -66,7 +66,7 @@ export function UserDropdown() {
               {initials}
             </AvatarFallback>
           </Avatar>
-          <span className="absolute -bottom-0.5 -right-0.5 z-10 size-2.5 bg-green-500 rounded-full border-2 border-background" />
+          <span className="absolute -bottom-0.5 -end-0.5 z-10 size-2.5 bg-green-500 rounded-full border-2 border-background" />
         </button>
       </DropdownMenuTrigger>
 
