@@ -94,6 +94,7 @@ function DynamicBreadcrumb() {
 
 import { AppSidebar } from './app-sidebar'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LanguageToggle } from '@/components/language-toggle'
 
 interface DashboardShellProps {
   children: React.ReactNode
@@ -122,18 +123,19 @@ export function DashboardShell({ children, sidebarContent }: DashboardShellProps
       <SidebarInset className="bg-slate-50/50 dark:bg-slate-950/50 overflow-x-hidden min-h-svh">
         <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 px-4 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-14 backdrop-blur-md bg-white/70 dark:bg-slate-950/70 sticky top-0 z-30">
           <div className="flex items-center gap-2">
-            <SidebarTrigger className="-ml-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors scale-110 md:scale-100" />
-            <Separator orientation="vertical" className="mr-2 h-4 hidden md:block bg-slate-200 dark:bg-slate-800" />
+            <SidebarTrigger className="-ms-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors scale-110 md:scale-100" />
+            <Separator orientation="vertical" className="me-2 h-4 hidden md:block bg-slate-200 dark:bg-slate-800" />
             <div className="hidden md:block">
               <DynamicBreadcrumb />
             </div>
             {/* On mobile, show a simplified title or just the trigger */}
-            <div className="md:hidden flex items-center gap-2 ml-1">
+            <div className="md:hidden flex items-center gap-2 ms-1">
               <div className="size-2 rounded-full bg-primary animate-pulse" />
               <span className="text-sm font-bold tracking-tight uppercase">MLILA</span>
             </div>
           </div>
           <div className="flex items-center gap-2 md:gap-4">
+            <LanguageToggle />
             <ThemeToggle />
             <NotificationDropdown
               notifications={notifications}
@@ -144,7 +146,7 @@ export function DashboardShell({ children, sidebarContent }: DashboardShellProps
                 <button className="relative size-9 md:size-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-primary/30 transition-all group flex items-center justify-center shadow-sm">
                   <Bell className="size-4.5 md:size-5 text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 size-4 md:size-5 bg-primary text-[10px] font-bold text-white rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-lg animate-in fade-in zoom-in duration-300">
+                    <span className="absolute -top-1 -end-1 size-4 md:size-5 bg-primary text-[10px] font-bold text-white rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-lg animate-in fade-in zoom-in duration-300">
                       {unreadCount}
                     </span>
                   )}

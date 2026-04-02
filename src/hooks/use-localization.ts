@@ -10,7 +10,7 @@ export function useLocalization() {
 
   const currentLanguage = i18n.language
   const isRTL = useMemo(() => currentLanguage === 'ar', [currentLanguage])
-  const dir = useMemo(() => (isRTL ? 'rtl' : 'ltr'), [isRTL])
+  const dir: 'ltr' | 'rtl' = useMemo(() => (isRTL ? 'rtl' : 'ltr'), [isRTL])
 
   const changeLanguage = useCallback(
     async (lng: string) => {
