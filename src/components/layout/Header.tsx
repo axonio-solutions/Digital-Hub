@@ -30,14 +30,14 @@ export default function Header() {
             trigger={
               <Button variant="ghost" size="icon" className="relative size-10 rounded-xl bg-muted border border-border hover:bg-accent transition-all group">
                 <Bell className="size-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                <span className="absolute top-2 right-2 size-2 bg-primary rounded-full animate-pulse border-2 border-white dark:border-slate-900" />
+                <span className="absolute top-2 end-2 size-2 bg-primary rounded-full animate-pulse border-2 border-white dark:border-slate-900" />
               </Button>
             }
           />
           
           <div className="h-8 w-[1px] bg-border mx-2" />
           
-          <div className="flex items-center gap-3 pl-2">
+          <div className="flex items-center gap-3 ps-2">
             <div className="size-10 rounded-xl bg-gradient-to-br from-primary to-orange-500 shadow-lg shadow-primary/20" />
           </div>
         </div>

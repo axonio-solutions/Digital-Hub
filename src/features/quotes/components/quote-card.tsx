@@ -88,7 +88,7 @@ export function QuoteCard({
 
             <div className="flex flex-col items-start md:items-end shrink-0">
               <div className={`text-2xl font-black tracking-tighter ${isAccepted ? 'text-primary' : 'text-foreground/90'}`}>
-                {quote.price.toLocaleString()} <span className="text-[10px] uppercase align-top mt-1 inline-block ml-0.5">DZD</span>
+                {quote.price.toLocaleString()} <span className="text-[10px] uppercase align-top mt-1 inline-block ms-0.5">DZD</span>
               </div>
               <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest py-0 px-1.5 border-primary/20 text-muted-foreground mt-1">
                 {quote.condition || 'Used - Clean'}

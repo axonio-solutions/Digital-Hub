@@ -36,7 +36,7 @@ function WaitlistPage() {
               <div className="h-24 w-24 bg-purple-100 rounded-full flex items-center justify-center animate-pulse">
                 <Clock className="h-12 w-12 text-purple-600" />
               </div>
-              <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-2 border-4 border-white shadow-lg">
+              <div className="absolute -bottom-2 -end-2 bg-green-500 rounded-full p-2 border-4 border-white shadow-lg">
                 <CheckCircle2 className="h-6 w-6 text-white" />
               </div>
             </div>

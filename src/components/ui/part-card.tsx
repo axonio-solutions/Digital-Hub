@@ -63,7 +63,7 @@ export function PartCard({
           </div>
         )}
 
-        <div className="absolute top-4 left-4 flex flex-col gap-2">
+        <div className="absolute top-4 start-4 flex flex-col gap-2">
           {quotesCount > 0 && (
             <Badge className="bg-orange-500 text-white border-none font-bold text-[10px] uppercase shadow-lg px-2 py-1">
               Offers Received
@@ -100,7 +100,7 @@ export function PartCard({
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">#{id.substring(0, 6)}</p>
             </div>
           </div>
-          <div className="text-right flex flex-col items-end">
+          <div className="text-end flex flex-col items-end">
             <p className="text-xl font-bold text-primary tracking-tighter leading-none">
               {quotesCount}
             </p>

@@ -67,13 +67,13 @@ export function BuyerHub() {
                   className="h-9 px-3 bg-white dark:bg-slate-950 shadow-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors border-slate-200 dark:border-slate-800"
                   onClick={() => refetch()}
                 >
-                  <RefreshCcw className="mr-2 size-3.5" /> Refresh
+                  <RefreshCcw className="me-2 size-3.5" /> Refresh
                 </Button>
 
                 <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
                   <DialogTrigger asChild>
                     <Button className="font-black uppercase text-xs tracking-widest px-6 h-11 shadow-lg shadow-primary/20">
-                      <Plus className="mr-2 h-4 w-4" />
+                      <Plus className="me-2 h-4 w-4" />
                       New Demand
                     </Button>
                   </DialogTrigger>

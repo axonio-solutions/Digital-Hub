@@ -27,7 +27,7 @@ function BarYAxisLabel({
 }: BarYAxisLabelProps) {
   return (
     <div
-      className="absolute right-0 flex items-center justify-end pr-2"
+      className="absolute end-0 flex items-center justify-end pe-2"
       style={{
         top: y,
         height: bandHeight,
@@ -40,7 +40,7 @@ function BarYAxisLabel({
             ? "var(--foreground)"
             : "var(--chart-label, var(--color-zinc-500))",
         }}
-        className={cn("truncate whitespace-nowrap text-right text-xs")}
+        className={cn("truncate whitespace-nowrap text-end text-xs")}
         initial={{
           opacity: 0.7,
           color: "var(--chart-label, var(--color-zinc-500))",

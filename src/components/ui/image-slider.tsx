@@ -166,7 +166,7 @@ export function ImageSlider({
       )}
 
       {/* Overlays */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
+      <div className="absolute top-4 end-4 z-20 flex flex-col gap-2">
         {isEditable && onRemove && (
           <Button
             size="icon"
@@ -200,7 +200,7 @@ export function ImageSlider({
 
       {/* Badge Indicator */}
       {images.length > 0 && (
-        <div className="absolute bottom-4 right-4 z-10">
+        <div className="absolute bottom-4 end-4 z-10">
           <div className="bg-black/60 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-tighter border border-white/10 px-2 py-0.5 rounded-md pointer-events-none">
             {currentIndex + 1} / {images.length}
           </div>

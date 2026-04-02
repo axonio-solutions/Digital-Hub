@@ -89,7 +89,7 @@ export function AdminOverview() {
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" className="hidden sm:flex">
-            <Download className="mr-2 h-4 w-4" />
+            <Download className="me-2 h-4 w-4" />
             Export Report
           </Button>
         </div>
@@ -174,7 +174,7 @@ export function AdminOverview() {
               Market demand over the last 10 nodes
             </CardDescription>
           </CardHeader>
-          <CardContent className="pl-2">
+          <CardContent className="ps-2">
             <div className="flex h-[240px] items-end gap-2 px-2">
               {displayVol.length === 0 ? (
                 <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">

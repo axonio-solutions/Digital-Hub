@@ -145,7 +145,7 @@ export function CategoryDialog({
             />
             <DialogFooter className="pt-4">
               <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="w-full h-11 bg-primary hover:bg-primary-dark text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
-                {(createMutation.isPending || updateMutation.isPending) ? <Loader2 className="animate-spin mr-2" size={16} /> : null}
+                {(createMutation.isPending || updateMutation.isPending) ? <Loader2 className="animate-spin me-2" size={16} /> : null}
                 {editingItem ? 'Update Category' : 'Deploy Category'}
               </Button>
             </DialogFooter>

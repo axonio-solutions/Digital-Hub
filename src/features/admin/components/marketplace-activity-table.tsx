@@ -35,7 +35,7 @@ function TableCellViewer({ item }: { item: MarketplaceActivity }) {
     <Drawer>
       <DrawerTrigger asChild>
         <Button variant="link" className="h-auto p-0 text-foreground no-underline hover:text-primary">
-          <div className="flex items-center gap-3 text-left">
+          <div className="flex items-center gap-3 text-start">
             <div className="size-10 rounded bg-muted overflow-hidden border shrink-0">
               <img src={item.image || 'https://via.placeholder.com/150'} alt={item.partName} className="size-full object-cover" />
             </div>

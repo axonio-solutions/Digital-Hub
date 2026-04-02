@@ -43,7 +43,7 @@ export function OrderHistory() {
             variant="secondary"
             className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20"
           >
-            <Clock className="mr-1 h-3 w-3" /> Browsing Quotes
+            <Clock className="me-1 h-3 w-3" /> Browsing Quotes
           </Badge>
         )
       case 'fulfilled':
@@ -52,7 +52,7 @@ export function OrderHistory() {
             variant="secondary"
             className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20"
           >
-            <CheckCircle2 className="mr-1 h-3 w-3" /> Purchased
+            <CheckCircle2 className="me-1 h-3 w-3" /> Purchased
           </Badge>
         )
       case 'cancelled':
@@ -61,7 +61,7 @@ export function OrderHistory() {
             variant="secondary"
             className="bg-red-500/10 text-red-600 hover:bg-red-500/20"
           >
-            <XOctagon className="mr-1 h-3 w-3" /> Cancelled
+            <XOctagon className="me-1 h-3 w-3" /> Cancelled
           </Badge>
         )
       default:
@@ -137,7 +137,7 @@ export function OrderHistory() {
                 <TableHead>Vehicle</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Quotes</TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-end">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -166,11 +166,11 @@ export function OrderHistory() {
                     </TableCell>
                     <TableCell>{getStatusBadge(req.status)}</TableCell>
                     <TableCell>{req.quotes.length} offer(s)</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       {req.status === 'open' ? (
                         <Button variant="ghost" size="sm" asChild>
                           <a href={`/dashboard`}>
-                            Review <ArrowRight className="ml-2 h-4 w-4" />
+                            Review <ArrowRight className="ms-2 h-4 w-4" />
                           </a>
                         </Button>
                       ) : (

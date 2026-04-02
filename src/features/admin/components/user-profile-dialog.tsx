@@ -62,9 +62,9 @@ export function UserProfileDialog({
       className="sm:max-w-[1000px]"
       contentClassName="p-8 md:p-10 pt-0"
     >
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 max-h-[85vh] overflow-y-auto scrollbar-hide pr-2">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 max-h-[85vh] overflow-y-auto scrollbar-hide pe-2">
         {/* Profile Sidebar (4 cols) */}
-        <div className="md:col-span-4 flex flex-col gap-8 border-r border-slate-100 dark:border-slate-800 pr-10">
+        <div className="md:col-span-4 flex flex-col gap-8 border-r border-slate-100 dark:border-slate-800 pe-10">
           <div className="flex flex-col items-center text-center gap-6">
              <div className="relative group">
                 <Avatar className="h-32 w-32 border-8 border-slate-50 dark:border-slate-900 shadow-2xl transition-transform group-hover:scale-105 duration-500">
@@ -75,7 +75,7 @@ export function UserProfileDialog({
                 </Avatar>
                 <div 
                   className={cn(
-                    "absolute -bottom-2 -right-2 p-3 rounded-full border-4 border-white dark:border-slate-950 shadow-xl",
+                    "absolute -bottom-2 -end-2 p-3 rounded-full border-4 border-white dark:border-slate-950 shadow-xl",
                     isBanned ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-emerald-500 text-white"
                   )}
                 >
@@ -129,7 +129,7 @@ export function UserProfileDialog({
                     onClick={handleActivate}
                     className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase text-[10px] tracking-widest rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
                   >
-                    <UserCheck size={14} className="mr-2" />
+                    <UserCheck size={14} className="me-2" />
                     Activate
                   </Button>
                 )}
@@ -140,12 +140,12 @@ export function UserProfileDialog({
                 >
                   {isBanned ? (
                     <>
-                      <ShieldCheck size={14} className="mr-2" />
+                      <ShieldCheck size={14} className="me-2" />
                       Restore Account
                     </>
                   ) : (
                     <>
-                      <UserX size={14} className="mr-2" />
+                      <UserX size={14} className="me-2" />
                       Suspend Access
                     </>
                   )}
@@ -202,7 +202,7 @@ function SectionHeading({ icon: Icon, title, sub }: any) {
         <Icon size={14} className="text-primary" />
         {title}
       </h3>
-      {sub && <p className="text-[10px] font-bold text-muted-foreground ml-5 uppercase tracking-tight opacity-70">{sub}</p>}
+      {sub && <p className="text-[10px] font-bold text-muted-foreground ms-5 uppercase tracking-tight opacity-70">{sub}</p>}
     </div>
   )
 }
@@ -295,7 +295,7 @@ function AdminContent() {
           sub="System integrity & permissions"
        />
        <div className="p-6 rounded-lg bg-muted/50 border relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
+          <div className="absolute top-0 end-0 p-4 opacity-10">
              <Lock size={48} className="text-muted-foreground" />
           </div>
           <h4 className="text-[10px] font-semibold uppercase tracking-wider text-primary mb-4">Authority Matrix</h4>

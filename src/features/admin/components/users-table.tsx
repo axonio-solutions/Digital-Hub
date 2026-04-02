@@ -244,7 +244,7 @@ export function AdminUsersTable({
                     }}
                     className="h-8"
                   >
-                    <UserX className="mr-2 h-4 w-4" />
+                    <UserX className="me-2 h-4 w-4" />
                     Ban Selected
                   </Button>
                 </div>

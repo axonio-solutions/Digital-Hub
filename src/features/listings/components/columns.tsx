@@ -84,7 +84,7 @@ export const columns: Array<ColumnDef<Product>> = [
       return (
         <div className="flex items-center">
           {category.icon && (
-            <category.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+            <category.icon className="me-2 h-4 w-4 text-muted-foreground" />
           )}
           <span>{category.label}</span>
         </div>
@@ -103,7 +103,7 @@ export const columns: Array<ColumnDef<Product>> = [
       return (
         <div className="flex items-center">
           {status.icon && (
-            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+            <status.icon className="me-2 h-4 w-4 text-muted-foreground" />
           )}
           <span>{status.label}</span>
         </div>

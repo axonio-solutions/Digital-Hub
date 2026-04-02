@@ -107,7 +107,7 @@ function OffersReceivedRoute() {
                   <TableHead>Part Name</TableHead>
                   <TableHead>Brand</TableHead>
                   <TableHead>Quotes</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
+                  <TableHead className="text-end">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -122,7 +122,7 @@ function OffersReceivedRoute() {
                         <p>You have no active offers to review.</p>
                         <Button variant="link" asChild>
                           <a href="/dashboard">
-                            <ArrowLeftCircle className="mr-2 h-4 w-4" /> Go back
+                            <ArrowLeftCircle className="me-2 h-4 w-4" /> Go back
                             to dashboard
                           </a>
                         </Button>
@@ -148,7 +148,7 @@ function OffersReceivedRoute() {
                           {req.quotes.length > 1 ? 's' : ''}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-end">
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button
@@ -277,7 +277,7 @@ function OffersReceivedRoute() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                       >
-                                        <MessageCircle className="mr-2 h-5 w-5" />
+                                        <MessageCircle className="me-2 h-5 w-5" />
                                         WhatsApp
                                       </a>
                                     </Button>
@@ -290,7 +290,7 @@ function OffersReceivedRoute() {
                                       <a
                                         href={`tel:${acceptedQuote.seller?.phoneNumber || `+213000000`}`}
                                       >
-                                        <Phone className="mr-2 h-5 w-5" />
+                                        <Phone className="me-2 h-5 w-5" />
                                         Call Now
                                       </a>
                                     </Button>

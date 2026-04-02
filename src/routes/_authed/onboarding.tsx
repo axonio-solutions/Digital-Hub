@@ -245,7 +245,7 @@ function OnboardingFlow() {
                   <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="name"
-                    className="pl-9"
+                    className="ps-9"
                     placeholder="Ahmed Kerroum"
                     value={formData.name}
                     onChange={(e) => updateFormData('name', e.target.value)}
@@ -268,7 +268,7 @@ function OnboardingFlow() {
                   <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="phoneNumber"
-                    className="pl-9"
+                    className="ps-9"
                     placeholder="05xx xx xx xx"
                     value={formData.phoneNumber}
                     onChange={(e) => updateFormData('phoneNumber', e.target.value)}
@@ -309,7 +309,7 @@ function OnboardingFlow() {
                     <Store className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="storeName"
-                      className="pl-9"
+                      className="ps-9"
                       placeholder="Grand Auto Parts"
                       value={formData.storeName}
                       onChange={(e) => updateFormData('storeName', e.target.value)}
@@ -341,7 +341,7 @@ function OnboardingFlow() {
                   <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="city"
-                    className="pl-9"
+                    className="ps-9"
                     placeholder="El Harrach"
                     value={formData.city}
                     onChange={(e) => updateFormData('city', e.target.value)}
@@ -428,7 +428,7 @@ function OnboardingFlow() {
         </CardHeader>
 
         <CardContent className="p-6 md:p-8 bg-white flex flex-col flex-1 overflow-hidden">
-          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto pe-2 custom-scrollbar">
             {renderStepContent()}
           </div>
 
@@ -439,7 +439,7 @@ function OnboardingFlow() {
                 disabled={currentStep === 1 || isPending}
                 className="h-11 px-6 border-2 hover:bg-gray-50 font-semibold"
               >
-                <ChevronLeft className="h-4 w-4 mr-2" />
+                <ChevronLeft className="h-4 w-4 me-2" />
                 Back
               </Button>
 
@@ -459,7 +459,7 @@ function OnboardingFlow() {
                         : currentStep === 5
                           ? 'Complete Setup'
                           : 'Continue'}
-                    <ChevronRight className="h-5 w-5 ml-2" />
+                    <ChevronRight className="h-5 w-5 ms-2" />
                   </>
                 )}
               </Button>

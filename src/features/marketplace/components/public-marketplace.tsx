@@ -103,7 +103,7 @@ function FilterSection() {
       {/* Brands */}
       <div>
         <h3 className="mb-3 font-semibold text-slate-900 dark:text-white">Vehicle Brands</h3>
-        <div className="max-h-48 space-y-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200">
+        <div className="max-h-48 space-y-3 overflow-y-auto pe-2 scrollbar-thin scrollbar-thumb-slate-200">
           {taxonomyData?.brands.map((brand) => (
             <div key={brand.id} className="flex items-center space-x-2">
               <Checkbox
@@ -231,8 +231,8 @@ export function PublicMarketplace() {
     <Card className="p-0 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm flex flex-col h-full">
       <div className="relative h-48 sm:h-80 w-full rounded-t-[inherit]">
         <Skeleton className="w-full h-full" />
-        <Skeleton className="absolute top-4 left-4 h-6 w-24 rounded-full" />
-        <Skeleton className="absolute top-4 right-4 h-6 w-16 rounded-full" />
+        <Skeleton className="absolute top-4 start-4 h-6 w-24 rounded-full" />
+        <Skeleton className="absolute top-4 end-4 h-6 w-16 rounded-full" />
       </div>
       <CardContent className="p-6 flex flex-col flex-1 gap-6">
         <div className="space-y-3">
@@ -315,7 +315,7 @@ export function PublicMarketplace() {
               
             <div className="mb-2 flex items-center gap-3">
               <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 hover:text-blue-700 border-none transition-all px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-tighter shadow-sm">
-                <Sparkle className="w-3 h-3 mr-1.5 fill-blue-600" />
+                <Sparkle className="w-3 h-3 me-1.5 fill-blue-600" />
                 Live Demand Feedback
               </Badge>
             </div>
@@ -331,7 +331,7 @@ export function PublicMarketplace() {
                   <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
                     <SheetTrigger asChild>
                       <Button variant="outline" size="sm" className="bg-white dark:bg-slate-900 lg:hidden shadow-sm">
-                        <Filter className="mr-2 h-4 w-4" />
+                        <Filter className="me-2 h-4 w-4" />
                         Filters
                       </Button>
                     </SheetTrigger>
@@ -339,7 +339,7 @@ export function PublicMarketplace() {
                       <SheetHeader>
                         <SheetTitle>Filters</SheetTitle>
                       </SheetHeader>
-                      <ScrollArea className="h-full pr-4">
+                      <ScrollArea className="h-full pe-4">
                         <div className="py-4">
                           <FilterSection />
                         </div>
@@ -379,7 +379,7 @@ export function PublicMarketplace() {
                     placeholder="Search by part name, brand, or OEM..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 sm:w-[350px] bg-white dark:bg-slate-900 shadow-sm"
+                    className="w-full ps-10 sm:w-[350px] bg-white dark:bg-slate-900 shadow-sm"
                   />
                 </div>
               </div>
@@ -434,7 +434,7 @@ export function PublicMarketplace() {
                           </div>
                         )}
 
-                        <div className="absolute top-4 left-4 flex flex-col gap-2">
+                        <div className="absolute top-4 start-4 flex flex-col gap-2">
                            <Badge className="bg-blue-600 text-white border-none font-black text-[10px] uppercase shadow-lg px-2 py-1">
                              Looking for Part
                            </Badge>
@@ -446,7 +446,7 @@ export function PublicMarketplace() {
                         </div>
 
                         {/* Quotes Count Badge on Image */}
-                        <div className="absolute top-4 right-4">
+                        <div className="absolute top-4 end-4">
                            <Badge className="bg-white/90 backdrop-blur-md text-slate-900 border-none font-black text-[10px] uppercase shadow-lg px-3 py-1 flex items-center gap-1.5 rounded-full">
                              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                              {request.quotes?.length || 0} Quotes

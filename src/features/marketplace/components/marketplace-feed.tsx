@@ -168,11 +168,11 @@ export function MarketplaceFeed() {
 
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative w-full sm:w-64">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute start-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="Search part or OEM..."
-                  className="pl-9"
+                  className="ps-9"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />

@@ -179,7 +179,7 @@ const columns: Array<ColumnDef<z.infer<typeof schema>>> = [
   },
   {
     accessorKey: 'target',
-    header: () => <div className="w-full text-right">Target</div>,
+    header: () => <div className="w-full text-end">Target</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
@@ -195,7 +195,7 @@ const columns: Array<ColumnDef<z.infer<typeof schema>>> = [
           Target
         </Label>
         <Input
-          className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
+          className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-end shadow-none focus-visible:border dark:bg-transparent"
           defaultValue={row.original.target}
           id={`${row.original.id}-target`}
         />
@@ -204,7 +204,7 @@ const columns: Array<ColumnDef<z.infer<typeof schema>>> = [
   },
   {
     accessorKey: 'limit',
-    header: () => <div className="w-full text-right">Limit</div>,
+    header: () => <div className="w-full text-end">Limit</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
@@ -220,7 +220,7 @@ const columns: Array<ColumnDef<z.infer<typeof schema>>> = [
           Limit
         </Label>
         <Input
-          className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
+          className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-end shadow-none focus-visible:border dark:bg-transparent"
           defaultValue={row.original.limit}
           id={`${row.original.id}-limit`}
         />
@@ -466,7 +466,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
   return (
     <Drawer direction={isMobile ? 'bottom' : 'right'}>
       <DrawerTrigger asChild>
-        <Button variant="link" className="text-foreground w-fit px-0 text-left">
+        <Button variant="link" className="text-foreground w-fit px-0 text-start">
           {item.header}
         </Button>
       </DrawerTrigger>

@@ -58,9 +58,9 @@ export function SettingsHub() {
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           {sidebarOpen ? (
-            <X className="h-4 w-4 mr-2" />
+            <X className="h-4 w-4 me-2" />
           ) : (
-            <Menu className="h-4 w-4 mr-2" />
+            <Menu className="h-4 w-4 me-2" />
           )}
           Menu
         </Button>
@@ -118,7 +118,7 @@ function ProfileSection({ user }: { user: any }) {
             currentImage={user?.image}
             size="lg"
           />
-          <div className="flex-1 space-y-2 text-center md:text-left">
+          <div className="flex-1 space-y-2 text-center md:text-start">
             <h3 className="text-xl font-bold tracking-tight text-foreground">
               Profile Identity
             </h3>

@@ -119,12 +119,12 @@ export const sellerColumns = (onAction: (action: { type: string, item: any }) =>
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => onAction({ type: 'view_request', item: quote })}>
-                <Eye className="mr-2 h-4 w-4" />
+                <Eye className="me-2 h-4 w-4" />
                 View Request
               </DropdownMenuItem>
               {quote.status === 'pending' && (
                 <DropdownMenuItem onClick={() => onAction({ type: 'update', item: quote })}>
-                  <Settings2 className="mr-2 h-4 w-4" />
+                  <Settings2 className="me-2 h-4 w-4" />
                   Edit Offer
                 </DropdownMenuItem>
               )}
@@ -133,7 +133,7 @@ export const sellerColumns = (onAction: (action: { type: string, item: any }) =>
                 onClick={() => onAction({ type: 'delete', item: quote })} 
                 className="text-rose-600 focus:text-rose-600"
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <Trash2 className="me-2 h-4 w-4" />
                 Withdraw Offer
               </DropdownMenuItem>
             </DropdownMenuContent>

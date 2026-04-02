@@ -61,12 +61,12 @@ const ActionCell = ({
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'send_offer', item })}
             >
-              <Send className="mr-2 h-4 w-4" /> Send Offer
+              <Send className="me-2 h-4 w-4" /> Send Offer
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'view_request', item })}
             >
-              <Eye className="mr-2 h-4 w-4" /> View Details
+              <Eye className="me-2 h-4 w-4" /> View Details
             </DropdownMenuItem>
           </>
         ) : (
@@ -74,19 +74,19 @@ const ActionCell = ({
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'view_offer', item })}
             >
-              <FileText className="mr-2 h-4 w-4" /> View Offer
+              <FileText className="me-2 h-4 w-4" /> View Offer
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'update', item })}
             >
-              <Pencil className="mr-2 h-4 w-4" /> Edit Quote
+              <Pencil className="me-2 h-4 w-4" /> Edit Quote
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'delete', item })}
               className="text-destructive focus:text-destructive"
             >
-              <Trash2 className="mr-2 h-4 w-4" /> Withdraw
+              <Trash2 className="me-2 h-4 w-4" /> Withdraw
             </DropdownMenuItem>
           </>
         )}

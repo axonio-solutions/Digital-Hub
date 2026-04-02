@@ -42,10 +42,10 @@ export function BuyerSkeleton() {
                   <div key={i} className="flex gap-4 items-center h-16 w-full border-b border-slate-100 dark:border-slate-800/60 pb-4">
                     <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
                     <Skeleton className="h-5 w-48 rounded-md" />
-                    <Skeleton className="h-5 w-24 rounded-md ml-auto" />
+                    <Skeleton className="h-5 w-24 rounded-md ms-auto" />
                     <Skeleton className="h-5 w-24 rounded-md mx-6" />
                     <Skeleton className="h-5 w-20 rounded-md" />
-                    <Skeleton className="h-8 w-8 rounded-full ml-6 shrink-0" />
+                    <Skeleton className="h-8 w-8 rounded-full ms-6 shrink-0" />
                   </div>
                 ))}
               </div>

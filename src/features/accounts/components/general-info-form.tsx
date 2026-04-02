@@ -243,7 +243,7 @@ export function GeneralInfoForm() {
                 className="font-bold min-w-[120px]"
               >
                 {isPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
                 ) : null}
                 {isPending ? 'Saving...' : 'Save Changes'}
               </Button>

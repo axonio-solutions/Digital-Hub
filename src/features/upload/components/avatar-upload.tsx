@@ -167,7 +167,7 @@ export function AvatarUpload({
             onClick={handleRemove}
             className="h-7 px-3 text-[10px] text-muted-foreground hover:text-destructive hover:bg-destructive/5 font-bold uppercase tracking-tighter"
           >
-            <Trash2 className="size-3 mr-1.5" />
+            <Trash2 className="size-3 me-1.5" />
             Remove Picture
           </Button>
         </div>

@@ -121,7 +121,7 @@ export function MarketplaceHub() {
               className="h-11 px-5 rounded-2xl bg-white dark:bg-slate-900 shadow-sm font-bold border-2 border-slate-100 dark:border-slate-800 hover:bg-slate-50 transition-all active:scale-95"
               onClick={() => refetch()}
             >
-              <RefreshCcw className={cn("mr-2 size-4", loadingRequests && "animate-spin")} /> Force Refresh
+              <RefreshCcw className={cn("me-2 size-4", loadingRequests && "animate-spin")} /> Force Refresh
             </Button>
           }
           className="mb-12"

@@ -55,9 +55,9 @@ type Brand = {
 }
 
 const CATEGORY_STATUSES = [
-  { label: 'Active', value: 'active', icon: () => <span className="size-2 rounded-full bg-emerald-500 mr-2" /> },
-  { label: 'Draft', value: 'draft', icon: () => <span className="size-2 rounded-full bg-slate-400 mr-2" /> },
-  { label: 'Archived', value: 'archived', icon: () => <span className="size-2 rounded-full bg-amber-500 mr-2" /> },
+  { label: 'Active', value: 'active', icon: () => <span className="size-2 rounded-full bg-emerald-500 me-2" /> },
+  { label: 'Draft', value: 'draft', icon: () => <span className="size-2 rounded-full bg-slate-400 me-2" /> },
+  { label: 'Archived', value: 'archived', icon: () => <span className="size-2 rounded-full bg-amber-500 me-2" /> },
 ]
 
 export function TaxonomyHub() {
@@ -134,9 +134,9 @@ export function TaxonomyHub() {
     },
     {
       id: 'actions',
-      header: () => <div className="text-right pr-4">Actions</div>,
+      header: () => <div className="text-end pe-4">Actions</div>,
       cell: ({ row }) => (
-        <div className="flex justify-end pr-2">
+        <div className="flex justify-end pe-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -257,9 +257,9 @@ export function TaxonomyHub() {
     },
     {
       id: 'actions',
-      header: () => <div className="text-right pr-4">Actions</div>,
+      header: () => <div className="text-end pe-4">Actions</div>,
       cell: ({ row }) => (
-        <div className="flex justify-end pr-2">
+        <div className="flex justify-end pe-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -352,10 +352,10 @@ export function TaxonomyHub() {
               <Tabs value={activeTab} onValueChange={(val: any) => setActiveTab(val)} className="w-full md:w-auto">
                 <TabsList className="bg-slate-100/50 dark:bg-slate-900/50 p-1 border border-slate-200 dark:border-slate-700 h-10 rounded-xl">
                   <TabsTrigger value="categories" className="px-6 text-[10px] font-bold uppercase tracking-wider data-[state=active]:bg-white dark:data-[state=active]:bg-slate-950 shadow-none border-none transition-all">
-                    <FolderTree size={14} className="mr-2" /> Categories
+                    <FolderTree size={14} className="me-2" /> Categories
                   </TabsTrigger>
                   <TabsTrigger value="models" className="px-6 text-[10px] font-bold uppercase tracking-wider data-[state=active]:bg-white dark:data-[state=active]:bg-slate-950 shadow-none border-none transition-all">
-                    <Car size={14} className="mr-2" /> Car Brands
+                    <Car size={14} className="me-2" /> Car Brands
                   </TabsTrigger>
                 </TabsList>
               </Tabs>

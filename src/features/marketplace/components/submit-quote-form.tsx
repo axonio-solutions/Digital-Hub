@@ -246,9 +246,9 @@ export function SubmitQuoteForm({
                   disabled={isPending}
                 >
                   {isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="me-2 h-4 w-4 animate-spin" />
                   ) : (
-                    <Send className="mr-2 h-4 w-4" />
+                    <Send className="me-2 h-4 w-4" />
                   )}
                   {isEditing ? 'Update Quote' : 'Submit Quote'}
                 </Button>

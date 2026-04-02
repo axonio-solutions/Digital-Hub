@@ -161,7 +161,7 @@ export function GarageDashboard() {
               key={vehicle.id}
               className="group relative overflow-hidden border-2 hover:border-primary/30 hover:shadow-xl transition-all duration-300 rounded-3xl"
             >
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/10 via-primary to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute top-0 start-0 w-full h-1 bg-gradient-to-r from-primary/10 via-primary to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
 
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -221,7 +221,7 @@ export function GarageDashboard() {
                     toast.info('Vehicle details editing coming soon!')
                   }
                 >
-                  <Settings className="h-4 w-4 mr-2" />
+                  <Settings className="h-4 w-4 me-2" />
                   Details
                 </Button>
                 <Button

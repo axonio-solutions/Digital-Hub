@@ -480,7 +480,7 @@ export function AlgeriaMap({
 
         {/* Simplified Compact Legend */}
         <div className="mt-8 flex flex-wrap gap-6 justify-center items-center py-4 px-8 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800/50">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mr-2 border-r pr-4 border-slate-200 dark:border-slate-800">Density Legend</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 me-2 border-r pe-4 border-slate-200 dark:border-slate-800">Density Legend</div>
           <div className="flex items-center gap-2">
             <div className="size-2 rounded-full bg-sky-100" />
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Low Presence</span>

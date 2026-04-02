@@ -74,7 +74,7 @@ function LandingPage() {
         {/* Hero Section */}
         <section className="w-full py-20 lg:py-32 flex flex-col items-center justify-center text-center px-4 md:px-6 z-20">
           <Badge className="mb-6 bg-blue-100 text-blue-700 hover:bg-blue-100 hover:text-blue-700 border-none transition-all px-4 py-1 text-sm font-semibold rounded-full">
-            <SparkleIcon className="w-4 h-4 mr-2" />
+            <SparkleIcon className="w-4 h-4 me-2" />
             The First Reverse-Marketplace in Algeria
           </Badge>
           <div className="max-w-[800px] space-y-6">
@@ -96,7 +96,7 @@ function LandingPage() {
                 className="h-14 px-8 text-base bg-blue-600 hover:bg-blue-700 text-white w-full shadow-lg shadow-blue-500/30 transition-all font-semibold rounded-xl"
               >
                 I am a Buyer
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ms-2 h-5 w-5" />
               </Button>
             </Link>
             <Link to="/register-seller" className="w-full sm:w-auto">
@@ -299,7 +299,7 @@ function LandingPage() {
 
         {/* Explore Marketplace Section */}
         <section className="w-full py-24 bg-accent relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 translate-x-1/2"></div>
+          <div className="absolute top-0 end-0 w-1/3 h-full bg-primary/5 -skew-x-12 translate-x-1/2"></div>
           <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center gap-16">
             <div className="flex-1 space-y-6">
               <Badge className="bg-primary text-white border-none py-1 px-3 rounded-full font-bold uppercase tracking-wider text-[10px]">
@@ -316,7 +316,7 @@ function LandingPage() {
                 <Link to="/explore">
                   <Button size="lg" className="h-14 px-8 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-xl flex items-center">
                     Enter Marketplace
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ms-2 h-5 w-5" />
                   </Button>
                 </Link>
               </div>

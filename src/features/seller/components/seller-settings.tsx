@@ -160,7 +160,7 @@ export function SellerSettings() {
                 className="font-bold min-w-[150px] shadow-lg shadow-primary/20"
               >
                 {isPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
                 ) : null}
                 {isPending ? 'Updating Store...' : 'Update Store Profile'}
               </Button>

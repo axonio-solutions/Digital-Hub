@@ -58,11 +58,11 @@ const ActionCell = ({ row, onAction }: { row: any, onAction?: (action: { type: s
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => onAction?.({ type: 'view_request', item: request })}>
-            <Eye className="mr-2 h-4 w-4" /> View Details
+            <Eye className="me-2 h-4 w-4" /> View Details
           </DropdownMenuItem>
           {request.status === "open" && (
             <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
-              <SquarePen className="mr-2 h-4 w-4" /> Edit Request
+              <SquarePen className="me-2 h-4 w-4" /> Edit Request
             </DropdownMenuItem>
           )}
 
@@ -73,7 +73,7 @@ const ActionCell = ({ row, onAction }: { row: any, onAction?: (action: { type: s
               onClick={() => setIsCancelDialogOpen(true)}
               className="text-amber-600 focus:text-amber-700"
             >
-              <XCircle className="mr-2 h-4 w-4" /> Cancel Request
+              <XCircle className="me-2 h-4 w-4" /> Cancel Request
             </DropdownMenuItem>
           )}
 
@@ -82,7 +82,7 @@ const ActionCell = ({ row, onAction }: { row: any, onAction?: (action: { type: s
               onClick={() => setIsReopenDialogOpen(true)}
               className="text-blue-600 focus:text-blue-700"
             >
-              <RefreshCcw className="mr-2 h-4 w-4" /> Reopen Request
+              <RefreshCcw className="me-2 h-4 w-4" /> Reopen Request
             </DropdownMenuItem>
           )}
 
@@ -90,7 +90,7 @@ const ActionCell = ({ row, onAction }: { row: any, onAction?: (action: { type: s
             onClick={() => setIsDeleteDialogOpen(true)}
             className="text-destructive focus:text-destructive"
           >
-            <Trash2 className="mr-2 h-4 w-4" /> Delete Permanently
+            <Trash2 className="me-2 h-4 w-4" /> Delete Permanently
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

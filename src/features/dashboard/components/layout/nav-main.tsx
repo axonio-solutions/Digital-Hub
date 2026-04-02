@@ -50,7 +50,7 @@ export function NavMain({
                   onClick={() => isMobile && setOpenMobile(false)}
                   className="flex items-center gap-3 font-medium text-sm px-3"
                   activeProps={{
-                    className: 'bg-primary/10 text-primary !font-bold border-r-2 border-primary shadow-sm shadow-primary/5',
+                    className: 'bg-primary/10 text-primary !font-bold border-e-2 border-primary shadow-sm shadow-primary/5',
                   }}
                 >
                   <item.icon className="size-4 shrink-0" />

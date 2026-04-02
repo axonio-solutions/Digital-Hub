@@ -154,7 +154,7 @@ export function LoginForm() {
           )}
         />
         <Button type="submit" className="w-full h-11" disabled={isPending}>
-          {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+          {isPending && <Loader2 className="w-4 h-4 me-2 animate-spin" />}
           Sign In or Join
         </Button>
       </form>

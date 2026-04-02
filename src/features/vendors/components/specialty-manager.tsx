@@ -145,7 +145,7 @@ export function SpecialtyManager() {
             disabled={updateSpecialties.isPending || !isDirty}
             className="rounded-2xl px-8 h-12 font-bold shadow-lg shadow-primary/20 transition-all active:scale-95"
           >
-            {updateSpecialties.isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
+            {updateSpecialties.isPending && <Loader2 className="me-2 size-4 animate-spin" />}
             Save Configuration
           </Button>
         </div>

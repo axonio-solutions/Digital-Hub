@@ -30,7 +30,7 @@ export function DashboardHeader({
       
       <div className="flex flex-col sm:flex-row items-center gap-4">
         {showDate && (
-          <div className="hidden sm:block text-right pr-4 border-r border-slate-100 dark:border-slate-800">
+          <div className="hidden sm:block text-end pe-4 border-r border-slate-100 dark:border-slate-800">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
               Current Date
             </p>

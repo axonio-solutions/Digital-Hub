@@ -334,7 +334,7 @@ export function NewPartRequestForm({
                           }}
                         />
                         <Button variant="outline" size="sm" type="button" className="h-8 rounded-lg gap-2">
-                           <Plus className="size-3 mr-1" /> Add Photos
+                           <Plus className="size-3 me-1" /> Add Photos
                         </Button>
                      </div>
                   )}
@@ -360,7 +360,7 @@ export function NewPartRequestForm({
                         onClick={() => handleRemoveImage(idx)}
                         className="absolute inset-x-0 bottom-0 bg-black/60 text-white py-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80 flex items-center justify-center"
                       >
-                         <XIcon className="size-3 mr-1" /> Remove
+                         <XIcon className="size-3 me-1" /> Remove
                       </button>
                     </div>
                   ))}
@@ -375,7 +375,7 @@ export function NewPartRequestForm({
                           onClick={() => handleRemoveImage(imageUrls.length + idx)}
                           className="absolute inset-x-0 bottom-0 bg-primary/80 text-white py-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/90 flex items-center justify-center"
                         >
-                           <XIcon className="size-3 mr-1" /> Clear local
+                           <XIcon className="size-3 me-1" /> Clear local
                         </button>
                       </div>
                     )
@@ -472,7 +472,7 @@ export function NewPartRequestForm({
           >
             {(isUploading || createRequest.isPending || updateRequest.isPending) ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="me-2 h-4 w-4 animate-spin" />
                 {isUploading ? `Uploading ${uploadProgress}%` : 'Synchronizing...'}
               </>
             ) : isEditing ? 'Update Request' : 'Broadcast Request'}
