@@ -186,6 +186,16 @@
 
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* Transition for specific themed elements to avoid global overhead if needed, 
+     but for a "premium" feel, a smooth fade on the background and text is key. */
+  .theme-transition, 
+  .theme-transition *, 
+  .theme-transition *:before, 
+  .theme-transition *:after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, fill 0.3s ease, stroke 0.3s ease !important;
   }
 }
 

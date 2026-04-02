@@ -134,7 +134,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           }}
         />
       </head>
-      <body className="antialiased min-h-screen bg-background text-foreground">
+      <body className="antialiased min-h-screen bg-background text-foreground theme-transition">
         <ThemeProvider>{children}</ThemeProvider>
         <Scripts />
       </body>
