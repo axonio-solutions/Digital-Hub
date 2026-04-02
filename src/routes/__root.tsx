@@ -16,10 +16,8 @@ import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import styles from '../styles.css?url'
 import { DefaultNotFound } from './components/errors/-default-not-found'
 import type { MyRouterContext } from '@/types/router'
-import { authQueries } from '@/features/auth/queries/auth-queries'
-import { Toaster } from '@/components/ui/sonner'
-import { useNotifications } from '@/features/notifications/hooks/use-notifications'
 import { ThemeProvider } from '@/components/theme-provider'
+import { I18nProvider } from '@/components/i18n-provider'
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ context }) => {
@@ -79,8 +77,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
     return (
       <RootDocument>
-        <Outlet />
-        <Toaster position="bottom-right" closeButton />
+        <I18nProvider>
+          <Outlet />
+          <Toaster position="bottom-right" closeButton />
+        </I18nProvider>
 
         {/* Render the unified devtools button with tabs for each plugin */}
         <TanStackDevtools
