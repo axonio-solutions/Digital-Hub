@@ -21,14 +21,14 @@ i18n
   .use(LanguageDetector)
   .init({
     resources,
-    lng: 'en', // default language
     fallbackLng,
     defaultNS,
     interpolation: {
       escapeValue: false,
     },
     detection: {
-      order: ['path', 'cookie', 'localStorage', 'navigator'],
+      order: ['querystring', 'path', 'cookie', 'localStorage', 'navigator'],
+      lookupQuerystring: 'lang',
       lookupFromPathIndex: 0,
       caches: ['cookie', 'localStorage'],
     },

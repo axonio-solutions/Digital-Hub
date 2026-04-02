@@ -12,24 +12,39 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 // 2. Import the *Panel* versions (not the floating default ones)
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
+import { Toaster } from '@/components/ui/sonner'
+import { DirectionProvider } from '@/components/ui/direction'
+import { authQueries } from '@/features/auth/queries/auth-queries'
+import { useNotifications } from '@/features/notifications/hooks/use-notifications'
 
 import styles from '../styles.css?url'
 import { DefaultNotFound } from './components/errors/-default-not-found'
 import type { MyRouterContext } from '@/types/router'
 import { ThemeProvider } from '@/components/theme-provider'
 import { I18nProvider } from '@/components/i18n-provider'
+import { useTranslation } from 'react-i18next'
+import { z } from 'zod'
+
+const rootSearchSchema = z.object({
+  lang: z.enum(['en', 'fr', 'ar']).optional(),
+})
+
+type RootSearch = z.infer<typeof rootSearchSchema>
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  validateSearch: (search) => rootSearchSchema.parse(search),
   beforeLoad: async ({ context }) => {
     try {
-      const user = await context.queryClient.ensureQueryData(authQueries.user())
+      const user = (await context.queryClient.ensureQueryData(
+        authQueries.user(),
+      )) as any
       return {
         user,
       }
     } catch (error) {
       console.error('Auth Session Error:', error)
       return {
-        user: null,
+        user: null as any,
       }
     }
   },
@@ -72,14 +87,28 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   }),
   component: () => {
     const { user } = Route.useRouteContext()
+    const { lang } = Route.useSearch() as RootSearch
+    const { i18n } = useTranslation()
+
     // Subscribe to real-time notifications
-    useNotifications(user?.id)
+    useNotifications(user?.id as string | undefined)
+
+    // Sync URL lang with i18n
+    React.useEffect(() => {
+      if (lang && i18n.language !== lang) {
+        i18n.changeLanguage(lang)
+      }
+    }, [lang, i18n])
+
+    const direction = i18n.language === 'ar' ? 'rtl' : 'ltr'
 
     return (
-      <RootDocument>
+      <RootDocument lang={i18n.language} dir={direction}>
         <I18nProvider>
-          <Outlet />
-          <Toaster position="bottom-right" closeButton />
+          <DirectionProvider direction={direction}>
+            <Outlet />
+            <Toaster position={direction === 'rtl' ? 'bottom-left' : 'bottom-right'} closeButton />
+          </DirectionProvider>
         </I18nProvider>
 
         {/* Render the unified devtools button with tabs for each plugin */}
@@ -108,9 +137,17 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   notFoundComponent: DefaultNotFound,
 })
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({
+  children,
+  lang,
+  dir,
+}: {
+  children: React.ReactNode
+  lang: string
+  dir: 'ltr' | 'rtl'
+}) {
   return (
-    <html lang="en">
+    <html lang={lang} dir={dir}>
       <head>
         <HeadContent />
         <script
