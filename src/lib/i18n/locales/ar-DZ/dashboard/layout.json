@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "overview": "نظرة عامة",
+    "demands_hub": "مركز الطلبات",
+    "my_garage": "الكراراج تاعي",
+    "live_requests": "الطلبات لي راهي تمشي",
+    "my_quotes": "الدوفيات تاعي",
+    "global_metrics": "أرقام المنصة",
+    "user_moderation": "تسيير المستخدمين",
+    "buyers_hub": "خدمة لي يشرو",
+    "sellers_hub": "خدمة لي بياع",
+    "categories": "الفئات",
+    "request_audit": "تدقيق الطلبات",
+    "settings": "الريلاج (Paramètres)",
+    "support": "المساعدة والدعم",
+    "cloud_logs": "سجلات السحاب",
+    "admin_settings": "ريلاج الأدمين"
+  },
+  "labels": {
+    "buyer_hub": "خدمة المشتري",
+    "seller_hub": "خدمة البياع",
+    "admin_control": "تحكم الأدمين"
+  },
+  "breadcrumbs": {
+    "dashboard": "لوحة التحكم",
+    "overview": "نظرة عامة",
+    "demands_hub": "مركز الطلبات",
+    "live_feed": "الطلبات الحية",
+    "my_quotes": "دوفياتي",
+    "audit_log": "سجل التدقيق",
+    "my_garage": "الكراراج",
+    "buyers_intelligence": "ذكاء المشريين",
+    "sellers_ecosystem": "شبكة لي بياع",
+    "taxonomy_management": "تسيير الفئات",
+    "user_moderation": "تسيير المستخدمين",
+    "admin_settings": "ريلاج الأدمين",
+    "cloud_logs": "سجلات السحاب",
+    "support": "المساعدة والدعم"
+  },
+  "user_dropdown": {
+    "role": "الدور",
+    "region": "المنطقة",
+    "account_settings": "ريلاج الحساب",
+    "seller_hub": "خدمة البياع",
+    "sign_out": "خرج (Sign out)"
+  }
+}

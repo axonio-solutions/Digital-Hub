@@ -1,0 +1,71 @@
+{
+  "title": "تفاصيل الدوموند",
+  "description": "المواصفات التقنية والملاحظات تاع المشتري.",
+  "sections": {
+    "vehicle": "معلومات الطوموبيل",
+    "part_specifics": "ديتاي تاع البياسة (Pièce)",
+    "metadata": "ريفيونس (Reference)"
+  },
+  "labels": {
+    "brand": "المركة (Marque)",
+    "part_category": "فئة البياسة",
+    "general": "عام",
+    "model_year": "العام",
+    "oem_number": "ريفيونس (OEM) / نيميرو تاع البياسة",
+    "not_specified": "ما كانش",
+    "buyer_notes": "ملاحظات المشتري",
+    "no_notes": "ما خلى حتى ملاحظة.",
+    "network_id": "رقم الشبكة",
+    "broadcasted": "تبعتت (Broadcasted)",
+    "na": "ما كانش",
+    "regional_origin": "الولاية",
+    "market_traction": "حركة السوق",
+    "responses": "الردود"
+  },
+  "actions": {
+    "back_to_list": "رجع لطلباتي",
+    "edit_details": "بدل ديتاي الدوموند",
+    "copy_link": "كوبي لولايان (Copier lien)",
+    "delete_request": "سيبريمي (Supprimer)",
+    "close_request": "بلع الدوموند",
+    "reopen_request": "عاود حل الدوموند",
+    "delete_permanently": "سيبريمي قاع",
+    "close": "بلع",
+    "cancel": "أنولي (Annuler)"
+  },
+  "errors": {
+    "not_found": "الدوموند ما كانش",
+    "not_found_desc": "ما لقيناش الدوموند لي راك تحوس عليها."
+  },
+  "hints": {
+    "fulfill_desc": "ماركي هاد الدوموند باللي تسوات ولا ما راكش محتاجها.",
+    "closed_desc": "هاد الدوموند مبلعة دركا. عاود حلها باش يجيوك دوفيات جدد."
+  },
+  "quotes": {
+    "title": "الدوفيات لي جاو",
+    "sort_by": "ترتيب حسب:",
+    "sort_recent": "الجديد قاع",
+    "sort_price": "الرخيص قاع",
+    "empty_title": "مازال ما كاين حتى دوفي",
+    "empty_desc": "غير يريبونديو لي بياع نبعتولك ميساج."
+  },
+  "dialogs": {
+    "delete": {
+      "title": "تسيبريمي الدوموند؟",
+      "confirm": "سيبريمي قاع"
+    },
+    "cancel": "أنولي"
+  },
+  "contact": {
+    "title": "كونتاكتي البياع",
+    "connect_desc": "تواصل مع {{name}} باش تشري السلعة.",
+    "phone_label": "التيليفون",
+    "not_listed": "ما كانش",
+    "store_address": "أدريس الحانوت",
+    "main_store": "الحانوت الرئيسي",
+    "default_location": "الدزاير",
+    "whatsapp": "بعت ميساج واتساب",
+    "call": "عيطلو ديريكت",
+    "hint": "قولو جيت من جهة \"مليلة\" باش يتهلا فيك"
+  }
+}

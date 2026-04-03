@@ -1,0 +1,74 @@
+{
+  "card": {
+    "authorized_seller": "بياع معتمد",
+    "rejected": "مرفوض",
+    "default_location": "الدزاير",
+    "default_note": "مرحبا بك! هاد البياسة كاينة عندنا ريقل. مريفيزي وموجدينها باش نبعتوهالك.",
+    "ago": "عندو",
+    "actions": {
+      "revoke": "أنولي القبول",
+      "revoking": "رانا نأنوليو...",
+      "contact": "كلم البياع",
+      "unreject": "نحي الرفض",
+      "unrejecting": "رانا نرجعو فيه...",
+      "reject": "رفض",
+      "rejecting": "رانا نرفضو...",
+      "accept": "أقبل الدوفي",
+      "accepting": "رانا نقبلو...",
+      "closed": "الدوموند مبلعة"
+    }
+  },
+  "columns": {
+    "part": "البياسة (Piece)",
+    "vehicle": "الطوموبيل",
+    "price": "السومة",
+    "status": "الحالة",
+    "date": "التاريخ",
+    "actions": "الإجراءات",
+    "statuses": {
+      "accepted": "مقبول",
+      "pending": "فالانتظار",
+      "rejected": "مرفوض"
+    }
+  },
+  "table": {
+    "search_placeholder": "حوس على الدوفيات...",
+    "status_filter": "الحالة",
+    "actions_menu": "الإجراءات",
+    "view_request": "شوف الدوموند",
+    "edit_offer": "بدل الدوفي",
+    "withdraw_offer": "أنولي الدوفي"
+  },
+  "hub": {
+    "title": "خدمة البيع (Pipeline)",
+    "desc": "جيري الدوفيات تاعك وتبع البيع تاع البياس.",
+    "loading": "رانا نطلعو فالخدمة...",
+    "stats": {
+      "total": "قاع الدوفيات",
+      "total_sub": "النشاط قاع",
+      "success_rate": "معدل الربح",
+      "success_rate_sub": "معدل التحويل",
+      "pipeline": "قيمة الخدمة",
+      "pipeline_sub": "د.ج (فالانتظار)",
+      "accepted": "لي تباعو",
+      "accepted_sub": "البيعات لي كملو"
+    },
+    "tabs": {
+      "active": "خدام",
+      "won": "رابح",
+      "lost": "مبلع / خاسر"
+    },
+    "dialog": {
+      "update_title": "ميز أ جور (Mise à jour) للدوفي",
+      "update_desc": "ريقل التفاصيل تاع العرض تاعك.",
+      "update_btn": "بدل الدوفي",
+      "close": "بلع"
+    },
+    "confirm": {
+      "withdraw": "صح حاب تنحي هاد الدوفي؟ هاد الحاجة ما توليش للور."
+    },
+    "toasts": {
+      "withdrawn": "الدوفي تنحا ريقل"
+    }
+  }
+}

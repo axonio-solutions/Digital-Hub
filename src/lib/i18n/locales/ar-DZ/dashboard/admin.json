@@ -1,0 +1,197 @@
+{
+  "welcome": "مرحبا بيك، شوف واش كاين جديد في مليلة اليوم.",
+  "export": "خرج رابور (Export)",
+  "intelligence": {
+    "buyer": "نيفو المشتري",
+    "seller": "نيفو البياع",
+    "marketplace": "نيفو السوق"
+  },
+  "subtitle": {
+    "buyer": "تحليلات الطلب فالوقت الحقيقي وتوقعات السوق",
+    "seller": "توزيع السلعة المنظم وربط التجار قاع",
+    "marketplace": "إشارات الطلب الفوري وسرعة البيع والشراء"
+  },
+  "metrics": {
+    "inquiries_tracked": "الاستفسارات لي رانا متبعينها",
+    "supply_nodes": "لي بياع لي مسجلين",
+    "avg_offers": "معدل العروض",
+    "market_liquidity": "سيولة السوق",
+    "avg_offers_desc": "شحال من عرض فكل استفسار",
+    "conversion_rate": "معدل التحويل",
+    "fulfillment_success": "نجاح التلبية",
+    "fulfillment_success_desc": "الطلبات لي لقات مولاها",
+    "response_time": "وقت الاستجابة",
+    "market_velocity": "فيتاس السوق",
+    "avg_response_time_desc": "شحال بالخف يجي العرض اللول",
+    "buyer_pool": "مجموعة المشريين",
+    "network_scale": "كبر الشبكة",
+    "verified_buyers": "لي يشرو لي معتمدين فمليلة",
+    "quotes_frequency": "شحال من دوفي يجي",
+    "supply_engagement": "تفاعل لي بياع",
+    "win_rate": "معدل الربح فالشبكة",
+    "lead_conversion": "تحويل الزبائن",
+    "win_rate_desc": "شحال من دوفي جاب فايدة",
+    "turnaround": "متوسط الملحوق",
+    "response_velocity": "سرعة التجاوب",
+    "merchant_base": "قاعدة التجار",
+    "merchant_capacity": "قدرة البياعين",
+    "verified_sellers": "لي بياع لي خدامين ومعتمدين"
+  },
+  "charts": {
+    "demand_velocity": "سرعة الطلب",
+    "brand_origin": "دورييجين (Brand Origin)",
+    "request_volume_title": "فيتاس الطلبات",
+    "supply_density": "كثافة السلعة",
+    "category_focus": "التركيز على الفئة",
+    "quote_velocity": "فيتاس العروض",
+    "market_throughput": "تداول السوق في 30 يوم",
+    "request_volume": {
+      "title": "حجم الطلبات",
+      "desc": "طلب السوق في آخر 10 نقاط",
+      "insufficient": "مازال ما كاينش بيانات بزاف..."
+    },
+    "market_analytics": {
+      "title": "تحليلات السوق",
+      "desc": "شحال من دوفي فكل طلب",
+      "label": "دوفي/طلب",
+      "health": "حالة السوق"
+    }
+  },
+  "distribution": {
+    "buyer_title": "توزيع لي يشرو",
+    "seller_title": "توزيع لي بياع",
+    "regional_concentration": "الولايات لي فيهم الخدمة بزاف"
+  },
+  "stats": {
+    "buyers": {
+      "label": "لي يشرو لي نشطين",
+      "sub": "ناس معتمدين",
+      "desc": "قاع لي يشرو لي مسجلين"
+    },
+    "sellers": {
+      "label": "لي بياع لي نشطين",
+      "sub": "تجار معتمدين",
+      "desc": "لي بياع لي راهم يديرو عروض"
+    },
+    "demands": {
+      "label": "طلبات محلولة",
+      "sub": "حركة فالخدمة",
+      "desc": "قاع الطلبات لي محلولين دركا"
+    },
+    "supply": {
+      "label": "سلعة السوق",
+      "sub": "بري ودوفيات",
+      "desc": "قاع واش راه متوفر فالشبكة"
+    }
+  },
+  "table": {
+    "intelligence": "ذكاء السوق",
+    "signals": "إشارات الطلب الفوري وسرعة البيع والشراء",
+    "full_audit": "شوف التدقيق كامل",
+    "columns": {
+      "part_name": "اسم القطعة (Piece)",
+      "created_at": "وقتاش تكرية"
+    },
+    "submitted": "تبعت في {{time}}",
+    "vehicle": "طوموبيل",
+    "year": "العام",
+    "buyer": "المشتري",
+    "lifecycle": "حالة الدوموند",
+    "status_placeholder": "الحالة",
+    "update": "بدل الحالة",
+    "close": "بلع",
+    "liquidity": "سيولة السوق طوب. كاين فرصة كبيرة للبيع فآخر 24 ساعة.",
+    "status": {
+      "fulfilled": "تباعت/تسوات",
+      "open": "دوموند محلولة",
+      "cancelled": "أنولي (Annulé)"
+    }
+  },
+  "users": {
+    "title": "إدارة المستخدمين",
+    "search": "حوس على المستخدمين...",
+    "columns": {
+      "name": "الاسم",
+      "role": "الدور",
+      "status": "الحالة",
+      "score": "السكور (Score)",
+      "integrity": "المصداقية"
+    },
+    "filters": {
+      "role": "الدور",
+      "status": "الحالة",
+      "account": "الحساب"
+    },
+    "roles": {
+      "admin": "أدمين",
+      "seller": "بياع",
+      "buyer": "مشتري"
+    },
+    "integrity": {
+      "secure": "آمن",
+      "compromised": "مخطر"
+    },
+    "account_status": {
+      "new": "جديد",
+      "waitlisted": "فالانتظار",
+      "active": "نشط"
+    },
+    "actions": {
+      "activate": "أكتيفي (Activer)",
+      "view": "شوف",
+      "ban": "باني (Bannir)",
+      "selected": "سيكسيوني {{count}}",
+      "banned_success": "تسبباو {{count}} مستخدمين",
+      "activated_success": "البياع راه مأكتيفي"
+    },
+    "profile": {
+      "title": "بروفايل المستخدم",
+      "description": "شوف وجيري تفاصيل حساب المستخدم.",
+      "suspended": "مبلوكي",
+      "account_intelligence": "ذكاء الحساب",
+      "account_meta": "داتا الحساب",
+      "business_perf": "سجل الخدمة وأداء البيزنس",
+      "markers": "علامات التفاعل المضمونة",
+      "authority_ops": "جيري الصلاحيات",
+      "authority_desc": "بدل صلاحيات الوصول فالسيستيم",
+      "activate": "أكتيفي",
+      "restore": "رجع الحساب",
+      "suspend": "حبس الوصول",
+      "terminate": "إنهاء الجلسة",
+      "health_score": "سكور الصحة",
+      "security": "الأمن",
+      "registry_email": "الإيميل المسجل",
+      "contact_line": "التيليفون",
+      "origin_node": "البوستا اللولة",
+      "member_since": "عضو من",
+      "entity_name": "اسم المؤسسة",
+      "commercial_index": "السجل التجاري",
+      "priority_score": "سكور الأولوية",
+      "active_quotes": "الدوفيات لي خدامين",
+      "success_rate": "معدل النجاح",
+      "response_time": "وقت الاستجابة",
+      "account_tier": "نيفو الحساب",
+      "registry_node": "بوسط التسجيل",
+      "jurisdictions": "مجال الخدمة",
+      "no_entries": "ما كانش داتا مسجلة",
+      "market_position": "موضع السوق",
+      "registry_age": "عمر السجل",
+      "auth_method": "كيفاش يدخل",
+      "last_origin": "آخر حطة",
+      "elevated_access": "وصول عالي",
+      "system_integrity": "سلامة السيستيم والصلاحيات",
+      "authority_matrix": "طابلو الصلاحيات",
+      "days": "{{count}} يوم",
+      "success": {
+        "activated": "الحساب تأكتيفا ريقل",
+        "restored": "الحساب رجع كما كان",
+        "suspended": "الحساب تبلوكا"
+      }
+    },
+    "health": {
+      "optimal": "طوب",
+      "stable": "نيشان",
+      "low": "ناقص"
+    }
+  }
+}
