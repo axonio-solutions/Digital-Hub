@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "overview": "نظرة عامة",
+    "demands_hub": "مركز الطلبات",
+    "my_garage": "مرآبي",
+    "live_requests": "الطلبات الحية",
+    "my_quotes": "عروضي",
+    "global_metrics": "المقاييس العامة",
+    "user_moderation": "إدارة المستخدمين",
+    "buyers_hub": "مركز المشترين",
+    "sellers_hub": "مركز البائعين",
+    "categories": "الأصناف",
+    "request_audit": "تدقيق الطلبات",
+    "settings": "الإعدادات",
+    "support": "المساعدة والدعم",
+    "cloud_logs": "سجلات السحابة",
+    "admin_settings": "إعدادات المسؤول"
+  },
+  "labels": {
+    "buyer_hub": "مركز المشتري",
+    "seller_hub": "مركز البائع",
+    "admin_control": "لوحة التحكم"
+  },
+  "breadcrumbs": {
+    "dashboard": "لوحة التحكم",
+    "overview": "نظرة عامة",
+    "demands_hub": "مركز الطلبات",
+    "live_feed": "الموجز الحي",
+    "my_quotes": "عروضي",
+    "audit_log": "سجل التدقيق",
+    "my_garage": "مرآبي",
+    "buyers_intelligence": "ذكاء المشترين",
+    "sellers_ecosystem": "نظام البائعين",
+    "taxonomy_management": "إدارة التصنيفات",
+    "user_moderation": "إدارة المستخدمين",
+    "admin_settings": "إعدادات المسؤول",
+    "cloud_logs": "سجلات السحابة",
+    "support": "المساعدة والدعم"
+  },
+  "user_dropdown": {
+    "role": "الدور",
+    "region": "المنطقة",
+    "account_settings": "إعدادات الحساب",
+    "seller_hub": "مركز البائع",
+    "sign_out": "تسجيل الخروج"
+  }
+}

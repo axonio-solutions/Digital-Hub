@@ -1,0 +1,36 @@
+{
+  "title": "مركز التصنيف",
+  "description": "نظم التصنيف الداخلي للقطع ومجموعات المركبات للحفاظ على إشارات طلب السوق عالية الدقة.",
+  "buttons": {
+    "export": "تصدير",
+    "add_new": "إضافة جديد"
+  },
+  "tabs": {
+    "categories": "الأصناف",
+    "brands": "البراندات"
+  },
+  "table": {
+    "columns": {
+      "category_label": "اسم الصنف",
+      "demand_logic": "منطق الطلب (الطلبات)",
+      "manufacturer_spec": "مواصفات المصنع",
+      "cluster_origin": "أصل المجموعة",
+      "cluster_region": "منطقة المجموعة",
+      "active_demand": "الطلب النشط",
+      "status": "الحالة",
+      "actions": "الإجراءات",
+      "no_description": "لا يوجد وصف مقدم.",
+      "manufacturer_cluster": "مجموعة المصنع"
+    },
+    "search_placeholder": "بحث في {{tab}}...",
+    "actions": {
+      "category_label": "إجراءات الصنف",
+      "brand_label": "إجراءات البراند",
+      "update_label": "تحديث الاسم",
+      "update_cluster": "تحديث المجموعة",
+      "delete_entry": "حذف الإدخال",
+      "delete_cluster": "حذف المجموعة",
+      "open_menu": "فتح القائمة"
+    }
+  }
+}

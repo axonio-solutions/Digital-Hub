@@ -1,0 +1,18 @@
+{
+  "badges": {
+    "offers_received": "تم استلام عروض",
+    "new": "جديد",
+    "premium_grid": "شبكة ممتازة"
+  },
+  "labels": {
+    "quotes": "عروض",
+    "id_prefix": "معرف"
+  },
+  "actions": {
+    "review": "مراجعة",
+    "details": "تفاصيل"
+  },
+  "defaults": {
+    "note": "يطلب {{title}} لـ {{brand}} {{modelYear}}."
+  }
+}

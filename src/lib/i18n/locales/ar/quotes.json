@@ -1,0 +1,74 @@
+{
+  "card": {
+    "authorized_seller": "بائع معتمد",
+    "rejected": "مرفوض",
+    "default_location": "الجزائر",
+    "default_note": "مرحباً! هذه القطعة متوفرة لدينا بالضبط. تم فحص الجودة وهي جاهزة للشحن.",
+    "ago": "منذ",
+    "actions": {
+      "revoke": "إلغاء القبول",
+      "revoking": "جاري الإلغاء...",
+      "contact": "الاتصال بالبائع",
+      "unreject": "إلغاء الرفض",
+      "unrejecting": "جاري الاستعادة...",
+      "reject": "رفض",
+      "rejecting": "جاري الرفض...",
+      "accept": "قبول العرض",
+      "accepting": "جاري القبول...",
+      "closed": "الطلب مغلق"
+    }
+  },
+  "columns": {
+    "part": "القطعة",
+    "vehicle": "المركبة",
+    "price": "السعر",
+    "status": "الحالة",
+    "date": "التاريخ",
+    "actions": "الإجراءات",
+    "statuses": {
+      "accepted": "مقبول",
+      "pending": "قيد الانتظار",
+      "rejected": "مرفوض"
+    }
+  },
+  "table": {
+    "search_placeholder": "البحث عن العروض...",
+    "status_filter": "الحالة",
+    "actions_menu": "الإجراءات",
+    "view_request": "عرض الطلب",
+    "edit_offer": "تعديل العرض",
+    "withdraw_offer": "سحب العرض"
+  },
+  "hub": {
+    "title": "أنبوب المبيعات",
+    "desc": "إدارة عروض الأسعار وتتبع مبيعات القطع الخاصة بك.",
+    "loading": "جاري تحميل أنبوب المبيعات...",
+    "stats": {
+      "total": "إجمالي العروض",
+      "total_sub": "النشاط الكلي",
+      "success_rate": "معدل النجاح",
+      "success_rate_sub": "معدل التحويل",
+      "pipeline": "قيمة الأنبوب",
+      "pipeline_sub": "د.ج (قيد الانتظار)",
+      "accepted": "العروض المقبولة",
+      "accepted_sub": "المبيعات المكتملة"
+    },
+    "tabs": {
+      "active": "نشط",
+      "won": "مكتسب",
+      "lost": "مغلق / مفقود"
+    },
+    "dialog": {
+      "update_title": "تحديث عرض السعر",
+      "update_desc": "اضبط تفاصيل عرضك.",
+      "update_btn": "تحديث العرض",
+      "close": "إغلاق"
+    },
+    "confirm": {
+      "withdraw": "هل تريد سحب هذا العرض نهائياً؟ هذا الإجراء لا يمكن التراجع عنه."
+    },
+    "toasts": {
+      "withdrawn": "تم سحب العرض بنجاح"
+    }
+  }
+}

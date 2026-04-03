@@ -1,0 +1,42 @@
+{
+  "filters": {
+    "categories": "فئات القطع",
+    "all_categories": "جميع الفئات",
+    "brands": "علامات السيارات",
+    "condition": "حالة القطعة",
+    "urgency": "الاستعجال",
+    "any_time": "أي وقت",
+    "asap": "عاجل جداً (السيارة معطلة)",
+    "within_week": "خلال أسبوع",
+    "conditions": {
+      "new": "جديدة (أصلية/بديلة)",
+      "used": "مستعملة / خردة",
+      "refurbished": "مجددة"
+    }
+  },
+  "header": {
+    "title": "إشارات الطلب",
+    "badge": "موجز الطلب الحي",
+    "description": "اكتشف طلبات المشترين النشطة عبر شبكتنا. وفر لهم القطعة الدقيقة التي يبحثون عنها."
+  },
+  "controls": {
+    "filters_btn": "تصفية",
+    "requests_count": "{{count}} طلبات",
+    "search_placeholder": "ابحث باسم القطعة، العلامة، أو رقم OEM...",
+    "grid_view": "عرض الشبكة",
+    "list_view": "عرض القائمة"
+  },
+  "empty": {
+    "title": "لم يتم العثور على طلبات تطابق اختياراتك.",
+    "description": "حاول تعديل معايير البحث أو إزالة بعض الفلاتر."
+  },
+  "card": {
+    "badge_looking": "مطلوب قطعة",
+    "badge_offers": "تم استلام عروض",
+    "quotes_count": "{{count}} عروض",
+    "model_year": "سنة {{year}}",
+    "default_category": "قطعة زينة",
+    "action_btn": "سجل الدخول لتقديم عرض",
+    "request_summary": "يطلب {{partName}} لـ {{brand}} {{year}}."
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "title": "تفاصيل الطلب",
+  "description": "المواصفات الفنية وملاحظات المشتري.",
+  "sections": {
+    "vehicle": "معلومات المركبة",
+    "part_specifics": "تفاصيل القطعة",
+    "metadata": "مرجع البيانات"
+  },
+  "labels": {
+    "brand": "العلامة التجارية",
+    "part_category": "فئة القطعة",
+    "general": "عام",
+    "model_year": "سنة الصنع",
+    "oem_number": "رقم القطعة الأصلي (OEM)",
+    "not_specified": "غير محدد",
+    "buyer_notes": "ملاحظات المشتري",
+    "no_notes": "لا توجد ملاحظات محددة.",
+    "network_id": "معرف الشبكة",
+    "broadcasted": "تم البث",
+    "na": "غير متوفر",
+    "regional_origin": "المنشأ الإقليمي",
+    "market_traction": "تفاعل السوق",
+    "responses": "الردود"
+  },
+  "actions": {
+    "back_to_list": "العودة لطلباتي",
+    "edit_details": "تعديل تفاصيل الطلب",
+    "copy_link": "نسخ رابط المشاركة",
+    "delete_request": "حذف الطلب",
+    "close_request": "إغلاق الطلب",
+    "reopen_request": "إعادة فتح الطلب",
+    "delete_permanently": "حذف نهائي",
+    "close": "إغلاق",
+    "cancel": "إلغاء"
+  },
+  "errors": {
+    "not_found": "الطلب غير موجود",
+    "not_found_desc": "لم نتمكن من العثور على الطلب الذي تبحث عنه."
+  },
+  "hints": {
+    "fulfill_desc": "حدد هذا الطلب كمكتمل أو لم تعد بحاجة إليه.",
+    "closed_desc": "هذا الطلب مغلق حالياً. أعد فتحه لتلقي المزيد من العروض."
+  },
+  "quotes": {
+    "title": "العروض المستلمة",
+    "sort_by": "ترتيب حسب:",
+    "sort_recent": "الأحدث",
+    "sort_price": "الأقل سعراً",
+    "empty_title": "لا توجد عروض بعد",
+    "empty_desc": "سنقوم بإخطارك فور استجابة البائعين."
+  },
+  "dialogs": {
+    "delete": {
+      "title": "حذف الطلب؟",
+      "confirm": "حذف نهائي"
+    },
+    "cancel": "إلغاء"
+  },
+  "contact": {
+    "title": "الاتصال بالبائع",
+    "connect_desc": "اتصل بـ {{name}} لإتمام عملية الشراء.",
+    "phone_label": "الهاتف",
+    "not_listed": "غير مدرج",
+    "store_address": "عنوان المتجر",
+    "main_store": "المتجر الرئيسي",
+    "default_location": "الجزائر",
+    "whatsapp": "رسالة واتساب",
+    "call": "اتصال هاتفي مباشر",
+    "hint": "اذكر \"ديجيتال هب\" للحصول على خدمة أسرع"
+  }
+}

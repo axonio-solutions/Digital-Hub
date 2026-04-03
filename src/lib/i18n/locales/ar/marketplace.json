@@ -1,0 +1,151 @@
+{
+  "title": "خلاصة المتجر",
+  "description": "تصفح طلبات المشترين في الوقت الحقيقي عبر الجزائر وقدم عروض أسعارك.",
+  "metrics": {
+    "open": "الفرص المتاحة",
+    "open_desc": "قطع الغيار المطلوبة حالياً في الشبكة",
+    "active": "عروض أسعارك النشطة",
+    "active_desc": "عروض بانتظار رد المشتري",
+    "revenue": "الإيرادات الشهرية",
+    "revenue_desc": "انظر الأرباح",
+    "win_rate": "معدل النجاح",
+    "win_rate_desc": "انظر الأرباح"
+  },
+  "hub": {
+    "title": "مركز المتجر",
+    "description": "راقب إشارات الطلب في الوقت الحقيقي وقم بإدارة عروضك النشطة عبر الشبكة الآمنة.",
+    "refresh": "تحديث إجباري",
+    "filter_specialties": "تصفية التخصصات"
+  },
+  "specialties_banner": {
+    "complete_title": "أكمل ملفك الشخصي التخصصي",
+    "complete_desc": "اختر العلامات التجارية للسيارات والفئات لفتح الطلبات المفلترة وتحسين سرعة ردك.",
+    "complete_btn": "تكوين التخصصات",
+    "ready_title": "تخصصاتك جاهزة!",
+    "ready_desc": "لقد حددنا فرصاً مطابقة لمخزونك المتخصص. قم بتفعيل الفلترة أدناه للتركيز على الطلبات ذات الصلة.",
+    "ready_btn": "تفعيل فلتر التخصصات"
+  },
+  "tabs": {
+    "open": "الفرص المتاحة",
+    "active": "عروض أسعارك النشطة"
+  },
+  "table": {
+    "title": "الطلبات المتوفرة",
+    "description": "ابحث عن قطع الغيار المتوفرة لديك وقدم أسعاراً تنافسية.",
+    "search_placeholder": "ابحث عن قطعة أو رقم OEM...",
+    "brand_filter": "فلتر العلامة التجارية",
+    "all_brands": "كل العلامات التجارية",
+    "clear_filters": "مسح الفلاتر",
+    "headers": {
+      "part": "القطعة",
+      "vehicle": "المركبة",
+      "category": "الفئة",
+      "posted": "نُشر في",
+      "my_offer": "عرضي"
+    },
+    "actions": {
+      "label": "الإجراءات",
+      "send_offer": "إرسال عرض",
+      "view_details": "عرض التفاصيل",
+      "view_offer": "عرض العرض",
+      "edit_quote": "تعديل العرض",
+      "withdraw": "سحب"
+    },
+    "row_actions": {
+      "label": "إجراءات العرض",
+      "edit": "تعديل العرض",
+      "retract": "سحب العرض",
+      "edit_title": "تعديل عرضك",
+      "edit_desc": "تحديث السعر أو الحالة لهذه القطعة.",
+      "retract_title": "سحب العرض؟",
+      "retract_confirm": "هل أنت متأكد أنك تريد سحب عرضك لـ <strong>{{partName}}</strong>؟ لن يتمكن المشتري من قبوله بعد الآن.",
+      "retract_btn": "نعم، اسحب العرض"
+    },
+    "defaults": {
+      "general": "عام",
+      "part": "قطعة",
+      "id_prefix": "رقم:"
+    }
+  },
+  "offer_details": {
+    "title": "تفاصيل عرضك",
+    "description": "ملخص عرضك لهذا الطلب.",
+    "price": "السعر المعروض",
+    "condition": "حالة القطعة",
+    "warranty": "الضمان/الملاحظات",
+    "no_warranty": "لم يتم تسجيل شروط محددة.",
+    "adjust_btn": "تعديل العرض",
+    "delete_btn": "حذف العرض"
+  },
+  "form": {
+    "title": "تقديم عرض سعر",
+    "description": "قدم أفضل سعر لديك لهذه القطعة. سيتلقى المشتري عرضك فوراً.",
+    "context": "سياق الطلب",
+    "category": "فئة القطعة",
+    "compatible": "المركبة المتوافقة",
+    "oem_id": "رقم OEM",
+    "your_offer": "عرضك",
+    "offer_desc": "أدخل تفاصيل عرض سعرك.",
+    "price_label": "السعر (د.ج)",
+    "price_placeholder": "أدخل السعر",
+    "condition_label": "الحالة",
+    "condition_new": "جديد",
+    "condition_used": "مستعمل",
+    "warranty_label": "الضمان",
+    "warranty_placeholder": "مثلاً: 6 أشهر",
+    "note": "ملاحظة",
+    "no_notes": "لا توجد ملاحظات من المشتري.",
+    "submit_btn": "إرسال عرض السعر",
+    "update_btn": "تحديث عرض السعر",
+    "vehicle": "المركبة",
+    "part_name": "اسم القطعة"
+  },
+  "toasts": {
+    "submit_success": "تم إرسال عرض السعر بنجاح",
+    "submit_error": "فشل الإرسال",
+    "update_success": "تم تحديث عرض السعر بنجاح",
+    "update_error": "فشل التحديث",
+    "delete_success": "تم حذف العرض بنجاح",
+    "retract_success": "تم سحب العرض بنجاح",
+    "retract_error": "فشل سحب العرض"
+  },
+  "alerts": {
+    "delete_confirm": "هل تريد حذف هذا العرض نهائياً؟ لا يمكن التراجع عن هذا الإجراء."
+  },
+  "loading": "جاري تحميل خلاصة المتجر...",
+  "error": "فشل تحميل بيانات المتجر.",
+  "close": "إغلاق",
+  "list": {
+    "new": "جديد",
+    "spare_part": "قطعة غيار",
+    "no_description": "لا يوجد وصف متوفر.",
+    "ago": "منذ",
+    "ignore": "تجاهل",
+    "send_offer": "إرسال عرض",
+    "view_quote": "عرض الاقتباس",
+    "no_results": "لا توجد نتائج تطابق عوامل التصفية الخاصة بك.",
+    "algiers": "الجزائر",
+    "unknown": "غير معروف"
+  },
+  "statuses": {
+    "accepted": "مقبول",
+    "pending": "قيد الانتظار",
+    "rejected": "مرفوض"
+  },
+  "conditions": {
+    "new": "جديد",
+    "used": "مستعمل",
+    "unknown": "غير معروف"
+  },
+  "grid": {
+    "active_badge": "عرض نشط",
+    "new_badge": "فرصة جديدة",
+    "oem_prefix": "OEM:",
+    "submit_btn": "تقديم عرض",
+    "view_btn": "عرض التفاصيل",
+    "no_results": "لا توجد نتائج تطابق عوامل التصفية الخاصة بك."
+  },
+  "defaults": {
+    "unknown": "غير معروف"
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "title": "الإعدادات",
+  "menu": "القائمة",
+  "sections": {
+    "profile": "الملف الشخصي",
+    "security": "الأمان",
+    "notifications": "الإشعارات"
+  },
+  "profile": {
+    "identity_title": "هوية الملف الشخصي",
+    "identity_desc": "صورتك الرمزية مرئية للمشاركين الآخرين في السوق. استخدم صورة احترافية لبناء الثقة وزيادة قبول العروض.",
+    "personal_title": "التفاصيل الشخصية",
+    "personal_desc": "إدارة معلومات حسابك وتفاصيل الاتصال الخاصة بك.",
+    "store_title": "ملف المتجر",
+    "store_desc": "إدارة هويتك التجارية كبائع."
+  },
+  "form": {
+    "basic_identity": "الهوية الأساسية",
+    "identity_desc": "تحديث صورتك الرمزية وتفاصيل الاتصال الشخصية.",
+    "name": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "whatsapp": "واتساب (اختياري)",
+    "whatsapp_placeholder": "+213...",
+    "physical_address": "العنوان الفعلي",
+    "address_desc": "إدارة موقعك الأساسي للتوصيل والخدمة.",
+    "street": "عنوان الشارع",
+    "street_placeholder": "123 اسم الشارع",
+    "city": "المدينة / البلدية",
+    "city_placeholder": "مثال: الشراقة",
+    "wilaya": "الولاية",
+    "wilaya_placeholder": "اختر الولاية",
+    "save": "حفظ التغييرات",
+    "saving": "جاري الحفظ..."
+  },
+  "messages": {
+    "profile_updated": "تم تحديث الملف الشخصي",
+    "update_failed": "فشل التحديث",
+    "account_deactivated": "تم إلغاء تنشيط الحساب",
+    "account_deactivated_desc": "تم تسجيل خروجك. بياناتك مخفية الآن.",
+    "deactivation_failed": "فشل إلغاء التنشيط",
+    "account_deleted": "تم حذف الحساب نهائياً",
+    "account_deleted_desc": "تم مسح جميع بياناتك.",
+    "deletion_failed": "فشل الحذف",
+    "saving": "جاري الحفظ...",
+    "preferences_updated": "تم تحديث التفضيلات بنجاح",
+    "update_pref_failed": "فشل تحديث التفضيلات",
+    "admin_alert_triggered": "تم إطلاق تنبيه المشرف!",
+    "admin_alert_failed": "فشل إطلاق التنبيه"
+  },
+  "security_section": {
+    "password": "كلمة المرور",
+    "current_password": "كلمة المرور الحالية",
+    "new_password": "كلمة المرور الجديدة",
+    "confirm_password": "تأكيد كلمة المرور",
+    "update_button": "تحديث كلمة المرور",
+    "danger_zone": "منطقة الخطر",
+    "deactivation": "إلغاء التنشيط",
+    "deactivation_desc": "إخفاء حسابك مؤقتًا. يمكنك العودة في أي وقت.",
+    "deactivation_button": "إلغاء تنشيط الحساب",
+    "deletion": "الحذف الدائم",
+    "deletion_desc": "هذا الإجراء غير قابل للتراجع. سيتم مسح جميع البيانات.",
+    "deletion_button": "حذف للأبد",
+    "prompts": {
+      "deactivate_confirm": "هل أنت متأكد؟ سيؤدي هذا إلى إخفاء ملفك الشخصي وتسجيل خروجك.",
+      "delete_confirm": "اكتب DELETE لتأكيد الحذف الدائم:"
+    }
+  },
+  "security": {
+    "title": "أمان الحساب",
+    "desc": "احمِ حسابك بكلمات مرور قوية وضوابط الخصوصية."
+  },
+  "notifications": {
+    "title": "تفضيلات الإشعارات",
+    "desc": "حسِّن تجربتك من خلال اختيار أين وكيف تتلقى إشارات السوق."
+  },
+  "notifications_section": {
+    "loading": "جاري تحميل تفضيلاتك...",
+    "delivery_channels": "قنوات التوصيل",
+    "delivery_desc": "اختر كيف تريد أن يتم تنبيهك بشأن النشاط الجديد.",
+    "in_app": "إشعارات داخل التطبيق",
+    "in_app_desc": "تنبيهات فورية تظهر في لوحة التحكم الخاصة بك.",
+    "email": "تنبيهات البريد الإلكتروني",
+    "email_desc": "احصل على تحديثات مفصلة تصل إلى بريدك الوارد.",
+    "coming_soon": "قريباً",
+    "seller_strategy": "استراتيجية تنبيه البائع",
+    "seller_strategy_desc": "حسِّن كيفية تلقي الطلبات وإشارات السوق.",
+    "frequency": "تردد الإشعارات",
+    "frequency_desc": "اختر بين الطلبات الفورية أو ملخص يومي.",
+    "immediate": "فوري",
+    "immediate_desc": "نبهني في اللحظة التي يتطابق فيها طلب جديد مع تخصصي.",
+    "daily_digest": "ملخص يومي",
+    "daily_digest_desc": "تلقي ملخص واحد لجميع الطلبات يومياً.",
+    "visibility": "نطاق رؤية الطلبات",
+    "visibility_desc": "تحكم في طلبات العلامات التجارية التي تطلق إشعاراتك.",
+    "my_specialties": "تخصصاتي",
+    "my_specialties_desc": "التنبيه فقط للعلامات التجارية في قائمة تخصصاتي.",
+    "global_access": "وصول عالمي",
+    "global_access_desc": "التنبيه لكل طلب جديد عبر المنصة.",
+    "admin_sim": "مركز محاكاة المشرف",
+    "admin_sim_desc": "إطلاق أحداث على مستوى النظام لاختبار توجيه الإشعارات.",
+    "spam_test": "اختبار الحد من السبام",
+    "spam_test_desc": "محاكاة بلاغ سبام على طلب وهمي (#TEST-123).",
+    "trigger_button": "إطلاق تنبيه سبام"
+  }
+}

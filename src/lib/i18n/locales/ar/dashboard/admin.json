@@ -1,0 +1,197 @@
+{
+  "welcome": "أهلاً بك من جديد، إليك ملخص نشاط منصة مليلة اليوم.",
+  "export": "صدّر التقرير",
+  "intelligence": {
+    "buyer": "ذكاء المشترين",
+    "seller": "ذكاء البائعين",
+    "marketplace": "ذكاء السوق"
+  },
+  "subtitle": {
+    "buyer": "تحليلات الطلب في الوقت الفعلي وتوقعات السوق",
+    "seller": "توزيع الإمدادات الاستراتيجي والربط العالمي للتجار",
+    "marketplace": "إشارات الطلب الفورية وسرعة التلبية"
+  },
+  "metrics": {
+    "inquiries_tracked": "الاستفسارات المتتبعة",
+    "supply_nodes": "نقاط التوريد المسجلة",
+    "avg_offers": "متوسط العروض",
+    "market_liquidity": "سيولة السوق",
+    "avg_offers_desc": "متوسط العروض لكل استفسار",
+    "conversion_rate": "معدل التحويل",
+    "fulfillment_success": "نجاح التلبية",
+    "fulfillment_success_desc": "الطلبات المطابقة للعروض",
+    "response_time": "وقت الاستجابة",
+    "market_velocity": "سرعة السوق",
+    "avg_response_time_desc": "السرعة المتوسطة للعرض الأول",
+    "buyer_pool": "مجمع المشترين",
+    "network_scale": "حجم الشبكة",
+    "verified_buyers": "المشترون المعتمدون في المنصة",
+    "quotes_frequency": "تكرار العروض",
+    "supply_engagement": "تفاعل الموردين",
+    "win_rate": "معدل الفوز في الشبكة",
+    "lead_conversion": "تحويل العملاء",
+    "win_rate_desc": "مطابقات العروض للطلبات الناجحة",
+    "turnaround": "متوسط الإنجاز",
+    "response_velocity": "سرعة الاستجابة",
+    "merchant_base": "قاعدة التجار",
+    "merchant_capacity": "قدرة التجار",
+    "verified_sellers": "نقاط التوريد النشطة والمعتمدة"
+  },
+  "charts": {
+    "demand_velocity": "سرعة الطلب",
+    "brand_origin": "أصل العلامة التجارية",
+    "request_volume_title": "سرعة الطلبات",
+    "supply_density": "كثافة التوريد",
+    "category_focus": "التركيز على الفئة",
+    "quote_velocity": "سرعة العروض",
+    "market_throughput": "إنتاجية السوق خلال 30 يوماً",
+    "request_volume": {
+      "title": "حجم الطلبات",
+      "desc": "طلب السوق خلال آخر 10 نقاط",
+      "insufficient": "بيانات غير كافية لتوقع الحجم..."
+    },
+    "market_analytics": {
+      "title": "تحليلات السوق",
+      "desc": "متوسط العروض لكل طلب في السوق",
+      "label": "عرض/طلب",
+      "health": "صحة السوق"
+    }
+  },
+  "distribution": {
+    "buyer_title": "توزيع شبكة المشترين",
+    "seller_title": "توزيع شبكة التجار",
+    "regional_concentration": "التركيز الإقليمي حسب الولايات"
+  },
+  "stats": {
+    "buyers": {
+      "label": "المشترون النشطون",
+      "sub": "مشاركون معتمدون",
+      "desc": "إجمالي المشترين المسجلين في المنصة"
+    },
+    "sellers": {
+      "label": "البائعون الحاليون",
+      "sub": "تجار معتمدون",
+      "desc": "شركاء التوريد النشطون"
+    },
+    "demands": {
+      "label": "الطلبات المفتوحة",
+      "sub": "نشاط السوق",
+      "desc": "إجمالي الطلبات المفتوحة حالياً"
+    },
+    "supply": {
+      "label": "إمدادات السوق",
+      "sub": "الأسعار والعروض",
+      "desc": "إجمالي التوفر عبر الشبكة"
+    }
+  },
+  "table": {
+    "intelligence": "ذكاء السوق",
+    "signals": "إشارات الطلب الفورية وسرعة التلبية",
+    "full_audit": "عرض التدقيق الكامل",
+    "columns": {
+      "part_name": "اسم القطعة",
+      "created_at": "تاريخ الإنشاء"
+    },
+    "submitted": "تم الإرسال منذ {{time}}",
+    "vehicle": "المركبة",
+    "year": "السنة",
+    "buyer": "المشتري",
+    "lifecycle": "حالة الطلب",
+    "status_placeholder": "الحالة",
+    "update": "حدّث الحالة",
+    "close": "أغلق",
+    "liquidity": "سيولة السوق مثالية. تم رصد إمكانية تحويل عالية خلال آخر 24 ساعة.",
+    "status": {
+      "fulfilled": "تمت التلبية",
+      "open": "طلب مفتوح",
+      "cancelled": "ملغى"
+    }
+  },
+  "users": {
+    "title": "إدارة المستخدمين",
+    "search": "ابحث عن مستخدمين...",
+    "columns": {
+      "name": "الاسم",
+      "role": "الدور",
+      "status": "الحالة",
+      "score": "التقييم",
+      "integrity": "النزاهة"
+    },
+    "filters": {
+      "role": "الدور",
+      "status": "الحالة",
+      "account": "الحساب"
+    },
+    "roles": {
+      "admin": "مسؤول",
+      "seller": "بائع",
+      "buyer": "مشتري"
+    },
+    "integrity": {
+      "secure": "آمن",
+      "compromised": "مخترق"
+    },
+    "account_status": {
+      "new": "جديد",
+      "waitlisted": "في قائمة الانتظار",
+      "active": "نشط"
+    },
+    "actions": {
+      "activate": "فعّل",
+      "view": "اعرض",
+      "ban": "احظر المحدد",
+      "selected": "تم تحديد {{count}}",
+      "banned_success": "تم حظر {{count}} مستخدم",
+      "activated_success": "تم تفعيل البائع"
+    },
+    "profile": {
+      "title": "ملف المستخدم",
+      "description": "عرض وإدارة تفاصيل حساب المستخدم.",
+      "suspended": "موقوف",
+      "account_intelligence": "ذكاء الحساب",
+      "account_meta": "بيانات الحساب",
+      "business_perf": "سجل النطاقات المتقاطعة وأداء الأعمال",
+      "markers": "علامات التفاعل المعتمدة",
+      "authority_ops": "عمليات الصلاحيات",
+      "authority_desc": "تطبيق تغييرات الوصول على مستوى النظام",
+      "activate": "فعّل",
+      "restore": "استعد الحساب",
+      "suspend": "أوقف الوصول",
+      "terminate": "إنهاء الجلسة",
+      "health_score": "درجة الصحة",
+      "security": "الأمان",
+      "registry_email": "البريد الإلكتروني المسجل",
+      "contact_line": "خط الاتصال",
+      "origin_node": "نقطة الأصل",
+      "member_since": "عضو منذ",
+      "entity_name": "اسم الكيان",
+      "commercial_index": "السجل التجاري",
+      "priority_score": "درجة الأولويّة",
+      "active_quotes": "العروض النشطة",
+      "success_rate": "معدل النجاح",
+      "response_time": "وقت الاستجابة",
+      "account_tier": "فئة الحساب",
+      "registry_node": "نقطة التسجيل",
+      "jurisdictions": "الاختصاصات العملياتية",
+      "no_entries": "لا توجد بيانات موثقة",
+      "market_position": "موضع السوق",
+      "registry_age": "عمر السجل",
+      "auth_method": "طريقة المصادقة",
+      "last_origin": "آخر نقطة أصل",
+      "elevated_access": "وصول مرتفع",
+      "system_integrity": "سلامة النظام والأذونات",
+      "authority_matrix": "مصفوفة الصلاحيات",
+      "days": "{{count}} يوم",
+      "success": {
+        "activated": "تم تفعيل الحساب بنجاح",
+        "restored": "تمت استعادة الحساب",
+        "suspended": "تم إيقاف الحساب"
+      }
+    },
+    "health": {
+      "optimal": "مثالي",
+      "stable": "مستقر",
+      "low": "منخفض"
+    }
+  }
+}
