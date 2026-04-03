@@ -1,15 +1,15 @@
 'use client'
 
-import { useMemo } from 'react'
 import {
   IconCircleCheckFilled,
   IconLoader,
   IconCircleXFilled,
 } from '@tabler/icons-react'
+import { useTranslation } from 'react-i18next'
 
 import { DataTable } from '@/components/ui/data-table/data-table'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
-import { sellerColumns } from './seller-columns'
+import { useSellerColumns } from './seller-columns'
 
 interface SellerQuotesTableProps {
   data: Array<any>
@@ -17,7 +17,8 @@ interface SellerQuotesTableProps {
 }
 
 export function SellerQuotesTable({ data, onAction }: SellerQuotesTableProps) {
-  const columns = useMemo(() => sellerColumns(onAction), [onAction])
+  const { t } = useTranslation('quotes')
+  const columns = useSellerColumns(onAction)
 
   return (
     <div className="space-y-6">
@@ -29,15 +30,15 @@ export function SellerQuotesTable({ data, onAction }: SellerQuotesTableProps) {
           <DataTableToolbar
             table={table}
             searchColumn="partName"
-            searchPlaceholder="Search proposals..."
+            searchPlaceholder={t('table.search_placeholder')}
             facetedFilters={[
               {
                 column: "status",
-                title: "Status",
+                title: t('table.status_filter'),
                 options: [
-                  { label: "Accepted", value: "accepted", icon: IconCircleCheckFilled },
-                  { label: "Pending", value: "pending", icon: IconLoader },
-                  { label: "Rejected", value: "rejected", icon: IconCircleXFilled },
+                  { label: t('columns.statuses.accepted'), value: "accepted", icon: IconCircleCheckFilled },
+                  { label: t('columns.statuses.pending'),  value: "pending",  icon: IconLoader },
+                  { label: t('columns.statuses.rejected'), value: "rejected", icon: IconCircleXFilled },
                 ]
               }
             ]}

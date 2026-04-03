@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import {
   Activity,
   TriangleAlert,
@@ -31,6 +32,7 @@ export const Route = createFileRoute('/_authed/dashboard/audit/')({
 })
 
 function AdminRequestsRoute() {
+  const { t } = useTranslation('dashboard/audit')
   const { data: requests = [], isLoading } = useAllRequests()
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -52,31 +54,31 @@ function AdminRequestsRoute() {
 
     return [
       { 
-        label: 'Pending Review', 
+        label: t('stats.pending.label'), 
         value: pending.toLocaleString(), 
-        description: 'Pending Validation',
-        detail: 'Awaiting moderate approval',
+        description: t('stats.pending.desc'),
+        detail: t('stats.pending.detail'),
         color: 'amber'
       },
       {
-        label: 'Flagged Spam',
+        label: t('stats.flagged.label'),
         value: flagged.toLocaleString(),
-        description: 'Security Alerts',
-        detail: 'High-risk signals detected',
+        description: t('stats.flagged.desc'),
+        detail: t('stats.flagged.detail'),
         color: 'red'
       },
       {
-        label: 'Total Today',
+        label: t('stats.today.label'),
         value: totalToday.toLocaleString(),
-        description: 'Daily Volume',
-        detail: 'New market entries (24h)',
+        description: t('stats.today.desc'),
+        detail: t('stats.today.detail'),
         color: 'blue'
       },
       {
-        label: 'Conversion Rate',
+        label: t('stats.conversion.label'),
         value: `${conversion.toFixed(1)}%`,
-        description: 'Market Yield',
-        detail: 'Fulfillment-matched inquiries',
+        description: t('stats.conversion.desc'),
+        detail: t('stats.conversion.detail'),
         color: 'emerald'
       },
     ]
@@ -108,7 +110,7 @@ function AdminRequestsRoute() {
       },
       {
         accessorKey: 'partName',
-        header: 'Part Info',
+        header: t('table.columns.part_info'),
         cell: ({ row }) => {
           const request = row.original
           const mainImage = request.imageUrls?.[0]
@@ -126,7 +128,7 @@ function AdminRequestsRoute() {
                   {request.partName}
                 </span>
                 <span className="text-[11px] text-slate-500 font-medium truncate max-w-[180px]">
-                  #{request.oemNumber || 'Global ID'}
+                  #{request.oemNumber || t('table.columns.global_id')}
                 </span>
               </div>
             </div>
@@ -135,7 +137,7 @@ function AdminRequestsRoute() {
       },
       {
         accessorKey: 'vehicleBrand',
-        header: 'Vehicle Profile',
+        header: t('table.columns.vehicle_profile'),
         cell: ({ row }) => {
           const createdAt = row.original.createdAt ? new Date(row.original.createdAt).toLocaleDateString() : '';
           return (
@@ -162,7 +164,7 @@ function AdminRequestsRoute() {
       },
       {
         id: 'traction',
-        header: 'Market Traction',
+        header: t('table.columns.market_traction'),
         cell: ({ row }) => {
           const qCount = row.original.quotes?.length || 0
           return (
@@ -175,7 +177,7 @@ function AdminRequestsRoute() {
                 ))}
               </div>
               <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
-                {qCount} {qCount === 1 ? 'Response' : 'Responses'}
+                {qCount} {qCount === 1 ? t('table.columns.responses.singular') : t('table.columns.responses.plural')}
               </span>
             </div>
           )
@@ -183,7 +185,7 @@ function AdminRequestsRoute() {
       },
       {
         accessorKey: 'status',
-        header: 'Status Matrix',
+        header: t('table.columns.status'),
         cell: ({ row }) => {
           const status = row.original.status;
           const isSpam = row.original.isSpam;
@@ -199,18 +201,20 @@ function AdminRequestsRoute() {
                   "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-900 dark:text-slate-400 dark:border-slate-800"
                 )}
               >
-                {status}
+                {status === 'open' ? t('table.filters.status.open') : 
+                 status === 'fulfilled' ? t('table.filters.status.fulfilled') : 
+                 status}
               </Badge>
               {isPriority && (
                 <Badge className="bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800 font-bold uppercase text-[10px] tracking-wider px-2 py-0.5 rounded-md border shadow-sm flex items-center gap-1">
                   <Star className="size-3" />
-                  Priority
+                  {t('table.columns.status_types.priority')}
                 </Badge>
               )}
               {isSpam && (
                 <Badge className="bg-red-50 text-red-700 border-red-100 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800 font-bold uppercase text-[10px] tracking-wider px-2 py-0.5 rounded-md border shadow-sm flex items-center gap-1">
                   <TriangleAlert className="size-3" />
-                  Spam
+                  {t('table.columns.status_types.spam')}
                 </Badge>
               )}
             </div>
@@ -231,10 +235,10 @@ function AdminRequestsRoute() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
           <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white uppercase leading-none">
-            Offer Monitoring
+            {t('title')}
           </h2>
           <p className="text-slate-500 max-w-2xl text-sm font-medium leading-relaxed">
-            Review current requests, validate demand signals, and detect potential spam across the network.
+            {t('description')}
           </p>
         </div>
       </div>
@@ -278,14 +282,14 @@ function AdminRequestsRoute() {
           <DataTableToolbar 
             table={table} 
             searchColumn="partName"
-            searchPlaceholder="Filter requests..."
+            searchPlaceholder={t('table.search')}
             facetedFilters={[
               {
                 column: "status",
-                title: "Status",
+                title: t('table.filters.status.title'),
                 options: [
-                  { label: "Open", value: "open" },
-                  { label: "Fulfilled", value: "fulfilled" },
+                  { label: t('table.filters.status.open'), value: "open" },
+                  { label: t('table.filters.status.fulfilled'), value: "fulfilled" },
                 ],
               },
             ]}

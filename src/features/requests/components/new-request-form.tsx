@@ -3,11 +3,11 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
-import { Camera, Car, Loader2, PlusIcon, UploadCloud, XIcon, X, Plus } from 'lucide-react'
+import { Camera, Car, Loader2, Plus, UploadCloud, XIcon } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
-import { cn } from '@/lib/utils'
 import {
   productFormSchema
 } from '../validations/product-schemas'
@@ -56,6 +56,8 @@ export function NewPartRequestForm({
   const [uploadProgress, setUploadProgress] = useState(0)
   const [selectedImages, setSelectedImages] = useState<Array<File>>([])
 
+  const { t } = useTranslation('requests/form')
+
   const {
     register,
     handleSubmit,
@@ -98,7 +100,7 @@ export function NewPartRequestForm({
 
   const onSubmit = async (data: any) => {
     if (!user?.id) {
-      toast.error('You must be logged in to create or edit a request')
+      toast.error(t('toasts.login_required'))
       return
     }
 
@@ -145,18 +147,18 @@ export function NewPartRequestForm({
       // 2. Persist to DB
       if (isEditing) {
         await (updateRequest as any).mutateAsync({ id: initialData.id, payload })
-        toast.success('Part request updated successfully!')
+        toast.success(t('toasts.update_success'))
       } else {
         await (createRequest as any).mutateAsync(payload)
-        toast.success('Part request submitted successfully!')
+        toast.success(t('toasts.create_success'))
       }
-      
+
       // Artificial grace period
       await new Promise(resolve => setTimeout(resolve, 500))
       onSuccess?.()
     } catch (error: any) {
       console.error(error)
-      toast.error(error.message || 'Failed to process request')
+      toast.error(error.message || t('toasts.process_error'))
     } finally {
       setIsUploading(false)
       setUploadProgress(0)
@@ -172,19 +174,19 @@ export function NewPartRequestForm({
             {/* General Section */}
             <Card className="shadow-none border-muted-foreground/20">
               <CardHeader>
-                <CardTitle className="text-lg">Part Information</CardTitle>
+                <CardTitle className="text-lg">{t('title')}</CardTitle>
                 <CardDescription>
-                  Specify what part you need and add details.
+                  {t('description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="partName">
-                    Part Name <span className="text-red-500">*</span>
+                    {t('labels.part_name')} <span className="text-red-500">{t('labels.required_star')}</span>
                   </Label>
                   <Input
                     id="partName"
-                    placeholder="e.g. Brake Pads, Front Bumper"
+                    placeholder={t('placeholders.part_name')}
                     {...register('partName')}
                   />
                   {errors.partName && (
@@ -196,7 +198,7 @@ export function NewPartRequestForm({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="categoryId">Category</Label>
+                    <Label htmlFor="categoryId">{t('labels.category')}</Label>
                     <Select
                       defaultValue={initialData?.categoryId}
                       value={watch('categoryId')}
@@ -204,7 +206,7 @@ export function NewPartRequestForm({
                       disabled={isLoadingTaxonomy}
                     >
                       <SelectTrigger id="categoryId">
-                        <SelectValue placeholder={isLoadingTaxonomy ? "Loading Categories..." : "Select Category"} />
+                        <SelectValue placeholder={isLoadingTaxonomy ? t('placeholders.category_loading') : t('placeholders.category_select')} />
                       </SelectTrigger>
                       <SelectContent>
                         {taxonomy?.categories.map((c: any) => (
@@ -217,16 +219,16 @@ export function NewPartRequestForm({
                   </div>
                   <div className="space-y-2 flex flex-col justify-end">
                     <p className="text-[11px] text-muted-foreground italic mb-1">
-                      Choose the closest category for accurate seller matching.
+                      {t('hints.category')}
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Detailed Description</Label>
+                  <Label htmlFor="description">{t('labels.description')}</Label>
                   <Textarea
                     id="description"
-                    placeholder="Provide any specific details, OEM numbers, or special requirements."
+                    placeholder={t('placeholders.description')}
                     className="min-h-[120px]"
                     {...register('description')}
                   />
@@ -239,17 +241,17 @@ export function NewPartRequestForm({
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Car className="size-5" />
-                  Vehicle Specification
+                  {t('labels.vehicle')}
                 </CardTitle>
                 <CardDescription>
-                  Determine vehicle compatibility here.
+                  {t('description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="brandId">
-                      Brand <span className="text-red-500">*</span>
+                      {t('labels.brand')} <span className="text-red-500">{t('labels.required_star')}</span>
                     </Label>
                     <Select
                       defaultValue={initialData?.brandId}
@@ -262,7 +264,7 @@ export function NewPartRequestForm({
                       disabled={isLoadingTaxonomy}
                     >
                       <SelectTrigger id="brandId">
-                        <SelectValue placeholder={isLoadingTaxonomy ? "Loading Brands..." : "Select Brand"} />
+                        <SelectValue placeholder={isLoadingTaxonomy ? t('placeholders.brand_loading') : t('placeholders.brand_select')} />
                       </SelectTrigger>
                       <SelectContent>
                         {taxonomy?.brands.map((b: any) => (
@@ -275,11 +277,11 @@ export function NewPartRequestForm({
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="vehicleModel">
-                      Model <span className="text-red-500">*</span>
+                      {t('labels.model')} <span className="text-red-500">{t('labels.required_star')}</span>
                     </Label>
                     <Input
                       id="vehicleModel"
-                      placeholder="Camry, Golf, etc."
+                      placeholder={t('placeholders.model')}
                       {...register('vehicleModel')}
                     />
                   </div>
@@ -287,19 +289,19 @@ export function NewPartRequestForm({
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="modelYear">
-                      Year <span className="text-red-500">*</span>
+                      {t('labels.year')} <span className="text-red-500">{t('labels.required_star')}</span>
                     </Label>
                     <Input
                       id="modelYear"
-                      placeholder="2018"
+                      placeholder={t('placeholders.year')}
                       {...register('modelYear')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="vinNumber">VIN Number (Optional)</Label>
+                    <Label htmlFor="vinNumber">{t('labels.vin')} {t('labels.optional')}</Label>
                     <Input
                       id="vinNumber"
-                      placeholder="Chassis No."
+                      placeholder={t('placeholders.vin')}
                       {...register('vinNumber')}
                     />
                   </div>
@@ -313,42 +315,42 @@ export function NewPartRequestForm({
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-1">
                     <CardTitle className="text-lg flex items-center gap-2 font-semibold">
-                       <Camera className="size-5 text-primary" />
-                       Part Photos
+                      <Camera className="size-5 text-primary" />
+                      {t('labels.photos')}
                     </CardTitle>
                     <CardDescription className="text-xs">
-                       Add live photos of your broken parts for best results.
+                      {t('hints.photos')}
                     </CardDescription>
                   </div>
                   {!isUploading && (
-                     <div className="relative">
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                          onChange={(e) => {
-                             if (e.target.files) {
-                               setSelectedImages(prev => [...prev, ...Array.from(e.target.files!)])
-                             }
-                          }}
-                        />
-                        <Button variant="outline" size="sm" type="button" className="h-8 rounded-lg gap-2">
-                           <Plus className="size-3 me-1" /> Add Photos
-                        </Button>
-                     </div>
+                    <div className="relative">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        onChange={(e) => {
+                          if (e.target.files) {
+                            setSelectedImages(prev => [...prev, ...Array.from(e.target.files!)])
+                          }
+                        }}
+                      />
+                      <Button variant="outline" size="sm" type="button" className="h-8 rounded-lg gap-2">
+                        <Plus className="size-3 me-1" /> {t('buttons.add_photos')}
+                      </Button>
+                    </div>
                   )}
                 </div>
               </CardHeader>
               <CardContent className="p-4">
                 {isUploading && (
-                   <div className="mb-6 space-y-2 p-3 bg-secondary/20 rounded-xl border border-border/50">
-                      <div className="flex justify-between items-center px-1">
-                        <span className="text-[10px] uppercase font-bold text-primary tracking-widest">Encrypting Assets...</span>
-                        <span className="text-[10px] font-bold text-primary">{uploadProgress}%</span>
-                      </div>
-                      <Progress value={uploadProgress} variant="primary" className="h-2" />
-                   </div>
+                  <div className="mb-6 space-y-2 p-3 bg-secondary/20 rounded-xl border border-border/50">
+                    <div className="flex justify-between items-center px-1">
+                      <span className="text-[10px] uppercase font-bold text-primary tracking-widest">{t('buttons.uploading')}...</span>
+                      <span className="text-[10px] font-bold text-primary">{uploadProgress}%</span>
+                    </div>
+                    <Progress value={uploadProgress} variant="primary" className="h-2" />
+                  </div>
                 )}
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -360,11 +362,11 @@ export function NewPartRequestForm({
                         onClick={() => handleRemoveImage(idx)}
                         className="absolute inset-x-0 bottom-0 bg-black/60 text-white py-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80 flex items-center justify-center"
                       >
-                         <XIcon className="size-3 me-1" /> Remove
+                        <XIcon className="size-3 me-1" /> {t('buttons.remove')}
                       </button>
                     </div>
                   ))}
-                  
+
                   {selectedImages.map((file, idx) => {
                     const previewUrl = URL.createObjectURL(file)
                     return (
@@ -375,7 +377,7 @@ export function NewPartRequestForm({
                           onClick={() => handleRemoveImage(imageUrls.length + idx)}
                           className="absolute inset-x-0 bottom-0 bg-primary/80 text-white py-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/90 flex items-center justify-center"
                         >
-                           <XIcon className="size-3 me-1" /> Clear local
+                          <XIcon className="size-3 me-1" /> {t('buttons.clear_local')}
                         </button>
                       </div>
                     )
@@ -384,22 +386,22 @@ export function NewPartRequestForm({
                   {/* Empty Selection Dropzone if no images */}
                   {imageUrls.length === 0 && selectedImages.length === 0 && (
                     <div className="col-span-full py-16 flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/20 rounded-2xl bg-muted/5 hover:bg-muted/10 transition-colors relative group">
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                          onChange={(e) => {
-                             if (e.target.files) {
-                               setSelectedImages(Array.from(e.target.files))
-                             }
-                          }}
-                        />
-                        <div className="size-12 rounded-2xl bg-white dark:bg-slate-900 border border-border shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                           <UploadCloud className="size-6 text-primary" />
-                        </div>
-                        <p className="text-sm font-semibold">Select part media</p>
-                        <p className="text-[11px] text-muted-foreground mt-1">Files will be encrypted on submission</p>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        onChange={(e) => {
+                          if (e.target.files) {
+                            setSelectedImages(Array.from(e.target.files))
+                          }
+                        }}
+                      />
+                      <div className="size-12 rounded-2xl bg-white dark:bg-slate-900 border border-border shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <UploadCloud className="size-6 text-primary" />
+                      </div>
+                      <p className="text-sm font-semibold">{t('placeholders.photos_empty')}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">{t('hints.photos_empty')}</p>
                     </div>
                   )}
                 </div>
@@ -413,7 +415,7 @@ export function NewPartRequestForm({
             <Card className="shadow-none border-muted-foreground/20 bg-muted/20">
               <CardHeader className="pb-3 border-b border-muted">
                 <CardTitle className="flex items-center gap-2 text-md font-semibold">
-                  Request Status
+                  {t('labels.status')}
                   <div className="h-2 w-2 rounded-full bg-blue-500"></div>
                 </CardTitle>
               </CardHeader>
@@ -423,33 +425,33 @@ export function NewPartRequestForm({
                   onValueChange={(val: any) => setValue('status', val)}
                 >
                   <SelectTrigger className="w-full h-11">
-                    <SelectValue placeholder={initialData?.status || "published"} />
+                    <SelectValue placeholder={initialData?.status || t('status.published')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="published">
-                      Immediate Broadcast
+                      {t('status.published')}
                     </SelectItem>
-                    <SelectItem value="draft">Save as Draft</SelectItem>
+                    <SelectItem value="draft">{t('status.draft')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  "Broadcasting" sends your request to verified sellers instantly. Sellers can then bid with price and availability.
+                  {t('hints.status')}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="shadow-none border-muted-foreground/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-md font-semibold">Submission Guidelines</CardTitle>
+                <CardTitle className="text-md font-semibold">{t('labels.guidelines')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-xs text-muted-foreground">
                 <div className="flex items-start gap-2">
-                   <div className="size-1.5 rounded-full bg-primary mt-1 shrink-0" />
-                   <p>Clear VIN plate photos help sellers identify OEM parts accurately.</p>
+                  <div className="size-1.5 rounded-full bg-primary mt-1 shrink-0" />
+                  <p>{t('hints.guidelines1')}</p>
                 </div>
                 <div className="flex items-start gap-2">
-                   <div className="size-1.5 rounded-full bg-primary mt-1 shrink-0" />
-                   <p>Specify the condition (New/Used/Genunine) in the detailed description.</p>
+                  <div className="size-1.5 rounded-full bg-primary mt-1 shrink-0" />
+                  <p>{t('hints.guidelines2')}</p>
                 </div>
               </CardContent>
             </Card>
@@ -463,7 +465,7 @@ export function NewPartRequestForm({
             onClick={onCancel}
             className="text-muted-foreground font-medium"
           >
-            Cancel
+            {t('buttons.cancel')}
           </Button>
           <Button
             type="submit"
@@ -473,9 +475,9 @@ export function NewPartRequestForm({
             {(isUploading || createRequest.isPending || updateRequest.isPending) ? (
               <>
                 <Loader2 className="me-2 h-4 w-4 animate-spin" />
-                {isUploading ? `Uploading ${uploadProgress}%` : 'Synchronizing...'}
+                {isUploading ? `${t('buttons.uploading')} ${uploadProgress}%` : t('buttons.syncing')}
               </>
-            ) : isEditing ? 'Update Request' : 'Broadcast Request'}
+            ) : isEditing ? t('buttons.update') : t('buttons.broadcast')}
           </Button>
         </div>
       </form>

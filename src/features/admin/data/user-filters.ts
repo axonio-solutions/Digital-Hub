@@ -1,49 +1,50 @@
 import { Activity, CheckCircle, Lock, Shield, ShieldOff, ShoppingBag, User } from 'lucide-react'
+import { TFunction } from 'i18next'
 
-export const roles = [
+export const getRoles = (t: TFunction) => [
   {
-    label: 'Admin',
+    label: t('users.roles.admin'),
     value: 'admin',
     icon: Lock,
   },
   {
-    label: 'Seller',
+    label: t('users.roles.seller'),
     value: 'seller',
     icon: ShoppingBag,
   },
   {
-    label: 'Buyer',
+    label: t('users.roles.buyer'),
     value: 'buyer',
     icon: User,
   },
 ]
 
-export const integrityStatuses = [
+export const getIntegrityStatuses = (t: TFunction) => [
   {
-    label: 'Secure',
-    value: 'false', // false for banned means secure
+    label: t('users.integrity.secure'),
+    value: 'false',
     icon: Shield,
   },
   {
-    label: 'Compromised',
-    value: 'true', // true for banned means compromised
+    label: t('users.integrity.compromised'),
+    value: 'true',
     icon: ShieldOff,
   },
 ]
 
-export const accountStatuses = [
+export const getAccountStatuses = (t: TFunction) => [
   {
-    label: 'New',
+    label: t('users.status.new'),
     value: 'new',
     icon: User,
   },
   {
-    label: 'Waitlisted',
+    label: t('users.status.waitlisted'),
     value: 'waitlisted',
     icon: Activity,
   },
   {
-    label: 'Active',
+    label: t('users.status.active'),
     value: 'active',
     icon: CheckCircle,
   },

@@ -18,6 +18,7 @@ import {
   Layers,
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { arDZ, fr, enUS } from 'date-fns/locale'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +29,13 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { DataTable } from '@/components/ui/data-table/data-table'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
+import { useTranslation } from 'react-i18next'
+
+const dateLocaleMap: Record<string, any> = {
+  ar: arDZ,
+  fr: fr,
+  en: enUS,
+}
 
 interface MarketplaceDataTableProps {
   data: Array<any>
@@ -44,16 +52,17 @@ const ActionCell = ({
   onAction?: (action: any) => void,
   type: 'opportunity' | 'active'
 }) => {
+  const { t } = useTranslation('marketplace')
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">{t('table.actions.label')}</span>
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('table.actions.label')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
         {type === 'opportunity' ? (
@@ -61,12 +70,12 @@ const ActionCell = ({
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'send_offer', item })}
             >
-              <Send className="me-2 h-4 w-4" /> Send Offer
+              <Send className="me-2 h-4 w-4" /> {t('table.actions.send_offer')}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'view_request', item })}
             >
-              <Eye className="me-2 h-4 w-4" /> View Details
+              <Eye className="me-2 h-4 w-4" /> {t('table.actions.view_details')}
             </DropdownMenuItem>
           </>
         ) : (
@@ -74,19 +83,19 @@ const ActionCell = ({
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'view_offer', item })}
             >
-              <FileText className="me-2 h-4 w-4" /> View Offer
+              <FileText className="me-2 h-4 w-4" /> {t('table.actions.view_offer')}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'update', item })}
             >
-              <Pencil className="me-2 h-4 w-4" /> Edit Quote
+              <Pencil className="me-2 h-4 w-4" /> {t('table.actions.edit_quote')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'delete', item })}
               className="text-destructive focus:text-destructive"
             >
-              <Trash2 className="me-2 h-4 w-4" /> Withdraw
+              <Trash2 className="me-2 h-4 w-4" /> {t('table.actions.withdraw')}
             </DropdownMenuItem>
           </>
         )}
@@ -100,6 +109,9 @@ export function MarketplaceDataTable({
   onAction,
   type,
 }: MarketplaceDataTableProps) {
+  const { t, i18n } = useTranslation('marketplace')
+  const currentLocale = dateLocaleMap[i18n.language] || enUS
+
   // Extract unique brands for filtering
   const brandOptions = useMemo(() => {
     const brands = new Set<string>()
@@ -136,7 +148,7 @@ export function MarketplaceDataTable({
     () => [
       {
         accessorKey: 'partName',
-        header: 'Part',
+        header: t('table.headers.part'),
         cell: ({ row }) => {
           const images = row.original.imageUrls || []
           return (
@@ -154,12 +166,12 @@ export function MarketplaceDataTable({
                   </div>
                 )}
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col text-start">
                 <span className="font-medium text-sm">
                   {row.original.partName}
                 </span>
                 <span className="text-[10px] text-muted-foreground uppercase">
-                  ID: {row.original.id.substring(0, 8)}
+                  {t('table.defaults.id_prefix')} {row.original.id.substring(0, 8)}
                 </span>
               </div>
             </div>
@@ -168,16 +180,16 @@ export function MarketplaceDataTable({
       },
       {
         accessorKey: 'vehicleBrand',
-        header: 'Vehicle',
+        header: t('table.headers.vehicle'),
         cell: ({ row }) => {
           const brand = row.original.vehicleBrand || row.original.brand?.brand
           return (
-            <div className="flex flex-col">
+            <div className="flex flex-col text-start">
               <span className="text-sm font-medium">
                 {brand} {row.original.vehicleModel || ''}
               </span>
               <span className="text-xs text-muted-foreground">
-                {row.original.modelYear} • {row.original.brand?.clusterRegion || 'General'}
+                {row.original.modelYear} • {row.original.brand?.clusterRegion || t('table.defaults.general')}
               </span>
             </div>
           )
@@ -185,11 +197,11 @@ export function MarketplaceDataTable({
       },
       {
         accessorKey: 'category',
-        header: 'Category',
+        header: t('table.headers.category'),
         cell: ({ row }) => {
-          const category = row.original.category?.name || row.original.category || 'Part'
+          const category = row.original.category?.name || row.original.category || t('table.defaults.part')
           return (
-            <Badge variant="secondary" className="capitalize">
+            <Badge variant="secondary">
               {category}
             </Badge>
           )
@@ -197,12 +209,15 @@ export function MarketplaceDataTable({
       },
       {
         accessorKey: 'createdAt',
-        header: 'Posted',
+        header: t('table.headers.posted'),
         cell: ({ row }) => (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Clock className="size-3" />
             <span className="text-xs">
-              {formatDistanceToNow(new Date(row.original.createdAt), { addSuffix: true })}
+              {formatDistanceToNow(new Date(row.original.createdAt), { 
+                addSuffix: true,
+                locale: currentLocale 
+              })}
             </span>
           </div>
         )
@@ -210,17 +225,17 @@ export function MarketplaceDataTable({
       ...(type === 'active' ? [
         {
           accessorKey: 'quoteStatus',
-          header: 'My Offer',
+          header: t('table.headers.my_offer'),
           cell: ({ row }: { row: any }) => (
             <div className="flex flex-col gap-1">
               <span className="text-sm font-bold">
-                {row.original.quotePrice.toLocaleString()} <span className="text-[10px] font-normal">DZD</span>
+                {new Intl.NumberFormat(i18n.language).format(row.original.quotePrice)} <span className="text-[10px] font-normal">DZD</span>
               </span>
               <Badge
                 variant={row.original.quoteStatus === 'accepted' ? 'default' : 'outline'}
-                className="w-fit text-[10px] capitalize"
+                className="w-fit text-[10px]"
               >
-                {row.original.quoteStatus}
+                {t(`statuses.${row.original.quoteStatus}`)}
               </Badge>
             </div>
           )
@@ -230,7 +245,7 @@ export function MarketplaceDataTable({
         id: 'actions',
         header: '',
         cell: ({ row }: { row: any }) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end rtl:justify-start">
             <ActionCell
               item={row.original}
               onAction={onAction}
@@ -240,7 +255,7 @@ export function MarketplaceDataTable({
         )
       }
     ],
-    [type, onAction]
+    [type, onAction, t, i18n.language, currentLocale]
   )
 
   return (
@@ -255,16 +270,16 @@ export function MarketplaceDataTable({
         <DataTableToolbar
           table={table}
           searchColumn="partName"
-          searchPlaceholder="Search parts, vehicles..."
+          searchPlaceholder={t('table.search_placeholder')}
           facetedFilters={[
             {
               column: 'vehicleBrand',
-              title: 'Brands',
+              title: t('table.brand_filter'),
               options: brandOptions,
             },
             {
               column: 'category',
-              title: 'Categories',
+              title: t('table.headers.category'),
               options: categoryOptions,
             },
           ]}

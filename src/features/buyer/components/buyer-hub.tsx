@@ -5,6 +5,7 @@ import {
   RefreshCcw,
   Plus,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { BuyerListView } from './buyer-list-view'
 import { BuyerGridView } from './buyer-grid-view'
 import { useNavigate } from '@tanstack/react-router'
@@ -16,9 +17,9 @@ import { ViewToggles } from "@/components/ui/view-toggles";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogTrigger,
 } from '@/components/ui/dialog'
 
@@ -27,6 +28,7 @@ import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useBuyerRequests } from '../hooks/use-buyer'
 
 export function BuyerHub() {
+  const { t } = useTranslation('requests/hub')
   const [view, setView] = useState<'list' | 'grid'>('list')
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
   const navigate = useNavigate()
@@ -54,8 +56,8 @@ export function BuyerHub() {
       <div className="layout-container flex justify-center w-full py-2 px-2 sm:px-4 lg:px-6">
         <div className="flex w-full max-w-6xl flex-col gap-6 pt-4">
           <DashboardHeader 
-            title="Demands Hub" 
-            description="Manage all your part requests and view incoming offers." 
+            title={t('title')} 
+            description={t('description')} 
             showDate={false}
             actions={
               <div className="flex items-center gap-2">
@@ -67,25 +69,24 @@ export function BuyerHub() {
                   className="h-9 px-3 bg-white dark:bg-slate-950 shadow-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors border-slate-200 dark:border-slate-800"
                   onClick={() => refetch()}
                 >
-                  <RefreshCcw className="me-2 size-3.5" /> Refresh
+                  <RefreshCcw className="me-2 size-3.5" /> {t('buttons.refresh')}
                 </Button>
 
                 <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
                   <DialogTrigger asChild>
                     <Button className="font-black uppercase text-xs tracking-widest px-6 h-11 shadow-lg shadow-primary/20">
                       <Plus className="me-2 h-4 w-4" />
-                      New Demand
+                      {t('buttons.new_demand')}
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[1000px] max-h-[95vh] overflow-y-auto p-0 border-none shadow-2xl">
                     <div className="p-8">
                       <DialogHeader className="mb-6">
                         <DialogTitle className="text-2xl font-bold">
-                          Submit Part Demand
+                          {t('dialog.title')}
                         </DialogTitle>
                         <DialogDescription>
-                          Provide details about the automotive spare part you are
-                          looking for.
+                          {t('dialog.description')}
                         </DialogDescription>
                       </DialogHeader>
                       <NewPartRequestForm

@@ -8,6 +8,7 @@ import {
   User,
   X,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { GeneralInfoForm } from './general-info-form'
 import { SellerSettings } from '@/features/seller'
 import { AccountManagement } from './account-management'
@@ -23,16 +24,18 @@ import { cn } from '@/lib/utils'
 
 // Sub-components
 
-const sidebarItems = [
-  { id: 'profile', label: 'Profile', icon: User },
-  { id: 'security', label: 'Security', icon: Shield },
-  { id: 'notifications', label: 'Notification', icon: Bell },
-]
 
 export function SettingsHub() {
+  const { t } = useTranslation('dashboard/settings')
   const { data: user } = useAuth()
   const [activeSection, setActiveSection] = useState('profile')
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const sidebarItems = [
+    { id: 'profile', label: t('sections.profile'), icon: User },
+    { id: 'security', label: t('sections.security'), icon: Shield },
+    { id: 'notifications', label: t('sections.notifications'), icon: Bell },
+  ]
 
   const renderContent = () => {
     switch (activeSection) {
@@ -51,18 +54,18 @@ export function SettingsHub() {
     <div className="flex flex-col lg:flex-row min-h-[calc(100vh-10rem)] gap-8">
       {/* Mobile menu button */}
       <div className="lg:hidden flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Settings</h2>
+        <h2 className="text-2xl font-bold">{t('title')}</h2>
         <Button
           variant="outline"
           size="sm"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           {sidebarOpen ? (
-            <X className="h-4 w-4 me-2" />
+            <X className="h-4 w-4 me-2 rtl:ms-2" />
           ) : (
-            <Menu className="h-4 w-4 me-2" />
+            <Menu className="h-4 w-4 me-2 rtl:ms-2" />
           )}
-          Menu
+          {t('menu')}
         </Button>
       </div>
 
@@ -107,6 +110,7 @@ export function SettingsHub() {
 }
 
 function ProfileSection({ user }: { user: any }) {
+  const { t } = useTranslation('dashboard/settings')
   const role = user?.role || 'buyer'
 
   return (
@@ -118,12 +122,12 @@ function ProfileSection({ user }: { user: any }) {
             currentImage={user?.image}
             size="lg"
           />
-          <div className="flex-1 space-y-2 text-center md:text-start">
+          <div className="flex-1 space-y-2 text-center md:text-start rtl:md:text-right">
             <h3 className="text-xl font-bold tracking-tight text-foreground">
-              Profile Identity
+              {t('profile.identity_title')}
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-lg">
-              Your avatar is visible to other marketplace participants. Use a professional photo to build trust and increase proposal acceptance.
+              {t('profile.identity_desc')}
             </p>
           </div>
         </CardContent>
@@ -131,8 +135,8 @@ function ProfileSection({ user }: { user: any }) {
 
       <div className="space-y-6">
         <div className="px-1">
-          <h3 className="text-lg font-bold tracking-tight mb-1">Personal Details</h3>
-          <p className="text-xs text-muted-foreground">Manage your account information and contact details.</p>
+          <h3 className="text-lg font-bold tracking-tight mb-1">{t('profile.personal_title')}</h3>
+          <p className="text-xs text-muted-foreground">{t('profile.personal_desc')}</p>
         </div>
         <GeneralInfoForm />
       </div>
@@ -141,10 +145,10 @@ function ProfileSection({ user }: { user: any }) {
         <div className="space-y-8 pt-8 border-t">
           <div>
             <h2 className="text-2xl font-bold tracking-tight mb-2">
-              Store Profile
+              {t('profile.store_title')}
             </h2>
             <p className="text-muted-foreground text-sm">
-              Manage your business identity as a seller.
+              {t('profile.store_desc')}
             </p>
           </div>
           <SellerSettings />
@@ -161,14 +165,15 @@ function ProfileSection({ user }: { user: any }) {
 }
 
 function SecuritySection() {
+  const { t } = useTranslation('dashboard/settings')
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-black tracking-tight mb-2">
-          Account Security
+          {t('security.title')}
         </h1>
         <p className="text-muted-foreground">
-          Protect your account with strong passwords and privacy controls.
+          {t('security.desc')}
         </p>
       </div>
       <AccountManagement />
@@ -179,14 +184,15 @@ function SecuritySection() {
 import { NotificationPreferences } from './notification-preferences'
 
 function NotificationsSection({ user }: { user: any }) {
+  const { t } = useTranslation('dashboard/settings')
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-black tracking-tighter uppercase italic mb-2">
-          Notification Preferences
+          {t('notifications.title')}
         </h1>
         <p className="text-muted-foreground font-medium text-sm">
-          Optimize your experience by choosing where and how you receive marketplace signals.
+          {t('notifications.desc')}
         </p>
       </div>
 

@@ -7,6 +7,7 @@ import {
 import { cn } from '@/lib/utils'
 import { AlgeriaMap } from './algeria-map'
 import { useBuyerAnalytics } from '@/features/admin/hooks/use-analytics'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, CardAction } from '@/components/ui/card'
 import {
   PieChart,
@@ -30,6 +31,7 @@ import { useMemo, useState } from 'react'
 const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6366f1']
 
 export function BuyerAnalytics() {
+  const { t } = useTranslation('dashboard/admin')
   const { data: analytics, isLoading } = useBuyerAnalytics()
 
   const demandByOrigin = useMemo(() => {
@@ -73,10 +75,10 @@ export function BuyerAnalytics() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-6 md:px-10">
         <div className="flex flex-col gap-1">
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white uppercase leading-none">
-            Buyer Intelligence
+            {t('intelligence.buyer')}
           </h2>
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Real-Time Demand Analytics & Market Forecasting</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('subtitle.buyer')}</span>
             <span className="h-[1px] w-8 bg-slate-200 dark:bg-slate-800" />
           </div>
         </div>
@@ -84,7 +86,7 @@ export function BuyerAnalytics() {
         <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-5 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
           <div className="size-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
           <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider leading-none">
-            {analytics?.metrics?.totalRequests || 0} Inquiries Tracked
+            {analytics?.metrics?.totalRequests || 0} {t('metrics.inquiries_tracked')}
           </span>
         </div>
       </div>
@@ -94,64 +96,64 @@ export function BuyerAnalytics() {
         {/* Avg Offers */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Avg Offers</CardDescription>
+            <CardDescription>{t('metrics.avg_offers')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-blue-600 dark:text-blue-500">
               {analytics?.metrics?.avgOffersPerRequest || '0'}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Market Liquidity
+              {t('metrics.market_liquidity')}
             </div>
-            <div className="text-muted-foreground">Average offers per inquiry</div>
+            <div className="text-muted-foreground">{t('metrics.avg_offers_desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Conversion */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Conversion Rate</CardDescription>
+            <CardDescription>{t('metrics.conversion_rate')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-emerald-600 dark:text-emerald-500">
               {analytics?.metrics?.conversionRate || '0%'}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Fulfillment Success
+              {t('metrics.fulfillment_success')}
             </div>
-            <div className="text-muted-foreground">Requests with matched quotes</div>
+            <div className="text-muted-foreground">{t('metrics.fulfillment_success_desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Response Time */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Response Time</CardDescription>
+            <CardDescription>{t('metrics.response_time')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-orange-600 dark:text-orange-500">
               {analytics?.metrics?.avgResponseTime || '0m'}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Market Velocity
+              {t('metrics.market_velocity')}
             </div>
-            <div className="text-muted-foreground">Average speed to first quote</div>
+            <div className="text-muted-foreground">{t('metrics.avg_response_time_desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Buyer Pool */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Buyer Pool</CardDescription>
+            <CardDescription>{t('metrics.buyer_pool')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-purple-600 dark:text-purple-500">
               {analytics?.metrics?.totalBuyers?.toLocaleString() || '0'}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Network Scale
+              {t('metrics.network_scale')}
             </div>
-            <div className="text-muted-foreground">Verified platform buyers</div>
+            <div className="text-muted-foreground">{t('metrics.verified_buyers')}</div>
           </CardFooter>
         </Card>
       </div>
@@ -160,7 +162,7 @@ export function BuyerAnalytics() {
       <div className="grid grid-cols-12 gap-8 px-6 md:px-10">
         <Card className="col-span-12 md:col-span-6 bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col group transition-all duration-300 hover:shadow-md overflow-hidden">
           <CardHeader className="items-center pb-0">
-            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-primary/30 underline-offset-8">Demand Velocity</CardTitle>
+            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-primary/30 underline-offset-8">{t('charts.demand_velocity')}</CardTitle>
           </CardHeader>
           <CardContent className="flex-1 pb-0 px-2">
             <ChartContainer
@@ -208,7 +210,7 @@ export function BuyerAnalytics() {
         <Card className="col-span-12 md:col-span-6 bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col group transition-all duration-300 hover:shadow-md overflow-hidden" id={id}>
           <ChartStyle id={id} config={chartConfig} />
           <CardHeader className="items-center pb-0">
-            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-primary/30 underline-offset-8">Brand Origin</CardTitle>
+            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-primary/30 underline-offset-8">{t('charts.brand_origin')}</CardTitle>
           </CardHeader>
           <CardContent className="flex-1 pb-0 px-2">
             <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[350px]">
@@ -239,9 +241,9 @@ export function BuyerAnalytics() {
           <CardHeader className="pb-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-1">
-                <CardTitle className="text-xl font-bold text-slate-900 dark:text-white uppercase leading-none">Request Velocity</CardTitle>
+                <CardTitle className="text-xl font-bold text-slate-900 dark:text-white uppercase leading-none">{t('charts.request_volume_title')}</CardTitle>
                 <CardDescription className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
-                  {activeData ? `${activeData.date}: ${activeData.count} Requests` : "30-Day Market Throughout"}
+                  {activeData ? `${activeData.date}: ${activeData.count} ${t('table.status.open')}` : t('charts.market_throughput')}
                 </CardDescription>
               </div>
             </div>
@@ -266,8 +268,8 @@ export function BuyerAnalytics() {
         <div className="bg-white dark:bg-slate-950/50 shadow-sm border border-slate-200 dark:border-slate-800 p-12 rounded-[2.5rem] relative overflow-hidden group">
           <div className="flex justify-between items-start mb-12">
             <div className="space-y-1">
-              <h3 className="font-bold text-2xl text-slate-900 dark:text-white uppercase leading-none">Buyer Network Distribution</h3>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Regional concentration mapped across Wilayas</p>
+              <h3 className="font-bold text-2xl text-slate-900 dark:text-white uppercase leading-none">{t('distribution.buyer_title')}</h3>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{t('distribution.regional_concentration')}</p>
             </div>
           </div>
           <div className="relative flex items-center justify-center bg-slate-50/5 dark:bg-slate-900/5 rounded-3xl overflow-hidden min-h-[650px]">

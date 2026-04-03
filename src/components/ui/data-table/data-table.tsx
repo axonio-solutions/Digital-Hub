@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   flexRender,
   getCoreRowModel,
@@ -55,6 +56,7 @@ export function DataTable<TData, TValue>({
   components,
   enableRowSelection = true,
 }: DataTableProps<TData, TValue>) {
+  const { t, i18n } = useTranslation('common')
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -86,7 +88,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className={cn("flex flex-col gap-4", className)}>
+    <div dir={i18n.dir()} className={cn("flex flex-col gap-4", className)}>
       {/* Search & Filters */}
       {typeof toolbar === 'function' ? toolbar(table) : toolbar}
 
@@ -146,7 +148,7 @@ export function DataTable<TData, TValue>({
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No Results.
+                    {t('table.no_results')}
                   </TableCell>
                 </TableRow>
               )}

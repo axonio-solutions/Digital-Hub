@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { z } from 'zod'
@@ -18,15 +19,16 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
-const authSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-})
-
 type AuthInput = z.infer<typeof authSchema>
 
 export function LoginForm() {
+  const { t } = useTranslation('auth/login')
   const router = useRouter()
+
+  const authSchema = z.object({
+    email: z.string().email(t('login.errors.invalid_email')),
+    password: z.string().min(6, t('login.errors.invalid_password')),
+  })
 
   const form = useForm<AuthInput>({
     resolver: zodResolver(authSchema),
@@ -52,7 +54,7 @@ export function LoginForm() {
         const status = (signInError as any).status
 
         if (status === 500) {
-          throw new Error('Server connection error. Please check if the database is accessible.')
+          throw new Error(t('login.errors.server_error'))
         }
 
         // 2. If generic auth error, try to sign up (Universal Join logic)
@@ -73,13 +75,13 @@ export function LoginForm() {
             const signUpStatus = (signUpError as any).status
 
             if (signUpStatus === 500) {
-              throw new Error('Server connection error during sign up. Please try again later.')
+              throw new Error(t('login.errors.signup_error'))
             }
 
             // If sign up fails because user exists, it means the original sign in was a wrong password
             if (signUpError.code === 'USER_ALREADY_EXISTS') {
               console.log('[LoginForm] User already exists, must be a wrong password.')
-              throw new Error('Invalid password. This email is already registered.')
+              throw new Error(t('login.errors.user_exists'))
             }
 
             throw new Error(signUpError.message || 'Failed to join')
@@ -91,7 +93,7 @@ export function LoginForm() {
 
         // Other sign in errors
         console.log('[LoginForm] Unhandled signIn error:', signInError)
-        throw new Error(signInError.message || 'Authentication failed')
+        throw new Error(signInError.message || t('login.errors.auth_failed'))
       }
 
       console.log('[LoginForm] signIn.email successful')
@@ -99,8 +101,8 @@ export function LoginForm() {
     },
     onSuccess: async () => {
       console.log('[LoginForm] Authentication flow complete, redirecting...')
-      toast.success('Success!', {
-        description: 'You have been authenticated.',
+      toast.success(t('login.toasts.success_title'), {
+        description: t('login.toasts.success_desc'),
       })
 
       // We do not need to manually refetch queries or invalidate the router here
@@ -114,8 +116,8 @@ export function LoginForm() {
       window.location.href = redirectUrl
     },
     onError: (error: Error) => {
-      toast.error('Auth Error', {
-        description: error.message || 'Please check your credentials.',
+      toast.error(t('login.toasts.error_title'), {
+        description: error.message || t('login.errors.check_credentials'),
       })
     },
   })
@@ -132,9 +134,9 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t('login.email_label')}</FormLabel>
               <FormControl>
-                <Input placeholder="email@example.com" {...field} />
+                <Input placeholder={t('login.email_placeholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,9 +147,9 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t('login.password_label')}</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••" {...field} />
+                <Input type="password" placeholder={t('login.password_placeholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -155,7 +157,7 @@ export function LoginForm() {
         />
         <Button type="submit" className="w-full h-11" disabled={isPending}>
           {isPending && <Loader2 className="w-4 h-4 me-2 animate-spin" />}
-          Sign In or Join
+          {t('login.submit_btn')}
         </Button>
       </form>
     </Form>

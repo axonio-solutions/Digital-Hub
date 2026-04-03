@@ -1,6 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
+import { useTranslation } from 'react-i18next'
 import { 
   MapPin, 
   Clock, 
@@ -40,6 +41,7 @@ export function QuoteCard({
   isUnrejecting = false,
   isRevoking = false,
 }: QuoteCardProps) {
+  const { t } = useTranslation('quotes')
   const isAccepted = quote.status === 'accepted'
   const isRejected = quote.status === 'rejected'
   const isPending = !quote.status || quote.status === 'pending'
@@ -66,22 +68,22 @@ export function QuoteCard({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="text-lg font-black text-foreground uppercase tracking-tight truncate">
-                   {quote.seller?.storeName || quote.seller?.name || 'Authorized Seller'}
+                   {quote.seller?.storeName || quote.seller?.name || t('card.authorized_seller')}
                 </h3>
                 {isAccepted && <CheckCircle2 className="size-4 text-primary fill-primary/10" />}
-                {isRejected && <Badge variant="secondary" className="text-[9px] uppercase h-4 px-1.5 font-bold">Rejected</Badge>}
+                {isRejected && <Badge variant="secondary" className="text-[9px] uppercase h-4 px-1.5 font-bold">{t('card.rejected')}</Badge>}
               </div>
 
               <div className="flex flex-wrap items-center gap-y-2 gap-x-4">
                 <div className="flex items-center gap-1.5 text-[12px] font-bold text-muted-foreground opacity-80">
                   <MapPin className="size-3.5 text-primary" />
                   <span className="truncate max-w-[200px]">
-                    {quote.seller?.address || quote.seller?.city || quote.seller?.wilaya || 'Algeria'}
+                    {quote.seller?.address || quote.seller?.city || quote.seller?.wilaya || t('card.default_location', { defaultValue: 'Algeria' })}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[12px] font-bold text-muted-foreground opacity-80">
                   <Clock className="size-3.5 text-primary" />
-                  <span>{formatDistanceToNow(new Date(quote.createdAt))} ago</span>
+                  <span>{formatDistanceToNow(new Date(quote.createdAt))} {t('card.ago')}</span>
                 </div>
               </div>
             </div>
@@ -100,7 +102,7 @@ export function QuoteCard({
             isAccepted ? 'bg-primary/5 border-primary/10' : 'bg-secondary/50 dark:bg-gray-800/40 border-border group-hover:bg-white dark:group-hover:bg-gray-800/60'
           }`}>
             <p className="text-sm text-foreground dark:text-gray-300 italic font-medium leading-relaxed">
-              "{quote.notes || 'Hi! We have this exact part in stock. Quality checked and ready for dispatch.'}"
+              "{quote.notes || t('card.default_note')}"
             </p>
           </div>
 
@@ -115,7 +117,7 @@ export function QuoteCard({
                   className="flex-1 sm:flex-none h-10 px-4 gap-2 font-black uppercase text-[10px] tracking-widest border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all"
                 >
                   <Undo2 className="size-3.5" />
-                  {isRevoking ? 'Revoking...' : 'Revoke Acceptance'}
+                  {isRevoking ? t('card.actions.revoking') : t('card.actions.revoke')}
                 </Button>
                 <Button
                   onClick={() => onContact(quote.seller)}
@@ -123,7 +125,7 @@ export function QuoteCard({
                   className="flex-1 sm:flex-none h-10 px-6 gap-2 font-black uppercase text-[11px] tracking-widest bg-primary hover:bg-primary/90 shadow-md shadow-primary/10 transition-all active:scale-95"
                 >
                   <Phone className="size-4" />
-                  Contact Seller
+                  {t('card.actions.contact')}
                 </Button>
               </>
             ) : isRejected ? (
@@ -135,7 +137,7 @@ export function QuoteCard({
                 className="flex-1 sm:flex-none h-10 px-6 gap-2 font-black uppercase text-[11px] tracking-widest border-primary/20 text-primary hover:bg-primary/5 transition-all"
               >
                 <RotateCcw className="size-4" />
-                {isUnrejecting ? 'Restoring...' : 'Un-reject Offer'}
+                {isUnrejecting ? t('card.actions.unrejecting') : t('card.actions.unreject')}
               </Button>
             ) : isPending && isRequestOpen ? (
               <>
@@ -147,7 +149,7 @@ export function QuoteCard({
                   className="flex-1 sm:flex-none h-10 px-4 gap-2 font-black uppercase text-[10px] tracking-widest border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-all"
                 >
                   <XCircle className="size-3.5" />
-                  {isRejecting ? 'Rejecting...' : 'Reject'}
+                  {isRejecting ? t('card.actions.rejecting') : t('card.actions.reject')}
                 </Button>
                 <Button
                   onClick={() => onAccept(quote.id)}
@@ -156,12 +158,12 @@ export function QuoteCard({
                   className="flex-1 sm:flex-none h-10 px-6 gap-2 font-black uppercase text-[11px] tracking-widest bg-primary hover:bg-primary/90 shadow-md shadow-primary/10 transition-all active:scale-95"
                 >
                   <CheckCircle2 className="size-4" />
-                  {isAccepting ? 'Accepting...' : 'Accept Offer'}
+                  {isAccepting ? t('card.actions.accepting') : t('card.actions.accept')}
                 </Button>
               </>
             ) : null}
             
-            {/* Show contact button if request is NOT open and this IS NOT the accepted quote (e.g. historical view) */}
+            {/* Show disabled button if request is NOT open and this is a non-accepted/rejected quote */}
             {!isRequestOpen && !isAccepted && !isRejected && (
                <Button
                 disabled
@@ -169,7 +171,7 @@ export function QuoteCard({
                  size="sm"
                  className="flex-1 sm:flex-none h-10 px-6 gap-2 font-black uppercase text-[11px] tracking-widest opacity-50 cursor-not-allowed"
                >
-                 Request Closed
+                 {t('card.actions.closed')}
                </Button>
             )}
           </div>

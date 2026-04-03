@@ -3,33 +3,25 @@ import { useQueryClient } from '@tanstack/react-query'
 import {
   Loader2,
   LogOut,
-  Settings,
   CircleUserRound,
-  CreditCard,
-  ReceiptText,
-  ShieldCheck,
-  MapPin,
-  ArrowRight,
   Store,
 } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { authClient } from '@/lib/auth-client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from "@/lib/utils"
 
-import { Badge } from '@/components/ui/badge'
-
 export function UserDropdown() {
+  const { t } = useTranslation(['dashboard/layout', 'common'])
   const { data: user } = useAuth()
   const navigate = useNavigate()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -39,8 +31,6 @@ export function UserDropdown() {
   const email = user?.email || ''
   const initials = name.substring(0, 2).toUpperCase()
   const role = user?.role || 'buyer'
-  const status = user?.account_status || 'active'
-  const location = user?.wilaya ? `${user.city ? user.city + ', ' : ''}${user.wilaya}` : 'No location set'
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
@@ -101,11 +91,11 @@ export function UserDropdown() {
         <div className="p-3">
           <div className="grid grid-cols-2 divide-x divide-slate-100 dark:divide-slate-800/50">
             <div className="flex flex-col items-center gap-0.5 px-2 group/item">
-              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight">Role</span>
+              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight">{t('user_dropdown.role')}</span>
               <span className="text-xs font-semibold capitalize">{role}</span>
             </div>
             <div className="flex flex-col items-center gap-0.5 px-2 group/item">
-              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight">Region</span>
+              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight">{t('user_dropdown.region')}</span>
               <span className="text-xs font-semibold truncate">{user?.wilaya || 'N/A'}</span>
             </div>
           </div>
@@ -119,16 +109,16 @@ export function UserDropdown() {
             className={cn(itemClass, "px-3 py-2.5 rounded-xl")}
           >
             <CircleUserRound size={16} className="text-slate-400 group-hover:text-primary transition-colors" />
-            <span className="flex-1">Account Settings</span>
+            <span className="flex-1">{t('user_dropdown.account_settings')}</span>
           </DropdownMenuItem>
 
           {role === 'seller' && (
             <DropdownMenuItem
-              onClick={() => navigate({ to: '/dashboard/seller' })}
+              onClick={() => navigate({ to: '/dashboard' })}
               className={cn(itemClass, "px-3 py-2.5 rounded-xl")}
             >
-              <Store size={16} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
-              <span className="flex-1">Seller Hub</span>
+               <Store size={16} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
+              <span className="flex-1">{t('user_dropdown.seller_hub')}</span>
             </DropdownMenuItem>
           )}
         </div>
@@ -146,7 +136,7 @@ export function UserDropdown() {
             ) : (
               <LogOut size={16} />
             )}
-            <span>Sign out</span>
+            <span>{t('user_dropdown.sign_out')}</span>
           </DropdownMenuItem>
         </div>
       </DropdownMenuContent>

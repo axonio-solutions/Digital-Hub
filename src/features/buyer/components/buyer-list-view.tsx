@@ -1,9 +1,10 @@
 'use client'
 
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { DataTable } from '@/components/ui/data-table/data-table'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
-import { buyerColumns } from './buyer-columns'
+import { useBuyerColumns } from './buyer-columns'
 import { 
   IconCircleCheckFilled, 
   IconLoader,
@@ -16,7 +17,8 @@ interface RequestsListViewProps {
 }
 
 export function BuyerListView({ data, onAction }: RequestsListViewProps) {
-  const columns = useMemo(() => buyerColumns(onAction), [onAction])
+  const { t } = useTranslation('requests/list')
+  const columns = useBuyerColumns(onAction)
 
   const brandOptions = useMemo(() => {
     const brands = new Set<string>()
@@ -42,20 +44,20 @@ export function BuyerListView({ data, onAction }: RequestsListViewProps) {
           <DataTableToolbar
             table={table}
             searchColumn="partName"
-            searchPlaceholder="Filter demands..."
+            searchPlaceholder={t('filters.search_placeholder')}
             facetedFilters={[
               {
                 column: "status",
-                title: "Status",
+                title: t('filters.status'),
                 options: [
-                  { label: "Open", value: "open", icon: IconLoader },
-                  { label: "Fulfilled", value: "fulfilled", icon: IconCircleCheckFilled },
-                  { label: "Cancelled", value: "cancelled", icon: IconCircleXFilled },
+                  { label: t('filters.statuses.open'), value: "open", icon: IconLoader },
+                  { label: t('filters.statuses.fulfilled'), value: "fulfilled", icon: IconCircleCheckFilled },
+                  { label: t('filters.statuses.cancelled'), value: "cancelled", icon: IconCircleXFilled },
                 ]
               },
               {
                 column: "vehicleBrand",
-                title: "Brand",
+                title: t('filters.brand'),
                 options: brandOptions,
               }
             ]}

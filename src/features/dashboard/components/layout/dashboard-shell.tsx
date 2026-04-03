@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useMatches } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import {
   Bell,
 } from 'lucide-react'
@@ -30,6 +31,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 
 function DynamicBreadcrumb() {
+  const { t } = useTranslation('dashboard/layout')
   const matches = useMatches()
 
   const breadcrumbs = matches
@@ -38,16 +40,20 @@ function DynamicBreadcrumb() {
         match.id !== '/' && match.id !== '/_auth' && match.id !== '/dashboard',
     )
     .map((match) => {
-      let title = 'Dashboard'
-      if (match.id === '/dashboard/') title = 'Overview'
-      if (match.id === '/dashboard/requests/') title = 'Demands Hub'
-      if (match.id === '/dashboard/marketplace/') title = 'Live Feed'
-      if (match.id === '/dashboard/quotes/') title = 'My Quotes'
-      if (match.id === '/dashboard/audit/') title = 'Audit Log'
-      if (match.id === '/dashboard/garage/') title = 'My Garage'
-      if (match.id === '/dashboard/admin/buyers') title = 'Buyers Intelligence'
-      if (match.id === '/dashboard/admin/sellers') title = 'Sellers Ecosystem'
-      if (match.id === '/dashboard/admin/categories') title = 'Taxonomy Management'
+      let title = t('breadcrumbs.dashboard')
+      if (match.id === '/dashboard/') title = t('breadcrumbs.overview')
+      if (match.id === '/dashboard/requests/') title = t('breadcrumbs.demands_hub')
+      if (match.id === '/dashboard/marketplace/') title = t('breadcrumbs.live_feed')
+      if (match.id === '/dashboard/quotes/') title = t('breadcrumbs.my_quotes')
+      if (match.id === '/dashboard/audit/') title = t('breadcrumbs.audit_log')
+      if (match.id === '/dashboard/garage/') title = t('breadcrumbs.my_garage')
+      if (match.id === '/dashboard/users') title = t('breadcrumbs.user_moderation')
+      if (match.id === '/dashboard/admin/buyers') title = t('breadcrumbs.buyers_intelligence')
+      if (match.id === '/dashboard/admin/sellers') title = t('breadcrumbs.sellers_ecosystem')
+      if (match.id === '/dashboard/admin/categories') title = t('breadcrumbs.taxonomy_management')
+      if (match.id === '/dashboard/admin/settings') title = t('breadcrumbs.admin_settings')
+      if (match.id === '/dashboard/admin/logs') title = t('breadcrumbs.cloud_logs')
+      if (match.id === '/dashboard/support') title = t('breadcrumbs.support')
 
       return { id: match.id, pathname: match.pathname, title }
     })
@@ -56,7 +62,7 @@ function DynamicBreadcrumb() {
     breadcrumbs.push({
       id: '/dashboard/',
       pathname: '/dashboard',
-      title: 'Overview',
+      title: t('breadcrumbs.overview'),
     })
   }
 
@@ -64,7 +70,7 @@ function DynamicBreadcrumb() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem className="hidden md:block">
-          <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+          <BreadcrumbLink href="/dashboard">{t('breadcrumbs.dashboard')}</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator className="hidden md:block" />
 

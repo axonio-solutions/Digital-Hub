@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { deactivateAccountServerFn, deleteAccountServerFn } from '@/fn/users'
 import { useAuth } from '@/features/auth/hooks/use-auth'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -23,6 +24,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 export function AccountManagement() {
+  const { t } = useTranslation('dashboard/settings')
   const { data: user } = useAuth()
 
   const { mutate: deactivate, isPending: isDeactivating } = useMutation({
@@ -30,13 +32,13 @@ export function AccountManagement() {
       return await (deactivateAccountServerFn as any)({ data: { userId } })
     },
     onSuccess: () => {
-      toast.success('Account Deactivated', {
-        description: 'You have been logged out. Your data is now hidden.',
+      toast.success(t('messages.account_deactivated'), {
+        description: t('messages.account_deactivated_desc'),
       })
       window.location.href = '/'
     },
     onError: () => {
-      toast.error('Deactivation Failed')
+      toast.error(t('messages.deactivation_failed'))
     },
   })
 
@@ -45,26 +47,26 @@ export function AccountManagement() {
       return await (deleteAccountServerFn as any)({ data: { userId } })
     },
     onSuccess: () => {
-      toast.success('Account Deleted Permanently', {
-        description: 'All your data has been purged.',
+      toast.success(t('messages.account_deleted'), {
+        description: t('messages.account_deleted_desc'),
       })
       window.location.href = '/'
     },
     onError: () => {
-      toast.error('Deletion Failed')
+      toast.error(t('messages.deletion_failed'))
     },
   })
 
   const handleDeactivate = () => {
     if (!user?.id) return
-    if (confirm('Are you sure? This will hide your profile and log you out.')) {
+    if (confirm(t('security_section.prompts.deactivate_confirm'))) {
       deactivate(user.id)
     }
   }
 
   const handleDelete = () => {
     if (!user?.id) return
-    const check = prompt('Type DELETE to confirm permanent deletion:')
+    const check = prompt(t('security_section.prompts.delete_confirm'))
     if (check === 'DELETE') {
       remove(user.id)
     }
@@ -76,12 +78,12 @@ export function AccountManagement() {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Lock className="size-5 text-primary" />
-          <h2 className="text-xl font-bold">Password</h2>
+          <h2 className="text-xl font-bold">{t('security_section.password')}</h2>
         </div>
         <Card className="border-primary/5 shadow-sm">
           <CardContent className="pt-6 space-y-4">
             <div className="grid gap-2">
-              <Label htmlFor="current-password">Current Password</Label>
+              <Label htmlFor="current-password">{t('security_section.current_password')}</Label>
               <Input
                 id="current-password"
                 type="password"
@@ -89,11 +91,11 @@ export function AccountManagement() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="new-password">New Password</Label>
+              <Label htmlFor="new-password">{t('security_section.new_password')}</Label>
               <Input id="new-password" type="password" placeholder="••••••••" />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <Label htmlFor="confirm-password">{t('security_section.confirm_password')}</Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -102,7 +104,7 @@ export function AccountManagement() {
             </div>
             <div className="flex justify-end pt-2">
               <Button size="sm" className="font-bold">
-                Update Password
+                {t('security_section.update_button')}
               </Button>
             </div>
           </CardContent>
@@ -114,16 +116,16 @@ export function AccountManagement() {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <AlertTriangle className="size-5 text-destructive" />
-          <h2 className="text-xl font-bold text-destructive">Danger Zone</h2>
+          <h2 className="text-xl font-bold text-destructive">{t('security_section.danger_zone')}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="border-orange-100 bg-orange-50/20 shadow-none">
             <CardHeader className="pb-4">
               <CardTitle className="text-base text-orange-900 flex items-center gap-2">
-                <EyeOff className="size-4" /> Deactivation
+                <EyeOff className="size-4" /> {t('security_section.deactivation')}
               </CardTitle>
               <CardDescription className="text-xs text-orange-700/70">
-                Temporarily hide your account. You can return anytime.
+                {t('security_section.deactivation_desc')}
               </CardDescription>
             </CardHeader>
             <CardFooter>
@@ -137,7 +139,7 @@ export function AccountManagement() {
                 {isDeactivating ? (
                   <Loader2 className="me-2 h-4 w-4 animate-spin" />
                 ) : (
-                  'Deactivate Account'
+                  t('security_section.deactivation_button')
                 )}
               </Button>
             </CardFooter>
@@ -146,10 +148,10 @@ export function AccountManagement() {
           <Card className="border-red-100 bg-red-50/20 shadow-none">
             <CardHeader className="pb-4">
               <CardTitle className="text-base text-red-900 flex items-center gap-2">
-                <Trash2 className="size-4" /> Permanent Deletion
+                <Trash2 className="size-4" /> {t('security_section.deletion')}
               </CardTitle>
               <CardDescription className="text-xs text-red-700/70">
-                This action is irreversible. All data will be purged.
+                {t('security_section.deletion_desc')}
               </CardDescription>
             </CardHeader>
             <CardFooter>
@@ -163,7 +165,7 @@ export function AccountManagement() {
                 {isDeleting ? (
                   <Loader2 className="me-2 h-4 w-4 animate-spin" />
                 ) : (
-                  'Delete Forever'
+                  t('security_section.deletion_button')
                 )}
               </Button>
             </CardFooter>

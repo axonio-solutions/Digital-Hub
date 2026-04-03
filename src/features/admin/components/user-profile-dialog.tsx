@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useActivateSeller, useToggleUserBan } from '@/features/admin/hooks/use-users' 
+import { useTranslation } from 'react-i18next'
 
 
 interface UserProfileDialogProps {
@@ -34,6 +35,7 @@ export function UserProfileDialog({
   open,
   onOpenChange,
 }: UserProfileDialogProps) {
+  const { t } = useTranslation('dashboard/admin')
   const { mutate: activateSeller } = useActivateSeller()
   const { mutate: toggleBan } = useToggleUserBan()
 
@@ -45,20 +47,20 @@ export function UserProfileDialog({
 
   const handleActivate = () => {
     activateSeller({ userId: user.id })
-    toast.success("Account activated successfully")
+    toast.success(t('users.profile.success.activated'))
   }
 
   const handleToggleBan = () => {
     toggleBan({ userId: user.id, isBanned: !isBanned })
-    toast.success(isBanned ? "Account restored" : "Account suspended")
+    toast.success(isBanned ? t('users.profile.success.restored') : t('users.profile.success.suspended'))
   }
 
   return (
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title="User Profile"
-      description="View and manage user account details."
+      title={t('users.profile.title')}
+      description={t('users.profile.description')}
       className="sm:max-w-[1000px]"
       contentClassName="p-8 md:p-10 pt-0"
     >
@@ -89,20 +91,20 @@ export function UserProfileDialog({
                 </h2>
                 <div className="flex flex-col items-center gap-3 pt-1">
                   <Badge variant={isBanned ? "destructive" : "secondary"} className="text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-sm">
-                    {isBanned ? 'SUSPENDED' : role}
+                    {isBanned ? t('users.profile.suspended') : t(`users.roles.${role}`)}
                   </Badge>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] opacity-60">
-                    ID: {user.id.substring(0, 16)}
+                    {t('users.profile.id')}: {user.id.substring(0, 16)}
                   </p>
                 </div>
              </div>
           </div>
 
           <div className="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-             <SidebarItem icon={Mail} label="Registry Email" value={user.email} />
-             <SidebarItem icon={Phone} label="Contact Line" value={user.phoneNumber || 'N/A'} />
-             <SidebarItem icon={MapPin} label="Origin Node" value={`${user.wilaya || 'N/A'}, ${user.city || 'N/A'}`} />
-             <SidebarItem icon={Calendar} label="Member Since" value={new Date(user.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })} />
+             <SidebarItem icon={Mail} label={t('users.profile.registry_email')} value={user.email} />
+             <SidebarItem icon={Phone} label={t('users.profile.contact_line')} value={user.phoneNumber || 'N/A'} />
+             <SidebarItem icon={MapPin} label={t('users.profile.origin_node')} value={`${user.wilaya || 'N/A'}, ${user.city || 'N/A'}`} />
+             <SidebarItem icon={Calendar} label={t('users.profile.member_since')} value={new Date(user.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })} />
           </div>
         </div>
 
@@ -117,9 +119,9 @@ export function UserProfileDialog({
                 </div>
                 <div className="space-y-1">
                    <h4 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white">
-                      Authority Operations
+                      {t('users.profile.authority_ops')}
                    </h4>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter italic">Commit system-level access changes</p>
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter italic">{t('users.profile.authority_desc')}</p>
                 </div>
              </div>
 
@@ -130,7 +132,7 @@ export function UserProfileDialog({
                     className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase text-[10px] tracking-widest rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
                   >
                     <UserCheck size={14} className="me-2" />
-                    Activate
+                    {t('users.profile.activate')}
                   </Button>
                 )}
                 <Button 
@@ -141,12 +143,12 @@ export function UserProfileDialog({
                   {isBanned ? (
                     <>
                       <ShieldCheck size={14} className="me-2" />
-                      Restore Account
+                      {t('users.profile.restore')}
                     </>
                   ) : (
                     <>
                       <UserX size={14} className="me-2" />
-                      Suspend Access
+                      {t('users.profile.suspend')}
                     </>
                   )}
                 </Button>
@@ -154,22 +156,22 @@ export function UserProfileDialog({
           </div>
 
           <div className="flex-1 space-y-8">
-            {role === 'seller' && <SellerContent user={user} />}
-            {role === 'buyer' && <BuyerContent user={user} />}
-            {role === 'admin' && <AdminContent />}
+            {role === 'seller' && <SellerContent user={user} t={t} />}
+            {role === 'buyer' && <BuyerContent user={user} t={t} />}
+            {role === 'admin' && <AdminContent t={t} />}
           </div>
 
           <div className="mt-8 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
              <div className="flex gap-4 px-2">
-                <SnapshotItem label="Health Score" value="98%" color="text-emerald-500" />
-                <SnapshotItem label="Security" value="LVL_2" color="text-blue-500" />
+                <SnapshotItem label={t('users.profile.health_score')} value="98%" color="text-emerald-500" />
+                <SnapshotItem label={t('users.profile.security')} value="LVL_2" color="text-blue-500" />
              </div>
              <Button 
                 variant="ghost" 
                 onClick={() => onOpenChange(false)}
                 className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               >
-                Terminate Session
+                {t('users.profile.terminate')}
               </Button>
           </div>
         </div>
@@ -227,23 +229,23 @@ function SnapshotItem({ label, value, color }: any) {
   )
 }
 
-function SellerContent({ user }: any) {
+function SellerContent({ user, t }: any) {
   return (
     <div className="space-y-8">
       <SectionHeading 
         icon={Store} 
-        title="Account Intelligence" 
-        sub="Cross-domain registry and business performance"
+        title={t('users.profile.account_intelligence')} 
+        sub={t('users.profile.business_perf')}
       />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <DataCard label="Entity Name" value={user.storeName || 'Personal Entity'} />
-        <DataCard label="Commercial Index" value={user.commercialRegister || 'N/A'} mono />
-        <DataCard label="Priority Score" value={user.priorityScore ? `${user.priorityScore.toFixed(1)}` : '0.0'} mono />
-        <DataCard label="Active Quotes" value={user.quotes?.length || '0'} mono />
-        <DataCard label="Success Rate" value="94.2%" mono />
-        <DataCard label="Response Time" value="< 2h" mono />
-        <DataCard label="Account Tier" value="GOLD_03" mono />
-        <DataCard label="Registry Node" value={user.city || 'N/A'} />
+        <DataCard label={t('users.profile.entity_name')} value={user.storeName || 'Personal Entity'} />
+        <DataCard label={t('users.profile.commercial_index')} value={user.commercialRegister || 'N/A'} mono />
+        <DataCard label={t('users.profile.priority_score')} value={user.priorityScore ? `${user.priorityScore.toFixed(1)}` : '0.0'} mono />
+        <DataCard label={t('users.profile.active_quotes')} value={user.quotes?.length || '0'} mono />
+        <DataCard label={t('users.profile.success_rate')} value="94.2%" mono />
+        <DataCard label={t('users.profile.response_time')} value="< 2h" mono />
+        <DataCard label={t('users.profile.account_tier')} value="GOLD_03" mono />
+        <DataCard label={t('users.profile.registry_node')} value={user.city || 'N/A'} />
       </div>
       
       <div className="space-y-4 pt-2">
@@ -251,7 +253,7 @@ function SellerContent({ user }: any) {
             <div className="size-6 rounded-full bg-primary/10 flex items-center justify-center">
                <Award size={12} className="text-primary" />
             </div>
-            <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-900 dark:text-white italic">Operational Jurisdictions</h4>
+            <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-900 dark:text-white italic">{t('users.profile.jurisdictions')}</h4>
          </div>
          <div className="flex flex-wrap gap-2 px-1">
             {(user.sellerCategories || []).map((cat: any, i: number) => (
@@ -260,7 +262,7 @@ function SellerContent({ user }: any) {
               </Badge>
             ))}
             {(user.sellerCategories || []).length === 0 && (
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic opacity-60">No data entries documented</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic opacity-60">{t('users.profile.no_entries')}</p>
             )}
          </div>
       </div>
@@ -268,37 +270,37 @@ function SellerContent({ user }: any) {
   )
 }
 
-function BuyerContent({ user }: any) {
+function BuyerContent({ user, t }: any) {
   return (
     <div className="space-y-6">
        <SectionHeading 
           icon={History} 
-          title="Account Meta" 
-          sub="Verified interaction markers"
+          title={t('users.profile.account_meta')} 
+          sub={t('users.profile.markers')}
        />
        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <DataCard label="Market Position" value="Consumer Entity" />
-          <DataCard label="Registry Age" value={`${Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24))} Days`} />
-          <DataCard label="Authentication Method" value="Identity Core" />
-          <DataCard label="Last Origin Node" value={user.city || 'Digital Space'} />
+          <DataCard label={t('users.profile.market_position')} value="Consumer Entity" />
+          <DataCard label={t('users.profile.registry_age')} value={t('users.profile.days', { count: Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24)) })} />
+          <DataCard label={t('users.profile.auth_method')} value="Identity Core" />
+          <DataCard label={t('users.profile.last_origin')} value={user.city || 'Digital Space'} />
        </div>
     </div>
   )
 }
 
-function AdminContent() {
+function AdminContent({ t }: any) {
   return (
     <div className="space-y-6">
        <SectionHeading 
           icon={Lock} 
-          title="Elevated Access" 
-          sub="System integrity & permissions"
+          title={t('users.profile.elevated_access')} 
+          sub={t('users.profile.system_integrity')}
        />
        <div className="p-6 rounded-lg bg-muted/50 border relative overflow-hidden group">
           <div className="absolute top-0 end-0 p-4 opacity-10">
              <Lock size={48} className="text-muted-foreground" />
           </div>
-          <h4 className="text-[10px] font-semibold uppercase tracking-wider text-primary mb-4">Authority Matrix</h4>
+          <h4 className="text-[10px] font-semibold uppercase tracking-wider text-primary mb-4">{t('users.profile.authority_matrix')}</h4>
           <div className="grid grid-cols-1 gap-3">
              <div className="flex items-center gap-2 text-xs font-medium"><div className="size-1.5 rounded-full bg-emerald-500" /> FULL_SYSTEM_READ</div>
              <div className="flex items-center gap-2 text-xs font-medium"><div className="size-1.5 rounded-full bg-emerald-500" /> USER_MODERATION_WRITE</div>

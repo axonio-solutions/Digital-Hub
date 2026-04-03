@@ -8,12 +8,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   Search,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // Live Hooks
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useBuyerRequests } from '@/features/buyer/hooks/use-buyer'
 
 export function BuyerOverview() {
+  const { t } = useTranslation('dashboard/buyer')
   const { data: user } = useAuth()
   const buyerId = user?.id || ''
 
@@ -47,10 +49,10 @@ export function BuyerOverview() {
       <div className="flex items-center justify-between space-y-2">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">
-            Welcome back, {user?.name || 'Acme Corp'}
+            {t('welcome', { name: user?.name || 'Acme Corp' })}
           </h2>
           <p className="text-muted-foreground">
-            Here's what's happening with your parts requests today.
+            {t('subtitle')}
           </p>
         </div>
       </div>
@@ -60,64 +62,64 @@ export function BuyerOverview() {
         {/* Active Requests */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Active Requests</CardDescription>
+            <CardDescription>{t('stats.active.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-blue-600 dark:text-blue-500">
               {activeRequests.length}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Live Interest
+              {t('stats.active.sub')}
             </div>
-            <div className="text-muted-foreground">Currently seeking market offers</div>
+            <div className="text-muted-foreground">{t('stats.active.desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Offers Received */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Offers Received</CardDescription>
+            <CardDescription>{t('stats.offers.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-emerald-600 dark:text-emerald-500">
               {totalQuotes}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Quote Volume
+              {t('stats.offers.sub')}
             </div>
-            <div className="text-muted-foreground">Supply responses across all requests</div>
+            <div className="text-muted-foreground">{t('stats.offers.desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Fulfilled */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Fulfilled</CardDescription>
+            <CardDescription>{t('stats.fulfilled.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-orange-600 dark:text-orange-500">
               {fulfilledRequests.length}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Success Rate
+              {t('stats.fulfilled.sub')}
             </div>
-            <div className="text-muted-foreground">Successfully matched inquiries</div>
+            <div className="text-muted-foreground">{t('stats.fulfilled.desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Total Volume */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Total Volume</CardDescription>
+            <CardDescription>{t('stats.total.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-purple-600 dark:text-purple-500">
               {requests.length}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              History
+              {t('stats.total.sub')}
             </div>
-            <div className="text-muted-foreground">Lifetime marketplace interactions</div>
+            <div className="text-muted-foreground">{t('stats.total.desc')}</div>
           </CardFooter>
         </Card>
       </div>
@@ -125,11 +127,11 @@ export function BuyerOverview() {
       <div className="space-y-4 pt-8">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h3 className="text-2xl font-semibold tracking-tight">Recent Requests</h3>
-            <p className="text-sm text-muted-foreground">Monitor your latest marketplace activity</p>
+            <h3 className="text-2xl font-semibold tracking-tight">{t('recent.title')}</h3>
+            <p className="text-sm text-muted-foreground">{t('recent.subtitle')}</p>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link to="/dashboard/requests">View all</Link>
+            <Link to="/dashboard/requests">{t('recent.view_all')}</Link>
           </Button>
         </div>
 
@@ -139,8 +141,8 @@ export function BuyerOverview() {
               <div className="size-16 bg-muted rounded-full flex items-center justify-center mb-4 text-muted-foreground">
                 <Search className="size-8" />
               </div>
-              <h3 className="text-lg font-semibold">No Requests Yet</h3>
-              <p className="text-sm text-muted-foreground mt-1">Post your first part request to start receiving offers.</p>
+              <h3 className="text-lg font-semibold">{t('empty.title')}</h3>
+              <p className="text-sm text-muted-foreground mt-1">{t('empty.desc')}</p>
             </div>
           ) : (
             recentDemands.map((req: any) => (

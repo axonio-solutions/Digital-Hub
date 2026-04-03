@@ -12,6 +12,7 @@ import {
   Store,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { useTranslation } from 'react-i18next'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -55,19 +56,21 @@ export const Route = createFileRoute('/_authed/onboarding')({
   component: OnboardingFlow,
 })
 
-const steps = [
-  { id: 1, title: 'Role', description: 'Choose your account type' },
-  { id: 2, title: 'Profile', description: 'Upload your photo' },
-  { id: 3, title: 'Contact', description: 'How can we reach you?' },
-  { id: 4, title: 'Location', description: 'Where are you based?' },
-  { id: 5, title: 'Specialties', description: 'What do you sell?' },
-]
 
 function OnboardingFlow() {
+  const { t } = useTranslation('dashboard/onboarding')
   const [currentStep, setCurrentStep] = useState(1)
   const router = useRouter()
   const queryClient = useQueryClient()
   const { user } = Route.useRouteContext()
+
+  const steps = [
+    { id: 1, title: t('steps.role.title'), description: t('steps.role.description') },
+    { id: 2, title: t('steps.profile.title'), description: t('steps.profile.description') },
+    { id: 3, title: t('steps.contact.title'), description: t('steps.contact.description') },
+    { id: 4, title: t('steps.location.title'), description: t('steps.location.description') },
+    { id: 5, title: t('steps.specialties.title'), description: t('steps.specialties.description') },
+  ]
 
   const [formData, setFormData] = useState({
     role: (user?.role as 'buyer' | 'seller' | '') || '',
@@ -96,7 +99,7 @@ function OnboardingFlow() {
       })
     },
     onSuccess: async () => {
-      toast.success('Onboarding complete!')
+      toast.success(t('toast.success'))
       await queryClient.refetchQueries({
         queryKey: authQueries.user().queryKey,
       })
@@ -109,7 +112,7 @@ function OnboardingFlow() {
       }
     },
     onError: (err: any) => {
-      toast.error('Error saving profile', { description: err.message })
+      toast.error(t('toast.error'), { description: err.message })
     },
   })
 
@@ -143,7 +146,7 @@ function OnboardingFlow() {
   const handleNext = () => {
     const valid = isStepValid()
     if (!valid) {
-      toast.error('Please fill all required fields correctly')
+      toast.error(t('toast.fill_fields'))
       return
     }
 
@@ -178,9 +181,9 @@ function OnboardingFlow() {
         return (
           <div className="space-y-4">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-xl font-bold">Choose your journey</CardTitle>
+              <CardTitle className="text-xl font-bold">{t('role_step.title')}</CardTitle>
               <CardDescription className="text-sm">
-                Are you looking to buy spare parts or sell them on the MLILA marketplace?
+                {t('role_step.desc')}
               </CardDescription>
             </CardHeader>
 
@@ -189,15 +192,15 @@ function OnboardingFlow() {
                 selected={formData.role === 'buyer'}
                 onClick={() => updateFormData('role', 'buyer')}
                 icon={<User className="h-6 w-6 text-purple-600" />}
-                title="Buyer Account"
-                description="Browse thousands of spare parts, request quotes, and manage your vehicle fleet."
+                title={t('role_step.buyer_title')}
+                description={t('role_step.buyer_desc')}
               />
               <AccountTypeCard
                 selected={formData.role === 'seller'}
                 onClick={() => updateFormData('role', 'seller')}
                 icon={<Briefcase className="h-6 w-6 text-purple-600" />}
-                title="Seller Account"
-                description="List your inventory, receive quote requests, and grow your automotive business."
+                title={t('role_step.seller_title')}
+                description={t('role_step.seller_desc')}
               />
             </div>
           </div>
@@ -207,9 +210,9 @@ function OnboardingFlow() {
         return (
           <div className="space-y-4">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-xl font-bold">Profile Picture</CardTitle>
+              <CardTitle className="text-xl font-bold">{t('profile_step.title')}</CardTitle>
               <CardDescription className="text-sm">
-                Adding a photo helps build trust within the marketplace.
+                {t('profile_step.desc')}
               </CardDescription>
             </CardHeader>
             <div className="flex items-center gap-6 pb-2 invisible h-0 overflow-hidden">
@@ -223,7 +226,7 @@ function OnboardingFlow() {
                 onUploadComplete={(url) => updateFormData('image', url)}
               />
               <p className="text-sm text-muted-foreground text-center max-w-xs">
-                Upload a clear photo of yourself or your store logo to build trust with other users.
+                {t('profile_step.hint')}
               </p>
             </div>
           </div>
@@ -233,19 +236,19 @@ function OnboardingFlow() {
         return (
           <div className="space-y-4">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-xl font-bold">Contact Person</CardTitle>
+              <CardTitle className="text-xl font-bold">{t('contact_step.title')}</CardTitle>
               <CardDescription className="text-sm">
-                Your primary contact information for coordination.
+                {t('contact_step.desc')}
               </CardDescription>
             </CardHeader>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name *</Label>
+                <Label htmlFor="name">{t('contact_step.full_name')}</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <User className="absolute left-3 rtl:right-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="name"
-                    className="ps-9"
+                    className="ps-9 rtl:pe-9"
                     placeholder="Ahmed Kerroum"
                     value={formData.name}
                     onChange={(e) => updateFormData('name', e.target.value)}
@@ -253,7 +256,7 @@ function OnboardingFlow() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email">{t('contact_step.email')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -263,12 +266,12 @@ function OnboardingFlow() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phoneNumber">Phone Number *</Label>
+                <Label htmlFor="phoneNumber">{t('contact_step.phone')}</Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Phone className="absolute left-3 rtl:right-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="phoneNumber"
-                    className="ps-9"
+                    className="ps-9 rtl:pe-9"
                     placeholder="05xx xx xx xx"
                     value={formData.phoneNumber}
                     onChange={(e) => updateFormData('phoneNumber', e.target.value)}
@@ -276,7 +279,7 @@ function OnboardingFlow() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="whatsappNumber">WhatsApp Number *</Label>
+                <Label htmlFor="whatsappNumber">{t('contact_step.whatsapp')}</Label>
                 <Input
                   id="whatsappNumber"
                   placeholder="05xx xx xx xx"
@@ -293,23 +296,23 @@ function OnboardingFlow() {
           <div className="space-y-4">
             <CardHeader className="px-0 pt-0">
               <CardTitle className="text-xl font-bold">
-                {formData.role === 'buyer' ? 'Personal Information' : 'Store Details'}
+                {formData.role === 'buyer' ? t('location_step.buyer_title') : t('location_step.seller_title')}
               </CardTitle>
               <CardDescription className="text-sm">
                 {formData.role === 'buyer'
-                  ? 'Tell us where you are located to find parts near you.'
-                  : 'Establish your business presence on the marketplace.'}
+                  ? t('location_step.buyer_desc')
+                  : t('location_step.seller_desc')}
               </CardDescription>
             </CardHeader>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {formData.role === 'seller' && (
                 <div className="space-y-2">
-                  <Label htmlFor="storeName">Official Store Name *</Label>
+                  <Label htmlFor="storeName">{t('location_step.store_name')}</Label>
                   <div className="relative">
-                    <Store className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Store className="absolute left-3 rtl:right-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="storeName"
-                      className="ps-9"
+                      className="ps-9 rtl:pe-9"
                       placeholder="Grand Auto Parts"
                       value={formData.storeName}
                       onChange={(e) => updateFormData('storeName', e.target.value)}
@@ -318,13 +321,13 @@ function OnboardingFlow() {
                 </div>
               )}
               <div className="space-y-2">
-                <Label htmlFor="wilaya">Wilaya *</Label>
+                <Label htmlFor="wilaya">{t('location_step.wilaya')}</Label>
                 <Select
                   value={formData.wilaya}
                   onValueChange={(v) => updateFormData('wilaya', v)}
                 >
                   <SelectTrigger id="wilaya">
-                    <SelectValue placeholder="Select wilaya" />
+                    <SelectValue placeholder={t('location_step.wilaya_placeholder')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
                     {WILAYAS.map((w) => (
@@ -336,12 +339,12 @@ function OnboardingFlow() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="city">City *</Label>
+                <Label htmlFor="city">{t('location_step.city')}</Label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <MapPin className="absolute left-3 rtl:right-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="city"
-                    className="ps-9"
+                    className="ps-9 rtl:pe-9"
                     placeholder="El Harrach"
                     value={formData.city}
                     onChange={(e) => updateFormData('city', e.target.value)}
@@ -349,7 +352,7 @@ function OnboardingFlow() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="address">Full Address *</Label>
+                <Label htmlFor="address">{t('location_step.address')}</Label>
                 <Input
                   id="address"
                   placeholder="08 Rue des Martyrs..."
@@ -358,17 +361,17 @@ function OnboardingFlow() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="companyAddress">Company/Home Address</Label>
+                <Label htmlFor="companyAddress">{t('location_step.company_address')}</Label>
                 <Input
                   id="companyAddress"
-                  placeholder="Optional billing address"
+                  placeholder={t('location_step.company_placeholder')}
                   value={formData.companyAddress}
                   onChange={(e) => updateFormData('companyAddress', e.target.value)}
                 />
               </div>
               {formData.role === 'seller' && (
                 <div className="space-y-2">
-                  <Label htmlFor="rcNumber">Commercial Register (optional)</Label>
+                  <Label htmlFor="rcNumber">{t('location_step.rc')}</Label>
                   <Input
                     id="rcNumber"
                     placeholder="00B1234567"
@@ -439,8 +442,9 @@ function OnboardingFlow() {
                 disabled={currentStep === 1 || isPending}
                 className="h-11 px-6 border-2 hover:bg-gray-50 font-semibold"
               >
-                <ChevronLeft className="h-4 w-4 me-2" />
-                Back
+                <ChevronLeft className="h-4 w-4 me-2 rtl:hidden" />
+                <ChevronRight className="h-4 w-4 ms-2 hidden rtl:block" />
+                {t('nav.back')}
               </Button>
 
               <Button
@@ -453,13 +457,14 @@ function OnboardingFlow() {
                 ) : (
                   <>
                     {currentStep === 1 && !formData.role 
-                      ? 'Select a Role' 
+                      ? t('nav.select_role') 
                       : currentStep === 4 && formData.role === 'buyer'
-                        ? 'Complete Setup'
+                        ? t('nav.complete')
                         : currentStep === 5
-                          ? 'Complete Setup'
-                          : 'Continue'}
-                    <ChevronRight className="h-5 w-5 ms-2" />
+                          ? t('nav.complete')
+                          : t('nav.continue')}
+                    <ChevronRight className="h-5 w-5 ms-2 rtl:hidden" />
+                    <ChevronLeft className="h-5 w-5 me-2 hidden rtl:block" />
                   </>
                 )}
               </Button>
@@ -471,6 +476,7 @@ function OnboardingFlow() {
 }
 
 function SpecialtiesStep({ formData, setFormData }: any) {
+  const { t } = useTranslation('dashboard/onboarding')
   const { data: taxonomy, isLoading } = useQuery({
     queryKey: ['taxonomy'],
     queryFn: () => getTaxonomyServerFn(),
@@ -510,7 +516,7 @@ function SpecialtiesStep({ formData, setFormData }: any) {
     return (
       <div className="flex flex-col items-center justify-center py-12 space-y-4">
         <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
-        <p className="text-sm text-muted-foreground italic">Loading market specialties...</p>
+        <p className="text-sm text-muted-foreground italic">{t('specialties_step.loading')}</p>
       </div>
     )
   }
@@ -518,15 +524,15 @@ function SpecialtiesStep({ formData, setFormData }: any) {
   return (
     <div className="space-y-6">
       <CardHeader className="px-0 pt-0">
-        <CardTitle className="text-xl font-bold font-heading uppercase tracking-tight">Your Portfolio</CardTitle>
+        <CardTitle className="text-xl font-bold font-heading uppercase tracking-tight">{t('specialties_step.title')}</CardTitle>
         <CardDescription className="text-sm text-slate-500">
-          Select the vehicle brands and part categories you specialize in.
+          {t('specialties_step.desc')}
         </CardDescription>
       </CardHeader>
 
       <div className="space-y-6">
         <div className="space-y-3">
-          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Supported Vehicle Brands</Label>
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t('specialties_step.brands')}</Label>
           <div className="flex flex-wrap gap-2">
             {taxonomy?.data?.brands?.map((brand: any) => {
               const active = formData.brandIds?.includes(brand.id)
@@ -550,7 +556,7 @@ function SpecialtiesStep({ formData, setFormData }: any) {
         </div>
 
         <div className="space-y-3">
-          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Part Categories</Label>
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t('specialties_step.categories')}</Label>
           <div className="flex flex-wrap gap-2">
             {taxonomy?.data?.categories?.map((cat: any) => {
               const active = formData.categoryIds?.includes(cat.id)

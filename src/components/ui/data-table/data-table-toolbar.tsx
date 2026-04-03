@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react'
 import type { Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { DataTableViewOptions } from './data-table-view-options'
 import { DataTableFacetedFilter } from './data-table-faceted-filter'
 
@@ -36,6 +37,7 @@ export function DataTableToolbar<TData>({
   children,
   className,
 }: DataTableToolbarProps<TData>) {
+  const { t } = useTranslation('common')
   const isFiltered = table.getState().columnFilters.length > 0
 
   return (
@@ -69,7 +71,7 @@ export function DataTableToolbar<TData>({
             onClick={() => table.resetColumnFilters()}
             className="h-8 px-2 lg:px-3"
           >
-            Reset
+            {t('table.reset')}
             <X className="ms-2 h-4 w-4" />
           </Button>
         )}

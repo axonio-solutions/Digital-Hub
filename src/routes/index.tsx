@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import {
   ArrowRight,
   BarChart3,
@@ -16,6 +17,10 @@ export const Route = createFileRoute('/')({
 })
 
 function LandingPage() {
+  const { t: tLayout } = useTranslation('home/layout')
+  const { t: tHero } = useTranslation('home/hero')
+  const { t: tBenefits } = useTranslation('home/benefits')
+  const { t: tMarketing } = useTranslation('home/marketing')
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground overflow-hidden">
       {/* Header */}
@@ -34,16 +39,16 @@ function LandingPage() {
             hash="how-it-works"
             className="hover:text-blue-600 transition-colors"
           >
-            How it Works
+            {tLayout('nav.how_it_works')}
           </Link>
           <Link to="/" hash="benefits" className="hover:text-blue-600 transition-colors">
-            Benefits
+            {tLayout('nav.benefits')}
           </Link>
           <Link to="/explore" className="text-blue-600 font-bold hover:text-blue-700 transition-colors">
-            Explore Marketplace
+            {tLayout('nav.explore_marketplace')}
           </Link>
           <Link to="/" hash="faq" className="hover:text-primary transition-colors">
-            FAQ
+            {tLayout('nav.faq')}
           </Link>
         </nav>
         <div className="flex items-center gap-4">
@@ -54,12 +59,12 @@ function LandingPage() {
               variant="outline"
               className="hidden sm:inline-flex border-slate-300 font-semibold"
             >
-              Log in
+              {tLayout('header.log_in')}
             </Button>
           </Link>
           <Link to="/login">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold">
-              Get Started
+              {tLayout('header.get_started')}
             </Button>
           </Link>
         </div>
@@ -75,17 +80,15 @@ function LandingPage() {
         <section className="w-full py-20 lg:py-32 flex flex-col items-center justify-center text-center px-4 md:px-6 z-20">
           <Badge className="mb-6 bg-blue-100 text-blue-700 hover:bg-blue-100 hover:text-blue-700 border-none transition-all px-4 py-1 text-sm font-semibold rounded-full">
             <SparkleIcon className="w-4 h-4 me-2" />
-            The First Reverse-Marketplace in Algeria
+            {tHero('badge')}
           </Badge>
           <div className="max-w-[800px] space-y-6">
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground drop-shadow-sm">
-              Don't search for parts. <br className="hidden md:block" />
-              <span className="text-primary">Let the parts find you.</span>
+              {tHero('title_main')} <br className="hidden md:block" />
+              <span className="text-primary">{tHero('title_highlight')}</span>
             </h1>
             <p className="mx-auto max-w-[600px] text-lg text-muted-foreground md:text-xl font-medium leading-relaxed">
-              Buyers post what they need. Verified sellers across Algeria
-              compete to give the best quotes. Connect instantly via Call or
-              WhatsApp.
+              {tHero('description')}
             </p>
           </div>
 
@@ -95,31 +98,30 @@ function LandingPage() {
                 size="lg"
                 className="h-14 px-8 text-base bg-blue-600 hover:bg-blue-700 text-white w-full shadow-lg shadow-blue-500/30 transition-all font-semibold rounded-xl"
               >
-                I am a Buyer
+                {tHero('buyer_btn')}
                 <ArrowRight className="ms-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link to="/register-seller" className="w-full sm:w-auto">
+            <Link to="/login" className="w-full sm:w-auto">
               <Button
                 size="lg"
                 variant="outline"
                 className="h-14 px-8 text-base border-2 border-slate-300 hover:border-blue-600 hover:text-blue-700 hover:bg-blue-50 w-full transition-all font-semibold rounded-xl text-slate-700"
               >
-                I am a Seller
+                {tHero('seller_btn')}
               </Button>
             </Link>
           </div>
 
           <div className="mt-14 flex items-center gap-8 text-sm font-medium text-slate-500">
             <div className="flex gap-2 items-center">
-              <ShieldCheck className="w-5 h-5 text-emerald-500" /> Secure
-              Verification
+              <ShieldCheck className="w-5 h-5 text-emerald-500" /> {tBenefits('trust.secure')}
             </div>
             <div className="flex gap-2 items-center">
-              <Zap className="w-5 h-5 text-amber-500" /> Real-time Quotes
+              <Zap className="w-5 h-5 text-amber-500" /> {tBenefits('trust.quotes')}
             </div>
             <div className="hidden sm:flex gap-2 items-center">
-              <Truck className="w-5 h-5 text-blue-500" /> Direct Delivery
+              <Truck className="w-5 h-5 text-blue-500" /> {tBenefits('trust.delivery')}
             </div>
           </div>
         </section>
@@ -132,11 +134,10 @@ function LandingPage() {
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                How MLILA Works
+                {tBenefits('how_it_works.title')}
               </h2>
               <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                A seamless flow designed to get your vehicle back on the road in
-                record time.
+                {tBenefits('how_it_works.description')}
               </p>
             </div>
 
@@ -149,12 +150,10 @@ function LandingPage() {
                     1
                   </div>
                   <h3 className="text-2xl font-bold text-foreground mb-4">
-                    Request a Part
+                    {tBenefits('how_it_works.step1.title')}
                   </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Submit the exact details of the spare part you need,
-                    including vehicle brand, year, and photos of the broken
-                    piece.
+                    {tBenefits('how_it_works.step1.desc')}
                   </p>
                 </div>
               </div>
@@ -167,12 +166,10 @@ function LandingPage() {
                     2
                   </div>
                   <h3 className="text-2xl font-bold text-slate-900 mb-4">
-                    Receive Quotes
+                    {tBenefits('how_it_works.step2.title')}
                   </h3>
                   <p className="text-slate-600 leading-relaxed">
-                    Verified Sellers across the network receive your request
-                    immediately and respond with competitive quotes (New or
-                    Used).
+                    {tBenefits('how_it_works.step2.desc')}
                   </p>
                 </div>
               </div>
@@ -185,12 +182,10 @@ function LandingPage() {
                     3
                   </div>
                   <h3 className="text-2xl font-bold text-slate-900 mb-4">
-                    Accept & Connect
+                    {tBenefits('how_it_works.step3.title')}
                   </h3>
                   <p className="text-slate-600 leading-relaxed">
-                    Select the best quote based on price and warranty. Connect
-                    directly with the seller via Native Call or WhatsApp to
-                    finalize.
+                    {tBenefits('how_it_works.step3.desc')}
                   </p>
                 </div>
               </div>
@@ -207,15 +202,13 @@ function LandingPage() {
           <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center relative z-10">
             <div className="space-y-8">
               <Badge className="bg-blue-500/20 text-blue-300 hover:bg-blue-500/20 px-3 py-1 font-medium border-blue-500/30">
-                For Sellers
+                {tMarketing('sellers.badge')}
               </Badge>
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
-                Scale your auto parts business exponentially.
+                {tMarketing('sellers.title')}
               </h2>
               <p className="text-xl text-slate-300 leading-relaxed">
-                Stop waiting for foot traffic. Access a live feed of high-intent
-                buyers looking exactly for the inventory sitting on your
-                shelves.
+                {tMarketing('sellers.description')}
               </p>
 
               <ul className="space-y-5">
@@ -223,13 +216,13 @@ function LandingPage() {
                   <div className="bg-emerald-500/20 p-2 rounded-full border border-emerald-500/30 text-emerald-400">
                     <PackageCheck className="w-5 h-5" />
                   </div>
-                  Match inventory to real demand instantly
+                  {tMarketing('sellers.feature1')}
                 </li>
                 <li className="flex items-center gap-4 text-lg text-slate-200">
                   <div className="bg-blue-500/20 p-2 rounded-full border border-blue-500/30 text-blue-400">
                     <BarChart3 className="w-5 h-5" />
                   </div>
-                  Increase monthly revenue and liquidation
+                  {tMarketing('sellers.feature2')}
                 </li>
               </ul>
 
@@ -238,7 +231,7 @@ function LandingPage() {
                   size="lg"
                   className="bg-white text-slate-900 hover:bg-slate-100 font-bold h-14 px-8 rounded-xl shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]"
                 >
-                  Start Selling on MLILA
+                  {tMarketing('sellers.btn')}
                 </Button>
               </Link>
             </div>
@@ -303,19 +296,18 @@ function LandingPage() {
           <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center gap-16">
             <div className="flex-1 space-y-6">
               <Badge className="bg-primary text-white border-none py-1 px-3 rounded-full font-bold uppercase tracking-wider text-[10px]">
-                Live Marketplace
+                {tMarketing('marketplace.badge')}
               </Badge>
               <h2 className="text-4xl font-extrabold tracking-tight text-foreground leading-tight">
-                Browse our live <span className="text-primary">Demand Feed</span>.
+                {tMarketing('marketplace.title')}
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed font-medium">
-                You don't need an account to see what buyers are looking for. 
-                Explore live requests for car parts across Algeria right now.
+                {tMarketing('marketplace.description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/explore">
                   <Button size="lg" className="h-14 px-8 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-xl flex items-center">
-                    Enter Marketplace
+                    {tMarketing('marketplace.btn')}
                     <ArrowRight className="ms-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -328,7 +320,7 @@ function LandingPage() {
                    <div className="p-2 bg-blue-50 rounded-lg">
                       <Zap className="w-5 h-5 text-blue-600" />
                    </div>
-                   <div className="font-bold text-slate-900">Active Signals</div>
+                   <div className="font-bold text-slate-900">{tMarketing('marketplace.active_signals')}</div>
                 </div>
                 <div className="space-y-4">
                   {[1, 2, 3].map((i) => (
@@ -340,7 +332,7 @@ function LandingPage() {
                 </div>
               </div>
               <div className="absolute -top-6 -left-6 bg-blue-600 text-white p-4 rounded-2xl shadow-xl font-black text-xl z-20">
-                Live
+                {tHero('live')}
               </div>
             </div>
           </div>
@@ -359,7 +351,7 @@ function LandingPage() {
             </span>
           </div>
           <p className="text-muted-foreground text-sm font-medium">
-            © 2026 MLILA Reverse-Marketplace Algeria. All rights reserved.
+            {tLayout('footer.rights')}
           </p>
         </div>
       </footer>

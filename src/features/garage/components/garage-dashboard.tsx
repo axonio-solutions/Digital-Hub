@@ -11,6 +11,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import {
   useAddVehicle,
   useRemoveVehicle,
@@ -38,6 +39,7 @@ import {
 } from '@/components/ui/dialog'
 
 export function GarageDashboard() {
+  const { t } = useTranslation('garage')
   const { data: user } = useAuth()
   const userId = user?.id || ''
 
@@ -53,24 +55,22 @@ export function GarageDashboard() {
       {
         onSuccess: () => {
           setIsDialogOpen(false)
-          toast.success('Vehicle added to your garage!')
+          toast.success(t('toasts.add_success'))
         },
         onError: () => {
-          toast.error('Failed to add vehicle. Please try again.')
+          toast.error(t('toasts.add_error'))
         },
       },
     )
   }
 
   const handleDeleteVehicle = (id: string) => {
-    if (
-      confirm('Are you sure you want to remove this vehicle from your garage?')
-    ) {
+    if (confirm(t('actions.delete_confirm'))) {
       removeVehicle(
         { id, userId },
         {
           onSuccess: () => {
-            toast.success('Vehicle removed')
+            toast.success(t('toasts.remove_success'))
           },
         },
       )
@@ -82,7 +82,7 @@ export function GarageDashboard() {
       <div className="flex flex-col h-64 items-center justify-center space-y-4 animate-pulse">
         <Loader2 className="h-8 w-8 text-primary animate-spin" />
         <p className="text-muted-foreground font-medium">
-          Accessing your garage...
+          {t('loading')}
         </p>
       </div>
     )
@@ -91,10 +91,9 @@ export function GarageDashboard() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-xl p-8 flex flex-col items-center justify-center text-center">
         <AlertCircle className="h-10 w-10 text-red-500 mb-4" />
-        <h3 className="text-lg font-semibold text-red-900">Garage Error</h3>
+        <h3 className="text-lg font-semibold text-red-900">{t('error_title')}</h3>
         <p className="text-red-700 max-w-sm mt-2">
-          We couldn't reach the garage at the moment. Please check your
-          connection.
+          {t('error_desc')}
         </p>
       </div>
     )
@@ -104,10 +103,10 @@ export function GarageDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            My Garage
+            {t('title')}
           </h2>
           <p className="text-muted-foreground mt-1 text-lg">
-            Manage your cars and use them to auto-fill parts requests.
+            {t('description')}
           </p>
         </div>
 
@@ -118,16 +117,16 @@ export function GarageDashboard() {
               className="rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-semibold gap-2"
             >
               <Plus className="h-5 w-5" />
-              Add New Vehicle
+              {t('add_vehicle')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px] rounded-2xl">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold">
-                Register Vehicle
+                {t('register_vehicle')}
               </DialogTitle>
               <DialogDescription>
-                Fill in the details below to add a car to your digital garage.
+                {t('register_desc')}
               </DialogDescription>
             </DialogHeader>
             <GarageForm onSubmit={handleAddVehicle} isSubmitting={isAdding} />
@@ -142,17 +141,17 @@ export function GarageDashboard() {
               <Car className="h-12 w-12 text-muted-foreground opacity-30" />
             </div>
             <h3 className="text-xl font-bold text-slate-900">
-              Your Garage is Empty
+              {t('empty_title')}
             </h3>
             <p className="text-slate-500 max-w-xs mt-2 mb-6">
-              Add your vehicles now to make finding spare parts 5x faster.
+              {t('empty_desc')}
             </p>
             <Button
               variant="outline"
               onClick={() => setIsDialogOpen(true)}
               className="rounded-xl border-2 hover:bg-slate-100"
             >
-              Click here to start
+              {t('empty_cta')}
             </Button>
           </Card>
         ) : (
@@ -187,28 +186,28 @@ export function GarageDashboard() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                     <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">
-                      Plate
+                      {t('labels.plate')}
                     </div>
                     <div className="font-mono text-sm text-slate-700 bg-white px-2 py-0.5 rounded border inline-block select-all">
-                      {vehicle.licensePlate || 'N/A'}
+                      {vehicle.licensePlate || t('labels.na')}
                     </div>
                   </div>
                   <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                     <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">
-                      VIN
+                      {t('labels.vin')}
                     </div>
                     <div
                       className="font-mono text-xs text-slate-700 bg-white px-2 py-0.5 rounded border block truncate select-all"
                       title={vehicle.vin}
                     >
-                      {vehicle.vin || 'N/A'}
+                      {vehicle.vin || t('labels.na')}
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 text-sm text-emerald-600 font-semibold bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-100">
                   <ShieldCheck className="h-4 w-4" />
-                  Verified in Network
+                  {t('labels.verified')}
                 </div>
               </CardContent>
 
@@ -217,12 +216,10 @@ export function GarageDashboard() {
                   variant="outline"
                   size="sm"
                   className="flex-1 rounded-xl h-10 font-bold hover:bg-slate-50"
-                  onClick={() =>
-                    toast.info('Vehicle details editing coming soon!')
-                  }
+                  onClick={() => toast.info(t('actions.details_soon'))}
                 >
                   <Settings className="h-4 w-4 me-2" />
-                  Details
+                  {t('actions.details')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -245,16 +242,15 @@ export function GarageDashboard() {
           <div className="relative z-10 flex flex-col h-full justify-between">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold mb-4 uppercase tracking-wider">
-                <Activity className="h-3 w-3" /> Garage Tip
+                <Activity className="h-3 w-3" /> {t('tip.badge')}
               </div>
-              <h3 className="text-2xl font-bold mb-3">Maintenance Reminders</h3>
+              <h3 className="text-2xl font-bold mb-3">{t('tip.title')}</h3>
               <p className="text-slate-400 leading-relaxed mb-6">
-                Soon you'll be able to track oil changes and inspection dates
-                directly from your garage.
+                {t('tip.desc')}
               </p>
             </div>
             <Button className="w-fit bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl px-6">
-              Notify Me
+              {t('tip.notify_btn')}
             </Button>
           </div>
         </div>
@@ -264,17 +260,16 @@ export function GarageDashboard() {
           </div>
           <div>
             <h3 className="text-xl font-bold text-slate-900 mb-1">
-              Service History
+              {t('history.title')}
             </h3>
             <p className="text-slate-500">
-              View all parts requested and quotes accepted for each of your
-              vehicles in one place.
+              {t('history.desc')}
             </p>
             <Button
               variant="link"
               className="p-0 h-auto text-primary font-bold mt-2 hover:no-underline"
             >
-              Go to History →
+              {t('history.link')}
             </Button>
           </div>
         </div>

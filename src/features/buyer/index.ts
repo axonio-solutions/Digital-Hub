@@ -1,6 +1,5 @@
 export * from './components/buyer-overview'
 export * from './components/buyer-hub'
-export * from './components/buyer-requests'
 export * from './components/buyer-list-view'
 export * from './components/buyer-grid-view'
 export * from './components/buyer-skeleton'

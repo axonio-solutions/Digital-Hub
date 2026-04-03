@@ -10,13 +10,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import {
-  Award,
-  Clock,
-  DollarSign,
-  TrendingUp,
-  Activity,
-} from 'lucide-react'
+import { Activity } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { format, subDays, isSameDay, startOfDay } from 'date-fns'
 import { Link } from '@tanstack/react-router'
 import {
@@ -33,9 +28,9 @@ import { useOpenRequests } from '@/features/requests/hooks/use-requests'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
 
 export function SellerOverview() {
+  const { t } = useTranslation(['dashboard/seller', 'dashboard/layout'])
   const { data: user } = useAuth()
   const sellerId = user?.id || ''
 
@@ -83,14 +78,14 @@ export function SellerOverview() {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t('nav.overview', { ns: 'dashboard/layout' })}</h2>
           <p className="text-muted-foreground">
-            Welcome back, {user?.name || 'Seller'}. Here's what's happening today.
+            {t('welcome', { name: user?.name || 'Seller' })}
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button asChild size="sm">
-            <Link to="/dashboard">Go to Market</Link>
+            <Link to="/dashboard">{t('go_to_market')}</Link>
           </Button>
         </div>
       </div>
@@ -100,64 +95,64 @@ export function SellerOverview() {
         {/* Won Deals */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Won Deals</CardDescription>
+            <CardDescription>{t('stats.won.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-emerald-600 dark:text-emerald-500">
               {stats.won}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Deal Success
+              {t('stats.won.sub')}
             </div>
-            <div className="text-muted-foreground">Confirmed marketplace acquisitions</div>
+            <div className="text-muted-foreground">{t('stats.won.desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Active Bids */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Active Bids</CardDescription>
+            <CardDescription>{t('stats.active.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-blue-600 dark:text-blue-500">
               {stats.pending}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Open Negotiations
+              {t('stats.active.sub')}
             </div>
-            <div className="text-muted-foreground">Offers currently awaiting review</div>
+            <div className="text-muted-foreground">{t('stats.active.desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Win Rate */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Win Rate</CardDescription>
+            <CardDescription>{t('stats.win_rate.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-orange-600 dark:text-orange-500">
               {stats.winRate.toFixed(1)}%
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Conversion Yield
+              {t('stats.win_rate.sub')}
             </div>
-            <div className="text-muted-foreground">Efficiency of quote-to-deal transition</div>
+            <div className="text-muted-foreground">{t('stats.win_rate.desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Earnings */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Earnings</CardDescription>
+            <CardDescription>{t('stats.earnings.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-purple-600 dark:text-purple-500">
               {stats.totalRevenue.toLocaleString()}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Market Revenue
+              {t('stats.earnings.sub')}
             </div>
-            <div className="text-muted-foreground">Cumulative earnings (DZD)</div>
+            <div className="text-muted-foreground">{t('stats.earnings.desc')}</div>
           </CardFooter>
         </Card>
       </div>
@@ -165,9 +160,9 @@ export function SellerOverview() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Revenue Velocity</CardTitle>
+            <CardTitle>{t('charts.revenue_velocity.title')}</CardTitle>
             <CardDescription>
-              Earnings trajectory over the last 7 days.
+              {t('charts.revenue_velocity.desc')}
             </CardDescription>
           </CardHeader>
           <CardContent className="ps-2">
@@ -223,8 +218,8 @@ export function SellerOverview() {
 
         <Card className="col-span-3">
           <CardHeader>
-            <CardTitle>Offer Distribution</CardTitle>
-            <CardDescription>Performance breakdown.</CardDescription>
+            <CardTitle>{t('charts.offer_distribution.title')}</CardTitle>
+            <CardDescription>{t('charts.offer_distribution.desc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[250px]">
@@ -232,9 +227,9 @@ export function SellerOverview() {
                 <PieChart>
                   <Pie
                     data={[
-                      { name: 'Accepted', value: stats.won, fill: 'hsl(var(--primary))' },
-                      { name: 'Pending', value: stats.pending, fill: 'hsl(var(--primary) / 0.5)' },
-                      { name: 'Missed', value: Math.max(0, myQuotes.length - stats.won - stats.pending), fill: 'hsl(var(--muted))' },
+                      { name: t('pie.accepted'), value: stats.won, fill: 'hsl(var(--primary))' },
+                      { name: t('pie.pending'), value: stats.pending, fill: 'hsl(var(--primary) / 0.5)' },
+                      { name: t('pie.missed'), value: Math.max(0, myQuotes.length - stats.won - stats.pending), fill: 'hsl(var(--muted))' },
                     ]}
                     cx="50%"
                     cy="50%"
@@ -244,9 +239,9 @@ export function SellerOverview() {
                     dataKey="value"
                   >
                     {[
-                      { name: 'Accepted', value: stats.won, fill: 'hsl(var(--primary))' },
-                      { name: 'Pending', value: stats.pending, fill: 'hsl(var(--primary) / 0.5)' },
-                      { name: 'Missed', value: Math.max(0, myQuotes.length - stats.won - stats.pending), fill: 'hsl(var(--muted))' },
+                      { name: t('pie.accepted'), value: stats.won, fill: 'hsl(var(--primary))' },
+                      { name: t('pie.pending'), value: stats.pending, fill: 'hsl(var(--primary) / 0.5)' },
+                      { name: t('pie.missed'), value: Math.max(0, myQuotes.length - stats.won - stats.pending), fill: 'hsl(var(--muted))' },
                     ].map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
@@ -259,14 +254,14 @@ export function SellerOverview() {
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-2 rounded-full bg-primary" />
-                  <span>Accepted</span>
+                  <span>{t('pie.accepted')}</span>
                 </div>
                 <span className="font-bold">{stats.won}</span>
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-2 rounded-full bg-primary/50" />
-                  <span>Pending</span>
+                  <span>{t('pie.pending')}</span>
                 </div>
                 <span className="font-bold">{stats.pending}</span>
               </div>
@@ -279,10 +274,10 @@ export function SellerOverview() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <div className="space-y-1">
-              <CardTitle className="text-lg">Open Demands</CardTitle>
-              <CardDescription>Latest marketplace requests.</CardDescription>
+              <CardTitle className="text-lg">{t('tables.open_demands')}</CardTitle>
+              <CardDescription>{t('tables.latest_requests')}</CardDescription>
             </div>
-            <Badge variant="secondary">{openRequests.length} Active</Badge>
+            <Badge variant="secondary">{openRequests.length} {t('pie.pending')}</Badge>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -295,7 +290,7 @@ export function SellerOverview() {
                     </p>
                   </div>
                   <Link to="/dashboard">
-                    <Button variant="outline" size="sm">Review</Button>
+                    <Button variant="outline" size="sm">{t('tables.review')}</Button>
                   </Link>
                 </div>
               ))}
@@ -306,8 +301,8 @@ export function SellerOverview() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <div className="space-y-1">
-              <CardTitle className="text-lg">Sales History</CardTitle>
-              <CardDescription>Recent confirmed deals.</CardDescription>
+              <CardTitle className="text-lg">{t('tables.sales_history')}</CardTitle>
+              <CardDescription>{t('tables.recent_deals')}</CardDescription>
             </div>
             <Badge variant="outline">Verified</Badge>
           </CardHeader>
@@ -329,7 +324,7 @@ export function SellerOverview() {
               {myQuotes.filter((q: any) => q.status === 'accepted').length === 0 && (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <Activity className="size-8 text-muted-foreground/20 mb-2" />
-                  <p className="text-xs text-muted-foreground font-medium">No sales recorded yet.</p>
+                  <p className="text-xs text-muted-foreground font-medium">{t('tables.no_sales')}</p>
                 </div>
               )}
             </div>

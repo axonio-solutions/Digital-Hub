@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import {
   ArrowLeft,
   Calendar,
@@ -49,6 +50,7 @@ import { EditRequestDialog } from '@/features/requests/components/edit-request-d
 import { QuoteList } from '@/features/quotes/components/quote-list'
 
 export function BuyerRequestDetails() {
+  const { t } = useTranslation(['requests/details', 'requests/list'])
   const { requestId } = useParams({ from: '/_authed/dashboard/requests/$requestId' })
   const navigate = useNavigate()
   const { data: request, isLoading, error } = useRequestDetails(requestId)
@@ -194,10 +196,10 @@ export function BuyerRequestDetails() {
   if (error || !request) {
     return (
       <div className="p-8 text-center bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/20">
-        <h2 className="text-xl font-bold text-red-700 dark:text-red-400 mb-2">Request Not Found</h2>
-        <p className="text-red-600 dark:text-red-300">We couldn't find the request you're looking for.</p>
+        <h2 className="text-xl font-bold text-red-700 dark:text-red-400 mb-2">{t('errors.not_found', { defaultValue: 'Request Not Found' })}</h2>
+        <p className="text-red-600 dark:text-red-300">{t('errors.not_found_desc', { defaultValue: "We couldn't find the request you're looking for." })}</p>
         <Link to="/dashboard/requests" className="mt-4 inline-block">
-          <Button variant="outline">Back to My Requests</Button>
+          <Button variant="outline">{t('actions.back_to_list')}</Button>
         </Link>
       </div>
     )
@@ -208,8 +210,8 @@ export function BuyerRequestDetails() {
       <div className="flex w-full max-w-6xl flex-col gap-4">
         <div className="mb-2">
           <Link to="/dashboard/requests">
-            <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 font-black uppercase text-[10px] tracking-widest hover:bg-secondary dark:hover:bg-muted transition-all">
-              <ArrowLeft className="size-3.5" /> Back to List
+            <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 font-black uppercase text-[10px] tracking-widest hover:bg-secondary dark:hover:bg-muted transition-all" onClick={() => window.history.back()}>
+              <ArrowLeft className="size-3.5" /> {t('actions.back_to_list')}
             </Button>
           </Link>
         </div>
@@ -244,17 +246,17 @@ export function BuyerRequestDetails() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48 rounded-2xl border-none shadow-xl bg-white dark:bg-slate-900">
                           <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)} className="gap-2 font-bold uppercase text-[10px] tracking-widest p-3 cursor-pointer">
-                            <Edit className="size-3.5" /> Edit Details
+                            <Edit className="size-3.5" /> {t('actions.edit_details')}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={handleShare} className="gap-2 font-bold uppercase text-[10px] tracking-widest p-3 cursor-pointer">
-                            <Share2 className="size-3.5" /> Copy Share Link
+                            <Share2 className="size-3.5" /> {t('actions.copy_link')}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
                           <DropdownMenuItem
                             onClick={() => setIsDeleteDialogOpen(true)}
                             className="gap-2 font-bold uppercase text-[10px] tracking-widest p-3 cursor-pointer text-red-600 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
                           >
-                            <Trash2 className="size-3.5" /> Delete Request
+                            <Trash2 className="size-3.5" /> {t('actions.delete_request')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -272,37 +274,37 @@ export function BuyerRequestDetails() {
                       {request.brand?.brand || request.vehicleBrand}
                     </Badge>
                     <Badge variant="secondary" className="bg-slate-50 text-slate-500 font-bold uppercase text-[9px] tracking-widest border-none px-1.5 py-0.5 rounded-md">
-                      {request.category?.name || 'Category Pending'}
+                      {request.category?.name || t('labels.not_specified')}
                     </Badge>
                     <Badge variant="secondary" className="bg-blue-50 text-blue-600 font-bold uppercase text-[9px] tracking-widest border-none px-1.5 py-0.5 rounded-md">
-                      {request.brand?.clusterRegion || 'General Market'}
+                      {request.brand?.clusterRegion || t('labels.general')}
                     </Badge>
                   </div>
                   <p className="text-xs font-bold text-muted-foreground italic opacity-80 mt-1">
-                    Model Year: {request.modelYear}
+                    {t('labels.model_year')}: {request.modelYear}
                   </p>
                 </div>
 
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-[10px] font-black text-primary uppercase tracking-widest mb-3 border-b border-border pb-1 w-fit">Description</h3>
+                    <h3 className="text-[10px] font-black text-primary uppercase tracking-widest mb-3 border-b border-border pb-1 w-fit">{t('labels.description')}</h3>
                     <p className="text-sm leading-relaxed text-foreground dark:text-gray-300 font-medium">
-                      {request.notes || 'No detailed description provided for this request.'}
+                      {request.notes || t('labels.no_notes')}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-50 dark:border-gray-800">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Posted On</span>
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('columns.posted', { ns: 'requests/list' })}</span>
                       <div className="flex items-center gap-2 text-sm font-bold text-foreground">
                         <Calendar className="size-3.5 text-primary" />
                         <span>{new Date(request.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Status</span>
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('columns.status', { ns: 'requests/list' })}</span>
                       <div className="flex items-center gap-2 text-sm font-bold text-foreground capitalize">
-                        <span>{request.status}</span>
+                        <span>{t(`filters.statuses.${request.status}`, { ns: 'requests/list' })}</span>
                       </div>
                     </div>
                   </div>
@@ -317,7 +319,7 @@ export function BuyerRequestDetails() {
                       className="w-full flex items-center justify-center gap-2 h-12 transition-all hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800 font-black uppercase text-xs tracking-widest rounded-2xl"
                     >
                       <CheckCircle2 className="size-4 text-green-600" />
-                      {isCancelling ? 'Closing...' : 'Close Request'}
+                      {isCancelling ? t('dialogs.cancel.cancelling', { ns: 'requests/list' }) : t('actions.close_request')}
                     </Button>
                   ) : (
                     <Button
@@ -327,13 +329,13 @@ export function BuyerRequestDetails() {
                       className="w-full flex items-center justify-center gap-2 h-12 transition-all hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800 font-black uppercase text-xs tracking-widest rounded-2xl"
                     >
                       <Clock className="size-4 text-primary" />
-                      {isReopening ? 'Reopening...' : 'Reopen Request'}
+                      {isReopening ? t('dialogs.reopen.reopening', { ns: 'requests/list' }) : t('actions.reopen_request')}
                     </Button>
                   )}
                   <p className="text-[10px] text-center text-muted-foreground mt-4 font-medium opacity-60 italic">
                     {request.status === 'open'
-                      ? 'Mark this request as fulfilled or no longer needed.'
-                      : 'This request is currently closed. Reopen to receive more offers.'}
+                      ? t('hints.fulfill_desc', { defaultValue: 'Mark this request as fulfilled or no longer needed.' })
+                      : t('hints.closed_desc', { defaultValue: 'This request is currently closed. Reopen to receive more offers.' })}
                   </p>
                 </div>
               </div>
@@ -350,10 +352,10 @@ export function BuyerRequestDetails() {
             <DialogContent className="rounded-3xl border-none shadow-2xl p-8 bg-white dark:bg-slate-950">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-slate-900 dark:text-white">
-                  Delete Request?
+                  {t('dialogs.delete.title')}
                 </DialogTitle>
                 <DialogDescription className="text-sm font-medium text-slate-500 italic mt-2 leading-relaxed">
-                  This action cannot be undone. This will permanently remove the request and all received offers from your dashboard.
+                  {t('dialogs.delete.description', { ns: 'requests/list' })}
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter className="mt-8 gap-3 sm:justify-end">
@@ -362,14 +364,14 @@ export function BuyerRequestDetails() {
                   onClick={() => setIsDeleteDialogOpen(false)}
                   className="h-12 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest border-slate-200 dark:border-slate-800"
                 >
-                  Cancel
+                  {t('dialogs.cancel')}
                 </Button>
                 <Button
                   onClick={handleDelete}
                   disabled={isDeleting}
                   className="h-12 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest bg-red-600 hover:bg-red-700 text-white"
                 >
-                  {isDeleting ? 'Deleting...' : 'Delete Permanently'}
+                  {isDeleting ? t('dialogs.delete.deleting', { ns: 'requests/list' }) : t('dialogs.delete.confirm')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -398,10 +400,10 @@ export function BuyerRequestDetails() {
             <div className="p-8 pb-4">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-slate-900 dark:text-white">
-                  Contact Seller
+                  {t('contact.title')}
                 </DialogTitle>
                 <DialogDescription className="text-sm font-medium text-slate-500 italic mt-1 leading-relaxed">
-                  Connect with {contactingSeller?.storeName || contactingSeller?.name} to finalize your purchase.
+                  {t('contact.connect_desc', { name: contactingSeller?.storeName || contactingSeller?.name, defaultValue: `Connect with ${contactingSeller?.storeName || contactingSeller?.name} to finalize your purchase.` })}
                 </DialogDescription>
               </DialogHeader>
             </div>
@@ -416,18 +418,18 @@ export function BuyerRequestDetails() {
                     <h4 className="font-black uppercase text-slate-900 dark:text-white text-sm tracking-tight">{contactingSeller?.storeName || contactingSeller?.name}</h4>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 mt-0.5">
                       <MapPin className="size-3 text-primary" />
-                      {contactingSeller?.wilaya || 'Algeria'}
+                      {contactingSeller?.wilaya || t('contact.default_location', { defaultValue: 'Algeria' })}
                     </p>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span className="opacity-60 uppercase tracking-widest text-[9px]">Phone</span>
-                    <span className="text-slate-900 dark:text-white font-black">{contactingSeller?.phoneNumber || 'Not listed'}</span>
+                    <span className="opacity-60 uppercase tracking-widest text-[9px]">{t('contact.phone_label', { defaultValue: 'Phone' })}</span>
+                    <span className="text-slate-900 dark:text-white font-black">{contactingSeller?.phoneNumber || t('contact.not_listed', { defaultValue: 'Not listed' })}</span>
                   </div>
                   <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span className="opacity-60 uppercase tracking-widest text-[9px]">Store Address</span>
-                    <span className="text-slate-900 dark:text-white font-black truncate max-w-[180px]">{contactingSeller?.address || 'Main Store'}</span>
+                    <span className="opacity-60 uppercase tracking-widest text-[9px]">{t('contact.store_address', { defaultValue: 'Store Address' })}</span>
+                    <span className="text-slate-900 dark:text-white font-black truncate max-w-[180px]">{contactingSeller?.address || t('contact.main_store', { defaultValue: 'Main Store' })}</span>
                   </div>
                 </div>
               </div>
@@ -438,7 +440,7 @@ export function BuyerRequestDetails() {
                   className="bg-[#25D366] hover:bg-[#128C7E] text-white font-black uppercase text-xs tracking-widest h-14 rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-[#25D366]/20 transition-all active:scale-95"
                 >
                   <MessageCircle className="size-5 fill-current" />
-                  WhatsApp Message
+                  {t('contact.whatsapp')}
                 </Button>
 
                 <Button
@@ -447,12 +449,12 @@ export function BuyerRequestDetails() {
                   className="border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-900 dark:text-white font-black uppercase text-xs tracking-widest h-14 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95"
                 >
                   <Phone className="size-5" />
-                  Direct Phone Call
+                  {t('contact.call')}
                 </Button>
               </div>
 
               <p className="text-[10px] text-center text-slate-400 font-bold uppercase tracking-widest opacity-60">
-                Mention Digital Hub for faster service
+                {t('contact.hint')}
               </p>
             </div>
           </DialogContent>

@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 
 // In a real implementation this would navigate using @tanstack/react-router
 // import { useNavigate } from "@tanstack/react-router"
 
 export function SplashScreen({ onComplete }: { onComplete?: () => void }) {
+  const { t } = useTranslation('auth/splash')
   // const navigate = useNavigate()
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export function SplashScreen({ onComplete }: { onComplete?: () => void }) {
       >
         <div className="rounded-full bg-primary-foreground/20 p-6 backdrop-blur-sm mb-6">
           <h1 className="text-4xl font-extrabold tracking-tighter text-primary-foreground">
-            MLILA
+            {t('splash.title')}
           </h1>
         </div>
 
@@ -40,7 +42,7 @@ export function SplashScreen({ onComplete }: { onComplete?: () => void }) {
           transition={{ delay: 0.5, duration: 0.5 }}
           className="text-lg font-medium text-primary-foreground/90"
         >
-          Auto Spare Parts Direct
+          {t('splash.subtitle')}
         </motion.p>
       </motion.div>
 

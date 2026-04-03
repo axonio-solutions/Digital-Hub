@@ -25,14 +25,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
 // Live Hooks!
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useOpenRequests } from '@/features/requests/hooks/use-requests'
+import { useTranslation } from 'react-i18next'
 
 export function MarketplaceFeed() {
+  const { t } = useTranslation('marketplace')
   const [selectedRequest, setSelectedRequest] = useState<any>(null)
 
   // Filtering State
@@ -79,23 +80,22 @@ export function MarketplaceFeed() {
   if (isLoading && sellerId)
     return (
       <div className="flex h-64 items-center justify-center">
-        Loading marketplace feed...
+        {t('loading')}
       </div>
     )
   if (isError)
     return (
-      <div className="flex i-64 items-center justify-center text-red-500">
-        Failed to load marketplace data.
+      <div className="flex h-64 items-center justify-center text-red-500">
+        {t('error')}
       </div>
     )
 
   return (
     <div className="flex flex-col space-y-8">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Marketplace Feed</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
         <p className="text-muted-foreground">
-          Browse real-time requests from buyers across Algeria and submit your
-          quotes.
+          {t('description')}
         </p>
       </div>
 
@@ -104,7 +104,7 @@ export function MarketplaceFeed() {
         <Card className="bg-blue-50/50 border-blue-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-blue-900">
-              Open Opportunities
+              {t('metrics.open')}
             </CardTitle>
             <Target className="h-4 w-4 text-blue-600" />
           </CardHeader>
@@ -113,44 +113,44 @@ export function MarketplaceFeed() {
               {openOpportunities}
             </div>
             <p className="text-xs text-blue-600/80">
-              Parts currently needed in the network
+              {t('metrics.open_desc')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Your Active Quotes
+              {t('metrics.active')}
             </CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeQuotes}</div>
             <p className="text-xs text-muted-foreground">
-              Quotes awaiting buyer response
+              {t('metrics.active_desc')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Monthly Revenue
+              {t('metrics.revenue')}
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">N/A</div>
-            <p className="text-xs text-muted-foreground">See Earnings Route</p>
+            <p className="text-xs text-muted-foreground">{t('metrics.revenue_desc')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Win Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('metrics.win_rate')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">N/A</div>
-            <p className="text-xs text-muted-foreground">See Earnings Route</p>
+            <p className="text-xs text-muted-foreground">{t('metrics.win_rate_desc')}</p>
           </CardContent>
         </Card>
       </div>
@@ -160,9 +160,9 @@ export function MarketplaceFeed() {
         <CardHeader className="bg-slate-50/50 border-b">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <CardTitle>Available Requests</CardTitle>
+              <CardTitle>{t('table.title')}</CardTitle>
               <CardDescription>
-                Find the parts you stock and submit competitive pricing.
+                {t('table.description')}
               </CardDescription>
             </div>
 
@@ -171,7 +171,7 @@ export function MarketplaceFeed() {
                 <Search className="absolute start-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="Search part or OEM..."
+                  placeholder={t('table.search_placeholder')}
                   className="ps-9"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -180,10 +180,10 @@ export function MarketplaceFeed() {
 
               <Select value={brandFilter} onValueChange={setBrandFilter}>
                 <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Brand Filter" />
+                  <SelectValue placeholder={t('table.brand_filter')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Brands</SelectItem>
+                  <SelectItem value="all">{t('table.all_brands')}</SelectItem>
                   {uniqueBrands.map((brand: any) => (
                     <SelectItem key={brand} value={brand}>
                       {brand}
@@ -200,7 +200,7 @@ export function MarketplaceFeed() {
                     setSearchQuery('')
                     setBrandFilter('all')
                   }}
-                  title="Clear Filters"
+                  title={t('table.clear_filters')}
                 >
                   <FilterX className="h-4 w-4" />
                 </Button>
@@ -224,19 +224,19 @@ export function MarketplaceFeed() {
       <Modal
         open={!!selectedRequest}
         onOpenChange={(open) => !open && setSelectedRequest(null)}
-        title="Submit a Quote"
-        description="Offer your best price for this part. The buyer will receive your quote instantly."
+        title={t('form.title')}
+        description={t('form.description')}
       >
         {selectedRequest && (
           <div className="space-y-6">
             <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <div className="text-muted-foreground mb-1">Vehicle</div>
+                  <div className="text-muted-foreground mb-1">{t('form.vehicle')}</div>
                   <div className="font-bold">{selectedRequest.vehicleBrand} ({selectedRequest.modelYear})</div>
                 </div>
                 <div>
-                  <div className="text-muted-foreground mb-1">Part Name</div>
+                  <div className="text-muted-foreground mb-1">{t('form.part_name')}</div>
                   <div className="font-bold">{selectedRequest.partName}</div>
                 </div>
               </div>

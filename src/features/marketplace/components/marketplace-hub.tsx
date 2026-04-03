@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { DashboardHeader } from "@/components/ui/dashboard-header"
+import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,7 @@ import { RequestDetailsDialog } from '@/features/requests/components/request-det
 import { useSellerSpecialties, useToggleViewMode } from '@/features/vendors/hooks/use-vendors'
 
 export function MarketplaceHub() {
+  const { t, i18n } = useTranslation('marketplace')
   const [selectedRequest, setSelectedRequest] = useState<any>(null)
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
   const [isRequestDetailsOpen, setIsRequestDetailsOpen] = useState(false)
@@ -95,10 +97,10 @@ export function MarketplaceHub() {
         setIsOfferDetailsOpen(true)
         break
       case 'delete':
-        if (confirm('Permanently delete this offer? This cannot be undone.')) {
+        if (confirm(t('alerts.delete_confirm'))) {
           deleteQuote.mutate(action.item.quoteId, {
             onSuccess: () => {
-              toast.success('Offer deleted successfully')
+              toast.success(t('toasts.delete_success'))
               refetch()
               refetchQuotes()
             }
@@ -112,8 +114,8 @@ export function MarketplaceHub() {
     <div className="min-h-screen bg-background-light dark:bg-background-dark font-display text-text-main-light dark:text-text-main-dark transition-colors duration-200">
       <div className="max-w-[1600px] mx-auto p-4 md:p-8">
         <DashboardHeader 
-          title="Marketplace Hub" 
-          description="Monitor real-time demand signals and manage your active proposals across the secure network." 
+          title={t('hub.title')} 
+          description={t('hub.description')} 
           showDate={false}
           actions={
             <Button 
@@ -121,7 +123,7 @@ export function MarketplaceHub() {
               className="h-11 px-5 rounded-2xl bg-white dark:bg-slate-900 shadow-sm font-bold border-2 border-slate-100 dark:border-slate-800 hover:bg-slate-50 transition-all active:scale-95"
               onClick={() => refetch()}
             >
-              <RefreshCcw className={cn("me-2 size-4", loadingRequests && "animate-spin")} /> Force Refresh
+              <RefreshCcw className={cn("me-2 size-4", loadingRequests && "animate-spin")} /> {t('hub.refresh')}
             </Button>
           }
           className="mb-12"
@@ -137,9 +139,9 @@ export function MarketplaceHub() {
                   <SlidersHorizontal className="size-8 text-white animate-pulse" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-xl font-black tracking-tight">Complete Your Specialized Profile</h3>
+                  <h3 className="text-xl font-black tracking-tight">{t('specialties_banner.complete_title')}</h3>
                   <p className="text-sm text-slate-500 max-w-xl font-medium leading-relaxed">
-                    Select your vehicle brands and categories to unlock filtered requests and improve your response speed.
+                    {t('specialties_banner.complete_desc')}
                   </p>
                 </div>
               </div>
@@ -148,7 +150,7 @@ export function MarketplaceHub() {
                 className="rounded-2xl px-8 h-12 font-bold bg-amber-500 hover:bg-amber-600 shadow-lg shadow-amber-500/20 transition-all active:scale-95 shrink-0"
               >
                 <Link to="/dashboard/profile" hash="specialties">
-                  Configure Specialties
+                  {t('specialties_banner.complete_btn')}
                 </Link>
               </Button>
             </div>
@@ -165,9 +167,9 @@ export function MarketplaceHub() {
                   <Sparkles className="size-8 text-white animate-pulse" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-xl font-black tracking-tight">Your Specialties are Ready!</h3>
+                  <h3 className="text-xl font-black tracking-tight">{t('specialties_banner.ready_title')}</h3>
                   <p className="text-sm text-slate-500 max-w-xl font-medium leading-relaxed">
-                    We've identified opportunities matching your specialized inventory. Toggle filtering below to focus on relevant requests.
+                    {t('specialties_banner.ready_desc')}
                   </p>
                 </div>
               </div>
@@ -175,7 +177,7 @@ export function MarketplaceHub() {
                 onClick={() => toggleViewMode.mutate(false)}
                 className="rounded-2xl px-8 h-12 font-bold bg-primary hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all active:scale-95 shrink-0"
               >
-                Enable Specialty Filter
+                {t('specialties_banner.ready_btn')}
               </Button>
             </div>
           </div>
@@ -187,16 +189,16 @@ export function MarketplaceHub() {
               <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <TabsList className="grid w-full grid-cols-2 max-w-md">
                   <TabsTrigger value="open" className="font-bold uppercase tracking-wider text-[10px]">
-                    Open Opportunities ({loadingRequests || loadingQuotes ? '...' : openOpportunities.length})
+                    {t('tabs.open')} ({loadingRequests || loadingQuotes ? '...' : new Intl.NumberFormat(i18n.language).format(openOpportunities.length)})
                   </TabsTrigger>
                   <TabsTrigger value="active" className="font-bold uppercase tracking-wider text-[10px]">
-                    Your Active Quotes ({loadingRequests || loadingQuotes ? '...' : activeOpportunities.length})
+                    {t('tabs.active')} ({loadingRequests || loadingQuotes ? '...' : new Intl.NumberFormat(i18n.language).format(activeOpportunities.length)})
                   </TabsTrigger>
                 </TabsList>
 
                 <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-4 py-2 rounded-2xl border-2 border-slate-100 dark:border-slate-800 shadow-sm">
                   <SlidersHorizontal className="size-4 text-slate-400" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Filter Specialties</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">{t('hub.filter_specialties')}</span>
                   <div 
                     onClick={() => toggleViewMode.mutate(!user?.viewModeGeneralBroadcast)}
                     className={cn(
@@ -206,7 +208,7 @@ export function MarketplaceHub() {
                   >
                     <div className={cn(
                       "absolute top-1 left-1 size-4 bg-white rounded-full transition-all duration-300 shadow-sm",
-                      !user?.viewModeGeneralBroadcast ? "translate-x-6" : "translate-x-0"
+                      !user?.viewModeGeneralBroadcast ? "translate-x-6 rtl:-translate-x-6" : "translate-x-0"
                     )} />
                   </div>
                 </div>
@@ -252,9 +254,9 @@ export function MarketplaceHub() {
       <Dialog open={isQuoteModalOpen} onOpenChange={setIsQuoteModalOpen}>
         <DialogContent className="sm:max-w-[900px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Submit Quote</DialogTitle>
+            <DialogTitle>{t('form.submit_btn')}</DialogTitle>
             <DialogDescription>
-              Configure your proposal for this request.
+              {t('form.offer_desc')}
             </DialogDescription>
           </DialogHeader>
           
@@ -266,9 +268,9 @@ export function MarketplaceHub() {
                 sellerId={user.id}
                 requestImages={selectedRequest.imageUrls || []}
                 vehicleInfo={{
-                  brand: selectedRequest.vehicleBrand || 'Unknown',
-                  model: selectedRequest.vehicleModel || 'Unknown',
-                  year: selectedRequest.modelYear || 'Unknown'
+                  brand: selectedRequest.vehicleBrand || t('defaults.unknown'),
+                  model: selectedRequest.vehicleModel || t('defaults.unknown'),
+                  year: selectedRequest.modelYear || t('defaults.unknown')
                 }}
                 category={selectedRequest.category?.name || selectedRequest.category}
                 oemNumber={selectedRequest.oemNumber}
@@ -299,7 +301,7 @@ export function MarketplaceHub() {
                className="flex-1"
                onClick={() => { setIsRequestDetailsOpen(false); setIsQuoteModalOpen(true); }} 
             >
-              {selectedRequest?.quoteId ? 'Update Offer' : 'Send Offer'}
+              {selectedRequest?.quoteId ? t('form.update_btn') : t('form.send_offer')}
             </Button>
             {selectedRequest?.quoteId && (
               <Button 
@@ -307,7 +309,7 @@ export function MarketplaceHub() {
                 className="flex-1"
                 onClick={() => { setIsRequestDetailsOpen(false); handleAction({ type: 'delete', item: selectedRequest }); }} 
               >
-                Withdraw
+                {t('table.actions.withdraw')}
               </Button>
             )}
             <Button 
@@ -315,7 +317,7 @@ export function MarketplaceHub() {
                className={cn("flex-1", selectedRequest?.quoteId ? "hidden sm:inline-flex" : "")}
                onClick={() => setIsRequestDetailsOpen(false)} 
             >
-              Close
+              {t('close')}
             </Button>
           </div>
         }
@@ -324,28 +326,28 @@ export function MarketplaceHub() {
       <Dialog open={isOfferDetailsOpen} onOpenChange={setIsOfferDetailsOpen}>
         <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Your Offer Details</DialogTitle>
+            <DialogTitle>{t('offer_details.title')}</DialogTitle>
             <DialogDescription>
-              Summary of your proposal for this request.
+              {t('offer_details.description')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="py-4 space-y-6">
-            <div className="grid grid-cols-2 gap-4">
+             <div className="grid grid-cols-2 gap-4">
               <div className="p-6 rounded-2xl border bg-muted/50 text-center space-y-1">
-                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Offered Price</div>
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t('offer_details.price')}</div>
                 <div className="text-2xl font-black text-primary">
-                  {selectedRequest?.quotePrice?.toLocaleString()} <span className="text-sm font-black opacity-60">DZD</span>
+                  {new Intl.NumberFormat(i18n.language).format(selectedRequest?.quotePrice)} <span className="text-sm font-black opacity-60">DZD</span>
                 </div>
               </div>
               <div className="p-6 rounded-2xl border bg-muted/50 text-center space-y-1">
-                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Part Condition</div>
-                <div className="text-xl font-bold uppercase">{selectedRequest?.quoteCondition || 'used'}</div>
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t('offer_details.condition')}</div>
+                <div className="text-xl font-bold uppercase">{selectedRequest?.quoteCondition === 'new' ? t('form.condition_new') : t('form.condition_used')}</div>
               </div>
             </div>
 
             <div className="p-4 rounded-xl border bg-slate-50 italic text-sm text-center">
-              "{selectedRequest?.quoteWarranty || 'No specific terms recorded.'}"
+              {selectedRequest?.quoteWarranty || t('offer_details.no_warranty')}
             </div>
 
             <div className="flex gap-3 pt-4">
@@ -353,14 +355,14 @@ export function MarketplaceHub() {
                 className="flex-1"
                 onClick={() => { setIsOfferDetailsOpen(false); handleAction({ type: 'update', item: selectedRequest }); }} 
               >
-                Adjust Offer
+                {t('offer_details.adjust_btn')}
               </Button>
               <Button 
                 variant="destructive"
                 className="flex-1"
                 onClick={() => { setIsOfferDetailsOpen(false); handleAction({ type: 'delete', item: selectedRequest }); }} 
               >
-                Delete Offer
+                {t('offer_details.delete_btn')}
               </Button>
             </div>
           </div>

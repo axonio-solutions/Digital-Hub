@@ -7,6 +7,7 @@ import { Loader2, Send, Layout, Hash, Info, FileText } from 'lucide-react'
 import type { QuoteInput } from '@/types/quote-schemas'
 import { quoteSchema } from '@/types/quote-schemas'
 import { useSubmitQuote, useUpdateQuote } from '@/features/marketplace/hooks/use-marketplace'
+import { useTranslation } from 'react-i18next'
 
 import { ImageSlider } from '@/components/ui/image-slider'
 import { Button } from '@/components/ui/button'
@@ -60,6 +61,7 @@ export function SubmitQuoteForm({
   initialData,
   onSuccess,
 }: SubmitQuoteFormProps) {
+  const { t } = useTranslation('marketplace')
   const form = useForm<QuoteInput>({
     resolver: zodResolver(quoteSchema),
     defaultValues: {
@@ -83,22 +85,22 @@ export function SubmitQuoteForm({
         { id: quoteId, data: values },
         {
           onSuccess: () => {
-            toast.success('Quote updated successfully')
+            toast.success(t('toasts.update_success'))
             onSuccess()
           },
           onError: (err: any) => {
-            toast.error('Update failed', { description: err.message })
+            toast.error(t('toasts.update_error'), { description: err.message })
           },
         }
       )
     } else {
       submitQuote(values, {
         onSuccess: () => {
-          toast.success('Quote submitted successfully')
+          toast.success(t('toasts.submit_success'))
           onSuccess()
         },
         onError: (err: any) => {
-          toast.error('Submission failed', { description: err.message })
+          toast.error(t('toasts.submit_error'), { description: err.message })
         },
       })
     }
@@ -117,17 +119,17 @@ export function SubmitQuoteForm({
              <Card className="bg-muted/50 shadow-none border-none">
                 <CardHeader className="py-3">
                    <CardTitle className="text-[10px] font-black flex items-center gap-2 uppercase tracking-widest text-muted-foreground">
-                      <Layout className="h-3 w-3" /> Demand Context
+                      <Layout className="h-3 w-3" /> {t('form.context')}
                    </CardTitle>
                 </CardHeader>
                 <CardContent className="py-0 pb-4 space-y-3">
                    <div>
-                     <div className="text-[10px] font-black uppercase text-primary/60 mb-0.5 tracking-tight">Part Category</div>
-                     <div className="font-black text-lg uppercase leading-tight">{category || 'General Component'}</div>
+                     <div className="text-[10px] font-black uppercase text-primary/60 mb-0.5 tracking-tight">{t('form.category')}</div>
+                     <div className="font-black text-lg uppercase leading-tight">{category || t('form.no_notes')}</div>
                    </div>
                    
                    <div className="pt-2 border-t border-dashed border-muted-foreground/20">
-                     <div className="text-[10px] font-bold uppercase text-muted-foreground mb-0.5">Compatible Vehicle</div>
+                     <div className="text-[10px] font-bold uppercase text-muted-foreground mb-0.5">{t('form.compatible')}</div>
                      <div className="text-sm font-bold">{vehicleInfo?.brand} {vehicleInfo?.model} ({vehicleInfo?.year})</div>
                    </div>
                 </CardContent>
@@ -137,7 +139,7 @@ export function SubmitQuoteForm({
                <Card className="bg-primary/5 shadow-none border-primary/20">
                   <CardHeader className="py-3">
                      <CardTitle className="text-sm font-semibold flex items-center gap-2 uppercase tracking-wide text-primary">
-                        <Hash className="h-4 w-4" /> OEM ID
+                        <Hash className="h-4 w-4" /> {t('form.oem_id')}
                      </CardTitle>
                   </CardHeader>
                   <CardContent className="py-0 pb-3">
@@ -149,8 +151,8 @@ export function SubmitQuoteForm({
 
           <Card className="shadow-lg">
              <CardHeader>
-                <CardTitle className="text-lg">Your Offer</CardTitle>
-                <CardDescription>Enter the details for your quote.</CardDescription>
+                <CardTitle className="text-lg">{t('form.your_offer')}</CardTitle>
+                <CardDescription>{t('form.offer_desc')}</CardDescription>
              </CardHeader>
              <CardContent className="space-y-6">
                 <FormField
@@ -158,11 +160,11 @@ export function SubmitQuoteForm({
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs uppercase font-bold text-muted-foreground">Price (DZD)</FormLabel>
+                      <FormLabel className="text-xs uppercase font-bold text-muted-foreground">{t('form.price_label')}</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
-                          placeholder="Enter price"
+                          placeholder={t('form.price_placeholder')}
                           {...field}
                           onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
                           className="h-12 text-xl font-bold"
@@ -178,7 +180,7 @@ export function SubmitQuoteForm({
                   name="condition"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs uppercase font-bold text-muted-foreground">Condition</FormLabel>
+                      <FormLabel className="text-xs uppercase font-bold text-muted-foreground">{t('form.condition_label')}</FormLabel>
                       <FormControl>
                         <RadioGroup 
                           onValueChange={field.onChange}
@@ -195,7 +197,7 @@ export function SubmitQuoteForm({
                             )}
                           >
                             <RadioGroupItem value="new" id="cond-new" className="sr-only" />
-                            New
+                            {t('form.condition_new')}
                           </Label>
 
                           <Label
@@ -208,7 +210,7 @@ export function SubmitQuoteForm({
                             )}
                           >
                             <RadioGroupItem value="used" id="cond-used" className="sr-only" />
-                            Used
+                            {t('form.condition_used')}
                           </Label>
                         </RadioGroup>
                       </FormControl>
@@ -222,10 +224,10 @@ export function SubmitQuoteForm({
                   name="warranty"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs uppercase font-bold text-muted-foreground">Warranty</FormLabel>
+                      <FormLabel className="text-xs uppercase font-bold text-muted-foreground">{t('form.warranty_label')}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="e.g. 6 Months"
+                          placeholder={t('form.warranty_placeholder')}
                           {...field}
                           className="h-12"
                         />
@@ -236,7 +238,7 @@ export function SubmitQuoteForm({
                 />
 
                 <div className="pt-2 text-[10px] text-muted-foreground italic flex items-center gap-1.5">
-                   <FileText className="h-3 w-3" /> Note: {notes || "No buyer notes."}
+                   <FileText className="h-3 w-3" /> {t('form.note')}: {notes || t('form.no_notes')}
                 </div>
              </CardContent>
              <CardFooter>
@@ -250,7 +252,7 @@ export function SubmitQuoteForm({
                   ) : (
                     <Send className="me-2 h-4 w-4" />
                   )}
-                  {isEditing ? 'Update Quote' : 'Submit Quote'}
+                  {isEditing ? t('form.update_btn') : t('form.submit_btn')}
                 </Button>
              </CardFooter>
           </Card>

@@ -2,6 +2,7 @@ import { type ReactNode } from 'react'
 import { Badge } from './badge'
 import { Card, CardContent } from './card'
 import { Clock, LayoutGrid, Star, ArrowRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Link } from '@tanstack/react-router'
 import { Button } from './button'
@@ -41,6 +42,7 @@ export function PartCard({
   onClick,
   className,
 }: PartCardProps) {
+  const { t } = useTranslation('requests/card')
   const isNew = new Date(createdAt).getTime() > Date.now() - 86400000
 
   return (
@@ -66,12 +68,12 @@ export function PartCard({
         <div className="absolute top-4 start-4 flex flex-col gap-2">
           {quotesCount > 0 && (
             <Badge className="bg-orange-500 text-white border-none font-bold text-[10px] uppercase shadow-lg px-2 py-1">
-              Offers Received
+              {t('badges.offers_received')}
             </Badge>
           )}
           {isNew && (
             <Badge className="bg-primary text-white border-none font-bold text-[10px] uppercase shadow-lg px-2 py-1">
-              New
+              {t('badges.new')}
             </Badge>
           )}
         </div>
@@ -97,19 +99,19 @@ export function PartCard({
                   {region}
                 </Badge>
               )}
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">#{id.substring(0, 6)}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('labels.id_prefix')} {id.substring(0, 6)}</p>
             </div>
           </div>
           <div className="text-end flex flex-col items-end">
             <p className="text-xl font-bold text-primary tracking-tighter leading-none">
               {quotesCount}
             </p>
-            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Quotes</p>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t('labels.quotes')}</p>
           </div>
         </div>
 
         <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 font-medium line-clamp-2 italic">
-          {notes || `Requesting ${title} for ${brand} ${modelYear}.`}
+          {notes || t('defaults.note', { title, brand, modelYear })}
         </p>
 
         <div className="mt-auto pt-6 border-t border-slate-50 dark:border-slate-800/50 flex items-center justify-between">
@@ -122,7 +124,7 @@ export function PartCard({
             </div>
             <div className="flex items-center gap-1.5">
               <Star className="size-3 text-orange-400 fill-orange-400" />
-              <span className="text-[9px] font-bold uppercase text-slate-500">Premium Grid</span>
+              <span className="text-[9px] font-bold uppercase text-slate-500">{t('badges.premium_grid')}</span>
             </div>
           </div>
 
@@ -140,7 +142,7 @@ export function PartCard({
                 disabled={!actionHref}
               >
                 <Button className="bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white font-bold uppercase text-[10px] tracking-widest rounded-xl px-5 h-10 flex items-center gap-2 shadow-sm hover:bg-primary hover:text-white transition-all">
-                  <span>{actionLabel || (quotesCount > 0 ? 'Review' : 'Details')}</span>
+                  <span>{actionLabel || (quotesCount > 0 ? t('actions.review') : t('actions.details'))}</span>
                   <ArrowRight className="size-3.5" />
                 </Button>
               </Link>

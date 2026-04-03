@@ -1,10 +1,8 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { Download, ShieldCheck, Store, Users, Plus, ArrowUpRight } from 'lucide-react'
+import { Download, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, CardAction } from '@/components/ui/card'
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
 
 // Components
 import { AdminUsersTable } from '@/features/admin/components/users-table'
@@ -14,6 +12,8 @@ import {
   useAdminUsers,
   useToggleUserBan,
 } from '@/features/admin/hooks/use-users'
+
+import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/_authed/dashboard/users/')({
   beforeLoad: ({ context }) => {
@@ -25,6 +25,7 @@ export const Route = createFileRoute('/_authed/dashboard/users/')({
 })
 
 function AdminUsersRoute() {
+  const { t } = useTranslation('dashboard/users')
   const { data: users = [], isLoading } = useAdminUsers()
   const { mutate: toggleBan } = useToggleUserBan()
 
@@ -50,19 +51,19 @@ function AdminUsersRoute() {
       {/* Page Heading & Action */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">User Management</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{t("title")}</h2>
           <p className="text-slate-500 max-w-2xl">
-            Manage buyers, sellers, and platform access permissions efficiently across the network.
+            {t('description')}
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Button disabled variant="outline" className="h-10 px-4 rounded-xl border-slate-200 dark:border-slate-800 gap-2 font-bold shadow-sm opacity-50 cursor-not-allowed">
             <Download size={16} />
-            Export Data
+            {t('buttons.export')}
           </Button>
           <Button disabled className="h-10 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white gap-2 font-bold shadow-sm opacity-50 cursor-not-allowed">
             <Plus size={16} />
-            Add New User
+            {t('buttons.add_user')}
           </Button>
         </div>
       </div>
@@ -72,64 +73,64 @@ function AdminUsersRoute() {
         {/* Registered Users */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Registered Users</CardDescription>
+            <CardDescription>{t('stats.registered.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {totalUsers.toLocaleString()}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Network Scale
+              {t('stats.registered.desc')}
             </div>
-            <div className="text-muted-foreground">Total platform accounts</div>
+            <div className="text-muted-foreground">{t("stats.registered.detail")}</div>
           </CardFooter>
         </Card>
 
         {/* Waitlisted Sellers */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Waitlisted Sellers</CardDescription>
+            <CardDescription>{t('stats.waitlisted.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-amber-600 dark:text-amber-500">
               {waitlistedSellers.toLocaleString()}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Awaiting Approval
+              {t('stats.waitlisted.desc')}
             </div>
-            <div className="text-muted-foreground">Prospective merchant queue</div>
+            <div className="text-muted-foreground">{t("stats.waitlisted.detail")}</div>
           </CardFooter>
         </Card>
 
         {/* Active Sellers */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Active Sellers</CardDescription>
+            <CardDescription>{t('stats.active_sellers.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-emerald-600 dark:text-emerald-500">
               {activeSellers.toLocaleString()}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Verified Merchants
+              {t('stats.active_sellers.desc')}
             </div>
-            <div className="text-muted-foreground">Active supply-side partners</div>
+            <div className="text-muted-foreground">{t("stats.active_sellers.detail")}</div>
           </CardFooter>
         </Card>
 
         {/* Pending Verifications */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Pending Email</CardDescription>
+            <CardDescription>{t('stats.pending_email.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-blue-600 dark:text-blue-500">
               {pendingVerifications.toLocaleString()}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Identity Verification
+              {t('stats.pending_email.desc')}
             </div>
-            <div className="text-muted-foreground">Users requiring confirmation</div>
+            <div className="text-muted-foreground">{t("stats.pending_email.detail")}</div>
           </CardFooter>
         </Card>
       </div>

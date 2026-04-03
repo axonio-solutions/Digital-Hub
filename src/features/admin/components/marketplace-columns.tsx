@@ -27,6 +27,7 @@ export type MarketplaceActivity = z.infer<typeof marketplaceActivitySchema>;
 // but for true isolation we should define columns here.
 
 export const marketplaceColumns = (
+  t: (key: string) => string,
   TableCellViewer: React.ComponentType<{ item: MarketplaceActivity }>,
   showSelection: boolean = true
 ): ColumnDef<MarketplaceActivity>[] => {
@@ -60,7 +61,7 @@ export const marketplaceColumns = (
   columns.push(
   {
     accessorKey: "partName",
-    header: "Part Name",
+    header: t('table.columns.part_name'),
     cell: ({ row }) => {
       return <TableCellViewer item={row.original} />;
     },
@@ -68,7 +69,7 @@ export const marketplaceColumns = (
   },
   {
     accessorKey: "brand",
-    header: "Vehicle",
+    header: t('table.vehicle'),
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <Badge variant="outline">
@@ -80,15 +81,15 @@ export const marketplaceColumns = (
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: t('table.status_placeholder'),
     cell: ({ row }) => {
-      const status = row.original.status;
+      const status = row.original.status as 'fulfilled' | 'open' | 'cancelled';
       return (
         <Badge 
           variant={status === "fulfilled" ? "default" : "secondary"} 
           className="capitalize"
         >
-          {status}
+          {t(`table.status.${status}`)}
         </Badge>
       );
 
@@ -96,7 +97,7 @@ export const marketplaceColumns = (
   },
   {
     accessorKey: "buyer",
-    header: "Buyer",
+    header: t('table.buyer'),
     cell: ({ row }) => (
       <span className="text-sm font-medium">
         {row.original.buyer}
@@ -105,7 +106,7 @@ export const marketplaceColumns = (
   },
   {
     accessorKey: "offers",
-    header: "Offers",
+    header: t('metrics.avg_offers'),
     cell: ({ row }) => (
       <div className="text-center w-12 font-mono">
         {row.original.offers}
@@ -114,7 +115,7 @@ export const marketplaceColumns = (
   },
   {
     accessorKey: "createdAt",
-    header: "Created",
+    header: t('table.columns.created_at'),
     cell: ({ row }) => (
       <div className="text-muted-foreground text-xs">
         {formatDistanceToNow(new Date(row.original.createdAt), { addSuffix: true })}

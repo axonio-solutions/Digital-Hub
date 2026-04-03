@@ -12,6 +12,7 @@ import type {
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { updateProfileServerFn } from '@/fn/users'
 import { WILAYAS } from '@/lib/constants/wilayas'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -40,6 +41,7 @@ import {
 // AvatarUpload removed for consolidation
 
 export function GeneralInfoForm() {
+  const { t } = useTranslation('dashboard/settings')
   const queryClient = useQueryClient()
   const { data: user } = useAuth()
 
@@ -77,10 +79,10 @@ export function GeneralInfoForm() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth'] })
-      toast.success('Profile Updated')
+      toast.success(t('messages.profile_updated'))
     },
     onError: () => {
-      toast.error('Update Failed')
+      toast.error(t('messages.update_failed'))
     },
   })
 
@@ -96,10 +98,10 @@ export function GeneralInfoForm() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <UserIcon className="size-5 text-primary" />
-              <CardTitle>Basic Identity</CardTitle>
+              <CardTitle>{t('form.basic_identity')}</CardTitle>
             </div>
             <CardDescription>
-              Update your avatar and personal contact details.
+              {t('form.identity_desc')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -113,7 +115,7 @@ export function GeneralInfoForm() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>{t('form.name')}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -126,7 +128,7 @@ export function GeneralInfoForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
+                    <FormLabel>{t('form.email')}</FormLabel>
                     <FormControl>
                       <Input type="email" {...field} />
                     </FormControl>
@@ -142,7 +144,7 @@ export function GeneralInfoForm() {
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel>{t('form.phone')}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -155,9 +157,9 @@ export function GeneralInfoForm() {
                 name="whatsappNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>WhatsApp (Optional)</FormLabel>
+                    <FormLabel>{t('form.whatsapp')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="+213..." {...field} />
+                      <Input placeholder={t('form.whatsapp_placeholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -172,10 +174,10 @@ export function GeneralInfoForm() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <MapPin className="size-5 text-primary" />
-              <CardTitle>Physical Address</CardTitle>
+              <CardTitle>{t('form.physical_address')}</CardTitle>
             </div>
             <CardDescription>
-              Managed your primary location for deliveries and service.
+              {t('form.address_desc')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -184,9 +186,9 @@ export function GeneralInfoForm() {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Street Address</FormLabel>
+                  <FormLabel>{t('form.street')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="123 Street Name" {...field} />
+                    <Input placeholder={t('form.street_placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -199,9 +201,9 @@ export function GeneralInfoForm() {
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City / Commune</FormLabel>
+                    <FormLabel>{t('form.city')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. Cheraga" {...field} />
+                      <Input placeholder={t('form.city_placeholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -212,14 +214,14 @@ export function GeneralInfoForm() {
                 name="wilaya"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Wilaya</FormLabel>
+                    <FormLabel>{t('form.wilaya')}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select wilaya" />
+                          <SelectValue placeholder={t('form.wilaya_placeholder')} />
                         </SelectTrigger>
                       </FormControl>
                         <SelectContent className="max-h-[300px]">
@@ -243,9 +245,9 @@ export function GeneralInfoForm() {
                 className="font-bold min-w-[120px]"
               >
                 {isPending ? (
-                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-2 rtl:ms-2 h-4 w-4 animate-spin" />
                 ) : null}
-                {isPending ? 'Saving...' : 'Save Changes'}
+                {isPending ? t('messages.saving') : t('form.save')}
               </Button>
             </div>
           </CardContent>

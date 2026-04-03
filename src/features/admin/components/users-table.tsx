@@ -19,7 +19,8 @@ import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
 import { 
   useActivateSeller,
 } from '@/features/admin/hooks/use-users'
-import { accountStatuses, integrityStatuses, roles } from '../data/user-filters'
+import { getAccountStatuses, getIntegrityStatuses, getRoles } from '../data/user-filters'
+import { useTranslation } from 'react-i18next'
 
 interface AdminUsersTableProps {
   users: Array<any>
@@ -32,6 +33,7 @@ export function AdminUsersTable({
   onBan,
   onUnban,
 }: AdminUsersTableProps) {
+  const { t } = useTranslation('dashboard/admin')
   const [selectedUser, setSelectedUser] = useState<any | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -64,7 +66,7 @@ export function AdminUsersTable({
       {
         accessorKey: 'name',
         id: 'name',
-        header: 'Name',
+        header: t('users.columns.name'),
         cell: ({ row }) => {
           const user = row.original
           return (
@@ -89,19 +91,19 @@ export function AdminUsersTable({
       },
       {
         accessorKey: 'role',
-        header: 'Role',
+        header: t('users.columns.role'),
         cell: ({ row }) => {
           const role = row.original.role;
           return (
             <Badge variant="outline" className="capitalize">
-              {role}
+              {t(`users.roles.${role}`)}
             </Badge>
           );
         },
       },
       {
         accessorKey: 'account_status',
-        header: 'Status',
+        header: t('users.columns.status'),
         cell: ({ row }) => {
           const status = row.original.account_status || 'new';
           return (
@@ -113,14 +115,14 @@ export function AdminUsersTable({
               }
               className="capitalize"
             >
-              {status}
+              {t(`users.account_status.${status}`)}
             </Badge>
           )
         },
       },
       {
         accessorKey: 'priorityScore',
-        header: 'Score',
+        header: t('users.columns.score'),
         cell: ({ row }) => {
           const score = row.original.priorityScore;
           if (row.original.role !== 'seller' || score === null) return (
@@ -141,7 +143,7 @@ export function AdminUsersTable({
       },
       {
         accessorKey: 'banned',
-        header: 'Integrity',
+        header: t('users.columns.integrity'),
         cell: ({ row }) => {
           const isBanned = row.original.banned;
           return (
@@ -149,7 +151,7 @@ export function AdminUsersTable({
               variant={isBanned ? "destructive" : "outline"}
               className="text-[10px]"
             >
-              {isBanned ? "Banned" : "Active"}
+              {isBanned ? t('users.integrity.compromised') : t('users.integrity.secure')}
             </Badge>
           )
         },
@@ -168,11 +170,11 @@ export function AdminUsersTable({
                   onClick={(e) => {
                     e.stopPropagation();
                     activateSeller({ userId: user.id });
-                    toast.success("Seller activated");
+                    toast.success(t('users.actions.activated_success'));
                   }}
                   className="h-8"
                 >
-                  Activate
+                  {t('users.actions.activate')}
                 </Button>
               )}
               <Button
@@ -181,14 +183,14 @@ export function AdminUsersTable({
                 onClick={() => handleViewDetails(user)}
                 className="h-8"
               >
-                View
+                {t('users.actions.view')}
               </Button>
             </div>
           )
         },
       },
     ],
-    [onBan, onUnban, activateSeller],
+    [onBan, onUnban, activateSeller, t],
   )
 
   const handleViewDetails = (user: any) => {
@@ -209,29 +211,29 @@ export function AdminUsersTable({
             <DataTableToolbar
               table={table}
               searchColumn="name"
-              searchPlaceholder="Search users..."
+              searchPlaceholder={t('users.search')}
               facetedFilters={[
                 {
                   column: 'role',
-                  title: 'Role',
-                  options: roles,
+                  title: t('users.filters.role'),
+                  options: getRoles(t),
                 },
                 {
                   column: 'banned',
-                  title: 'Status',
-                  options: integrityStatuses,
+                  title: t('users.filters.status'),
+                  options: getIntegrityStatuses(t),
                 },
                 {
                   column: 'account_status',
-                  title: 'Account',
-                  options: accountStatuses,
+                  title: t('users.filters.account'),
+                  options: getAccountStatuses(t),
                 }
               ]}
             >
                {selectedCount > 0 && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    {selectedCount} selected
+                    {t('users.actions.selected', { count: selectedCount })}
                   </span>
                   <Button
                     variant="destructive"
@@ -240,12 +242,12 @@ export function AdminUsersTable({
                         const ids = selectedRows.map((r: any) => r.original.id);
                         ids.forEach((id: string) => onBan?.(id));
                         table.resetRowSelection();
-                        toast.error(`Banned ${ids.length} users`);
+                        toast.error(t('users.actions.banned_success', { count: ids.length }));
                     }}
                     className="h-8"
                   >
                     <UserX className="me-2 h-4 w-4" />
-                    Ban Selected
+                    {t('users.actions.ban')}
                   </Button>
                 </div>
               )}

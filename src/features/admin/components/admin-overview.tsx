@@ -2,7 +2,6 @@
 
 import {
   Download,
-  ChevronRight,
 } from "lucide-react";
 import {
   Label,
@@ -12,10 +11,10 @@ import {
   RadialBarChart,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, CardAction } from "@/components/ui/card";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
 import {
@@ -23,19 +22,21 @@ import {
   useSystemMetrics,
 } from "@/features/admin/hooks/use-analytics";
 import { useAllRequests } from "@/features/requests/hooks/use-requests";
-import { MarketplaceActivityTable, type MarketplaceActivity } from "./marketplace-activity-table";
+import { MarketplaceActivityTable } from "./marketplace-activity-table";
+import { type MarketplaceActivity } from "./marketplace-columns";
 
 const chartConfig = {
   visitors: {
-    label: "Offers",
+    label: "offers",
   },
   safari: {
-    label: "Avg Offers",
+    label: "avg_offers",
     color: "hsl(var(--primary))",
   },
 } satisfies ChartConfig;
 
 export function AdminOverview() {
+  const { t } = useTranslation(['dashboard/admin', 'dashboard/layout'])
   const { data: stats, isLoading: isStatsLoading } = useAdminDashboardStats();
   const { data: systemMetrics, isLoading: isMetricsLoading } = useSystemMetrics();
   const { data: allRequests = [], isLoading: isRequestsLoading } = useAllRequests();
@@ -82,15 +83,15 @@ export function AdminOverview() {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{t('nav.overview', { ns: 'dashboard/layout' })}</h2>
           <p className="text-muted-foreground">
-            Welcome back, here's what's happening on MLILA today.
+            {t('welcome')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" className="hidden sm:flex">
             <Download className="me-2 h-4 w-4" />
-            Export Report
+            {t('export')}
           </Button>
         </div>
       </div>
@@ -99,55 +100,55 @@ export function AdminOverview() {
         {/* Active Buyers */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Active Buyers</CardDescription>
+            <CardDescription>{t('stats.buyers.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {totalBuyers.toLocaleString()}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Vetted participants
+              {t('stats.buyers.sub')}
             </div>
-            <div className="text-muted-foreground">Total registered platform buyers</div>
+            <div className="text-muted-foreground">{t('stats.buyers.desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Live Sellers */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Live Sellers</CardDescription>
+            <CardDescription>{t('stats.sellers.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {totalSellers.toLocaleString()}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Verified merchants
+              {t('stats.sellers.sub')}
             </div>
-            <div className="text-muted-foreground">Active supply side partners</div>
+            <div className="text-muted-foreground">{t('stats.sellers.desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Open Demands */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Open Demands</CardDescription>
+            <CardDescription>{t('stats.demands.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {openRequestsCount.toLocaleString()}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Marketplace activity
+              {t('stats.demands.sub')}
             </div>
-            <div className="text-muted-foreground">Total currently open requests</div>
+            <div className="text-muted-foreground">{t('stats.demands.desc')}</div>
           </CardFooter>
         </Card>
 
         {/* Market Supply */}
         <Card className="@container/card">
           <CardHeader>
-            <CardDescription>Market Supply</CardDescription>
+            <CardDescription>{t('stats.supply.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {totalQuotes.toLocaleString()}
             </CardTitle>
@@ -159,9 +160,9 @@ export function AdminOverview() {
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Quotes & Offers
+              {t('stats.supply.sub')}
             </div>
-            <div className="text-muted-foreground">Total availability across network</div>
+            <div className="text-muted-foreground">{t('stats.supply.desc')}</div>
           </CardFooter>
         </Card>
       </div>
@@ -169,16 +170,20 @@ export function AdminOverview() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Request Volume</CardTitle>
+            <CardTitle>{t('charts.request_volume.title')}</CardTitle>
             <CardDescription>
-              Market demand over the last 10 nodes
+              {t('charts.request_volume.desc')}
             </CardDescription>
           </CardHeader>
           <CardContent className="ps-2">
             <div className="flex h-[240px] items-end gap-2 px-2">
               {displayVol.length === 0 ? (
                 <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
-                  Insufficient data for volume projection...
+                  {t('charts.request_volume.insufficient')}
+                </div>
+              ) : displayVol.length === 0 ? (
+                <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+                  {t('charts.request_volume.insufficient')}
                 </div>
               ) : (
                 displayVol.map((node: any, idx: number) => {
@@ -199,17 +204,17 @@ export function AdminOverview() {
               )}
             </div>
             <div className="mt-4 flex justify-between text-[10px] font-medium text-muted-foreground uppercase">
-              <span>{displayVol[0]?.date || 'Start'}</span>
-              <span>{displayVol[Math.floor(displayVol.length / 2)]?.date || 'Mid'}</span>
-              <span>{displayVol[displayVol.length - 1]?.date || 'Today'}</span>
+              <span>{displayVol[0]?.date || t('common.start', { ns: 'common' })}</span>
+              <span>{displayVol[Math.floor(displayVol.length / 2)]?.date || t('common.mid', { ns: 'common' })}</span>
+              <span>{displayVol[displayVol.length - 1]?.date || t('common.today', { ns: 'common' })}</span>
             </div>
           </CardContent>
         </Card>
         <Card className="col-span-3">
           <CardHeader>
-            <CardTitle>Market Analytics</CardTitle>
+            <CardTitle>{t('charts.market_analytics.title')}</CardTitle>
             <CardDescription>
-              Avg offers per marketplace request
+              {t('charts.market_analytics.desc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -233,7 +238,7 @@ export function AdminOverview() {
                               {marketHealth.avgOffersPerRequest.toFixed(1)}
                             </tspan>
                             <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 20} className="fill-muted-foreground text-[10px] font-medium uppercase tracking-wider">
-                              Offers/Req
+                              {t('charts.market_analytics.label')}
                             </tspan>
                           </text>
                         )
@@ -248,9 +253,11 @@ export function AdminOverview() {
             <div className="flex w-full items-center justify-between border-t py-4 mt-2">
               <div className="flex items-center gap-2">
                 <div className="h-3 w-3 rounded-full bg-primary" />
-                <span className="text-sm font-medium">Market Health</span>
+                <span className="text-sm font-medium">{t('charts.market_analytics.health')}</span>
               </div>
-              <span className="text-sm font-bold uppercase">{marketHealth.marketHealth}</span>
+              <span className="text-sm font-bold uppercase">
+                {t(`health.${marketHealth.marketHealth.toLowerCase()}`, { defaultValue: marketHealth.marketHealth })}
+              </span>
             </div>
           </CardFooter>
         </Card>
