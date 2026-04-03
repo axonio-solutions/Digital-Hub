@@ -1,0 +1,31 @@
+{
+  "title": "Offres Reçues",
+  "subtitle": "Consultez les devis en direct des vendeurs pour vos demandes actives.",
+  "loading": "Chargement des offres...",
+  "actionable_title": "Devis à traiter ({{count}})",
+  "actionable_desc": "Ces demandes nécessitent votre attention. Acceptez un devis pour finaliser la transaction.",
+  "table": {
+    "id": "ID",
+    "part_name": "Nom de la pièce",
+    "brand": "Marque",
+    "quotes": "Devis",
+    "action": "Action"
+  },
+  "empty": "Vous n'avez aucune offre active à examiner.",
+  "go_back": "Retour au tableau de bord",
+  "review_btn": "Examiner les devis",
+  "dialog": {
+    "title": "Devis pour {{part}}",
+    "desc": "Examinez les offres des vendeurs vérifiés. Acceptez la meilleure pour obtenir leurs coordonnées directes.",
+    "condition_new": "Pièce neuve",
+    "condition_used": "Occasion/Casse",
+    "warranty": "Garantie :",
+    "no_warranty": "Aucune",
+    "accepting": "Acceptation...",
+    "accept": "Accepter l'offre",
+    "accepted_title": "Devis accepté !",
+    "accepted_desc": "Vous avez sélectionné le devis de {{seller}} pour {{price}} DZD.",
+    "contact_desc": "Contactez directement le vendeur pour organiser le paiement et la logistique.",
+    "close": "Fermer"
+  }
+}

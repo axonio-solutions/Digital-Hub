@@ -1,0 +1,106 @@
+{
+  "title": "Settings",
+  "menu": "Menu",
+  "sections": {
+    "profile": "Profile",
+    "security": "Security",
+    "notifications": "Notifications"
+  },
+  "profile": {
+    "identity_title": "Profile Identity",
+    "identity_desc": "Your avatar is visible to other marketplace participants. Use a professional photo to build trust and increase proposal acceptance.",
+    "personal_title": "Personal Details",
+    "personal_desc": "Manage your account information and contact details.",
+    "store_title": "Store Profile",
+    "store_desc": "Manage your business identity as a seller."
+  },
+  "form": {
+    "basic_identity": "Basic Identity",
+    "identity_desc": "Update your avatar and personal contact details.",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "whatsapp": "WhatsApp (Optional)",
+    "whatsapp_placeholder": "+213...",
+    "physical_address": "Physical Address",
+    "address_desc": "Manage your primary location for deliveries and service.",
+    "street": "Street Address",
+    "street_placeholder": "123 Street Name",
+    "city": "City / Commune",
+    "city_placeholder": "e.g. Cheraga",
+    "wilaya": "Wilaya",
+    "wilaya_placeholder": "Select wilaya",
+    "save": "Save Changes",
+    "saving": "Saving..."
+  },
+  "messages": {
+    "profile_updated": "Profile Updated",
+    "update_failed": "Update Failed",
+    "account_deactivated": "Account Deactivated",
+    "account_deactivated_desc": "You have been logged out. Your data is now hidden.",
+    "deactivation_failed": "Deactivation Failed",
+    "account_deleted": "Account Deleted Permanently",
+    "account_deleted_desc": "All your data has been purged.",
+    "deletion_failed": "Deletion Failed",
+    "saving": "Saving...",
+    "preferences_updated": "Preferences updated successfully",
+    "update_pref_failed": "Failed to update preferences",
+    "admin_alert_triggered": "Admin alert triggered!",
+    "admin_alert_failed": "Failed to trigger alert"
+  },
+  "security_section": {
+    "password": "Password",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm Password",
+    "update_button": "Update Password",
+    "danger_zone": "Danger Zone",
+    "deactivation": "Deactivation",
+    "deactivation_desc": "Temporarily hide your account. You can return anytime.",
+    "deactivation_button": "Deactivate Account",
+    "deletion": "Permanent Deletion",
+    "deletion_desc": "This action is irreversible. All data will be purged.",
+    "deletion_button": "Delete Forever",
+    "prompts": {
+      "deactivate_confirm": "Are you sure? This will hide your profile and log you out.",
+      "delete_confirm": "Type DELETE to confirm permanent deletion:"
+    }
+  },
+  "security": {
+    "title": "Account Security",
+    "desc": "Protect your account with strong passwords and privacy controls."
+  },
+  "notifications": {
+    "title": "Notification Preferences",
+    "desc": "Optimize your experience by choosing where and how you receive marketplace signals."
+  },
+  "notifications_section": {
+    "loading": "Loading your preferences...",
+    "delivery_channels": "Delivery Channels",
+    "delivery_desc": "Choose how you want to be alerted about new activity.",
+    "in_app": "In-App Notifications",
+    "in_app_desc": "Real-time alerts shown in your dashboard.",
+    "email": "Email Alerts",
+    "email_desc": "Get detailed updates delivered to your inbox.",
+    "coming_soon": "Coming Soon",
+    "seller_strategy": "Seller Alert Strategy",
+    "seller_strategy_desc": "Optimize how you receive leads and market signals.",
+    "frequency": "Notification Frequency",
+    "frequency_desc": "Choose between real-time leads or a summary digest.",
+    "immediate": "Immediate",
+    "immediate_desc": "Alert me the moment a new request matches my focus.",
+    "daily_digest": "Daily Digest",
+    "daily_digest_desc": "Receive a single summary of all leads daily.",
+    "visibility": "Lead Visibility Scope",
+    "visibility_desc": "Control which brand requests trigger your notifications.",
+    "my_specialties": "My Specialties",
+    "my_specialties_desc": "Only notify for brands in my profile specialty list.",
+    "global_access": "Global Access",
+    "global_access_desc": "Notify for every single new lead across the platform.",
+    "admin_sim": "Admin Simulation Center",
+    "admin_sim_desc": "Trigger system-wide events to test real-time notification routing.",
+    "spam_test": "Spam Mitigation Test",
+    "spam_test_desc": "Emulate a spam flag on a dummy request (#TEST-123).",
+    "trigger_button": "Trigger Spam Alert"
+  }
+}

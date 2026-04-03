@@ -1,0 +1,172 @@
+{
+  "welcome": "Bon retour, voici ce qui se passe sur MLILA aujourd'hui.",
+  "export": "Exporter le Rapport",
+  "intelligence": {
+    "buyer": "Intelligence Acheteur",
+    "seller": "Intelligence Vendeur",
+    "marketplace": "Intelligence du Marché"
+  },
+  "subtitle": {
+    "buyer": "Analytique de la demande en temps réel et prévisions du marché",
+    "seller": "Distribution stratégique de l'offre et connectivité marchande globale",
+    "marketplace": "Signaux de demande en temps réel et vélocité de satisfaction"
+  },
+  "metrics": {
+    "inquiries_tracked": "Demandes Suivies",
+    "supply_nodes": "Nœuds d'Offre Enregistrés",
+    "avg_offers": "Moy. Offres",
+    "market_liquidity": "Liquidité du Marché",
+    "avg_offers_desc": "Moyenne des offres par demande",
+    "conversion_rate": "Taux de Conversion",
+    "fulfillment_success": "Succès de Satisfaction",
+    "fulfillment_success_desc": "Demandes avec devis correspondants",
+    "response_time": "Temps de Réponse",
+    "market_velocity": "Vélocité du Marché",
+    "avg_response_time_desc": "Vitesse moyenne pour le premier devis",
+    "buyer_pool": "Pool d'Acheteurs",
+    "network_scale": "Échelle du Réseau",
+    "verified_buyers": "Acheteurs vérifiés sur la plateforme",
+    "quotes_frequency": "Fréquence des Devis",
+    "supply_engagement": "Engagement de l'Offre",
+    "win_rate": "Taux de Réussite du Réseau",
+    "lead_conversion": "Conversion de Prospect",
+    "win_rate_desc": "Correspondances devis-demande réussies",
+    "turnaround": "Moy. Délai",
+    "response_velocity": "Vélocité de Réponse",
+    "merchant_base": "Base de Marchands",
+    "merchant_capacity": "Capacité Marchande",
+    "verified_sellers": "Nœuds d'offre actifs vérifiés"
+  },
+  "charts": {
+    "demand_velocity": "Vélocité de la Demande",
+    "brand_origin": "Origine de la Marque",
+    "request_volume_title": "Vélocité des Demandes",
+    "supply_density": "Densité de l'Offre",
+    "category_focus": "Focus Catégorie",
+    "quote_velocity": "Vélocité des Devis",
+    "market_throughput": "Débit du Marché sur 30 Jours",
+    "request_volume": { "title": "Volume de Demandes", "desc": "Demande du marché sur les 10 derniers nœuds", "insufficient": "Données insuffisantes pour la projection du volume..." },
+    "market_analytics": { "title": "Analytique du Marché", "desc": "Moyenne des offres par demande de marché", "label": "Offres/Dem", "health": "Santé du Marché" }
+  },
+  "distribution": {
+    "buyer_title": "Distribution du Réseau Acheteur",
+    "seller_title": "Distribution du Réseau Marchand",
+    "regional_concentration": "Concentration régionale cartographiée par Wilaya"
+  },
+  "stats": {
+    "buyers": { "label": "Acheteurs Actifs", "sub": "Participants vérifiés", "desc": "Total des acheteurs inscrits sur la plateforme" },
+    "sellers": { "label": "Vendeurs en Direct", "sub": "Marchands vérifiés", "desc": "Partenaires actifs du côté de l'offre" },
+    "demands": { "label": "Demandes Ouvertes", "sub": "Activité du marché", "desc": "Total des demandes actuellement ouvertes" },
+    "supply": { "label": "Offre du Marché", "sub": "Devis & Offres", "desc": "Disponibilité totale sur le réseau" }
+  },
+  "table": {
+    "intelligence": "Intelligence du Marché",
+    "signals": "Signaux de demande en temps réel et vélocité de satisfaction",
+    "full_audit": "Voir l'audit complet",
+    "columns": {
+      "part_name": "Nom de la pièce",
+      "created_at": "Créé le"
+    },
+    "submitted": "Soumis {{time}}",
+    "vehicle": "Véhicule",
+    "year": "Année",
+    "buyer": "Acheteur",
+    "lifecycle": "Statut du Cycle de Vie",
+    "status_placeholder": "Statut",
+    "update": "Mettre à jour le cycle de vie",
+    "close": "Fermer",
+    "liquidity": "La liquidité du marché est optimale. Potentiel de conversion élevé détecté au cours des dernières 24 heures.",
+    "status": {
+      "fulfilled": "Réalisé",
+      "open": "Demande Ouverte",
+      "cancelled": "Annulé"
+    }
+  },
+  "users": {
+    "title": "Gestion des Utilisateurs",
+    "search": "Rechercher des utilisateurs...",
+    "columns": {
+      "name": "Nom",
+      "role": "Rôle",
+      "status": "Statut",
+      "score": "Score",
+      "integrity": "Intégrité"
+    },
+    "filters": {
+      "role": "Rôle",
+      "status": "Statut",
+      "account": "Compte"
+    },
+    "roles": {
+      "admin": "Admin",
+      "seller": "Vendeur",
+      "buyer": "Acheteur"
+    },
+    "integrity": {
+      "secure": "Sécurisé",
+      "compromised": "Compromis"
+    },
+    "account_status": {
+      "new": "Nouveau",
+      "waitlisted": "Liste d'attente",
+      "active": "Actif"
+    },
+    "actions": {
+      "activate": "Activer",
+      "view": "Voir",
+      "ban": "Bannir la Sélection",
+      "selected": "{{count}} sélectionnés",
+      "banned_success": "{{count}} utilisateurs bannis",
+      "activated_success": "Vendeur activé"
+    },
+    "profile": {
+      "title": "Profil Utilisateur",
+      "description": "Afficher et gérer les détails du compte utilisateur.",
+      "suspended": "SUSPENDU",
+      "account_intelligence": "Intelligence du Compte",
+      "account_meta": "Meta du Compte",
+      "business_perf": "Registre inter-domaines et performance commerciale",
+      "markers": "Marqueurs d'interaction vérifiés",
+      "authority_ops": "Opérations d'Autorité",
+      "authority_desc": "Engager les modifications d'accès au niveau du système",
+      "activate": "Activer",
+      "restore": "Restaurer le Compte",
+      "suspend": "Suspendre l'Accès",
+      "terminate": "Terminer la Session",
+      "health_score": "Score de Santé",
+      "security": "Sécurité",
+      "registry_email": "E-mail d'Enregistrement",
+      "contact_line": "Ligne de Contact",
+      "origin_node": "Nœud d'Origine",
+      "member_since": "Membre Depuis",
+      "entity_name": "Nom de l'Entité",
+      "commercial_index": "Registre du Commerce",
+      "priority_score": "Score de Priorité",
+      "active_quotes": "Devis Actifs",
+      "success_rate": "Taux de Réussite",
+      "response_time": "Temps de Réponse",
+      "account_tier": "Niveau du Compte",
+      "registry_node": "Nœud d'Enregistrement",
+      "jurisdictions": "Juridictions Opérationnelles",
+      "no_entries": "Aucune donnée documentée",
+      "market_position": "Position sur le Marché",
+      "registry_age": "Âge de l'Enregistrement",
+      "auth_method": "Méthode d'Authentification",
+      "last_origin": "Dernier Nœud d'Origine",
+      "elevated_access": "Accès Élevé",
+      "system_integrity": "Intégrité du système & permissions",
+      "authority_matrix": "Matrice d'Autorité",
+      "days": "{{count}} Jours",
+      "success": {
+        "activated": "Compte activé avec succès",
+        "restored": "Compte restauré",
+        "suspended": "Compte suspendu"
+      }
+    },
+    "health": {
+      "optimal": "Optimal",
+      "stable": "Stable",
+      "low": "Faible"
+    }
+  }
+}

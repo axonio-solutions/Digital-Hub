@@ -1,0 +1,87 @@
+{
+  "title": "Part Information",
+  "description": "Specify what part you need and add details.",
+  "labels": {
+    "part_name": "Part Name",
+    "category": "Category",
+    "description": "Detailed Description",
+    "vehicle": "Vehicle Specification",
+    "brand": "Brand",
+    "model": "Model",
+    "year": "Year",
+    "vin": "VIN Number",
+    "optional": "(Optional)",
+    "required_star": "*",
+    "photos": "Part Photos",
+    "status": "Request Status",
+    "guidelines": "Submission Guidelines",
+    "oem_number": "OEM/Part Number",
+    "garage_picker": "Pick a vehicle from your Garage",
+    "media_attachments": "Media Attachments",
+    "selected_hub": "Selected Hub",
+    "files": "Files",
+    "notes_optional": "Additional Notes (Optional)"
+  },
+  "placeholders": {
+    "part_name": "e.g. Brake Pads, Front Bumper",
+    "category_loading": "Loading categories...",
+    "category_select": "Select Category",
+    "description": "Provide any specific details, OEM numbers, or special requirements.",
+    "brand_loading": "Loading brands...",
+    "brand_select": "Select Brand",
+    "model": "Camry, Golf, etc.",
+    "year": "2018",
+    "vin": "Chassis No.",
+    "status_select": "Select Status",
+    "photos_empty": "Select part media",
+    "garage_select": "Select a saved vehicle...",
+    "select_photos": "Select Part Photos",
+    "notes": "Need it urgent, etc..."
+  },
+  "hints": {
+    "category": "Choose the closest category for accurate seller matching.",
+    "photos": "Add live photos of your broken parts for best results.",
+    "photos_empty": "Files will be encrypted on submission",
+    "status": "\"Broadcasting\" sends your request to verified sellers instantly. Sellers can then bid with price and availability.",
+    "guidelines1": "Clear VIN plate photos help sellers identify OEM parts accurately.",
+    "guidelines2": "Specify the condition (New/Used/Genuine) in the detailed description.",
+    "media_speed": "High-quality photos speed up your quotes",
+    "browse_drop": "Tap to browse or drop here"
+  },
+  "buttons": {
+    "add_photos": "Add Photos",
+    "add_more": "Add More",
+    "add_more_photos": "Add More photos",
+    "remove": "Remove",
+    "clear_local": "Clear Local",
+    "cancel": "Cancel",
+    "update": "Update Request",
+    "broadcast": "Broadcast Request",
+    "submit": "Submit Request",
+    "uploading": "Uploading",
+    "syncing": "Syncing...",
+    "submitting": "Submitting...",
+    "save_changes": "Save Changes",
+    "saving_changes": "Saving Changes..."
+  },
+  "status": {
+    "published": "Immediate Broadcast",
+    "draft": "Save as Draft",
+    "encrypting": "Encrypting Assets",
+    "wait_sync": "Wait while we sync to storage",
+    "awaiting_submission": "Awaiting Submission"
+  },
+  "options": {
+    "manual_entry": "Enter details manually"
+  },
+  "dialogs": {
+    "edit_title": "Edit Request",
+    "edit_description": "Modify the details of your request to help sellers provide more accurate quotes."
+  },
+  "toasts": {
+    "login_required": "You must be logged in to create or edit a request",
+    "update_success": "Part request updated successfully!",
+    "create_success": "Part request submitted successfully!",
+    "process_error": "Failed to process request"
+  }
+}

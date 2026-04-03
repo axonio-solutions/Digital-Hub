@@ -1,0 +1,62 @@
+{
+  "steps": {
+    "role": { "title": "Rôle", "description": "Choisissez votre type de compte" },
+    "profile": { "title": "Profil", "description": "Téléversez votre photo" },
+    "contact": { "title": "Contact", "description": "Comment vous joindre ?" },
+    "location": { "title": "Localisation", "description": "Où êtes-vous basé ?" },
+    "specialties": { "title": "Spécialités", "description": "Que vendez-vous ?" }
+  },
+  "role_step": {
+    "title": "Choisissez votre parcours",
+    "desc": "Souhaitez-vous acheter des pièces détachées ou les vendre sur la marketplace MLILA ?",
+    "buyer_title": "Compte Acheteur",
+    "buyer_desc": "Parcourez des milliers de pièces détachées, demandez des devis et gérez votre parc automobile.",
+    "seller_title": "Compte Vendeur",
+    "seller_desc": "Listez votre inventaire, recevez des demandes de devis et développez votre activité automobile."
+  },
+  "profile_step": {
+    "title": "Photo de profil",
+    "desc": "Ajouter une photo contribue à instaurer la confiance sur la marketplace.",
+    "hint": "Téléversez une photo nette de vous-même ou le logo de votre boutique pour inspirer confiance aux autres utilisateurs."
+  },
+  "contact_step": {
+    "title": "Personne de contact",
+    "desc": "Vos informations de contact principales pour la coordination.",
+    "full_name": "Nom complet *",
+    "email": "Email *",
+    "phone": "Numéro de téléphone *",
+    "whatsapp": "Numéro WhatsApp *"
+  },
+  "location_step": {
+    "buyer_title": "Informations personnelles",
+    "seller_title": "Détails de la boutique",
+    "buyer_desc": "Indiquez-nous votre localisation pour trouver des pièces près de vous.",
+    "seller_desc": "Établissez votre présence commerciale sur la marketplace.",
+    "store_name": "Nom officiel de la boutique *",
+    "wilaya": "Wilaya *",
+    "wilaya_placeholder": "Choisir la wilaya",
+    "city": "Ville *",
+    "address": "Adresse complète *",
+    "company_address": "Adresse de l'entreprise/domicile",
+    "company_placeholder": "Adresse de facturation optionnelle",
+    "rc": "Registre de commerce (optionnel)"
+  },
+  "specialties_step": {
+    "title": "Votre Portefeuille",
+    "desc": "Sélectionnez les marques de véhicules et les catégories de pièces dans lesquelles vous vous spécialisez.",
+    "brands": "Marques de véhicules supportées",
+    "categories": "Catégories de pièces",
+    "loading": "Chargement des spécialités du marché..."
+  },
+  "nav": {
+    "back": "Retour",
+    "select_role": "Choisir un rôle",
+    "complete": "Finaliser la configuration",
+    "continue": "Continuer"
+  },
+  "toast": {
+    "fill_fields": "Veuillez remplir correctement tous les champs obligatoires",
+    "success": "Inscription terminée !",
+    "error": "Erreur lors de l'enregistrement du profil"
+  }
+}

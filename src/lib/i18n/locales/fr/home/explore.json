@@ -1,0 +1,42 @@
+{
+  "filters": {
+    "categories": "Catégories de pièces",
+    "all_categories": "Toutes les catégories",
+    "brands": "Marques de véhicules",
+    "condition": "État de la pièce",
+    "urgency": "Urgence",
+    "any_time": "Tout moment",
+    "asap": "Dès que possible (Véhicule en panne)",
+    "within_week": "Dans une semaine",
+    "conditions": {
+      "new": "Neuf (OEM/Adaptable)",
+      "used": "Occasion / Casse",
+      "refurbished": "Remis à neuf"
+    }
+  },
+  "header": {
+    "title": "Signaux de Demande",
+    "badge": "Demandes en temps réel",
+    "description": "Découvrez les demandes actives des acheteurs sur notre réseau. Fournissez la pièce exacte qu'ils recherchent."
+  },
+  "controls": {
+    "filters_btn": "Filtres",
+    "requests_count": "{{count}} demandes",
+    "search_placeholder": "Rechercher par nom de pièce, marque ou OEM...",
+    "grid_view": "Vue grille",
+    "list_view": "Vue liste"
+  },
+  "empty": {
+    "title": "Aucune demande trouvée avec ces filtres.",
+    "description": "Essayez d'ajuster vos critères de recherche ou de retirer certains filtres."
+  },
+  "card": {
+    "badge_looking": "Cherche une pièce",
+    "badge_offers": "Offres reçues",
+    "quotes_count": "{{count}} Devis",
+    "model_year": "Année {{year}}",
+    "default_category": "Pièce",
+    "action_btn": "Connectez-vous pour chiffrer",
+    "request_summary": "Demande {{partName}} pour {{brand}} {{year}}."
+  }
+}

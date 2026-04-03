@@ -1,0 +1,106 @@
+{
+  "title": "Paramètres",
+  "menu": "Menu",
+  "sections": {
+    "profile": "Profil",
+    "security": "Sécurité",
+    "notifications": "Notifications"
+  },
+  "profile": {
+    "identity_title": "Identité du profil",
+    "identity_desc": "Votre avatar est visible par les autres participants du marché. Utilisez une photo professionnelle pour instaurer la confiance et augmenter l'acceptation des propositions.",
+    "personal_title": "Détails personnels",
+    "personal_desc": "Gérez les informations de votre compte et vos coordonnées de contact.",
+    "store_title": "Profil du magasin",
+    "store_desc": "Gérez votre identité commerciale en tant que vendeur."
+  },
+  "form": {
+    "basic_identity": "Identité de Base",
+    "identity_desc": "Mettez à jour votre avatar et vos coordonnées personnelles.",
+    "name": "Nom Complet",
+    "email": "Adresse Email",
+    "phone": "Numéro de Téléphone",
+    "whatsapp": "WhatsApp (Optionnel)",
+    "whatsapp_placeholder": "+213...",
+    "physical_address": "Adresse Physique",
+    "address_desc": "Gérez votre emplacement principal pour les livraisons et le service.",
+    "street": "Adresse Rue",
+    "street_placeholder": "123 Nom de la Rue",
+    "city": "Ville / Commune",
+    "city_placeholder": "ex. Cheraga",
+    "wilaya": "Wilaya",
+    "wilaya_placeholder": "Sélectionnez la wilaya",
+    "save": "Enregistrer les modifications",
+    "saving": "Enregistrement..."
+  },
+  "messages": {
+    "profile_updated": "Profil Mis à Jour",
+    "update_failed": "Échec de la Mise à Jour",
+    "account_deactivated": "Compte Désactivé",
+    "account_deactivated_desc": "Vous avez été déconnecté. Vos données sont désormais masquées.",
+    "deactivation_failed": "Échec de la Désactivation",
+    "account_deleted": "Compte Supprimé Définitivement",
+    "account_deleted_desc": "Toutes vos données ont été purgées.",
+    "deletion_failed": "Échec de la Suppression",
+    "saving": "Enregistrement...",
+    "preferences_updated": "Préférences mises à jour avec succès",
+    "update_pref_failed": "Échec de la mise à jour des préférences",
+    "admin_alert_triggered": "Alerte administrateur déclenchée !",
+    "admin_alert_failed": "Échec du déclenchement de l'alerte"
+  },
+  "security_section": {
+    "password": "Mot de passe",
+    "current_password": "Mot de passe actuel",
+    "new_password": "Nouveau mot de passe",
+    "confirm_password": "Confirmer le mot de passe",
+    "update_button": "Mettre à jour le mot de passe",
+    "danger_zone": "Zone de Danger",
+    "deactivation": "Désactivation",
+    "deactivation_desc": "Désactivez temporairement votre compte. Vous pouvez revenir à tout moment.",
+    "deactivation_button": "Désactiver le compte",
+    "deletion": "Suppression Définitive",
+    "deletion_desc": "Cette action est irréversible. Toutes les données seront purgées.",
+    "deletion_button": "Supprimer Définitivement",
+    "prompts": {
+      "deactivate_confirm": "Êtes-vous sûr ? Cela masquera votre profil et vous déconnectera.",
+      "delete_confirm": "Tapez DELETE pour confirmer la suppression définitive :"
+    }
+  },
+  "security": {
+    "title": "Sécurité du compte",
+    "desc": "Protégez votre compte avec des mots de passe robustes et des contrôles de confidentialité."
+  },
+  "notifications": {
+    "title": "Préférences de notification",
+    "desc": "Optimisez votre expérience en choisissant où et comment vous recevez les signaux du marché."
+  },
+  "notifications_section": {
+    "loading": "Chargement de vos préférences...",
+    "delivery_channels": "Canaux de Réception",
+    "delivery_desc": "Choisissez comment vous souhaitez être alerté des nouvelles activités.",
+    "in_app": "Notifications In-App",
+    "in_app_desc": "Alertes en temps réel affichées dans votre tableau de bord.",
+    "email": "Alertes Email",
+    "email_desc": "Recevez des mises à jour détaillées dans votre boîte de réception.",
+    "coming_soon": "Bientôt disponible",
+    "seller_strategy": "Stratégie d'Alerte Vendeur",
+    "seller_strategy_desc": "Optimisez la réception de vos leads et signaux du marché.",
+    "frequency": "Fréquence des Notifications",
+    "frequency_desc": "Choisissez entre des leads en temps réel ou un résumé quotidien.",
+    "immediate": "Immédiat",
+    "immediate_desc": "Alertez-moi dès qu'une nouvelle demande correspond à mes spécialités.",
+    "daily_digest": "Résumé Quotidien",
+    "daily_digest_desc": "Recevez un résumé unique de tous les leads quotidiennement.",
+    "visibility": "Portée de Visibilité des Leads",
+    "visibility_desc": "Contrôlez quelles demandes de marques déclenchent vos notifications.",
+    "my_specialties": "Mes Spécialités",
+    "my_specialties_desc": "Notifier uniquement pour les marques dans ma liste de spécialités.",
+    "global_access": "Accès Global",
+    "global_access_desc": "Notifier pour chaque nouveau lead sur la plateforme.",
+    "admin_sim": "Centre de Simulation Admin",
+    "admin_sim_desc": "Déclenchez des événements système pour tester le routage des notifications.",
+    "spam_test": "Test d'Atténuation du Spam",
+    "spam_test_desc": "Simuler une alerte spam sur une demande factice (#TEST-123).",
+    "trigger_button": "Déclencher l'alerte Spam"
+  }
+}

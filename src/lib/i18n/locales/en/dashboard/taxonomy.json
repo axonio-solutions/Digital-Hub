@@ -1,0 +1,36 @@
+{
+  "title": "Taxonomy Hub",
+  "description": "Regulate the internal taxonomy of parts and vehicle clusters to maintain high-precision marketplace demand signals.",
+  "buttons": {
+    "export": "Export",
+    "add_new": "Add New"
+  },
+  "tabs": {
+    "categories": "Categories",
+    "brands": "Car Brands"
+  },
+  "table": {
+    "columns": {
+      "category_label": "Category Label",
+      "demand_logic": "Demand Logic (Requests)",
+      "manufacturer_spec": "Manufacturer Spec",
+      "cluster_origin": "Cluster Origin",
+      "cluster_region": "Cluster Region",
+      "active_demand": "Active Demand",
+      "status": "Status",
+      "actions": "Actions",
+      "no_description": "No description provided.",
+      "manufacturer_cluster": "Manufacturer Cluster"
+    },
+    "search_placeholder": "Search {{tab}}...",
+    "actions": {
+      "category_label": "Category Actions",
+      "brand_label": "Brand Actions",
+      "update_label": "Update Label",
+      "update_cluster": "Update Cluster",
+      "delete_entry": "Delete Entry",
+      "delete_cluster": "Delete Cluster",
+      "open_menu": "Open menu"
+    }
+  }
+}

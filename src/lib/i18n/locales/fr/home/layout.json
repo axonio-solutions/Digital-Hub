@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "how_it_works": "Comment ça marche",
+    "benefits": "Avantages",
+    "explore_marketplace": "Explorer le Marché",
+    "faq": "FAQ"
+  },
+  "header": {
+    "log_in": "Connexion",
+    "get_started": "Commencer"
+  },
+  "footer": {
+    "rights": "© 2026 MLILA Marché Inversé Algérie. Tous droits réservés."
+  }
+}

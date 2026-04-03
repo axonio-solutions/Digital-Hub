@@ -1,0 +1,62 @@
+{
+  "steps": {
+    "role": { "title": "Role", "description": "Choose your account type" },
+    "profile": { "title": "Profile", "description": "Upload your photo" },
+    "contact": { "title": "Contact", "description": "How can we reach you?" },
+    "location": { "title": "Location", "description": "Where are you based?" },
+    "specialties": { "title": "Specialties", "description": "What do you sell?" }
+  },
+  "role_step": {
+    "title": "Choose your journey",
+    "desc": "Are you looking to buy spare parts or sell them on the MLILA marketplace?",
+    "buyer_title": "Buyer Account",
+    "buyer_desc": "Browse thousands of spare parts, request quotes, and manage your vehicle fleet.",
+    "seller_title": "Seller Account",
+    "seller_desc": "List your inventory, receive quote requests, and grow your automotive business."
+  },
+  "profile_step": {
+    "title": "Profile Picture",
+    "desc": "Adding a photo helps build trust within the marketplace.",
+    "hint": "Upload a clear photo of yourself or your store logo to build trust with other users."
+  },
+  "contact_step": {
+    "title": "Contact Person",
+    "desc": "Your primary contact information for coordination.",
+    "full_name": "Full Name *",
+    "email": "Email *",
+    "phone": "Phone Number *",
+    "whatsapp": "WhatsApp Number *"
+  },
+  "location_step": {
+    "buyer_title": "Personal Information",
+    "seller_title": "Store Details",
+    "buyer_desc": "Tell us where you are located to find parts near you.",
+    "seller_desc": "Establish your business presence on the marketplace.",
+    "store_name": "Official Store Name *",
+    "wilaya": "Wilaya *",
+    "wilaya_placeholder": "Select wilaya",
+    "city": "City *",
+    "address": "Full Address *",
+    "company_address": "Company/Home Address",
+    "company_placeholder": "Optional billing address",
+    "rc": "Commercial Register (optional)"
+  },
+  "specialties_step": {
+    "title": "Your Portfolio",
+    "desc": "Select the vehicle brands and part categories you specialize in.",
+    "brands": "Supported Vehicle Brands",
+    "categories": "Part Categories",
+    "loading": "Loading market specialties..."
+  },
+  "nav": {
+    "back": "Back",
+    "select_role": "Select a Role",
+    "complete": "Complete Setup",
+    "continue": "Continue"
+  },
+  "toast": {
+    "fill_fields": "Please fill all required fields correctly",
+    "success": "Onboarding complete!",
+    "error": "Error saving profile"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "welcome": "Bon retour, {{name}}",
+  "subtitle": "Voici ce qui se passe avec vos demandes de pièces aujourd'hui.",
+  "stats": {
+    "active": { "label": "Demandes Actives", "sub": "Intérêt en Direct", "desc": "Recherche actuelle d'offres sur le marché" },
+    "offers": { "label": "Offres Reçues", "sub": "Volume de Devis", "desc": "Réponses de l'offre pour toutes les demandes" },
+    "fulfilled": { "label": "Satisfaites", "sub": "Taux de Réussite", "desc": "Demandes jumelées avec succès" },
+    "total": { "label": "Volume Total", "sub": "Historique", "desc": "Interactions sur le marché à vie" }
+  },
+  "recent": {
+    "title": "Demandes Récentes",
+    "subtitle": "Surveillez votre activité récente sur le marché",
+    "view_all": "Voir tout"
+  },
+  "empty": {
+    "title": "Aucune Demande pour le Moment",
+    "desc": "Publiez votre première demande de pièce pour commencer à recevoir des offres."
+  }
+}

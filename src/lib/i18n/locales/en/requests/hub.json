@@ -1,0 +1,37 @@
+{
+  "title": "Demands Hub",
+  "description": "Manage all your part requests and view incoming offers.",
+  "buttons": {
+    "new_demand": "New Demand",
+    "refresh": "Refresh"
+  },
+  "dialog": {
+    "title": "Submit Part Demand",
+    "description": "Provide details about the automotive spare part you are looking for."
+  },
+  "requests": {
+    "title": "Market Requests",
+    "desc": "Manage and track your automotive part requests.",
+    "new_btn": "New Request",
+    "create_title": "Create New Request",
+    "create_desc": "Fill in the details for the part you are looking for.",
+    "loading": "Loading marketplace requests...",
+    "error": "Failed to load marketplace demands. Please try again.",
+    "search_placeholder": "Filter demands...",
+    "stats": {
+      "active": "Active Requests",
+      "active_sub": "Currently open",
+      "offers": "Offers Received",
+      "offers_sub": "Total across requests",
+      "fulfilled": "Fulfilled",
+      "fulfilled_sub": "Completed acquisitions"
+    },
+    "filters": {
+      "status": "Status",
+      "brand": "Brand",
+      "open": "Open",
+      "fulfilled": "Fulfilled",
+      "cancelled": "Cancelled"
+    }
+  }
+}

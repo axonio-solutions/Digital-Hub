@@ -1,0 +1,36 @@
+{
+  "title": "Centre de Taxonomie",
+  "description": "Réglez la taxonomie interne des pièces et des clusters de véhicules pour maintenir des signaux de demande de marché de haute précision.",
+  "buttons": {
+    "export": "Exporter",
+    "add_new": "Ajouter Nouveau"
+  },
+  "tabs": {
+    "categories": "Catégories",
+    "brands": "Marques Automobiles"
+  },
+  "table": {
+    "columns": {
+      "category_label": "Libellé Catégorie",
+      "demand_logic": "Logique de Demande (Requêtes)",
+      "manufacturer_spec": "Spécification Fabricant",
+      "cluster_origin": "Origine du Cluster",
+      "cluster_region": "Région du Cluster",
+      "active_demand": "Demande Active",
+      "status": "Statut",
+      "actions": "Actions",
+      "no_description": "Aucune description fournie.",
+      "manufacturer_cluster": "Cluster Fabricant"
+    },
+    "search_placeholder": "Rechercher {{tab}}...",
+    "actions": {
+      "category_label": "Actions Catégorie",
+      "brand_label": "Actions Marque",
+      "update_label": "Mettre à Jour Libellé",
+      "update_cluster": "Mettre à Jour Cluster",
+      "delete_entry": "Supprimer l'Entrée",
+      "delete_cluster": "Supprimer le Cluster",
+      "open_menu": "Ouvrir le menu"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "title": "Informations sur la pièce",
+  "description": "Précisez la pièce dont vous avez besoin et ajoutez des détails.",
+  "labels": {
+    "part_name": "Nom de la pièce",
+    "category": "Catégorie",
+    "description": "Description détaillée",
+    "vehicle": "Spécifications du véhicule",
+    "brand": "Marque",
+    "model": "Modèle",
+    "year": "Année",
+    "vin": "Numéro VIN",
+    "optional": "(Optionnel)",
+    "required_star": "*",
+    "photos": "Photos de la pièce",
+    "status": "Statut de la demande",
+    "guidelines": "Instructions de soumission",
+    "oem_number": "Référence OEM",
+    "garage_picker": "Choisissez un véhicule dans votre garage",
+    "media_attachments": "Pièces jointes",
+    "selected_hub": "Hub sélectionné",
+    "files": "Fichiers",
+    "notes_optional": "Notes supplémentaires (En option)"
+  },
+  "placeholders": {
+    "part_name": "ex: Plaquettes de frein, Pare-chocs avant",
+    "category_loading": "Chargement des catégories...",
+    "category_select": "Choisir une catégorie",
+    "description": "Indiquez tout détail spécifique, numéro OEM ou exigence particulière.",
+    "brand_loading": "Chargement des marques...",
+    "brand_select": "Choisir une marque",
+    "model": "Camry, Golf, etc.",
+    "year": "2018",
+    "vin": "N° de châssis",
+    "status_select": "Choisir un statut",
+    "photos_empty": "Sélectionner les médias de la pièce",
+    "garage_select": "Sélectionnez un véhicule enregistré...",
+    "select_photos": "Sélectionner les photos de la pièce",
+    "notes": "Urgent, etc..."
+  },
+  "hints": {
+    "category": "Choisissez la catégorie la plus proche pour une mise en relation précise avec les vendeurs.",
+    "photos": "Ajoutez des photos de vos pièces défectueuses pour de meilleurs résultats.",
+    "photos_empty": "Les fichiers seront cryptés lors de la soumission",
+    "status": "La \"Diffusion\" envoie instantanément votre demande aux vendeurs vérifiés. Ils pourront ensuite répondre avec prix et disponibilité.",
+    "guidelines1": "Des photos claires de la plaque VIN aident les vendeurs à identifier précisément les pièces OEM.",
+    "guidelines2": "Précisez l'état (Neuf/Occasion/D'origine) dans la description détaillée.",
+    "media_speed": "Des photos de haute qualité accélèrent vos devis",
+    "browse_drop": "Appuyez pour parcourir ou déposez ici"
+  },
+  "buttons": {
+    "add_photos": "Ajouter des photos",
+    "add_more": "Ajouter plus",
+    "add_more_photos": "Ajouter plus de photos",
+    "remove": "Supprimer",
+    "clear_local": "Effacer local",
+    "cancel": "Annuler",
+    "update": "Mettre à jour la demande",
+    "broadcast": "Diffuser la demande",
+    "submit": "Soumettre la demande",
+    "uploading": "Téléchargement",
+    "syncing": "Synchronisation...",
+    "submitting": "Soumission...",
+    "save_changes": "Enregistrer les modifications",
+    "saving_changes": "Enregistrement..."
+  },
+  "status": {
+    "published": "Diffusion immédiate",
+    "draft": "Enregistrer en brouillon",
+    "encrypting": "Chiffrement des actifs",
+    "wait_sync": "Veuillez patienter pendant la synchronisation avec le stockage",
+    "awaiting_submission": "En attente de soumission"
+  },
+  "options": {
+    "manual_entry": "Saisir les détails manuellement"
+  },
+  "dialogs": {
+    "edit_title": "Modifier la demande",
+    "edit_description": "Modifiez les détails de votre demande pour aider les vendeurs à fournir des devis plus précis."
+  },
+  "toasts": {
+    "login_required": "Vous devez être connecté pour créer ou modifier une demande",
+    "update_success": "Demande de pièce mise à jour avec succès !",
+    "create_success": "Demande de pièce soumise avec succès !",
+    "process_error": "Échec du traitement de la demande"
+  }
+}

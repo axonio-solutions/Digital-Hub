@@ -1,0 +1,27 @@
+{
+  "language_picker": {
+    "title": "Select Language"
+  },
+  "roles": {
+    "buyer": "Buyer",
+    "seller": "Seller",
+    "admin": "Admin"
+  },
+  "table": {
+    "no_results": "No results.",
+    "reset": "Reset",
+    "selected": "selected",
+    "no_results_found": "No results found.",
+    "clear_filters": "Clear filters"
+  },
+  "pagination": {
+    "rows_per_page": "Rows per page",
+    "page": "Page",
+    "of": "of",
+    "selected": "row(s) selected.",
+    "first": "Go to first page",
+    "previous": "Go to previous page",
+    "next": "Go to next page",
+    "last": "Go to last page"
+  }
+}

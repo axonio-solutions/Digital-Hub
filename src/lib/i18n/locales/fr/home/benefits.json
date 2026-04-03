@@ -1,0 +1,23 @@
+{
+  "trust": {
+    "secure": "Vérification Sécurisée",
+    "quotes": "Devis en Temps Réel",
+    "delivery": "Livraison Directe"
+  },
+  "how_it_works": {
+    "title": "Comment fonctionne MLILA",
+    "description": "Un flux fluide conçu pour remettre votre véhicule sur la route en un temps record.",
+    "step1": {
+      "title": "Demander une pièce",
+      "desc": "Soumettez les détails exacts de la pièce de rechange dont vous avez besoin, y compris la marque du véhicule, l'année et les photos de la pièce cassée."
+    },
+    "step2": {
+      "title": "Recevoir des devis",
+      "desc": "Les vendeurs vérifiés sur tout le réseau reçoivent votre demande immédiatement et répondent avec des devis compétitifs (Neuf ou Occasion)."
+    },
+    "step3": {
+      "title": "Accepter et Connecter",
+      "desc": "Sélectionnez le meilleur devis en fonction du prix et de la garantie. Connectez-vous directement avec le vendeur via Appel Native ou WhatsApp pour finaliser."
+    }
+  }
+}

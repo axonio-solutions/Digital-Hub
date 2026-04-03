@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "overview": "Vue d'ensemble",
+    "demands_hub": "Centre de Demandes",
+    "my_garage": "Mon Garage",
+    "live_requests": "Demandes en Direct",
+    "my_quotes": "Mes Devis",
+    "global_metrics": "Statistiques Globales",
+    "user_moderation": "Modération Utilisateurs",
+    "buyers_hub": "Centre Acheteurs",
+    "sellers_hub": "Centre Vendeurs",
+    "categories": "Catégories",
+    "request_audit": "Audit des Requêtes",
+    "settings": "Paramètres",
+    "support": "Aide & Support",
+    "cloud_logs": "Logs Cloud",
+    "admin_settings": "Paramètres Admin"
+  },
+  "labels": {
+    "buyer_hub": "Espace Acheteur",
+    "seller_hub": "Espace Vendeur",
+    "admin_control": "Contrôle Admin"
+  },
+  "breadcrumbs": {
+    "dashboard": "Tableau de Bord",
+    "overview": "Vue d'ensemble",
+    "demands_hub": "Centre de Demandes",
+    "live_feed": "Flux en Direct",
+    "my_quotes": "Mes Devis",
+    "audit_log": "Journal d'Audit",
+    "my_garage": "Mon Garage",
+    "buyers_intelligence": "Intelligence Acheteurs",
+    "sellers_ecosystem": "Écosystème Vendeurs",
+    "taxonomy_management": "Gestion de la Taxonomie",
+    "user_moderation": "Modération Utilisateurs",
+    "admin_settings": "Paramètres Admin",
+    "cloud_logs": "Logs Cloud",
+    "support": "Aide & Support"
+  },
+  "user_dropdown": {
+    "role": "Rôle",
+    "region": "Région",
+    "account_settings": "Paramètres du compte",
+    "seller_hub": "Espace Vendeur",
+    "sign_out": "Se déconnecter"
+  }
+}

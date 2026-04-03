@@ -1,0 +1,172 @@
+{
+  "welcome": "Welcome back, here's what's happening on MLILA today.",
+  "export": "Export Report",
+  "intelligence": {
+    "buyer": "Buyer Intelligence",
+    "seller": "Seller Intelligence",
+    "marketplace": "Marketplace Intelligence"
+  },
+  "subtitle": {
+    "buyer": "Real-Time Demand Analytics & Market Forecasting",
+    "seller": "Strategic Supply Distribution & Global Merchant Connectivity",
+    "marketplace": "Real-time demand signals and fulfillment velocity"
+  },
+  "metrics": {
+    "inquiries_tracked": "Inquiries Tracked",
+    "supply_nodes": "Registered Supply Nodes",
+    "avg_offers": "Avg Offers",
+    "market_liquidity": "Market Liquidity",
+    "avg_offers_desc": "Average offers per inquiry",
+    "conversion_rate": "Conversion Rate",
+    "fulfillment_success": "Fulfillment Success",
+    "fulfillment_success_desc": "Requests with matched quotes",
+    "response_time": "Response Time",
+    "market_velocity": "Market Velocity",
+    "avg_response_time_desc": "Average speed to first quote",
+    "buyer_pool": "Buyer Pool",
+    "network_scale": "Network Scale",
+    "verified_buyers": "Verified platform buyers",
+    "quotes_frequency": "Quotes Frequency",
+    "supply_engagement": "Supply Engagement",
+    "win_rate": "Network Win Rate",
+    "lead_conversion": "Lead Conversion",
+    "win_rate_desc": "Successful quote-to-request matches",
+    "turnaround": "Avg Turnaround",
+    "response_velocity": "Response Velocity",
+    "merchant_base": "Merchant Base",
+    "merchant_capacity": "Merchant Capacity",
+    "verified_sellers": "Verified active supply nodes"
+  },
+  "charts": {
+    "demand_velocity": "Demand Velocity",
+    "brand_origin": "Brand Origin",
+    "request_volume_title": "Request Velocity",
+    "supply_density": "Supply Density",
+    "category_focus": "Category Focus",
+    "quote_velocity": "Quote Velocity",
+    "market_throughput": "30-Day Market Throughout",
+    "request_volume": { "title": "Request Volume", "desc": "Market demand over the last 10 nodes", "insufficient": "Insufficient data for volume projection..." },
+    "market_analytics": { "title": "Market Analytics", "desc": "Avg offers per marketplace request", "label": "Offers/Req", "health": "Market Health" }
+  },
+  "distribution": {
+    "buyer_title": "Buyer Network Distribution",
+    "seller_title": "Merchant Network Distribution",
+    "regional_concentration": "Regional concentration mapped across Wilayas"
+  },
+  "stats": {
+    "buyers": { "label": "Active Buyers", "sub": "Vetted participants", "desc": "Total registered platform buyers" },
+    "sellers": { "label": "Live Sellers", "sub": "Verified merchants", "desc": "Active supply side partners" },
+    "demands": { "label": "Open Demands", "sub": "Marketplace activity", "desc": "Total currently open requests" },
+    "supply": { "label": "Market Supply", "sub": "Quotes & Offers", "desc": "Total availability across network" }
+  },
+  "table": {
+    "intelligence": "Marketplace Intelligence",
+    "signals": "Real-time demand signals and fulfillment velocity",
+    "full_audit": "View Full Audit",
+    "columns": {
+      "part_name": "Part Name",
+      "created_at": "Created At"
+    },
+    "submitted": "Submitted {{time}}",
+    "vehicle": "Vehicle",
+    "year": "Year",
+    "buyer": "Buyer",
+    "lifecycle": "Lifecycle Status",
+    "status_placeholder": "Status",
+    "update": "Update Lifecycle",
+    "close": "Close",
+    "liquidity": "Market liquidity is optimal. High conversion potential detected within the last 24 hours.",
+    "status": {
+      "fulfilled": "Fulfilled",
+      "open": "Open Demand",
+      "cancelled": "Cancelled"
+    }
+  },
+  "users": {
+    "title": "User Management",
+    "search": "Search users...",
+    "columns": {
+      "name": "Name",
+      "role": "Role",
+      "status": "Status",
+      "score": "Score",
+      "integrity": "Integrity"
+    },
+    "filters": {
+      "role": "Role",
+      "status": "Status",
+      "account": "Account"
+    },
+    "roles": {
+      "admin": "Admin",
+      "seller": "Seller",
+      "buyer": "Buyer"
+    },
+    "integrity": {
+      "secure": "Secure",
+      "compromised": "Compromised"
+    },
+    "account_status": {
+      "new": "New",
+      "waitlisted": "Waitlisted",
+      "active": "Active"
+    },
+    "actions": {
+      "activate": "Activate",
+      "view": "View",
+      "ban": "Ban Selected",
+      "selected": "{{count}} selected",
+      "banned_success": "Banned {{count}} users",
+      "activated_success": "Seller activated"
+    },
+    "profile": {
+      "title": "User Profile",
+      "description": "View and manage user account details.",
+      "suspended": "SUSPENDED",
+      "account_intelligence": "Account Intelligence",
+      "account_meta": "Account Meta",
+      "business_perf": "Cross-domain registry and business performance",
+      "markers": "Verified interaction markers",
+      "authority_ops": "Authority Operations",
+      "authority_desc": "Commit system-level access changes",
+      "activate": "Activate",
+      "restore": "Restore Account",
+      "suspend": "Suspend Access",
+      "terminate": "Terminate Session",
+      "health_score": "Health Score",
+      "security": "Security",
+      "registry_email": "Registry Email",
+      "contact_line": "Contact Line",
+      "origin_node": "Origin Node",
+      "member_since": "Member Since",
+      "entity_name": "Entity Name",
+      "commercial_index": "Commercial Index",
+      "priority_score": "Priority Score",
+      "active_quotes": "Active Quotes",
+      "success_rate": "Success Rate",
+      "response_time": "Response Time",
+      "account_tier": "Account Tier",
+      "registry_node": "Registry Node",
+      "jurisdictions": "Operational Jurisdictions",
+      "no_entries": "No data entries documented",
+      "market_position": "Market Position",
+      "registry_age": "Registry Age",
+      "auth_method": "Authentication Method",
+      "last_origin": "Last Origin Node",
+      "elevated_access": "Elevated Access",
+      "system_integrity": "System integrity & permissions",
+      "authority_matrix": "Authority Matrix",
+      "days": "{{count}} Days",
+      "success": {
+        "activated": "Account activated successfully",
+        "restored": "Account restored",
+        "suspended": "Account suspended"
+      }
+    },
+    "health": {
+      "optimal": "Optimal",
+      "stable": "Stable",
+      "low": "Low"
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "card": {
+    "authorized_seller": "Vendeur Autorisé",
+    "rejected": "Rejeté",
+    "default_location": "Algérie",
+    "default_note": "Bonjour ! Nous avons exactement cette pièce en stock. Contrôlée qualité et prête à expédier.",
+    "ago": "il y a",
+    "actions": {
+      "revoke": "Révoquer l'Acceptation",
+      "revoking": "Révocation...",
+      "contact": "Contacter le Vendeur",
+      "unreject": "Annuler le Rejet",
+      "unrejecting": "Restauration...",
+      "reject": "Rejeter",
+      "rejecting": "Rejet en cours...",
+      "accept": "Accepter l'Offre",
+      "accepting": "Acceptation...",
+      "closed": "Demande Fermée"
+    }
+  },
+  "columns": {
+    "part": "Pièce",
+    "vehicle": "Véhicule",
+    "price": "Prix",
+    "status": "Statut",
+    "date": "Date",
+    "actions": "Actions",
+    "statuses": {
+      "accepted": "Accepté",
+      "pending": "En attente",
+      "rejected": "Rejeté"
+    }
+  },
+  "table": {
+    "search_placeholder": "Rechercher des propositions...",
+    "status_filter": "Statut",
+    "actions_menu": "Actions",
+    "view_request": "Voir la Demande",
+    "edit_offer": "Modifier l'Offre",
+    "withdraw_offer": "Retirer l'Offre"
+  },
+  "hub": {
+    "title": "Pipeline de Ventes",
+    "desc": "Gérez vos devis et suivez vos ventes de pièces.",
+    "loading": "Chargement du pipeline de ventes...",
+    "stats": {
+      "total": "Total des Propositions",
+      "total_sub": "Activité à vie",
+      "success_rate": "Taux de Réussite",
+      "success_rate_sub": "Taux de conversion",
+      "pipeline": "Valeur du Pipeline",
+      "pipeline_sub": "DZD (En attente)",
+      "accepted": "Acceptées",
+      "accepted_sub": "Ventes conclues"
+    },
+    "tabs": {
+      "active": "Actif",
+      "won": "Gagné",
+      "lost": "Fermé / Perdu"
+    },
+    "dialog": {
+      "update_title": "Mettre à Jour le Devis",
+      "update_desc": "Ajustez les détails de votre proposition.",
+      "update_btn": "Mettre à Jour l'Offre",
+      "close": "Fermer"
+    },
+    "confirm": {
+      "withdraw": "Retirer définitivement cette proposition ? Cette action est irréversible."
+    },
+    "toasts": {
+      "withdrawn": "Proposition retirée avec succès"
+    }
+  }
+}

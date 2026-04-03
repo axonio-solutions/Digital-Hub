@@ -1,0 +1,18 @@
+{
+  "badges": {
+    "offers_received": "Offres reçues",
+    "new": "Nouveau",
+    "premium_grid": "Grille Premium"
+  },
+  "labels": {
+    "quotes": "Offres",
+    "id_prefix": "ID"
+  },
+  "actions": {
+    "review": "Réviser",
+    "details": "Détails"
+  },
+  "defaults": {
+    "note": "Demande de {{title}} pour {{brand}} {{modelYear}}."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "title": "User Management",
+  "description": "Manage buyers, sellers, and platform access permissions efficiently across the network.",
+  "buttons": {
+    "export": "Export Data",
+    "add_user": "Add New User"
+  },
+  "stats": {
+    "registered": { "label": "Registered Users", "desc": "Network Scale", "detail": "Total platform accounts" },
+    "waitlisted": { "label": "Waitlisted Sellers", "desc": "Awaiting Approval", "detail": "Prospective merchant queue" },
+    "active_sellers": { "label": "Active Sellers", "desc": "Verified Merchants", "detail": "Active supply-side partners" },
+    "pending_email": { "label": "Pending Email", "desc": "Identity Verification", "detail": "Users requiring confirmation" }
+  }
+}

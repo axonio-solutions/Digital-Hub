@@ -1,0 +1,151 @@
+{
+  "title": "Marketplace Feed",
+  "description": "Browse real-time requests from buyers across Algeria and submit your quotes.",
+  "metrics": {
+    "open": "Open Opportunities",
+    "open_desc": "Parts currently needed in the network",
+    "active": "Your Active Quotes",
+    "active_desc": "Quotes awaiting buyer response",
+    "revenue": "Monthly Revenue",
+    "revenue_desc": "See Earnings Route",
+    "win_rate": "Win Rate",
+    "win_rate_desc": "See Earnings Route"
+  },
+  "hub": {
+    "title": "Marketplace Hub",
+    "description": "Monitor real-time demand signals and manage your active proposals across the secure network.",
+    "refresh": "Force Refresh",
+    "filter_specialties": "Filter Specialties"
+  },
+  "specialties_banner": {
+    "complete_title": "Complete Your Specialized Profile",
+    "complete_desc": "Select your vehicle brands and categories to unlock filtered requests and improve your response speed.",
+    "complete_btn": "Configure Specialties",
+    "ready_title": "Your Specialties are Ready!",
+    "ready_desc": "We've identified opportunities matching your specialized inventory. Toggle filtering below to focus on relevant requests.",
+    "ready_btn": "Enable Specialty Filter"
+  },
+  "tabs": {
+    "open": "Open Opportunities",
+    "active": "Your Active Quotes"
+  },
+  "table": {
+    "title": "Available Requests",
+    "description": "Find the parts you stock and submit competitive pricing.",
+    "search_placeholder": "Search part or OEM...",
+    "brand_filter": "Brand Filter",
+    "all_brands": "All Brands",
+    "clear_filters": "Clear Filters",
+    "headers": {
+      "part": "Part",
+      "vehicle": "Vehicle",
+      "category": "Category",
+      "posted": "Posted",
+      "my_offer": "My Offer"
+    },
+    "actions": {
+      "label": "Actions",
+      "send_offer": "Send Offer",
+      "view_details": "View Details",
+      "view_offer": "View Offer",
+      "edit_quote": "Edit Quote",
+      "withdraw": "Withdraw"
+    },
+    "row_actions": {
+      "label": "Quote Actions",
+      "edit": "Edit Offer",
+      "retract": "Retract Offer",
+      "edit_title": "Edit Your Offer",
+      "edit_desc": "Update your pricing or condition for this part.",
+      "retract_title": "Retract Offer?",
+      "retract_confirm": "Are you sure you want to retract your offer for {{partName}}? The buyer will no longer be able to accept it.",
+      "retract_btn": "Yes, Retract Offer"
+    },
+    "defaults": {
+      "general": "General",
+      "part": "Part",
+      "id_prefix": "ID:"
+    }
+  },
+  "offer_details": {
+    "title": "Your Offer Details",
+    "description": "Summary of your proposal for this request.",
+    "price": "Offered Price",
+    "condition": "Part Condition",
+    "warranty": "Warranty/Notes",
+    "no_warranty": "No specific terms recorded.",
+    "adjust_btn": "Adjust Offer",
+    "delete_btn": "Delete Offer"
+  },
+  "form": {
+    "title": "Submit a Quote",
+    "description": "Offer your best price for this part. The buyer will receive your quote instantly.",
+    "context": "Demand Context",
+    "category": "Part Category",
+    "compatible": "Compatible Vehicle",
+    "oem_id": "OEM ID",
+    "your_offer": "Your Offer",
+    "offer_desc": "Enter the details for your quote.",
+    "price_label": "Price (DZD)",
+    "price_placeholder": "Enter price",
+    "condition_label": "Condition",
+    "condition_new": "New",
+    "condition_used": "Used",
+    "warranty_label": "Warranty",
+    "warranty_placeholder": "e.g. 6 Months",
+    "note": "Note",
+    "no_notes": "No buyer notes.",
+    "submit_btn": "Submit Quote",
+    "update_btn": "Update Quote",
+    "vehicle": "Vehicle",
+    "part_name": "Part Name"
+  },
+  "toasts": {
+    "submit_success": "Quote submitted successfully",
+    "submit_error": "Submission failed",
+    "update_success": "Quote updated successfully",
+    "update_error": "Update failed",
+    "delete_success": "Offer deleted successfully",
+    "retract_success": "Quote retracted successfully",
+    "retract_error": "Failed to retract quote"
+  },
+  "alerts": {
+    "delete_confirm": "Permanently delete this offer? This cannot be undone."
+  },
+  "loading": "Loading marketplace feed...",
+  "error": "Failed to load marketplace data.",
+  "close": "Close",
+  "list": {
+    "new": "NEW",
+    "spare_part": "Spare Part",
+    "no_description": "No description provided.",
+    "ago": "ago",
+    "ignore": "Ignore",
+    "send_offer": "Send Offer",
+    "view_quote": "View Quote",
+    "no_results": "No results matching your filters.",
+    "algiers": "Algiers",
+    "unknown": "Unknown"
+  },
+  "statuses": {
+    "accepted": "Accepted",
+    "pending": "Pending",
+    "rejected": "Rejected"
+  },
+  "conditions": {
+    "new": "New",
+    "used": "Used",
+    "unknown": "Unknown"
+  },
+  "grid": {
+    "active_badge": "Active Bid",
+    "new_badge": "New Opportunity",
+    "oem_prefix": "OEM:",
+    "submit_btn": "Submit Quote",
+    "view_btn": "View Details",
+    "no_results": "No results matching your filters."
+  },
+  "defaults": {
+    "unknown": "Unknown"
+  }
+}

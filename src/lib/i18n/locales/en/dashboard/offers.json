@@ -1,0 +1,33 @@
+{
+  "offers": {
+    "title": "Offers Received",
+    "subtitle": "Review live quotes from sellers for your active requests.",
+    "loading": "Loading Offers...",
+    "actionable_title": "Actionable Quotes ({{count}})",
+    "actionable_desc": "These requests require your attention. Accept a quote to finalize the deal.",
+    "table": {
+      "id": "ID",
+      "part_name": "Part Name",
+      "brand": "Brand",
+      "quotes": "Quotes",
+      "action": "Action"
+    },
+    "empty": "You have no active offers to review.",
+    "go_back": "Go back to dashboard",
+    "review_btn": "Review Quotes",
+    "dialog": {
+      "title": "Quotes for {{part}}",
+      "desc": "Review offers from verified sellers. Accept the best one to get their direct contact info.",
+      "condition_new": "New Part",
+      "condition_used": "Used/Casse",
+      "warranty": "Warranty:",
+      "no_warranty": "None",
+      "accepting": "Accepting...",
+      "accept": "Accept Deal",
+      "accepted_title": "Quote Accepted!",
+      "accepted_desc": "You selected the quote from {{seller}} for {{price}} DZD.",
+      "contact_desc": "Contact the seller directly to arrange payment and logistics.",
+      "close": "Close"
+    }
+  }
+}

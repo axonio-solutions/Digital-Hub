@@ -1,0 +1,128 @@
+{
+  "title": "Flux de Marché",
+  "description": "Consultez les demandes en temps réel des acheteurs à travers l'Algérie et soumettez vos devis.",
+  "metrics": {
+    "open": "Opportunités Ouvertes",
+    "open_desc": "Pièces actuellement recherchées dans le réseau",
+    "active": "Vos Devis Actifs",
+    "active_desc": "Devis en attente de réponse de l'acheteur",
+    "revenue": "Revenu Mensuel",
+    "revenue_desc": "Voir les revenus",
+    "win_rate": "Taux de Réussite",
+    "win_rate_desc": "Voir les revenus"
+  },
+  "hub": {
+    "title": "Hub du Marché",
+    "description": "Surveillez les signaux de demande en temps réel et gérez vos propositions actives sur le réseau sécurisé.",
+    "refresh": "Forcer le Rafraîchissement",
+    "filter_specialties": "Filtrer par Spécialités"
+  },
+  "specialties_banner": {
+    "complete_title": "Complétez Votre Profil Spécialisé",
+    "complete_desc": "Sélectionnez vos marques de véhicules et catégories pour débloquer des demandes filtrées et améliorer votre vitesse de réponse.",
+    "complete_btn": "Configurer les Spécialités",
+    "ready_title": "Vos Spécialités sont Prêtes !",
+    "ready_desc": "Nous avons identifié des opportunités correspondant à votre inventaire spécialisé. Activez le filtrage ci-dessous pour vous concentrer sur les demandes pertinentes.",
+    "ready_btn": "Activer le Filtre par Spécialité"
+  },
+  "tabs": {
+    "open": "Opportunités Ouvertes",
+    "active": "Vos Devis Actifs"
+  },
+  "table": {
+    "title": "Demandes Disponibles",
+    "description": "Trouvez les pièces que vous avez en stock et proposez des prix compétitifs.",
+    "search_placeholder": "Rechercher une pièce ou OEM...",
+    "brand_filter": "Filtre de Marque",
+    "all_brands": "Toutes les Marques",
+    "clear_filters": "Effacer les Filtres",
+    "headers": {
+      "part": "Pièce",
+      "vehicle": "Véhicule",
+      "category": "Catégorie",
+      "posted": "Publié",
+      "my_offer": "Mon Offre"
+    },
+    "actions": {
+      "label": "Actions",
+      "send_offer": "Envoyer une Offre",
+      "view_details": "Voir les Détails",
+      "view_offer": "Voir l'Offre",
+      "edit_quote": "Modifier le Devis",
+      "withdraw": "Retirer"
+    },
+    "defaults": {
+      "general": "Général",
+      "part": "Pièce",
+      "id_prefix": "ID:"
+    }
+  },
+  "offer_details": {
+    "title": "Détails de Votre Offre",
+    "description": "Résumé de votre proposition pour cette demande.",
+    "price": "Prix Proposé",
+    "condition": "État de la Pièce",
+    "warranty": "Garantie/Notes",
+    "no_warranty": "Aucune condition spécifique enregistrée.",
+    "adjust_btn": "Ajuster l'Offre",
+    "delete_btn": "Supprimer l'Offre"
+  },
+  "form": {
+    "title": "Soumettre un Devis",
+    "description": "Offrez votre meilleur prix pour cette pièce. L'acheteur recevra votre devis instantanément.",
+    "context": "Contexte de la Demande",
+    "category": "Catégorie de Pièce",
+    "compatible": "Véhicule Compatible",
+    "oem_id": "ID OEM",
+    "your_offer": "Votre Offre",
+    "offer_desc": "Entrez les détails de votre devis.",
+    "price_label": "Prix (DZD)",
+    "price_placeholder": "Entrez le prix",
+    "condition_label": "État",
+    "condition_new": "Neuf",
+    "condition_used": "Occasion",
+    "warranty_label": "Garantie",
+    "warranty_placeholder": "ex. 6 Mois",
+    "note": "Note",
+    "no_notes": "Aucune note de l'acheteur.",
+    "submit_btn": "Soumettre le Devis",
+    "update_btn": "Mettre à jour le Devis",
+    "vehicle": "Véhicule",
+    "part_name": "Nom de la pièce"
+  },
+  "toasts": {
+    "submit_success": "Devis soumis avec succès",
+    "submit_error": "Échec de la soumission",
+    "update_success": "Devis mis à jour avec succès",
+    "update_error": "Échec de la mise à jour",
+    "delete_success": "Offre supprimée avec succès"
+  },
+  "alerts": {
+    "delete_confirm": "Supprimer définitivement cette offre ? Cette action est irréversible."
+  },
+  "loading": "Chargement du flux du marché...",
+  "error": "Échec du chargement des données du marché.",
+  "close": "Fermer",
+  "list": {
+    "new": "NEUF",
+    "spare_part": "Pièce de Rechange",
+    "no_description": "Aucune description fournie.",
+    "ago": "il y a",
+    "ignore": "Ignorer",
+    "send_offer": "Envoyer une Offre",
+    "view_quote": "Voir le Devis",
+    "no_results": "Aucun résultat correspondant à vos filtres.",
+    "algiers": "Alger",
+    "unknown": "Inconnu"
+  },
+  "statuses": {
+    "accepted": "Accepté",
+    "pending": "En Attente",
+    "rejected": "Rejeté"
+  },
+  "conditions": {
+    "new": "Neuf",
+    "used": "Occasion",
+    "unknown": "Inconnu"
+  }
+}

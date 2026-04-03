@@ -1,0 +1,23 @@
+{
+  "trust": {
+    "secure": "Secure Verification",
+    "quotes": "Real-time Quotes",
+    "delivery": "Direct Delivery"
+  },
+  "how_it_works": {
+    "title": "How MLILA Works",
+    "description": "A seamless flow designed to get your vehicle back on the road in record time.",
+    "step1": {
+      "title": "Request a Part",
+      "desc": "Submit the exact details of the spare part you need, including vehicle brand, year, and photos of the broken piece."
+    },
+    "step2": {
+      "title": "Receive Quotes",
+      "desc": "Verified Sellers across the network receive your request immediately and respond with competitive quotes (New or Used)."
+    },
+    "step3": {
+      "title": "Accept & Connect",
+      "desc": "Select the best quote based on price and warranty. Connect directly with the seller via Native Call or WhatsApp to finalize."
+    }
+  }
+}

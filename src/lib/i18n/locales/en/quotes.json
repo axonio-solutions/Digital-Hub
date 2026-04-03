@@ -1,0 +1,74 @@
+{
+  "card": {
+    "authorized_seller": "Authorized Seller",
+    "rejected": "Rejected",
+    "default_location": "Algeria",
+    "default_note": "Hi! We have this exact part in stock. Quality checked and ready for dispatch.",
+    "ago": "ago",
+    "actions": {
+      "revoke": "Revoke Acceptance",
+      "revoking": "Revoking...",
+      "contact": "Contact Seller",
+      "unreject": "Un-reject Offer",
+      "unrejecting": "Restoring...",
+      "reject": "Reject",
+      "rejecting": "Rejecting...",
+      "accept": "Accept Offer",
+      "accepting": "Accepting...",
+      "closed": "Request Closed"
+    }
+  },
+  "columns": {
+    "part": "Part",
+    "vehicle": "Vehicle",
+    "price": "Price",
+    "status": "Status",
+    "date": "Date",
+    "actions": "Actions",
+    "statuses": {
+      "accepted": "Accepted",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    }
+  },
+  "table": {
+    "search_placeholder": "Search proposals...",
+    "status_filter": "Status",
+    "actions_menu": "Actions",
+    "view_request": "View Request",
+    "edit_offer": "Edit Offer",
+    "withdraw_offer": "Withdraw Offer"
+  },
+  "hub": {
+    "title": "Sales Pipeline",
+    "desc": "Manage your quotes and track your part sales.",
+    "loading": "Loading sales pipeline...",
+    "stats": {
+      "total": "Total Proposals",
+      "total_sub": "Lifetime activity",
+      "success_rate": "Success Rate",
+      "success_rate_sub": "Conversion rate",
+      "pipeline": "Pipeline Value",
+      "pipeline_sub": "DZD (Pending)",
+      "accepted": "Accepted",
+      "accepted_sub": "Closed-Won deals"
+    },
+    "tabs": {
+      "active": "Active",
+      "won": "Won",
+      "lost": "Closed / Lost"
+    },
+    "dialog": {
+      "update_title": "Update Quote",
+      "update_desc": "Adjust your proposal details.",
+      "update_btn": "Update Offer",
+      "close": "Close"
+    },
+    "confirm": {
+      "withdraw": "Permanently withdraw this proposal? This action cannot be undone."
+    },
+    "toasts": {
+      "withdrawn": "Proposal withdrawn successfully"
+    }
+  }
+}

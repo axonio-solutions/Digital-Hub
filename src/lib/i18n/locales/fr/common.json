@@ -1,0 +1,27 @@
+{
+  "language_picker": {
+    "title": "Sélecteur de langue"
+  },
+  "roles": {
+    "buyer": "Acheteur",
+    "seller": "Vendeur",
+    "admin": "Admin"
+  },
+  "table": {
+    "no_results": "Aucun résultat.",
+    "reset": "Réinitialiser",
+    "selected": "sélectionné",
+    "no_results_found": "Aucun résultat trouvé.",
+    "clear_filters": "Effacer les filtres"
+  },
+  "pagination": {
+    "rows_per_page": "Lignes par page",
+    "page": "Page",
+    "of": "sur",
+    "selected": "ligne(s) sélectionnée(s).",
+    "first": "Aller à la première page",
+    "previous": "Aller à la page précédente",
+    "next": "Aller à la page suivante",
+    "last": "Aller à la dernière page"
+  }
+}

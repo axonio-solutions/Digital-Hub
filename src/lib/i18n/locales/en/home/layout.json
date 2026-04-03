@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "how_it_works": "How it Works",
+    "benefits": "Benefits",
+    "explore_marketplace": "Explore Marketplace",
+    "faq": "FAQ"
+  },
+  "header": {
+    "log_in": "Log in",
+    "get_started": "Get Started"
+  },
+  "footer": {
+    "rights": "© 2026 MLILA Reverse-Marketplace Algeria. All rights reserved."
+  }
+}

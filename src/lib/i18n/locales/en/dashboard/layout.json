@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "overview": "Overview",
+    "demands_hub": "Demands Hub",
+    "my_garage": "My Garage",
+    "live_requests": "Live Requests",
+    "my_quotes": "My Quotes",
+    "global_metrics": "Global Metrics",
+    "user_moderation": "User Moderation",
+    "buyers_hub": "Buyers Hub",
+    "sellers_hub": "Sellers Hub",
+    "categories": "Categories",
+    "request_audit": "Request Audit",
+    "settings": "Settings",
+    "support": "Help & Support",
+    "cloud_logs": "Cloud Logs",
+    "admin_settings": "Admin Settings"
+  },
+  "labels": {
+    "buyer_hub": "Buyer Hub",
+    "seller_hub": "Seller Hub",
+    "admin_control": "Admin Control"
+  },
+  "breadcrumbs": {
+    "dashboard": "Dashboard",
+    "overview": "Overview",
+    "demands_hub": "Demands Hub",
+    "live_feed": "Live Feed",
+    "my_quotes": "My Quotes",
+    "audit_log": "Audit Log",
+    "my_garage": "My Garage",
+    "buyers_intelligence": "Buyers Intelligence",
+    "sellers_ecosystem": "Sellers Ecosystem",
+    "taxonomy_management": "Taxonomy Management",
+    "user_moderation": "User Moderation",
+    "admin_settings": "Admin Settings",
+    "cloud_logs": "Cloud Logs",
+    "support": "Help & Support"
+  },
+  "user_dropdown": {
+    "role": "Role",
+    "region": "Region",
+    "account_settings": "Account Settings",
+    "seller_hub": "Seller Hub",
+    "sign_out": "Sign out"
+  }
+}

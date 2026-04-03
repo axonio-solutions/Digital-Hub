@@ -1,0 +1,37 @@
+{
+  "title": "Hub des demandes",
+  "description": "Gérez toutes vos demandes de pièces et consultez les offres reçues.",
+  "buttons": {
+    "new_demand": "Nouvelle demande",
+    "refresh": "Rafraîchir"
+  },
+  "dialog": {
+    "title": "Soumettre une demande de pièce",
+    "description": "Fournissez des détails sur la pièce détachée automobile que vous recherchez."
+  },
+  "requests": {
+    "title": "Demandes du Marché",
+    "desc": "Gérez et suivez vos demandes de pièces automobiles.",
+    "new_btn": "Nouvelle demande",
+    "create_title": "Créer une Nouvelle Demande",
+    "create_desc": "Remplissez les détails de la pièce que vous recherchez.",
+    "loading": "Chargement des demandes du marché...",
+    "error": "Échec du chargement des demandes. Veuillez réessayer.",
+    "search_placeholder": "Filtrer les demandes...",
+    "stats": {
+      "active": "Demandes Actives",
+      "active_sub": "Actuellement ouvertes",
+      "offers": "Offres Reçues",
+      "offers_sub": "Total pour toutes les demandes",
+      "fulfilled": "Satisfaites",
+      "fulfilled_sub": "Acquisitions complétées"
+    },
+    "filters": {
+      "status": "Statut",
+      "brand": "Marque",
+      "open": "Ouvert",
+      "fulfilled": "Exécuté",
+      "cancelled": "Annulé"
+    }
+  }
+}

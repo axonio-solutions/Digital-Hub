@@ -1,0 +1,17 @@
+{
+  "sellers": {
+    "badge": "For Sellers",
+    "title": "Scale your auto parts business exponentially.",
+    "description": "Stop waiting for foot traffic. Access a live feed of high-intent buyers looking exactly for the inventory sitting on your shelves.",
+    "feature1": "Match inventory to real demand instantly",
+    "feature2": "Increase monthly revenue and liquidation",
+    "btn": "Start Selling on MLILA"
+  },
+  "marketplace": {
+    "badge": "Live Marketplace",
+    "title": "Browse our live Demand Feed.",
+    "description": "You don't need an account to see what buyers are looking for. Explore live requests for car parts across Algeria right now.",
+    "btn": "Enter Marketplace",
+    "active_signals": "Active Signals"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "welcome": "Bon retour, {{name}}. Voici ce qui se passe aujourd'hui.",
+  "go_to_market": "Aller au Marché",
+  "stats": {
+    "won": { "label": "Ventes Conclues", "sub": "Succès de la Transaction", "desc": "Acquisitions confirmées sur le marché" },
+    "active": { "label": "Offres Actives", "sub": "Négociations Ouvertes", "desc": "Offres actuellement en attente de révision" },
+    "win_rate": { "label": "Taux de Réussite", "sub": "Rendement de Conversion", "desc": "Efficacité de la transition devis-vente" },
+    "earnings": { "label": "Gains", "sub": "Revenus du Marché", "desc": "Gains cumulés (DZD)" }
+  },
+  "charts": {
+    "revenue_velocity": { "title": "Vélocité des Revenus", "desc": "Trajectoire des gains au cours des 7 derniers jours." },
+    "offer_distribution": { "title": "Distribution des Offres", "desc": "Analyse de la performance." }
+  },
+  "tables": {
+    "open_demands": "Demandes Ouvertes",
+    "latest_requests": "Dernières demandes du marché.",
+    "sales_history": "Historique des Ventes",
+    "recent_deals": "Transactions récentes confirmées.",
+    "no_sales": "Aucune vente enregistrée pour le moment.",
+    "review": "Réviser"
+  },
+  "pie": {
+    "accepted": "Acceptées",
+    "pending": "En Attente",
+    "missed": "Manquées"
+  }
+}

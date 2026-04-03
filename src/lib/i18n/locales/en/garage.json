@@ -1,0 +1,40 @@
+{
+  "title": "My Garage",
+  "description": "Manage your cars and use them to auto-fill parts requests.",
+  "add_vehicle": "Add New Vehicle",
+  "register_vehicle": "Register Vehicle",
+  "register_desc": "Fill in the details below to add a car to your digital garage.",
+  "loading": "Accessing your garage...",
+  "error_title": "Garage Error",
+  "error_desc": "We couldn't reach the garage at the moment. Please check your connection.",
+  "empty_title": "Your Garage is Empty",
+  "empty_desc": "Add your vehicles now to make finding spare parts 5x faster.",
+  "empty_cta": "Click here to start",
+  "labels": {
+    "plate": "Plate",
+    "vin": "VIN",
+    "na": "N/A",
+    "verified": "Verified in Network"
+  },
+  "actions": {
+    "details": "Details",
+    "details_soon": "Vehicle details editing coming soon!",
+    "delete_confirm": "Are you sure you want to remove this vehicle from your garage?"
+  },
+  "toasts": {
+    "add_success": "Vehicle added to your garage!",
+    "add_error": "Failed to add vehicle. Please try again.",
+    "remove_success": "Vehicle removed"
+  },
+  "tip": {
+    "badge": "Garage Tip",
+    "title": "Maintenance Reminders",
+    "desc": "Soon you'll be able to track oil changes and inspection dates directly from your garage.",
+    "notify_btn": "Notify Me"
+  },
+  "history": {
+    "title": "Service History",
+    "desc": "View all parts requested and quotes accepted for each of your vehicles in one place.",
+    "link": "Go to History →"
+  }
+}

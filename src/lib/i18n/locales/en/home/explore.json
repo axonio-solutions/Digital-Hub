@@ -1,0 +1,42 @@
+{
+  "filters": {
+    "categories": "Part Categories",
+    "all_categories": "All Categories",
+    "brands": "Vehicle Brands",
+    "condition": "Condition Pref.",
+    "urgency": "Urgency",
+    "any_time": "Any time",
+    "asap": "ASAP (Vehicle is down)",
+    "within_week": "Within a week",
+    "conditions": {
+      "new": "New (OEM/Aftermarket)",
+      "used": "Used / Salvage",
+      "refurbished": "Refurbished"
+    }
+  },
+  "header": {
+    "title": "Demand Signals",
+    "badge": "Live Demand Feedback",
+    "description": "Discover active buyer requests across our network. Provide the exact part they are looking for."
+  },
+  "controls": {
+    "filters_btn": "Filters",
+    "requests_count": "{{count}} Requests",
+    "search_placeholder": "Search by part name, brand, or OEM...",
+    "grid_view": "Grid view",
+    "list_view": "List view"
+  },
+  "empty": {
+    "title": "No requests found matching your filters.",
+    "description": "Try adjusting your search criteria or removing some filters."
+  },
+  "card": {
+    "badge_looking": "Looking for Part",
+    "badge_offers": "Offers Received",
+    "quotes_count": "{{count}} Quotes",
+    "model_year": "FY {{year}}",
+    "default_category": "Part",
+    "action_btn": "Sign In to Quote",
+    "request_summary": "Requesting {{partName}} for {{brand}} {{year}}."
+  }
+}

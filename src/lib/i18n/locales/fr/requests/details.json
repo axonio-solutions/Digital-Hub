@@ -1,0 +1,71 @@
+{
+  "title": "Détails de la demande",
+  "description": "Spécifications techniques et notes de l'acheteur.",
+  "sections": {
+    "vehicle": "Informations sur le véhicule",
+    "part_specifics": "Spécificités de la pièce",
+    "metadata": "Référence des métadonnées"
+  },
+  "labels": {
+    "brand": "Marque",
+    "part_category": "Catégorie de pièce",
+    "general": "Général",
+    "model_year": "Année du modèle",
+    "oem_number": "Référence OEM",
+    "not_specified": "Non spécifié",
+    "buyer_notes": "Notes de l'acheteur",
+    "no_notes": "Aucune note spécifique fournie.",
+    "network_id": "ID Réseau",
+    "broadcasted": "Diffusé le",
+    "na": "N/A",
+    "regional_origin": "Origine régionale",
+    "market_traction": "Traction du marché",
+    "responses": "Réponses"
+  },
+  "actions": {
+    "back_to_list": "Retour à mes demandes",
+    "edit_details": "Modifier les détails de la demande",
+    "copy_link": "Copier le lien de partage",
+    "delete_request": "Supprimer la demande",
+    "close_request": "Fermer la demande",
+    "reopen_request": "Rouvrir la demande",
+    "delete_permanently": "Supprimer définitivement",
+    "close": "Fermer",
+    "cancel": "Annuler"
+  },
+  "errors": {
+    "not_found": "Demande non trouvée",
+    "not_found_desc": "Nous n'avons pas pu trouver la demande que vous recherchez."
+  },
+  "hints": {
+    "fulfill_desc": "Marquez cette demande comme satisfaite ou n'étant plus nécessaire.",
+    "closed_desc": "Cette demande est actuellement fermée. Rouvrez-la pour recevoir plus d'offres."
+  },
+  "quotes": {
+    "title": "Offres reçues",
+    "sort_by": "Trier par :",
+    "sort_recent": "Plus récent",
+    "sort_price": "Prix le plus bas",
+    "empty_title": "Aucune offre pour le moment",
+    "empty_desc": "Nous vous informerons dès que les vendeurs commenceront à répondre."
+  },
+  "dialogs": {
+    "delete": {
+      "title": "Supprimer la demande ?",
+      "confirm": "Supprimer définitivement"
+    },
+    "cancel": "Annuler"
+  },
+  "contact": {
+    "title": "Contacter le vendeur",
+    "connect_desc": "Connectez-vous avec {{name}} pour finaliser votre achat.",
+    "phone_label": "Téléphone",
+    "not_listed": "Non répertorié",
+    "store_address": "Adresse du magasin",
+    "main_store": "Magasin principal",
+    "default_location": "Algérie",
+    "whatsapp": "Message WhatsApp",
+    "call": "Appel direct",
+    "hint": "Mentionnez Digital Hub pour un service plus rapide"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "welcome": "Welcome back, {{name}}",
+  "subtitle": "Here's what's happening with your parts requests today.",
+  "stats": {
+    "active": { "label": "Active Requests", "sub": "Live Interest", "desc": "Currently seeking market offers" },
+    "offers": { "label": "Offers Received", "sub": "Quote Volume", "desc": "Supply responses across all requests" },
+    "fulfilled": { "label": "Fulfilled", "sub": "Success Rate", "desc": "Successfully matched inquiries" },
+    "total": { "label": "Total Volume", "sub": "History", "desc": "Lifetime marketplace interactions" }
+  },
+  "recent": {
+    "title": "Recent Requests",
+    "subtitle": "Monitor your latest marketplace activity",
+    "view_all": "View all"
+  },
+  "empty": {
+    "title": "No Requests Yet",
+    "desc": "Post your first part request to start receiving offers."
+  }
+}

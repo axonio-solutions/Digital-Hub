@@ -1,0 +1,17 @@
+{
+  "sellers": {
+    "badge": "Pour les Vendeurs",
+    "title": "Augmentez votre activité de pièces auto de manière exponentielle.",
+    "description": "Arrêtez d'attendre les clients physiques. Accédez à un flux en direct d'acheteurs à forte intention cherchant exactement ce que vous avez en stock.",
+    "feature1": "Faites correspondre votre stock à la demande réelle instantanément",
+    "feature2": "Augmentez votre chiffre d'affaires mensuel et votre liquidation",
+    "btn": "Commencer à vendre sur MLILA"
+  },
+  "marketplace": {
+    "badge": "Marché en Direct",
+    "title": "Parcourez notre flux de demande en direct.",
+    "description": "Vous n'avez pas besoin d'un compte pour voir ce que les acheteurs recherchent. Explorez dès maintenant les demandes en direct de pièces détachées à travers l'Algérie.",
+    "btn": "Entrer dans le Marché",
+    "active_signals": "Signaux Actifs"
+  }
+}

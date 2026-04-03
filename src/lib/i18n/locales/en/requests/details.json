@@ -1,0 +1,71 @@
+{
+  "title": "Request Details",
+  "description": "Technical specifications and buyer notes.",
+  "sections": {
+    "vehicle": "Vehicle Information",
+    "part_specifics": "Part Specifics",
+    "metadata": "Metadata Reference"
+  },
+  "labels": {
+    "brand": "Brand",
+    "part_category": "Part Category",
+    "general": "General",
+    "model_year": "Model Year",
+    "oem_number": "OEM / Part Number",
+    "not_specified": "Not specified",
+    "buyer_notes": "Buyer Notes",
+    "no_notes": "No specific notes provided.",
+    "network_id": "Network ID",
+    "broadcasted": "Broadcasted",
+    "na": "N/A",
+    "regional_origin": "Regional Origin",
+    "market_traction": "Market Traction",
+    "responses": "Responses"
+  },
+  "actions": {
+    "back_to_list": "Back to My Requests",
+    "edit_details": "Edit Request Details",
+    "copy_link": "Copy Share Link",
+    "delete_request": "Delete Request",
+    "close_request": "Close Request",
+    "reopen_request": "Reopen Request",
+    "delete_permanently": "Delete Permanently",
+    "close": "Close",
+    "cancel": "Cancel"
+  },
+  "errors": {
+    "not_found": "Request Not Found",
+    "not_found_desc": "We couldn't find the request you're looking for."
+  },
+  "hints": {
+    "fulfill_desc": "Mark this request as fulfilled or no longer needed.",
+    "closed_desc": "This request is currently closed. Reopen to receive more offers."
+  },
+  "quotes": {
+    "title": "Offers Received",
+    "sort_by": "Sort by:",
+    "sort_recent": "Most Recent",
+    "sort_price": "Lowest Price",
+    "empty_title": "No Offers Yet",
+    "empty_desc": "We'll notify you as soon as sellers start responding."
+  },
+  "dialogs": {
+    "delete": {
+      "title": "Delete Request?",
+      "confirm": "Delete Permanently"
+    },
+    "cancel": "Cancel"
+  },
+  "contact": {
+    "title": "Contact Seller",
+    "connect_desc": "Connect with {{name}} to finalize your purchase.",
+    "phone_label": "Phone",
+    "not_listed": "Not listed",
+    "store_address": "Store Address",
+    "main_store": "Main Store",
+    "default_location": "Algeria",
+    "whatsapp": "WhatsApp Message",
+    "call": "Direct Phone Call",
+    "hint": "Mention Digital Hub for faster service"
+  }
+}

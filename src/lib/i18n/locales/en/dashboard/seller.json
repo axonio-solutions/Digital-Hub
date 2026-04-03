@@ -1,0 +1,27 @@
+{
+  "welcome": "Welcome back, {{name}}. Here's what's happening today.",
+  "go_to_market": "Go to Market",
+  "stats": {
+    "won": { "label": "Won Deals", "sub": "Deal Success", "desc": "Confirmed marketplace acquisitions" },
+    "active": { "label": "Active Bids", "sub": "Open Negotiations", "desc": "Offers currently awaiting review" },
+    "win_rate": { "label": "Win Rate", "sub": "Conversion Yield", "desc": "Efficiency of quote-to-deal transition" },
+    "earnings": { "label": "Earnings", "sub": "Market Revenue", "desc": "Cumulative earnings (DZD)" }
+  },
+  "charts": {
+    "revenue_velocity": { "title": "Revenue Velocity", "desc": "Earnings trajectory over the last 7 days." },
+    "offer_distribution": { "title": "Offer Distribution", "desc": "Performance breakdown." }
+  },
+  "tables": {
+    "open_demands": "Open Demands",
+    "latest_requests": "Latest marketplace requests.",
+    "sales_history": "Sales History",
+    "recent_deals": "Recent confirmed deals.",
+    "no_sales": "No sales recorded yet.",
+    "review": "Review"
+  },
+  "pie": {
+    "accepted": "Accepted",
+    "pending": "Pending",
+    "missed": "Missed"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "title": "Offer Monitoring",
+  "description": "Review current requests, validate demand signals, and detect potential spam across the network.",
+  "stats": {
+    "pending": { "label": "Pending Review", "desc": "Pending Validation", "detail": "Awaiting moderate approval" },
+    "flagged": { "label": "Flagged Spam", "desc": "Security Alerts", "detail": "High-risk signals detected" },
+    "today": { "label": "Total Today", "desc": "Daily Volume", "detail": "New market entries (24h)" },
+    "conversion": { "label": "Conversion Rate", "desc": "Market Yield", "detail": "Fulfillment-matched inquiries" }
+  },
+  "table": {
+    "columns": {
+      "part_info": "Part Info",
+      "vehicle_profile": "Vehicle Profile",
+      "market_traction": "Market Traction",
+      "status": "Status",
+      "responses": {
+        "singular": "Response",
+        "plural": "Responses"
+      },
+      "status_types": {
+        "priority": "Priority",
+        "spam": "Spam"
+      },
+      "global_id": "Global ID"
+    },
+    "search": "Filter requests...",
+    "filters": {
+      "status": {
+        "title": "Status",
+        "open": "Open",
+        "fulfilled": "Fulfilled"
+      }
+    }
+  }
+}

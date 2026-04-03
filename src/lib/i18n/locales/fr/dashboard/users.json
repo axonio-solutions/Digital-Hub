@@ -1,0 +1,14 @@
+{
+  "title": "Gestion des Utilisateurs",
+  "description": "Gérez efficacement les acheteurs, les vendeurs et les autorisations d'accès à la plateforme sur tout le réseau.",
+  "buttons": {
+    "export": "Exporter les données",
+    "add_user": "Ajouter un utilisateur"
+  },
+  "stats": {
+    "registered": { "label": "Utilisateurs inscrits", "desc": "Taille du réseau", "detail": "Total des comptes plateforme" },
+    "waitlisted": { "label": "Vendeurs en attente", "desc": "En attente d'approbation", "detail": "File d'attente des marchands potentiels" },
+    "active_sellers": { "label": "Vendeurs actifs", "desc": "Marchands vérifiés", "detail": "Partenaires actifs du côté de l'offre" },
+    "pending_email": { "label": "Email en attente", "desc": "Vérification d'identité", "detail": "Utilisateurs nécessitant confirmation" }
+  }
+}

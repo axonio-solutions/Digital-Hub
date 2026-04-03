@@ -1,0 +1,40 @@
+{
+  "title": "Mon Garage",
+  "description": "Gérez vos voitures et utilisez-les pour remplir automatiquement les demandes de pièces.",
+  "add_vehicle": "Ajouter un Nouveau Véhicule",
+  "register_vehicle": "Enregistrer un Véhicule",
+  "register_desc": "Remplissez les détails ci-dessous pour ajouter une voiture à votre garage numérique.",
+  "loading": "Accès à votre garage en cours...",
+  "error_title": "Erreur de Garage",
+  "error_desc": "Nous n'avons pas pu accéder au garage pour le moment. Veuillez vérifier votre connexion.",
+  "empty_title": "Votre Garage est Vide",
+  "empty_desc": "Ajoutez vos véhicules maintenant pour trouver des pièces de rechange 5x plus vite.",
+  "empty_cta": "Cliquez ici pour commencer",
+  "labels": {
+    "plate": "Plaque",
+    "vin": "VIN",
+    "na": "N/D",
+    "verified": "Vérifié dans le Réseau"
+  },
+  "actions": {
+    "details": "Détails",
+    "details_soon": "Modification des détails du véhicule bientôt disponible !",
+    "delete_confirm": "Êtes-vous sûr de vouloir retirer ce véhicule de votre garage ?"
+  },
+  "toasts": {
+    "add_success": "Véhicule ajouté à votre garage !",
+    "add_error": "Échec de l'ajout du véhicule. Veuillez réessayer.",
+    "remove_success": "Véhicule retiré"
+  },
+  "tip": {
+    "badge": "Conseil Garage",
+    "title": "Rappels d'Entretien",
+    "desc": "Bientôt, vous pourrez suivre les vidanges et les dates d'inspection directement depuis votre garage.",
+    "notify_btn": "Me Notifier"
+  },
+  "history": {
+    "title": "Historique de Service",
+    "desc": "Consultez toutes les pièces demandées et les devis acceptés pour chacun de vos véhicules en un seul endroit.",
+    "link": "Aller à l'Historique →"
+  }
+}
