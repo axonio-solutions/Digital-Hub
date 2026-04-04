@@ -1,0 +1,15 @@
+{
+  "engine_parts": "Moteur & Pièces",
+  "braking_system": "Système de freinage",
+  "suspension_steering": "Suspension & Direction",
+  "transmission_gearbox": "Transmission & Boîte de vitesse",
+  "electrical_lighting": "Électricité & Éclairage",
+  "body_panels": "Carrosserie & Panneaux",
+  "cooling_heating": "Refroidissement & Chauffage",
+  "filters_fluids": "Filtres & Fluides",
+  "exhaust_system": "Système d'échappement",
+  "wheels_tires": "Roues & Pneus",
+  "interior_accessories": "Intérieur & Accessoires",
+  "tools_workshop": "Outils & Atelier",
+  "general": "Pièces générales"
+}

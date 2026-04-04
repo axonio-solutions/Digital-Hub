@@ -1,0 +1,15 @@
+{
+  "engine_parts": "المحرك وأجزاؤه",
+  "braking_system": "نظام الفرامل",
+  "suspension_steering": "نظام التعليق والتوجيه",
+  "transmission_gearbox": "ناقل الحركة وصندوق التروس",
+  "electrical_lighting": "الكهرباء والإضاءة",
+  "body_panels": "الهيكل والألواح",
+  "cooling_heating": "التبريد والتدفئة",
+  "filters_fluids": "الفلاتر والسوائل",
+  "exhaust_system": "نظام العادم",
+  "wheels_tires": "العجلات والإطارات",
+  "interior_accessories": "المقصورة والملحقات",
+  "tools_workshop": "الأدوات والمعدات",
+  "general": "قطع غيار عامة"
+}

@@ -1,0 +1,15 @@
+{
+  "engine_parts": "Engine & Parts",
+  "braking_system": "Braking System",
+  "suspension_steering": "Suspension & Steering",
+  "transmission_gearbox": "Transmission & Gearbox",
+  "electrical_lighting": "Electrical & Lighting",
+  "body_panels": "Body & Panels",
+  "cooling_heating": "Cooling & Heating",
+  "filters_fluids": "Filters & Fluids",
+  "exhaust_system": "Exhaust System",
+  "wheels_tires": "Wheels & Tires",
+  "interior_accessories": "Interior & Accessories",
+  "tools_workshop": "Tools & Workshop",
+  "general": "General Parts"
+}
