@@ -92,11 +92,12 @@ export function GeneralInfoForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Personal Information Card */}
-        <Card className="border-primary/5 shadow-sm">
+        <Card className="border shadow-sm bg-card">
+  
           <CardHeader>
             <div className="flex items-center gap-2">
               <UserIcon className="size-5 text-primary" />
-              <CardTitle>Basic Identity</CardTitle>
+              <CardTitle className="text-xl font-bold">Basic Identity</CardTitle>
             </div>
             <CardDescription>
               Update your avatar and personal contact details.
@@ -168,11 +169,12 @@ export function GeneralInfoForm() {
         </Card>
 
         {/* Address Information Card */}
-        <Card className="border-primary/5 shadow-sm">
+        <Card className="border shadow-sm bg-card">
+  
           <CardHeader>
             <div className="flex items-center gap-2">
               <MapPin className="size-5 text-primary" />
-              <CardTitle>Physical Address</CardTitle>
+              <CardTitle className="text-xl font-bold">Physical Address</CardTitle>
             </div>
             <CardDescription>
               Managed your primary location for deliveries and service.

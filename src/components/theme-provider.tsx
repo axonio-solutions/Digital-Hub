@@ -27,36 +27,78 @@ export function ThemeProvider({
   storageKey?: string
 }) {
   const [theme, setTheme] = React.useState<Theme>(
-    () => (typeof window !== "undefined" ? (localStorage.getItem(storageKey) as Theme) : defaultTheme) || defaultTheme
+    () => {
+      try {
+        if (typeof window !== "undefined") {
+          return (localStorage.getItem(storageKey) as Theme) || defaultTheme
+        }
+      } catch (e) {
+        // Handle potential security/storage errors
+      }
+      return defaultTheme
+    }
   )
 
-  React.useEffect(() => {
+  const applyTheme = React.useCallback((newTheme: Theme) => {
     const root = window.document.documentElement
-
+    
+    // 1. Disable transitions to prevent lag/flashes
+    root.classList.add("no-transitions")
+    
+    // 2. Perform the actual theme switch
     root.classList.remove("light", "dark")
-
-    if (theme === "system") {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
-      
-      const handleChange = () => {
-        root.classList.remove("light", "dark")
-        root.classList.add(mediaQuery.matches ? "dark" : "light")
-      }
-
-      mediaQuery.addEventListener("change", handleChange)
-      root.classList.add(mediaQuery.matches ? "dark" : "light")
-
-      return () => mediaQuery.removeEventListener("change", handleChange)
+    
+    if (newTheme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      root.classList.add(systemTheme)
+    } else {
+      root.classList.add(newTheme)
     }
 
-    root.classList.add(theme)
-  }, [theme])
+    // 3. Force a reflow to ensure the theme is applied without transitions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    window.getComputedStyle(root).opacity
+
+    // 4. Re-enable transitions in the next frame
+    requestAnimationFrame(() => {
+      root.classList.remove("no-transitions")
+    })
+  }, [])
+
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+    
+    const handleChange = () => {
+      if (theme === "system") {
+        applyTheme("system")
+      }
+    }
+
+    mediaQuery.addEventListener("change", handleChange)
+    applyTheme(theme)
+
+    return () => mediaQuery.removeEventListener("change", handleChange)
+  }, [theme, applyTheme])
 
   const value = React.useMemo(() => ({
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
+    setTheme: (newTheme: Theme) => {
+      // Check for View Transitions API support safely
+      const hasViewTransition = 
+        typeof window !== "undefined" && 
+        "startViewTransition" in window.document;
+
+      if (!hasViewTransition) {
+        localStorage.setItem(storageKey, newTheme)
+        setTheme(newTheme)
+        return
+      }
+
+      // High-fidelity transition
+      (window.document as any).startViewTransition(() => {
+        localStorage.setItem(storageKey, newTheme)
+        setTheme(newTheme)
+      })
     },
   }), [theme, storageKey])
 
@@ -70,7 +112,7 @@ export function ThemeProvider({
 export const useTheme = () => {
   const context = React.useContext(ThemeProviderContext)
 
-  if (context === undefined)
+  if (!context)
     throw new Error("useTheme must be used within a ThemeProvider")
 
   return context

@@ -255,30 +255,30 @@ export function PublicMarketplace() {
 
   return (
     <ExploreContext.Provider value={store}>
-      <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 overflow-hidden">
+      <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden">
         {/* Public Header */}
-        <header className="px-6 lg:px-14 h-20 flex items-center justify-between border-b bg-white relative z-10 w-full shadow-sm">
+        <header className="px-6 lg:px-14 h-20 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 relative z-10 w-full shadow-sm">
           <div className="flex items-center gap-2">
             <Link to="/" className="flex items-center gap-2">
-              <div className="bg-blue-600 rounded-lg p-1.5 flex items-center justify-center">
+              <div className="bg-blue-600 rounded-lg p-1.5 flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <Settings className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-2xl tracking-tighter text-slate-900">
+              <span className="font-bold text-2xl tracking-tighter text-slate-900 dark:text-white">
                 MLILA
               </span>
             </Link>
           </div>
-          <nav className="hidden md:flex gap-8 text-sm font-medium text-slate-600">
-            <Link to="/" hash="how-it-works" className="hover:text-blue-600 transition-colors">
+          <nav className="hidden md:flex gap-8 text-sm font-medium text-slate-600 dark:text-slate-400">
+            <Link to="/" hash="how-it-works" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               How it Works
             </Link>
-            <Link to="/" hash="benefits" className="hover:text-blue-600 transition-colors">
+            <Link to="/" hash="benefits" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               Benefits
             </Link>
-            <Link to="/explore" className="text-blue-600 font-bold underline decoration-2 underline-offset-4">
+            <Link to="/explore" className="text-blue-600 dark:text-blue-400 font-bold underline decoration-2 underline-offset-4">
               Explore
             </Link>
-            <Link to="/" hash="faq" className="hover:text-blue-600 transition-colors">
+            <Link to="/" hash="faq" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               FAQ
             </Link>
           </nav>
@@ -299,7 +299,7 @@ export function PublicMarketplace() {
           </div>
         </header>
 
-        <div className="flex-1 w-full bg-slate-50/50 dark:bg-slate-950/20 px-4 py-4 sm:py-6">
+        <div className="flex-1 w-full bg-slate-50/50 dark:bg-slate-950/50 px-4 py-4 sm:py-6">
           <div className="flex flex-col gap-6 lg:flex-row max-w-[1400px] mx-auto">
           {/* Desktop Filters Sidebar */}
           <aside className="hidden w-64 lg:block shrink-0">
@@ -447,7 +447,7 @@ export function PublicMarketplace() {
 
                         {/* Quotes Count Badge on Image */}
                         <div className="absolute top-4 right-4">
-                           <Badge className="bg-white/90 backdrop-blur-md text-slate-900 border-none font-black text-[10px] uppercase shadow-lg px-3 py-1 flex items-center gap-1.5 rounded-full">
+                           <Badge className="bg-white/90 dark:bg-slate-950/90 backdrop-blur-md text-slate-900 dark:text-white border-none font-black text-[10px] uppercase shadow-lg px-3 py-1 flex items-center gap-1.5 rounded-full">
                              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                              {request.quotes?.length || 0} Quotes
                            </Badge>
@@ -462,10 +462,10 @@ export function PublicMarketplace() {
                               {request.partName}
                             </h4>
                             <div className="flex flex-wrap items-center gap-2">
-                               <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-widest border-slate-200 py-0.5 h-auto px-2 rounded-md bg-slate-50/50">
+                               <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-widest border-slate-200 dark:border-slate-800 py-0.5 h-auto px-2 rounded-md bg-slate-50/50 dark:bg-slate-900/50 dark:text-slate-300">
                                  {request.brand?.brand || request.vehicleBrand}
                                </Badge>
-                               <Badge variant="secondary" className="bg-slate-100/50 text-slate-500 font-bold uppercase text-[9px] tracking-widest border-none px-2 py-0.5 rounded-md">
+                               <Badge variant="secondary" className="bg-slate-100/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold uppercase text-[9px] tracking-widest border-none px-2 py-0.5 rounded-md">
                                  {request.category?.name || 'Part'}
                                </Badge>
                                {request.modelYear && (
@@ -525,17 +525,17 @@ export function PublicMarketplace() {
       </div>
         
         {/* Public Footer */}
-        <footer className="bg-white border-t border-slate-200 py-12 px-6 mt-12">
+        <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-12 px-6 mt-12">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
-              <div className="bg-slate-900 rounded-lg p-1.5 flex items-center justify-center">
+              <div className="bg-slate-900 dark:bg-blue-600 rounded-lg p-1.5 flex items-center justify-center">
                 <Settings className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl tracking-tight text-slate-900">
+              <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
                 MLILA
               </span>
             </div>
-            <p className="text-slate-500 text-sm font-medium">
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
               © 2026 MLILA Reverse-Marketplace Algeria. All rights reserved.
             </p>
           </div>

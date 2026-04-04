@@ -175,16 +175,16 @@ export function NotificationPreferences({ user }: { user: any }) {
       {role === 'admin' && (
         <Card className="border-red-200 shadow-sm bg-red-50/10 rounded-xl overflow-hidden">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-red-700">
+            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-red-700 dark:text-red-500">
               <AlertCircle className="h-4 w-4" />
               Admin Simulation Center
             </CardTitle>
             <CardDescription>Trigger system-wide events to test real-time notification routing.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 rounded-xl border border-red-100 bg-white">
+            <div className="flex items-center justify-between p-4 rounded-xl border border-red-500/20 bg-muted/30">
               <div>
-                <p className="text-sm font-semibold text-red-900">Spam Mitigation Test</p>
+                <p className="text-sm font-semibold text-red-900 dark:text-red-400">Spam Mitigation Test</p>
                 <p className="text-xs text-muted-foreground">Emulate a spam flag on a dummy request (#TEST-123).</p>
               </div>
               <Button 

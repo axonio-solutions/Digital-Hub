@@ -11,10 +11,6 @@ import {
   YAxis,
 } from 'recharts'
 import {
-  Award,
-  Clock,
-  DollarSign,
-  TrendingUp,
   Activity,
 } from 'lucide-react'
 import { format, subDays, isSameDay, startOfDay } from 'date-fns'
@@ -33,7 +29,6 @@ import { useOpenRequests } from '@/features/requests/hooks/use-requests'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
 
 export function SellerOverview() {
   const { data: user } = useAuth()
@@ -80,110 +75,120 @@ export function SellerOverview() {
   }
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
-          <p className="text-muted-foreground">
-            Welcome back, {user?.name || 'Seller'}. Here's what's happening today.
-          </p>
+    <div className="flex-1 space-y-8 p-6 md:p-10 pt-6 animate-in fade-in duration-700 max-w-[1600px] mx-auto w-full pb-20">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="space-y-1">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white uppercase leading-none">Market Overview</h2>
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Welcome back, {user?.name || 'Seller'}. Monitoring your marketplace performance.</span>
+            <span className="h-[1px] w-8 bg-slate-200 dark:bg-slate-800" />
+          </div>
         </div>
         <div className="flex items-center space-x-2">
-          <Button asChild size="sm">
-            <Link to="/dashboard">Go to Market</Link>
+          <Button asChild size="sm" className="rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-bold uppercase tracking-tight">
+            <Link to="/dashboard">Go to Market Hub</Link>
           </Button>
         </div>
       </div>
 
       {/* Stats Overview - Premium Section Cards Style */}
-      <div className="grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-sm sm:grid-cols-2 lg:grid-cols-4">
         {/* Won Deals */}
-        <Card className="@container/card">
-          <CardHeader>
-            <CardDescription>Won Deals</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-emerald-600 dark:text-emerald-500">
+        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950 rounded-2xl group transition-all duration-300 hover:shadow-lg">
+          <CardHeader className="pb-3">
+            <CardDescription className="dark:text-slate-400 font-bold uppercase tracking-widest text-[10px]">Won Deals</CardDescription>
+            <CardTitle className="text-3xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
               {stats.won}
             </CardTitle>
           </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium">
+          <CardFooter className="flex-col items-start gap-1 text-sm pt-0">
+            <div className="line-clamp-1 flex gap-2 font-bold dark:text-slate-200 uppercase text-[10px]">
               Deal Success
             </div>
-            <div className="text-muted-foreground">Confirmed marketplace acquisitions</div>
+            <div className="text-muted-foreground dark:text-slate-500 text-[11px]">Confirmed marketplace acquisitions</div>
           </CardFooter>
         </Card>
 
         {/* Active Bids */}
-        <Card className="@container/card">
-          <CardHeader>
-            <CardDescription>Active Bids</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-blue-600 dark:text-blue-500">
+        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950 rounded-2xl group transition-all duration-300 hover:shadow-lg">
+          <CardHeader className="pb-3">
+            <CardDescription className="dark:text-slate-400 font-bold uppercase tracking-widest text-[10px]">Active Bids</CardDescription>
+            <CardTitle className="text-3xl font-bold tabular-nums text-blue-600 dark:text-blue-400">
               {stats.pending}
             </CardTitle>
           </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium">
+          <CardFooter className="flex-col items-start gap-1 text-sm pt-0">
+            <div className="line-clamp-1 flex gap-2 font-bold dark:text-slate-200 uppercase text-[10px]">
               Open Negotiations
             </div>
-            <div className="text-muted-foreground">Offers currently awaiting review</div>
+            <div className="text-muted-foreground dark:text-slate-500 text-[11px]">Offers currently awaiting review</div>
           </CardFooter>
         </Card>
 
         {/* Win Rate */}
-        <Card className="@container/card">
-          <CardHeader>
-            <CardDescription>Win Rate</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-orange-600 dark:text-orange-500">
+        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950 rounded-2xl group transition-all duration-300 hover:shadow-lg">
+          <CardHeader className="pb-3">
+            <CardDescription className="dark:text-slate-400 font-bold uppercase tracking-widest text-[10px]">Win Rate</CardDescription>
+            <CardTitle className="text-3xl font-bold tabular-nums text-orange-600 dark:text-orange-400">
               {stats.winRate.toFixed(1)}%
             </CardTitle>
           </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium">
+          <CardFooter className="flex-col items-start gap-1 text-sm pt-0">
+            <div className="line-clamp-1 flex gap-2 font-bold dark:text-slate-200 uppercase text-[10px]">
               Conversion Yield
             </div>
-            <div className="text-muted-foreground">Efficiency of quote-to-deal transition</div>
+            <div className="text-muted-foreground dark:text-slate-500 text-[11px]">Efficiency of quote-to-deal transition</div>
           </CardFooter>
         </Card>
 
         {/* Earnings */}
-        <Card className="@container/card">
-          <CardHeader>
-            <CardDescription>Earnings</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-purple-600 dark:text-purple-500">
+        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950 rounded-2xl group transition-all duration-300 hover:shadow-lg">
+          <CardHeader className="pb-3">
+            <CardDescription className="dark:text-slate-400 font-bold uppercase tracking-widest text-[10px]">Total Revenue</CardDescription>
+            <CardTitle className="text-3xl font-bold tabular-nums text-purple-600 dark:text-purple-400">
               {stats.totalRevenue.toLocaleString()}
             </CardTitle>
           </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium">
-              Market Revenue
+          <CardFooter className="flex-col items-start gap-1 text-sm pt-0">
+            <div className="line-clamp-1 flex gap-2 font-bold dark:text-slate-200 uppercase text-[10px]">
+              Market Value
             </div>
-            <div className="text-muted-foreground">Cumulative earnings (DZD)</div>
+            <div className="text-muted-foreground dark:text-slate-500 text-[11px]">Cumulative earnings (DZD)</div>
           </CardFooter>
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Revenue Velocity</CardTitle>
-            <CardDescription>
-              Earnings trajectory over the last 7 days.
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-12 lg:col-span-4 bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col group transition-all duration-300 hover:shadow-lg overflow-hidden">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-primary/30 underline-offset-8">Revenue Velocity</CardTitle>
+            <CardDescription className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2">
+              Performance Over Last 7 Cycles
             </CardDescription>
           </CardHeader>
-          <CardContent className="pl-2">
+          <CardContent className="pl-2 pt-4">
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
+                <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="revenue-gradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
                   <XAxis
                     dataKey="name"
                     stroke="#888888"
-                    fontSize={12}
+                    fontSize={10}
+                    fontWeight="bold"
                     tickLine={false}
                     axisLine={false}
+                    className="uppercase"
                   />
                   <YAxis
                     stroke="#888888"
-                    fontSize={12}
+                    fontSize={9}
+                    fontWeight="bold"
                     tickLine={false}
                     axisLine={false}
                     tickFormatter={(value) => `${value.toLocaleString()}`}
@@ -192,13 +197,13 @@ export function SellerOverview() {
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         return (
-                          <div className="rounded-lg border bg-background p-2 shadow-sm">
-                            <div className="grid grid-cols-2 gap-2">
-                              <span className="text-[0.70rem] uppercase text-muted-foreground">
-                                DZD
+                          <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 p-3 shadow-xl animate-in zoom-in-95 duration-200">
+                            <div className="grid gap-1">
+                              <span className="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">
+                                Marketplace Revenue
                               </span>
-                              <span className="font-bold text-muted-foreground text-[0.70rem]">
-                                {payload[0].value?.toLocaleString()}
+                              <span className="text-sm font-bold text-slate-900 dark:text-white">
+                                {payload[0].value?.toLocaleString()} DZD
                               </span>
                             </div>
                           </div>
@@ -210,10 +215,11 @@ export function SellerOverview() {
                   <Area
                     type="monotone"
                     dataKey="revenue"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={2}
-                    fill="hsl(var(--primary))"
-                    fillOpacity={0.1}
+                    stroke="var(--primary)"
+                    strokeWidth={4}
+                    fill="url(#revenue-gradient)"
+                    fillOpacity={1}
+                    animationDuration={1500}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -221,81 +227,105 @@ export function SellerOverview() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Offer Distribution</CardTitle>
-            <CardDescription>Performance breakdown.</CardDescription>
+        <Card className="col-span-12 lg:col-span-3 bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col group transition-all duration-300 hover:shadow-lg overflow-hidden">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-primary/30 underline-offset-8">Quote Effectiveness</CardTitle>
+            <CardDescription className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2">Conversion Distribution Breakdown</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="h-[250px]">
+          <CardContent className="pt-2">
+            <div className="h-[250px] relative">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={[
-                      { name: 'Accepted', value: stats.won, fill: 'hsl(var(--primary))' },
-                      { name: 'Pending', value: stats.pending, fill: 'hsl(var(--primary) / 0.5)' },
-                      { name: 'Missed', value: Math.max(0, myQuotes.length - stats.won - stats.pending), fill: 'hsl(var(--muted))' },
+                      { name: 'Accepted', value: stats.won, fill: '#10b981' },
+                      { name: 'Pending', value: stats.pending, fill: '#3b82f6' },
+                      { name: 'Missed', value: Math.max(0, myQuotes.length - stats.won - stats.pending), fill: '#94a3b8' },
                     ]}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
+                    innerRadius={65}
+                    outerRadius={85}
+                    paddingAngle={8}
                     dataKey="value"
+                    animationDuration={1000}
+                    strokeWidth={0}
                   >
                     {[
-                      { name: 'Accepted', value: stats.won, fill: 'hsl(var(--primary))' },
-                      { name: 'Pending', value: stats.pending, fill: 'hsl(var(--primary) / 0.5)' },
-                      { name: 'Missed', value: Math.max(0, myQuotes.length - stats.won - stats.pending), fill: 'hsl(var(--muted))' },
+                      { name: 'Accepted', value: stats.won, fill: '#10b981' },
+                      { name: 'Pending', value: stats.pending, fill: '#3b82f6' },
+                      { name: 'Missed', value: Math.max(0, myQuotes.length - stats.won - stats.pending), fill: '#94a3b8' },
                     ].map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                      <Cell key={`cell-${index}`} fill={entry.fill} className="hover:opacity-80 transition-opacity" />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                       if (active && payload && payload.length) {
+                         return (
+                           <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 p-2.5 shadow-xl">
+                             <div className="flex items-center gap-2">
+                               <div className="size-2 rounded-full" style={{ backgroundColor: payload[0].payload.fill }} />
+                               <span className="text-xs font-bold text-slate-900 dark:text-white">{payload[0].name}: {payload[0].value}</span>
+                             </div>
+                           </div>
+                         )
+                       }
+                       return null;
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="text-center">
+                   <p className="text-2xl font-bold text-slate-900 dark:text-white">{myQuotes.length}</p>
+                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Quotes</p>
+                </div>
+              </div>
             </div>
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="mt-8 space-y-3 px-4">
+              <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 <div className="flex items-center gap-2">
-                  <div className="size-2 rounded-full bg-primary" />
+                  <div className="size-2 rounded-full bg-emerald-500" />
                   <span>Accepted</span>
                 </div>
-                <span className="font-bold">{stats.won}</span>
+                <span className="text-emerald-600 dark:text-emerald-400">{stats.won}</span>
               </div>
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 <div className="flex items-center gap-2">
-                  <div className="size-2 rounded-full bg-primary/50" />
+                  <div className="size-2 rounded-full bg-blue-500" />
                   <span>Pending</span>
                 </div>
-                <span className="font-bold">{stats.pending}</span>
+                <span className="text-blue-600 dark:text-blue-400">{stats.pending}</span>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
+        <Card className="bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:shadow-lg transition-all duration-300">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
             <div className="space-y-1">
-              <CardTitle className="text-lg">Open Demands</CardTitle>
-              <CardDescription>Latest marketplace requests.</CardDescription>
+              <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-primary/30 underline-offset-8">Live Feed</CardTitle>
+              <CardDescription className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2">Latest marketplace demands.</CardDescription>
             </div>
-            <Badge variant="secondary">{openRequests.length} Active</Badge>
+            <Badge variant="outline" className="rounded-full bg-primary/5 text-primary border-primary/20 font-bold uppercase tracking-tighter text-[10px] px-3 py-1">
+              {openRequests.length} Active Nodes
+            </Badge>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {openRequests.slice(0, 4).map((req: any) => (
-                <div key={req.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                <div key={req.id} className="flex items-center justify-between border-b border-slate-50 dark:border-slate-900 pb-4 last:border-0 last:pb-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/30 p-2 rounded-xl transition-colors cursor-pointer group/item">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">{req.partName}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs font-bold text-slate-950 dark:text-slate-100 uppercase tracking-tight">{req.partName}</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       {req.vehicleBrand} • {req.modelYear}
                     </p>
                   </div>
                   <Link to="/dashboard">
-                    <Button variant="outline" size="sm">Review</Button>
+                    <Button variant="outline" size="sm" className="h-7 px-3 text-[10px] font-bold uppercase tracking-tight rounded-lg border-slate-200 dark:border-slate-800 group-hover/item:bg-primary group-hover/item:text-white group-hover/item:border-primary transition-all">Review</Button>
                   </Link>
                 </div>
               ))}
@@ -303,33 +333,35 @@ export function SellerOverview() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <Card className="bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:shadow-lg transition-all duration-300">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
             <div className="space-y-1">
-              <CardTitle className="text-lg">Sales History</CardTitle>
-              <CardDescription>Recent confirmed deals.</CardDescription>
+              <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-emerald-500/30 underline-offset-8">Transaction Logs</CardTitle>
+              <CardDescription className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2">Confirmed marketplace deals.</CardDescription>
             </div>
-            <Badge variant="outline">Verified</Badge>
+            <Badge variant="outline" className="rounded-full bg-emerald-500/5 text-emerald-600 border-emerald-500/20 font-bold uppercase tracking-tighter text-[10px] px-3 py-1">Verified</Badge>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {myQuotes.filter((q: any) => q.status === 'accepted').slice(0, 4).map((q: any) => (
-                <div key={q.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                <div key={q.id} className="flex items-center justify-between border-b border-slate-50 dark:border-slate-900 pb-4 last:border-0 last:pb-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/30 p-2 rounded-xl transition-colors cursor-pointer">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">{q.request?.partName}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs font-bold text-slate-950 dark:text-slate-100 uppercase tracking-tight">{q.request?.partName}</p>
+                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
                       {(q.price || 0).toLocaleString()} DZD
                     </p>
                   </div>
-                  <p className="text-[10px] text-muted-foreground font-mono">
+                  <p className="text-[9px] text-slate-400 font-bold uppercase">
                     {new Date(q.updatedAt).toLocaleDateString()}
                   </p>
                 </div>
               ))}
               {myQuotes.filter((q: any) => q.status === 'accepted').length === 0 && (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <Activity className="size-8 text-muted-foreground/20 mb-2" />
-                  <p className="text-xs text-muted-foreground font-medium">No sales recorded yet.</p>
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="size-12 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center mb-4">
+                    <Activity className="size-6 text-slate-300 dark:text-slate-700" />
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">No verified sales logs yet</p>
                 </div>
               )}
             </div>

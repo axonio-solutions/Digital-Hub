@@ -27,7 +27,14 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useMemo, useState } from 'react'
 
-const CHART_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#6366f1']
+const CHART_COLORS = [
+  '#10b981', // Emerald
+  '#3b82f6', // Blue
+  '#f59e0b', // Amber
+  '#ef4444', // Red
+  '#8b5cf6', // Violet
+  '#06b6d4', // Cyan
+]
 
 export function SellerAnalytics() {
   const { data: analytics, isLoading } = useSellerAnalytics()
@@ -83,7 +90,7 @@ export function SellerAnalytics() {
         </div>
 
         <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-5 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-          <div className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+          <div className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] dark:shadow-[0_0_12px_rgba(16,185,129,0.8)]" />
           <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider leading-none">
             {totalSellers} Registered Supply Nodes
           </span>
@@ -93,66 +100,66 @@ export function SellerAnalytics() {
       {/* Stats Overview - Premium Section Cards Style */}
       <div className="grid grid-cols-1 gap-4 px-6 md:px-10 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs sm:grid-cols-2 lg:grid-cols-4">
         {/* Quotes Frequency */}
-        <Card className="@container/card">
+        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950">
           <CardHeader>
-            <CardDescription>Quotes Frequency</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-emerald-600 dark:text-emerald-500">
+            <CardDescription className="dark:text-slate-400">Quotes Frequency</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-emerald-600 dark:text-emerald-400">
               {analytics?.metrics?.avgQuotesPerRequest || '0'}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium">
+            <div className="line-clamp-1 flex gap-2 font-medium dark:text-slate-200">
               Supply Engagement
             </div>
-            <div className="text-muted-foreground">Average offers per marketplace request</div>
+            <div className="text-muted-foreground dark:text-slate-500">Average offers per marketplace request</div>
           </CardFooter>
         </Card>
 
         {/* Network Win Rate */}
-        <Card className="@container/card">
+        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950">
           <CardHeader>
-            <CardDescription>Network Win Rate</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-blue-600 dark:text-blue-500">
+            <CardDescription className="dark:text-slate-400">Network Win Rate</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-blue-600 dark:text-blue-400">
               {analytics?.metrics?.conversionRate || '0%'}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium">
+            <div className="line-clamp-1 flex gap-2 font-medium dark:text-slate-200">
               Lead Conversion
             </div>
-            <div className="text-muted-foreground">Successful quote-to-request matches</div>
+            <div className="text-muted-foreground dark:text-slate-500">Successful quote-to-request matches</div>
           </CardFooter>
         </Card>
 
         {/* Avg Turnaround */}
-        <Card className="@container/card">
+        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950">
           <CardHeader>
-            <CardDescription>Avg Turnaround</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-orange-600 dark:text-orange-500">
+            <CardDescription className="dark:text-slate-400">Avg Turnaround</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-orange-600 dark:text-orange-400">
               {analytics?.metrics?.avgResponseTime || '0m'}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium">
+            <div className="line-clamp-1 flex gap-2 font-medium dark:text-slate-200">
               Response Velocity
             </div>
-            <div className="text-muted-foreground">Market speed to initial offer</div>
+            <div className="text-muted-foreground dark:text-slate-500">Market speed to initial offer</div>
           </CardFooter>
         </Card>
 
         {/* Merchant Base */}
-        <Card className="@container/card">
+        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950">
           <CardHeader>
-            <CardDescription>Merchant Base</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-purple-600 dark:text-purple-500">
+            <CardDescription className="dark:text-slate-400">Merchant Base</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-purple-600 dark:text-purple-400">
               {totalSellers.toLocaleString()}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium">
+            <div className="line-clamp-1 flex gap-2 font-medium dark:text-slate-200">
               Merchant Capacity
             </div>
-            <div className="text-muted-foreground">Verified active supply nodes</div>
+            <div className="text-muted-foreground dark:text-slate-500">Verified active supply nodes</div>
           </CardFooter>
         </Card>
       </div>
@@ -167,16 +174,16 @@ export function SellerAnalytics() {
             <ChartContainer config={{ count: { label: "Quotes", color: "hsl(var(--emerald-500))" } }} className="mx-auto aspect-square max-h-[350px] w-full">
               <RadarChart data={analytics?.demandByCategory || []} margin={{ top: 10, right: 20, bottom: 10, left: 20 }} cx="50%" cy="50%" outerRadius="75%">
                 <defs>
-                   <linearGradient id="radar-gradient-seller" x1="0" y1="0" x2="0" y2="1">
-                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-                     <stop offset="95%" stopColor="#059669" stopOpacity={0.1} />
-                   </linearGradient>
+                    <linearGradient id="radar-gradient-seller" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.6} />
+                      <stop offset="95%" stopColor="#059669" stopOpacity={0} />
+                    </linearGradient>
                 </defs>
                 <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <PolarGrid className="fill-slate-100/50 dark:fill-slate-800/50" />
-                <PolarAngleAxis dataKey="label" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontWeight: "bold" }} />
+                <PolarGrid className="stroke-slate-300/40 dark:stroke-slate-700/40 fill-slate-100/10 dark:fill-slate-800/5" />
+                <PolarAngleAxis dataKey="label" tick={{ fill: "white", fontSize: 10, fontWeight: "bold" }} />
                 <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
-                <Radar name="Supply" dataKey="count" stroke="#10b981" strokeWidth={2} fill="url(#radar-gradient-seller)" fillOpacity={1} />
+                <Radar name="Supply" dataKey="count" stroke="#10b981" strokeWidth={2.5} fill="url(#radar-gradient-seller)" fillOpacity={0.6} />
               </RadarChart>
             </ChartContainer>
           </CardContent>
@@ -199,12 +206,21 @@ export function SellerAnalytics() {
                     innerRadius={50}
                     outerRadius={BASE_RADIUS + index * SIZE_INCREMENT}
                     dataKey="count"
-                    cornerRadius={6}
+                    cornerRadius={8}
                     startAngle={(categoryDistribution.slice(0, index).reduce((sum, d) => sum + d.count, 0) / totalMerchants) * 360}
                     endAngle={(categoryDistribution.slice(0, index + 1).reduce((sum, d) => sum + d.count, 0) / totalMerchants) * 360}
                   >
-                    <Cell fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                    <LabelList dataKey="label" position="outside" offset={16} stroke="none" fontSize={10} fontWeight="bold" fill="currentColor" />
+                    <Cell fill={CHART_COLORS[index % CHART_COLORS.length]} stroke="rgba(255,255,255,0.1)" strokeWidth={1} />
+                    <LabelList 
+                      dataKey="label" 
+                      position="outside" 
+                      offset={16} 
+                      stroke="none" 
+                      fontSize={10} 
+                      fontWeight="bold" 
+                      fill="currentColor" 
+                      className="fill-slate-500 dark:fill-slate-300" 
+                    />
                   </Pie>
                 ))}
               </PieChart>
@@ -212,12 +228,12 @@ export function SellerAnalytics() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] shadow-sm flex flex-col group transition-all duration-300 hover:shadow-md overflow-hidden">
+        <Card className="col-span-12 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[2rem] shadow-sm flex flex-col group transition-all duration-300 hover:shadow-md overflow-hidden">
           <CardHeader className="pb-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-1">
                 <CardTitle className="text-xl font-bold text-slate-900 dark:text-white uppercase leading-none">Quote Velocity</CardTitle>
-                <CardDescription className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
+                <CardDescription className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1 dark:text-slate-400">
                   {activeData ? `${activeData.date}: ${activeData.count} Responses` : "30-Day Market Throughout"}
                 </CardDescription>
               </div>
@@ -228,9 +244,14 @@ export function SellerAnalytics() {
               <BarChart data={analytics?.requestVolume || []} onMouseLeave={() => setActiveIndex(null)} margin={{ left: 10, right: 10, top: 20, bottom: 0 }}>
                 <XAxis dataKey="date" tickLine={false} tickMargin={10} axisLine={false} className="text-[9px] font-bold text-slate-400 uppercase" />
                 <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <Bar dataKey="count" radius={4} fill="#10b981">
+                <Bar dataKey="count" radius={6} fill="#10b981">
                   {(analytics?.requestVolume || []).map((_: any, index: number) => (
-                    <Cell key={`cell-${index}`} fillOpacity={activeIndex === null ? 1 : activeIndex === index ? 1 : 0.2} onMouseEnter={() => setActiveIndex(index)} />
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fillOpacity={activeIndex === null ? 0.8 : activeIndex === index ? 1 : 0.2} 
+                      onMouseEnter={() => setActiveIndex(index)} 
+                      className="transition-all duration-300"
+                    />
                   ))}
                 </Bar>
               </BarChart>

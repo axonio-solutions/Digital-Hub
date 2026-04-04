@@ -78,7 +78,7 @@ export function AccountManagement() {
           <Lock className="size-5 text-primary" />
           <h2 className="text-xl font-bold">Password</h2>
         </div>
-        <Card className="border-primary/5 shadow-sm">
+        <Card className="border shadow-sm bg-card">
           <CardContent className="pt-6 space-y-4">
             <div className="grid gap-2">
               <Label htmlFor="current-password">Current Password</Label>
@@ -117,12 +117,12 @@ export function AccountManagement() {
           <h2 className="text-xl font-bold text-destructive">Danger Zone</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="border-orange-100 bg-orange-50/20 shadow-none">
+          <Card className="border-orange-500/20 bg-orange-500/5 shadow-none dark:bg-orange-500/10">
             <CardHeader className="pb-4">
-              <CardTitle className="text-base text-orange-900 flex items-center gap-2">
+              <CardTitle className="text-base text-orange-600 dark:text-orange-400 flex items-center gap-2">
                 <EyeOff className="size-4" /> Deactivation
               </CardTitle>
-              <CardDescription className="text-xs text-orange-700/70">
+              <CardDescription className="text-xs text-orange-600/70 dark:text-orange-400/70">
                 Temporarily hide your account. You can return anytime.
               </CardDescription>
             </CardHeader>
@@ -130,7 +130,7 @@ export function AccountManagement() {
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full bg-white border-orange-200 text-orange-700 hover:bg-orange-50 font-bold"
+                className="w-full border-orange-500/30 text-orange-600 dark:text-orange-400 hover:bg-orange-500/10 font-bold"
                 onClick={handleDeactivate}
                 disabled={isDeactivating}
               >
@@ -143,12 +143,12 @@ export function AccountManagement() {
             </CardFooter>
           </Card>
 
-          <Card className="border-red-100 bg-red-50/20 shadow-none">
+          <Card className="border-red-500/20 bg-red-500/5 shadow-none dark:bg-red-500/10">
             <CardHeader className="pb-4">
-              <CardTitle className="text-base text-red-900 flex items-center gap-2">
+              <CardTitle className="text-base text-red-600 dark:text-red-400 flex items-center gap-2">
                 <Trash2 className="size-4" /> Permanent Deletion
               </CardTitle>
-              <CardDescription className="text-xs text-red-700/70">
+              <CardDescription className="text-xs text-red-600/70 dark:text-red-400/70">
                 This action is irreversible. All data will be purged.
               </CardDescription>
             </CardHeader>
@@ -156,7 +156,7 @@ export function AccountManagement() {
               <Button
                 variant="destructive"
                 size="sm"
-                className="w-full font-bold shadow-lg shadow-red-200"
+                className="w-full font-bold shadow-lg shadow-red-500/20"
                 onClick={handleDelete}
                 disabled={isDeleting}
               >

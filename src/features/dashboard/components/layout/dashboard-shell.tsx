@@ -2,10 +2,7 @@
 
 import React from 'react'
 import { useMatches } from '@tanstack/react-router'
-import {
-  Bell,
-} from 'lucide-react'
-import { NotificationDropdown } from '@/features/notifications'
+import { NotificationBell } from '@/features/notifications'
 import { UserDropdown } from './user-dropdown'
 import {
   SidebarInset,
@@ -22,9 +19,6 @@ import {
 } from '@/components/ui/breadcrumb'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import {
-  useUnreadNotifications,
-  useMarkNotificationRead,
-  useMarkAllNotificationsRead,
   useNotifications
 } from '@/features/notifications/hooks/use-notifications'
 import { Separator } from '@/components/ui/separator'
@@ -107,12 +101,6 @@ export function DashboardShell({ children, sidebarContent }: DashboardShellProps
   // Establish SSE connection for real-time updates
   useNotifications(userId)
 
-  const { data: notifications = [] } = useUnreadNotifications(userId)
-  const { mutate: markAsRead } = useMarkNotificationRead()
-  const { mutate: markAllRead } = useMarkAllNotificationsRead()
-
-  const unreadCount = notifications.length
-
   return (
     <SidebarProvider>
       <AppSidebar>
@@ -135,22 +123,7 @@ export function DashboardShell({ children, sidebarContent }: DashboardShellProps
           </div>
           <div className="flex items-center gap-2 md:gap-4">
             <ThemeToggle />
-            <NotificationDropdown
-              notifications={notifications}
-              unreadCount={unreadCount}
-              onMarkRead={(id) => markAsRead(id)}
-              onMarkAllRead={() => markAllRead(userId)}
-              trigger={
-                <button className="relative size-9 md:size-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-primary/30 transition-all group flex items-center justify-center shadow-sm">
-                  <Bell className="size-4.5 md:size-5 text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 size-4 md:size-5 bg-primary text-[10px] font-bold text-white rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-lg animate-in fade-in zoom-in duration-300">
-                      {unreadCount}
-                    </span>
-                  )}
-                </button>
-              }
-            />
+            <NotificationBell />
             <UserDropdown />
           </div>
         </header>

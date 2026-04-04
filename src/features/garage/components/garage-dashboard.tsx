@@ -89,10 +89,10 @@ export function GarageDashboard() {
 
   if (isError)
     return (
-      <div className="bg-red-50 border border-red-200 rounded-xl p-8 flex flex-col items-center justify-center text-center">
+      <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-8 flex flex-col items-center justify-center text-center">
         <AlertCircle className="h-10 w-10 text-red-500 mb-4" />
-        <h3 className="text-lg font-semibold text-red-900">Garage Error</h3>
-        <p className="text-red-700 max-w-sm mt-2">
+        <h3 className="text-lg font-semibold text-red-500">Garage Error</h3>
+        <p className="text-muted-foreground max-w-sm mt-2">
           We couldn't reach the garage at the moment. Please check your
           connection.
         </p>
@@ -137,20 +137,20 @@ export function GarageDashboard() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {userVehicles.length === 0 ? (
-          <Card className="col-span-full border-dashed border-2 bg-slate-50/50 py-16 flex flex-col items-center justify-center text-center hover:bg-slate-50 transition-colors">
-            <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+          <Card className="col-span-full border-dashed border-2 bg-muted/30 py-16 flex flex-col items-center justify-center text-center hover:bg-muted/40 transition-colors">
+            <div className="bg-card p-4 rounded-full shadow-sm mb-4 border ring-offset-background">
               <Car className="h-12 w-12 text-muted-foreground opacity-30" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">
+            <h3 className="text-xl font-bold text-foreground">
               Your Garage is Empty
             </h3>
-            <p className="text-slate-500 max-w-xs mt-2 mb-6">
+            <p className="text-muted-foreground max-w-xs mt-2 mb-6">
               Add your vehicles now to make finding spare parts 5x faster.
             </p>
             <Button
               variant="outline"
               onClick={() => setIsDialogOpen(true)}
-              className="rounded-xl border-2 hover:bg-slate-100"
+              className="rounded-xl border-2 hover:bg-accent"
             >
               Click here to start
             </Button>
@@ -170,43 +170,43 @@ export function GarageDashboard() {
                   </div>
                   <Badge
                     variant="secondary"
-                    className="bg-slate-100 text-slate-700 font-bold px-3 py-1 rounded-full"
+                    className="font-bold px-3 py-1 rounded-full"
                   >
                     {vehicle.year}
                   </Badge>
                 </div>
-                <CardTitle className="text-2xl font-extrabold mt-4 text-slate-900">
+                <CardTitle className="text-2xl font-extrabold mt-4 text-foreground">
                   {vehicle.make}
                 </CardTitle>
-                <CardDescription className="text-lg font-medium text-slate-600">
+                <CardDescription className="text-lg font-medium">
                   {vehicle.model}
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-4 pt-2">
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                    <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">
+                  <div className="bg-muted/50 p-3 rounded-2xl border">
+                    <div className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
                       Plate
                     </div>
-                    <div className="font-mono text-sm text-slate-700 bg-white px-2 py-0.5 rounded border inline-block select-all">
+                    <div className="font-mono text-sm text-foreground bg-muted px-2 py-0.5 rounded border inline-block select-all">
                       {vehicle.licensePlate || 'N/A'}
                     </div>
                   </div>
-                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                    <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">
+                  <div className="bg-muted/50 p-3 rounded-2xl border">
+                    <div className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
                       VIN
                     </div>
                     <div
-                      className="font-mono text-xs text-slate-700 bg-white px-2 py-0.5 rounded border block truncate select-all"
+                      className="font-mono text-xs text-foreground bg-muted px-2 py-0.5 rounded border block truncate select-all"
                       title={vehicle.vin}
                     >
                       {vehicle.vin || 'N/A'}
                     </div>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-2 text-sm text-emerald-600 font-semibold bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-100">
+ 
+                <div className="flex items-center gap-2 text-sm text-emerald-500 font-semibold bg-emerald-500/10 px-3 py-2 rounded-xl border border-emerald-500/20">
                   <ShieldCheck className="h-4 w-4" />
                   Verified in Network
                 </div>
@@ -216,7 +216,7 @@ export function GarageDashboard() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex-1 rounded-xl h-10 font-bold hover:bg-slate-50"
+                  className="flex-1 rounded-xl h-10 font-bold hover:bg-muted"
                   onClick={() =>
                     toast.info('Vehicle details editing coming soon!')
                   }
@@ -227,7 +227,7 @@ export function GarageDashboard() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="rounded-xl h-10 w-10 text-slate-400 hover:text-red-600 hover:bg-red-50"
+                  className="rounded-xl h-10 w-10 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
                   onClick={() => handleDeleteVehicle(vehicle.id)}
                 >
                   <Trash2 className="h-4 w-4" />
@@ -258,15 +258,15 @@ export function GarageDashboard() {
             </Button>
           </div>
         </div>
-        <div className="bg-white border-2 border-slate-100 rounded-[2rem] p-8 flex items-center gap-6">
-          <div className="h-16 w-16 rounded-3xl bg-amber-100 flex items-center justify-center shrink-0">
-            <History className="h-8 w-8 text-amber-600" />
+        <div className="bg-card border rounded-[2rem] p-8 flex items-center gap-6">
+          <div className="h-16 w-16 rounded-3xl bg-amber-500/10 flex items-center justify-center shrink-0">
+            <History className="h-8 w-8 text-amber-500" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-900 mb-1">
+            <h3 className="text-xl font-bold text-foreground mb-1">
               Service History
             </h3>
-            <p className="text-slate-500">
+            <p className="text-muted-foreground">
               View all parts requested and quotes accepted for each of your
               vehicles in one place.
             </p>
