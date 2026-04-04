@@ -171,7 +171,7 @@ function RootDocument({
           }}
         />
       </head>
-      <body className="antialiased min-h-screen bg-background text-foreground theme-transition">
+      <body className="antialiased min-h-screen bg-background text-foreground">
         <ThemeProvider>{children}</ThemeProvider>
         <Scripts />
       </body>

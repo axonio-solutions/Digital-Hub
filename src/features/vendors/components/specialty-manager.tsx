@@ -73,8 +73,8 @@ export function SpecialtyManager() {
   const categories = taxonomy?.data?.categories || []
 
   return (
-    <Card className="border-2 border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-      <CardHeader className="bg-slate-50/50 dark:bg-slate-900/50 border-b">
+    <Card className="border shadow-sm overflow-hidden bg-card">
+      <CardHeader className="border-b">
         <CardTitle className="text-xl font-bold tracking-tight">Marketplace Specialties</CardTitle>
         <CardDescription>
           Select the car brands and parts categories you specialize in to filter your marketplace feed.
@@ -99,7 +99,7 @@ export function SpecialtyManager() {
                     "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all border-2",
                     isSelected 
                       ? "bg-primary border-primary text-primary-foreground shadow-md scale-105" 
-                      : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-primary/30"
+                      : "bg-card border text-muted-foreground hover:border-primary/30"
                   )}
                 >
                   {brand.brand}
@@ -128,7 +128,7 @@ export function SpecialtyManager() {
                     "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all border-2",
                     isSelected 
                       ? "bg-primary border-primary text-primary-foreground shadow-md scale-105" 
-                      : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-primary/30"
+                      : "bg-card border text-muted-foreground hover:border-primary/30"
                   )}
                 >
                   {cat.name}

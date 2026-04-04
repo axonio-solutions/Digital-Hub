@@ -94,11 +94,12 @@ export function GeneralInfoForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Personal Information Card */}
-        <Card className="border-primary/5 shadow-sm">
+        <Card className="border shadow-sm bg-card">
+  
           <CardHeader>
             <div className="flex items-center gap-2">
               <UserIcon className="size-5 text-primary" />
-              <CardTitle>{t('form.basic_identity')}</CardTitle>
+              <CardTitle className="text-xl font-bold">{t('form.basic_identity')}</CardTitle>
             </div>
             <CardDescription>
               {t('form.identity_desc')}
@@ -170,11 +171,12 @@ export function GeneralInfoForm() {
         </Card>
 
         {/* Address Information Card */}
-        <Card className="border-primary/5 shadow-sm">
+        <Card className="border shadow-sm bg-card">
+  
           <CardHeader>
             <div className="flex items-center gap-2">
               <MapPin className="size-5 text-primary" />
-              <CardTitle>{t('form.physical_address')}</CardTitle>
+              <CardTitle className="text-xl font-bold">{t('form.physical_address')}</CardTitle>
             </div>
             <CardDescription>
               {t('form.address_desc')}

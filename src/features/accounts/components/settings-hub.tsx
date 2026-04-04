@@ -88,8 +88,8 @@ export function SettingsHub() {
               className={cn(
                 'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all shadow-sm',
                 activeSection === item.id
-                  ? 'bg-primary text-primary-foreground scale-[1.02] shadow-primary/20'
-                  : 'bg-white border hover:bg-slate-50 text-muted-foreground hover:text-foreground',
+                  ? 'bg-accent border border-accent-foreground/10 text-foreground scale-[1.02] shadow-sm'
+                  : 'bg-card border hover:bg-muted/50 text-muted-foreground hover:text-foreground',
               )}
             >
               <Icon className="h-4 w-4" />
@@ -115,14 +115,24 @@ function ProfileSection({ user }: { user: any }) {
 
   return (
     <div className="space-y-10">
-      <Card className="border-primary/5 shadow-sm overflow-hidden bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
-        <CardContent className="flex flex-col md:flex-row items-center gap-10 py-8 px-8 bg-slate-50/30 dark:bg-slate-800/20">
+      <div className="px-1">
+        <div className="flex items-center gap-3 mb-2">
+          <User className="size-6 text-primary" />
+          <h2 className="text-2xl font-bold tracking-tight">Profile & Identity</h2>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
+          Manage your public avatar, professional bio, and account-level identification.
+        </p>
+      </div>
+
+      <Card className="border shadow-sm overflow-hidden bg-card">
+        <CardContent className="flex flex-col md:flex-row items-center gap-10 py-8 px-8">
           <AvatarUpload
             userId={user?.id || ''}
             currentImage={user?.image}
             size="lg"
           />
-          <div className="flex-1 space-y-2 text-center md:text-start rtl:md:text-right">
+          <div className="flex-1 space-y-2 text-center md:text-left rtl:md:text-right">
             <h3 className="text-xl font-bold tracking-tight text-foreground">
               {t('profile.identity_title')}
             </h3>
@@ -168,11 +178,12 @@ function SecuritySection() {
   const { t } = useTranslation('dashboard/settings')
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-black tracking-tight mb-2">
-          {t('security.title')}
-        </h1>
-        <p className="text-muted-foreground">
+      <div className="px-1">
+        <div className="flex items-center gap-3 mb-2">
+          <Shield className="size-6 text-primary" />
+          <h2 className="text-2xl font-bold tracking-tight">{t('security.title')}</h2>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
           {t('security.desc')}
         </p>
       </div>
@@ -187,11 +198,12 @@ function NotificationsSection({ user }: { user: any }) {
   const { t } = useTranslation('dashboard/settings')
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-black tracking-tighter uppercase italic mb-2">
-          {t('notifications.title')}
-        </h1>
-        <p className="text-muted-foreground font-medium text-sm">
+      <div className="px-1">
+        <div className="flex items-center gap-3 mb-2">
+          <Bell className="size-6 text-primary" />
+          <h2 className="text-2xl font-bold tracking-tight">{t('notifications.title')}</h2>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
           {t('notifications.desc')}
         </p>
       </div>

@@ -44,19 +44,19 @@ type Props = {
 const getIconConfig = (title: string = "") => {
   const t = title.toLowerCase();
   if (t.includes("offer") || t.includes("quote"))
-    return { icon: ShoppingBag, iconColor: "stroke-blue-500", bgColor: "bg-blue-500/10" };
+    return { icon: ShoppingBag, iconColor: "stroke-blue-500", bgColor: "bg-blue-500/10 dark:bg-blue-500/20" };
   if (t.includes("event"))
-    return { icon: Star, iconColor: "stroke-orange-400", bgColor: "bg-orange-400/10" };
+    return { icon: Star, iconColor: "stroke-orange-400", bgColor: "bg-orange-400/10 dark:bg-orange-400/20" };
   if (t.includes("meeting") || t.includes("call"))
-    return { icon: Video, iconColor: "stroke-teal-400", bgColor: "bg-teal-400/10" };
+    return { icon: Video, iconColor: "stroke-teal-400", bgColor: "bg-teal-400/10 dark:bg-teal-400/20" };
   if (t.includes("review") || t.includes("deliver"))
-    return { icon: ScanText, iconColor: "stroke-sky-400", bgColor: "bg-sky-400/10" };
+    return { icon: ScanText, iconColor: "stroke-sky-400", bgColor: "bg-sky-400/10 dark:bg-sky-400/20" };
   if (t.includes("support") || t.includes("help"))
-    return { icon: Headset, iconColor: "stroke-red-500", bgColor: "bg-red-500/10" };
+    return { icon: Headset, iconColor: "stroke-red-500", bgColor: "bg-red-500/10 dark:bg-red-500/20" };
   if (t.includes("success") || t.includes("completed"))
-    return { icon: CheckCircle2, iconColor: "stroke-emerald-500", bgColor: "bg-emerald-500/10" };
+    return { icon: CheckCircle2, iconColor: "stroke-emerald-500", bgColor: "bg-emerald-500/10 dark:bg-emerald-500/20" };
 
-  return { icon: Info, iconColor: "stroke-slate-500", bgColor: "bg-slate-500/10" };
+  return { icon: Info, iconColor: "stroke-slate-500", bgColor: "bg-slate-500/10 dark:bg-slate-500/20" };
 };
 
 export const NotificationDropdown = ({
@@ -74,16 +74,16 @@ export const NotificationDropdown = ({
         <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
         <DropdownMenuContent
           align={align}
-          className="p-0 w-80 rounded-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-end-2 data-[side=right]:slide-in-from-start-2 data-[side=top]:slide-in-from-bottom-2 duration-300 overflow-hidden"
+          className="p-0 w-[480px] rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-2xl data-[state=open]:animate-in data-[state=closed]:animate-out duration-300 overflow-hidden"
         >
           <DropdownMenuGroup>
             {/* title */}
-            <DropdownMenuLabel className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+            <DropdownMenuLabel className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
               <div className="flex items-center gap-2">
-                <p className="text-base font-bold text-popover-foreground">
+                <p className="text-base font-bold text-slate-900 dark:text-white">
                   Notifications
                 </p>
-                {unreadCount > 0 && <Badge className="font-bold bg-primary text-white rounded-full px-2 py-0.5 text-[10px]">{unreadCount} New</Badge>}
+                {unreadCount > 0 && <Badge className="font-bold bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-[10px]">{unreadCount} New</Badge>}
               </div>
               {unreadCount > 0 && (
                 <Button
@@ -95,7 +95,7 @@ export const NotificationDropdown = ({
                       onMarkAllRead?.(); 
                     }
                   }}
-                  className="h-auto px-3 py-1.5 text-xs text-primary hover:bg-primary/10 rounded-xl transition-all font-bold uppercase tracking-tight"
+                  className="h-auto px-3 py-1.5 text-xs text-primary hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl transition-all font-bold uppercase tracking-tight"
                 >
                   Clear all
                 </Button>
@@ -106,10 +106,10 @@ export const NotificationDropdown = ({
             <div className="max-h-[350px] overflow-y-auto py-1">
               {notifications.length === 0 ? (
                 <div className="py-12 text-center flex flex-col items-center justify-center gap-2">
-                  <div className="size-12 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
-                    <Bell className="size-6 text-slate-300" />
+                  <div className="size-12 rounded-full bg-slate-50 dark:bg-slate-900/50 flex items-center justify-center">
+                    <Bell className="size-6 text-slate-300 dark:text-slate-700" />
                   </div>
-                  <p className="text-sm text-slate-400 font-medium italic">You're all caught up!</p>
+                  <p className="text-sm text-slate-400 dark:text-slate-600 font-medium italic">You're all caught up!</p>
                 </div>
               ) : (
                 notifications.map((notification) => {
@@ -126,8 +126,8 @@ export const NotificationDropdown = ({
                         }
                       }}
                       className={cn(
-                        "mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-900 border border-transparent hover:border-slate-100 dark:hover:border-slate-800 group/item",
-                        !notification.isRead && "bg-primary/5 border-primary/10 hover:border-primary/20"
+                        "mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-slate-900/80 border border-transparent hover:border-slate-100 dark:hover:border-slate-800 group/item",
+                        !notification.isRead && "bg-primary/[0.03] dark:bg-primary/10 border-primary/10 hover:border-primary/20"
                       )}
                     >
                       <div className="flex items-center gap-3 min-w-0">
@@ -137,11 +137,11 @@ export const NotificationDropdown = ({
                         <div className="min-w-0">
                           <p className={cn(
                             "text-sm truncate tracking-tight",
-                            !notification.isRead ? "font-bold text-popover-foreground" : "font-medium text-muted-foreground"
+                            !notification.isRead ? "font-bold text-slate-900 dark:text-white" : "font-medium text-slate-500 dark:text-slate-400"
                           )}>
                             {notification.title}
                           </p>
-                          <p className="max-w-44 truncate text-[11px] text-muted-foreground mt-0.5">
+                          <p className="max-w-[320px] truncate text-[11px] text-slate-500 dark:text-slate-500 mt-0.5">
                             {notification.message}
                           </p>
                         </div>

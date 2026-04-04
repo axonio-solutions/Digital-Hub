@@ -161,7 +161,7 @@ export function BrandDialog({
               )}
             />
             <DialogFooter className="pt-4">
-              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="w-full h-11 bg-primary hover:bg-primary-dark text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
+              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 border-none shadow-[0_10px_20px_-10px_rgba(59,130,246,0.5)]">
                 {(createMutation.isPending || updateMutation.isPending) ? <Loader2 className="animate-spin me-2" size={16} /> : null}
                 {editingItem ? 'Update Cluster' : 'Deploy Cluster'}
               </Button>

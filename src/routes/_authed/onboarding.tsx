@@ -11,6 +11,7 @@ import {
   Phone,
   Store,
 } from 'lucide-react'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { Badge } from '@/components/ui/badge'
 import { useTranslation } from 'react-i18next'
 
@@ -191,14 +192,14 @@ function OnboardingFlow() {
               <AccountTypeCard
                 selected={formData.role === 'buyer'}
                 onClick={() => updateFormData('role', 'buyer')}
-                icon={<User className="h-6 w-6 text-purple-600" />}
+                icon={<User className="h-6 w-6 text-primary" />}
                 title={t('role_step.buyer_title')}
                 description={t('role_step.buyer_desc')}
               />
               <AccountTypeCard
                 selected={formData.role === 'seller'}
                 onClick={() => updateFormData('role', 'seller')}
-                icon={<Briefcase className="h-6 w-6 text-purple-600" />}
+                icon={<Briefcase className="h-6 w-6 text-primary" />}
                 title={t('role_step.seller_title')}
                 description={t('role_step.seller_desc')}
               />
@@ -312,7 +313,7 @@ function OnboardingFlow() {
                     <Store className="absolute left-3 rtl:right-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="storeName"
-                      className="ps-9 rtl:pe-9"
+                      className="ps-9"
                       placeholder="Grand Auto Parts"
                       value={formData.storeName}
                       onChange={(e) => updateFormData('storeName', e.target.value)}
@@ -393,9 +394,12 @@ function OnboardingFlow() {
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center p-4 bg-muted/20">
-      <Card className="w-full max-w-5xl shadow-2xl border-none max-h-[min(90vh,700px)] flex flex-col overflow-hidden">
-        <CardHeader className="pb-4 border-b bg-white rounded-t-xl shrink-0">
+    <div className="flex min-h-svh items-center justify-center p-4 bg-muted/20 relative">
+      <div className="absolute top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+      <Card className="w-full max-w-5xl shadow-2xl border-none max-h-[min(90vh,700px)] flex flex-col overflow-hidden bg-card">
+        <CardHeader className="pb-4 border-b bg-card rounded-t-xl shrink-0">
           <div className="flex items-center justify-between px-4">
             {steps
               .filter(s => s.id !== 5 || formData.role === 'seller')
@@ -405,24 +409,24 @@ function OnboardingFlow() {
                   className={cn(
                     'flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 z-10',
                     currentStep > step.id
-                      ? 'bg-purple-600 text-white shadow-md'
+                      ? 'bg-primary text-primary-foreground shadow-md'
                       : currentStep === step.id
-                        ? 'bg-purple-500 text-white shadow-lg ring-8 ring-purple-100'
-                        : 'bg-gray-100 text-gray-400',
+                        ? 'bg-primary text-primary-foreground shadow-lg ring-8 ring-primary/20'
+                        : 'bg-muted text-muted-foreground',
                   )}
                 >
                   {currentStep > step.id ? <Check className="h-6 w-6" /> : step.id}
                 </div>
                 <div className={cn(
                   'mt-4 text-center text-[10px] md:text-xs font-bold uppercase tracking-widest',
-                  currentStep >= step.id ? 'text-purple-700' : 'text-gray-400'
+                  currentStep >= step.id ? 'text-primary' : 'text-muted-foreground'
                 )}>
                   {step.id === 4 && formData.role === 'buyer' ? 'Personal' : step.title}
                 </div>
                 {idx < arr.length - 1 && (
                   <div className={cn(
-                    'absolute top-6 left-[calc(50%+24px)] h-1 w-[calc(100%-48px)] -translate-y-1/2 bg-gray-100 transition-colors duration-500',
-                    currentStep > step.id && 'bg-purple-400'
+                    'absolute top-6 left-[calc(50%+24px)] h-1 w-[calc(100%-48px)] -translate-y-1/2 bg-muted transition-colors duration-500',
+                    currentStep > step.id && 'bg-primary/50'
                   )} />
                 )}
               </div>
@@ -430,17 +434,17 @@ function OnboardingFlow() {
           </div>
         </CardHeader>
 
-        <CardContent className="p-6 md:p-8 bg-white flex flex-col flex-1 overflow-hidden">
-          <div className="flex-1 overflow-y-auto pe-2 custom-scrollbar">
+        <CardContent className="p-6 md:p-8 bg-card flex flex-col flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto ps-2 custom-scrollbar">
             {renderStepContent()}
           </div>
 
-          <div className="mt-4 flex items-center justify-between pt-4 border-t border-gray-100/60 shrink-0">
+          <div className="mt-4 flex items-center justify-between pt-4 border-t border-border shrink-0">
               <Button
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={currentStep === 1 || isPending}
-                className="h-11 px-6 border-2 hover:bg-gray-50 font-semibold"
+                className="h-11 px-6 border-2 hover:bg-accent font-semibold"
               >
                 <ChevronLeft className="h-4 w-4 me-2 rtl:hidden" />
                 <ChevronRight className="h-4 w-4 ms-2 hidden rtl:block" />
@@ -450,7 +454,7 @@ function OnboardingFlow() {
               <Button
                 onClick={handleNext}
                 disabled={isPending || !stepValid}
-                className="bg-purple-600 hover:bg-purple-700 text-white min-w-40 h-11 text-base shadow-lg shadow-purple-600/20 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground min-w-40 h-11 text-base shadow-lg shadow-primary/20 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isPending ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -515,7 +519,7 @@ function SpecialtiesStep({ formData, setFormData }: any) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-12 space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="text-sm text-muted-foreground italic">{t('specialties_step.loading')}</p>
       </div>
     )
@@ -525,14 +529,14 @@ function SpecialtiesStep({ formData, setFormData }: any) {
     <div className="space-y-6">
       <CardHeader className="px-0 pt-0">
         <CardTitle className="text-xl font-bold font-heading uppercase tracking-tight">{t('specialties_step.title')}</CardTitle>
-        <CardDescription className="text-sm text-slate-500">
+        <CardDescription className="text-sm text-muted-foreground">
           {t('specialties_step.desc')}
         </CardDescription>
       </CardHeader>
 
       <div className="space-y-6">
         <div className="space-y-3">
-          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t('specialties_step.brands')}</Label>
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{t('specialties_step.brands')}</Label>
           <div className="flex flex-wrap gap-2">
             {taxonomy?.data?.brands?.map((brand: any) => {
               const active = formData.brandIds?.includes(brand.id)
@@ -543,8 +547,8 @@ function SpecialtiesStep({ formData, setFormData }: any) {
                   className={cn(
                     'cursor-pointer h-8 px-4 border-2 transition-all',
                     active
-                      ? 'bg-purple-600 border-purple-600 text-white shadow-md'
-                      : 'hover:border-purple-200 hover:bg-purple-50 text-slate-600',
+                      ? 'bg-primary border-primary text-primary-foreground shadow-md'
+                      : 'hover:border-primary/20 hover:bg-primary/5 text-muted-foreground',
                   )}
                   onClick={() => toggleBrand(brand.id)}
                 >
@@ -556,7 +560,7 @@ function SpecialtiesStep({ formData, setFormData }: any) {
         </div>
 
         <div className="space-y-3">
-          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t('specialties_step.categories')}</Label>
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{t('specialties_step.categories')}</Label>
           <div className="flex flex-wrap gap-2">
             {taxonomy?.data?.categories?.map((cat: any) => {
               const active = formData.categoryIds?.includes(cat.id)
@@ -567,8 +571,8 @@ function SpecialtiesStep({ formData, setFormData }: any) {
                   className={cn(
                     'cursor-pointer h-8 px-4 border-2 transition-all',
                     active
-                      ? 'bg-purple-600 border-purple-600 text-white shadow-md'
-                      : 'hover:border-purple-200 hover:bg-purple-50 text-slate-600',
+                      ? 'bg-primary border-primary text-primary-foreground shadow-md'
+                      : 'hover:border-primary/20 hover:bg-primary/5 text-muted-foreground',
                   )}
                   onClick={() => toggleCategory(cat.id)}
                 >
@@ -589,13 +593,13 @@ function AccountTypeCard({ selected, onClick, icon, title, description }: any) {
       className={cn(
         'cursor-pointer transition-all duration-300 transform',
         selected
-          ? 'bg-purple-50 border-purple-500 ring-2 ring-purple-500/20 shadow-lg -translate-y-1'
-          : 'border-border hover:border-purple-200 hover:shadow-md hover:-translate-y-0.5',
+          ? 'bg-primary/5 border-primary ring-2 ring-primary/20 shadow-lg -translate-y-1'
+          : 'border-border hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5',
       )}
       onClick={onClick}
     >
       <CardContent className="flex flex-col items-center text-center space-y-3 p-5">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100 mb-1">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 mb-1">
           {icon}
         </div>
         <div>
@@ -606,9 +610,9 @@ function AccountTypeCard({ selected, onClick, icon, title, description }: any) {
         </div>
         <div className={cn(
           "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
-          selected ? "border-purple-600 bg-purple-600" : "border-gray-200"
+          selected ? "border-primary bg-primary" : "border-border"
         )}>
-          {selected && <Check className="h-3 w-3 text-white" />}
+          {selected && <Check className="h-3 w-3 text-primary-foreground" />}
         </div>
       </CardContent>
     </Card>

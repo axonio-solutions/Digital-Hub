@@ -73,11 +73,11 @@ export function SellerSettings() {
   }
 
   return (
-    <Card className="border-primary/5 shadow-sm overflow-hidden">
-      <CardHeader className="bg-slate-50/50 border-b">
+    <Card className="border shadow-sm overflow-hidden bg-card">
+      <CardHeader className="border-b">
         <div className="flex items-center gap-2">
           <Store className="size-5 text-primary" />
-          <CardTitle className="text-xl">Business Credentials</CardTitle>
+          <CardTitle className="text-xl font-bold">Business Credentials</CardTitle>
         </div>
         <CardDescription>
           Managed your official store identity and legal registration.
@@ -101,7 +101,6 @@ export function SellerSettings() {
                   <FormControl>
                     <Input
                       placeholder="e.g. DZ Parts Pro"
-                      className="bg-slate-50 border-slate-200 focus:bg-white transition-all"
                       {...field}
                     />
                   </FormControl>
@@ -121,9 +120,8 @@ export function SellerSettings() {
                       Number
                     </FormLabel>
                     <FormControl>
-                      <Input
+                    <Input
                         placeholder="00A1234567-00/00"
-                        className="bg-slate-50 border-slate-200 focus:bg-white transition-all"
                         {...field}
                       />
                     </FormControl>
@@ -141,9 +139,8 @@ export function SellerSettings() {
                       Physical Shop Address
                     </FormLabel>
                     <FormControl>
-                      <Input
+                    <Input
                         placeholder="Full street address"
-                        className="bg-slate-50 border-slate-200 focus:bg-white transition-all"
                         {...field}
                       />
                     </FormControl>

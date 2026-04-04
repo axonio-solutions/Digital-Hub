@@ -180,27 +180,27 @@ export function BuyerAnalytics() {
               >
                 <defs>
                   <linearGradient id="radar-gradient-buyer" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.1} />
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.5} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent hideLabel />}
                 />
-                <PolarGrid className="fill-slate-100/50 dark:fill-slate-800/50" />
+                <PolarGrid className="stroke-slate-300/40 dark:stroke-slate-700/40 fill-slate-100/10 dark:fill-slate-800/5" />
                 <PolarAngleAxis
                   dataKey="label"
-                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontWeight: "bold" }}
+                  tick={{ fill: "white", fontSize: 10, fontWeight: "bold" }}
                 />
                 <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
                 <Radar
                    name="Demand"
                    dataKey="count"
                    stroke="#3b82f6"
-                   strokeWidth={2}
+                   strokeWidth={2.5}
                    fill="url(#radar-gradient-buyer)"
-                   fillOpacity={1}
+                   fillOpacity={0.6}
                 />
               </RadarChart>
             </ChartContainer>

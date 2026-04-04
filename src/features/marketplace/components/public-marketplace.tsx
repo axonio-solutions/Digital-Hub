@@ -20,8 +20,8 @@ import { useInView } from "react-intersection-observer";
 import { Link, useRouter } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { useTranslation } from "react-i18next";
-import i18n from "@/lib/i18n/config";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 
 export type TaxonomyData = {
@@ -264,40 +264,42 @@ export function PublicMarketplace() {
 
   return (
     <ExploreContext.Provider value={store}>
-      <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 overflow-hidden">
+      <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden">
         {/* Public Header */}
-        <header className="px-6 lg:px-14 h-20 flex items-center justify-between border-b bg-white relative z-10 w-full shadow-sm">
+        <header className="px-6 lg:px-14 h-20 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 relative z-10 w-full shadow-sm">
           <div className="flex items-center gap-2">
             <Link to="/" className="flex items-center gap-2">
-              <div className="bg-blue-600 rounded-lg p-1.5 flex items-center justify-center">
-                <Settings className="w-5 h-5 text-white" />
+              <div className="bg-primary rounded-lg p-1.5 flex items-center justify-center shadow-lg shadow-primary/20">
+                <Settings className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="font-bold text-2xl tracking-tighter text-slate-900">
+              <span className="font-bold text-2xl tracking-tighter text-foreground">
                 MLILA
               </span>
             </Link>
           </div>
-          <nav className="hidden md:flex gap-8 text-sm font-medium text-slate-600">
-            <Link to="/" hash="how-it-works" className="hover:text-blue-600 transition-colors">
+          <nav className="hidden md:flex gap-8 text-sm font-medium text-muted-foreground">
+            <Link to="/" hash="how-it-works" className="hover:text-primary transition-colors">
               {t('home/layout:nav.how_it_works')}
             </Link>
-            <Link to="/" hash="benefits" className="hover:text-blue-600 transition-colors">
+            <Link to="/" hash="benefits" className="hover:text-primary transition-colors">
               {t('home/layout:nav.benefits')}
             </Link>
-            <Link to="/explore" className="text-blue-600 font-bold underline decoration-2 underline-offset-4">
+            <Link to="/explore" className="text-primary font-bold underline decoration-2 underline-offset-4">
               {t('home/layout:nav.explore_marketplace')}
             </Link>
-            <Link to="/" hash="faq" className="hover:text-blue-600 transition-colors">
+            <Link to="/" hash="faq" className="hover:text-primary transition-colors">
               {t('home/layout:nav.faq')}
             </Link>
           </nav>
           <div className="flex gap-4 items-center">
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 mr-2">
+            <div className="flex items-center gap-1 bg-muted rounded-lg p-1 mr-2 px-2">
               <Button
                 variant="ghost"
                 size="sm"
-                className={`h-7 px-2 text-[10px] font-bold rounded-md transition-all ${i18n.language === 'ar' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500'
-                  }`}
+                className={cn(
+                  "h-7 px-2 text-[10px] font-bold rounded-md transition-all",
+                  i18n.language === 'ar' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground'
+                )}
                 onClick={() => changeLanguage('ar')}
               >
                 العربية
@@ -305,22 +307,16 @@ export function PublicMarketplace() {
               <Button
                 variant="ghost"
                 size="sm"
-                className={`h-7 px-2 text-[10px] font-bold rounded-md transition-all ${i18n.language === 'en' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500'
-                  }`}
+                className={cn(
+                  "h-7 px-2 text-[10px] font-bold rounded-md transition-all",
+                  i18n.language === 'en' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground'
+                )}
                 onClick={() => changeLanguage('en')}
               >
                 EN
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`h-7 px-2 text-[10px] font-bold rounded-md transition-all ${i18n.language === 'fr' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500'
-                  }`}
-                onClick={() => changeLanguage('fr')}
-              >
-                FR
-              </Button>
             </div>
+            <ThemeToggle />
             <Link to="/login">
               <Button
                 variant="outline"
@@ -330,14 +326,14 @@ export function PublicMarketplace() {
               </Button>
             </Link>
             <Link to="/login">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
                 {t('home/layout:header.get_started')}
               </Button>
             </Link>
           </div>
         </header>
 
-        <div className="flex-1 w-full bg-slate-50/50 dark:bg-slate-950/20 px-4 py-4 sm:py-6">
+        <div className="flex-1 w-full bg-slate-50/50 dark:bg-slate-950/50 px-4 py-4 sm:py-6">
           <div className="flex flex-col gap-6 lg:flex-row max-w-[1400px] mx-auto">
             {/* Desktop Filters Sidebar */}
             <aside className="hidden w-64 lg:block shrink-0">
@@ -352,8 +348,8 @@ export function PublicMarketplace() {
               <div className="mb-4 flex flex-col gap-4 sm:mb-6">
 
                 <div className="mb-2 flex items-center gap-3">
-                  <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 hover:text-blue-700 border-none transition-all px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-tighter shadow-sm">
-                    <Sparkle className="w-3 h-3 me-1.5 fill-blue-600" />
+                  <Badge className="bg-primary/10 text-primary hover:bg-primary/10 border-none transition-all px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-tighter shadow-sm">
+                    <Sparkle className="w-3 h-3 me-1.5 fill-primary" />
                     {t('header.badge')}
                   </Badge>
                 </div>
@@ -460,7 +456,7 @@ export function PublicMarketplace() {
                     {allRequests.map((request: any) => (
                       <Card
                         key={request.id}
-                        className="group p-0 bg-white dark:bg-card border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/20 transition-all flex flex-col h-full ring-0 outline-none"
+                        className="group p-0 bg-card border border-border rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/20 transition-all flex flex-col h-full ring-0 outline-none"
                       >
                         {/* Image Section (Flush with top, no gap) */}
                         <div className="relative h-48 sm:h-80 w-full bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 overflow-hidden m-0 rounded-t-[inherit]">
@@ -477,7 +473,7 @@ export function PublicMarketplace() {
                           )}
 
                           <div className="absolute top-4 start-4 flex flex-col gap-2">
-                            <Badge className="bg-blue-600 text-white border-none font-black text-[10px] uppercase shadow-lg px-2 py-1">
+                            <Badge className="bg-primary text-primary-foreground border-none font-black text-[10px] uppercase shadow-lg px-2 py-1">
                               {t('card.badge_looking')}
                             </Badge>
                             {request.quotes?.length > 0 && (
@@ -489,7 +485,7 @@ export function PublicMarketplace() {
 
                           {/* Quotes Count Badge on Image */}
                           <div className="absolute top-4 end-4">
-                            <Badge className="bg-white/90 backdrop-blur-md text-slate-900 border-none font-black text-[10px] uppercase shadow-lg px-3 py-1 flex items-center gap-1.5 rounded-full">
+                            <Badge className="bg-card/90 backdrop-blur-md text-foreground border-none font-black text-[10px] uppercase shadow-lg px-3 py-1 flex items-center gap-1.5 rounded-full">
                               <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                               {t('card.quotes_count', { count: request.quotes?.length || 0 })}
                             </Badge>
@@ -504,19 +500,19 @@ export function PublicMarketplace() {
                               {request.partName}
                             </h4>
                             <div className="flex flex-wrap items-center gap-2">
-                              <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-widest border-slate-200 py-0.5 h-auto px-2 rounded-md bg-slate-50/50">
+                              <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-widest border-border py-0.5 h-auto px-2 rounded-md bg-muted/50">
                                 {request.brand?.brand || request.vehicleBrand}
                               </Badge>
-                              <Badge variant="secondary" className="bg-slate-100/50 text-slate-500 font-bold uppercase text-[9px] tracking-widest border-none px-2 py-0.5 rounded-md">
+                              <Badge variant="secondary" className="bg-muted text-muted-foreground font-bold uppercase text-[9px] tracking-widest border-none px-2 py-0.5 rounded-md">
                                 {request.category?.name || t('card.default_category')}
                               </Badge>
                               {request.modelYear && (
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                                   {t('card.model_year', { year: request.modelYear })}
                                 </span>
                               )}
-                              <span className="text-slate-300 mx-1">•</span>
-                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                              <span className="text-muted-foreground/30 mx-1">•</span>
+                              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                                 <Clock className="size-3" />
                                 {formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })}
                               </span>
@@ -575,17 +571,17 @@ export function PublicMarketplace() {
         </div>
 
         {/* Public Footer */}
-        <footer className="bg-white border-t border-slate-200 py-12 px-6 mt-12">
+        <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-12 px-6 mt-12">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
-              <div className="bg-slate-900 rounded-lg p-1.5 flex items-center justify-center">
+              <div className="bg-slate-900 dark:bg-blue-600 rounded-lg p-1.5 flex items-center justify-center">
                 <Settings className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl tracking-tight text-slate-900">
+              <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
                 MLILA
               </span>
             </div>
-            <p className="text-slate-500 text-sm font-medium">
+            <p className="text-muted-foreground text-sm font-medium">
               {t('home/layout:footer.rights')}
             </p>
           </div>
