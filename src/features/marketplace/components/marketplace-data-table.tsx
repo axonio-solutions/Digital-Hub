@@ -30,6 +30,8 @@ import {
 import { DataTable } from '@/components/ui/data-table/data-table'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
 import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
+import { cn } from '@/lib/utils'
 
 const dateLocaleMap: Record<string, any> = {
   ar: arDZ,
@@ -138,7 +140,7 @@ export function MarketplaceDataTable({
     return Array.from(categories)
       .sort()
       .map((cat) => ({
-        label: cat,
+        label: tCategory(cat, t),
         value: cat,
         icon: Layers,
       }))
@@ -166,11 +168,14 @@ export function MarketplaceDataTable({
                   </div>
                 )}
               </div>
-              <div className="flex flex-col text-start">
-                <span className="font-medium text-sm">
+              <div className={cn(
+                "flex flex-col w-full",
+                i18n.dir() === 'rtl' ? "items-start text-right" : "items-start text-left"
+              )}>
+                <span className="font-medium text-sm w-fit" dir="auto">
                   {row.original.partName}
                 </span>
-                <span className="text-[10px] text-muted-foreground uppercase">
+                <span className="text-[10px] text-muted-foreground uppercase w-fit" dir="auto">
                   {t('table.defaults.id_prefix')} {row.original.id.substring(0, 8)}
                 </span>
               </div>
@@ -184,11 +189,14 @@ export function MarketplaceDataTable({
         cell: ({ row }) => {
           const brand = row.original.vehicleBrand || row.original.brand?.brand
           return (
-            <div className="flex flex-col text-start">
-              <span className="text-sm font-medium">
+            <div className={cn(
+              "flex flex-col w-full",
+              i18n.dir() === 'rtl' ? "items-start text-right" : "items-start text-left"
+            )}>
+              <span className="text-sm font-medium w-fit" dir="auto">
                 {brand} {row.original.vehicleModel || ''}
               </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-muted-foreground w-fit" dir="auto">
                 {row.original.modelYear} • {row.original.brand?.clusterRegion || t('table.defaults.general')}
               </span>
             </div>
@@ -199,10 +207,10 @@ export function MarketplaceDataTable({
         accessorKey: 'category',
         header: t('table.headers.category'),
         cell: ({ row }) => {
-          const category = row.original.category?.name || row.original.category || t('table.defaults.part')
+          const category = row.original.category?.name || row.original.category 
           return (
             <Badge variant="secondary">
-              {category}
+              {tCategory(category, t)}
             </Badge>
           )
         }
@@ -227,9 +235,15 @@ export function MarketplaceDataTable({
           accessorKey: 'quoteStatus',
           header: t('table.headers.my_offer'),
           cell: ({ row }: { row: any }) => (
-            <div className="flex flex-col gap-1">
-              <span className="text-sm font-bold">
-                {new Intl.NumberFormat(i18n.language).format(row.original.quotePrice)} <span className="text-[10px] font-normal">DZD</span>
+            <div className={cn(
+              "flex flex-col gap-1 w-full",
+              i18n.dir() === 'rtl' ? "items-start text-right" : "items-start text-left"
+            )}>
+              <span className="text-sm font-bold w-fit">
+                {new Intl.NumberFormat(i18n.language).format(row.original.quotePrice)}{' '}
+                <span className="text-[10px] font-normal uppercase">
+                  {t('table.defaults.currency')}
+                </span>
               </span>
               <Badge
                 variant={row.original.quoteStatus === 'accepted' ? 'default' : 'outline'}

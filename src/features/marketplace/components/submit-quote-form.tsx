@@ -8,6 +8,7 @@ import type { QuoteInput } from '@/types/quote-schemas'
 import { quoteSchema } from '@/types/quote-schemas'
 import { useSubmitQuote, useUpdateQuote } from '@/features/marketplace/hooks/use-marketplace'
 import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
 
 import { ImageSlider } from '@/components/ui/image-slider'
 import { Button } from '@/components/ui/button'
@@ -125,7 +126,7 @@ export function SubmitQuoteForm({
                 <CardContent className="py-0 pb-4 space-y-3">
                    <div>
                      <div className="text-[10px] font-black uppercase text-primary/60 mb-0.5 tracking-tight">{t('form.category')}</div>
-                     <div className="font-black text-lg uppercase leading-tight">{category || t('form.no_notes')}</div>
+                     <div className="font-black text-lg uppercase leading-tight">{tCategory(category, t)}</div>
                    </div>
                    
                    <div className="pt-2 border-t border-dashed border-muted-foreground/20">

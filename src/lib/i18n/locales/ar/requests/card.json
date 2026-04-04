@@ -1,18 +1,18 @@
 {
   "badges": {
-    "offers_received": "تم استلام عروض",
+    "offers_received": "تم تلقي عروض",
     "new": "جديد",
-    "premium_grid": "شبكة ممتازة"
+    "premium_grid": "شبكة مميزة"
   },
   "labels": {
-    "quotes": "عروض",
-    "id_prefix": "معرف"
+    "quotes": "العروض",
+    "id_prefix": "المعرف"
   },
   "actions": {
     "review": "مراجعة",
     "details": "تفاصيل"
   },
   "defaults": {
-    "note": "يطلب {{title}} لـ {{brand}} {{modelYear}}."
+    "note": "طلب {{title}} لسيارة {{brand}} موديل {{modelYear}}."
   }
 }

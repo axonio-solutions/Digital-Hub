@@ -3,39 +3,39 @@
     "overview": "نظرة عامة",
     "demands_hub": "مركز الطلبات",
     "my_garage": "مرآبي",
-    "live_requests": "الطلبات الحية",
+    "live_requests": "طلبات حية",
     "my_quotes": "عروضي",
-    "global_metrics": "المقاييس العامة",
+    "global_metrics": "إحصائيات عامة",
     "user_moderation": "إدارة المستخدمين",
     "buyers_hub": "مركز المشترين",
     "sellers_hub": "مركز البائعين",
-    "categories": "الأصناف",
+    "categories": "الفئات",
     "request_audit": "تدقيق الطلبات",
     "settings": "الإعدادات",
-    "support": "المساعدة والدعم",
+    "support": "الدعم والمساعدة",
     "cloud_logs": "سجلات السحابة",
     "admin_settings": "إعدادات المسؤول"
   },
   "labels": {
     "buyer_hub": "مركز المشتري",
     "seller_hub": "مركز البائع",
-    "admin_control": "لوحة التحكم"
+    "admin_control": "تحكم المسؤول"
   },
   "breadcrumbs": {
     "dashboard": "لوحة التحكم",
     "overview": "نظرة عامة",
     "demands_hub": "مركز الطلبات",
-    "live_feed": "الموجز الحي",
+    "live_feed": "البث المباشر",
     "my_quotes": "عروضي",
     "audit_log": "سجل التدقيق",
     "my_garage": "مرآبي",
     "buyers_intelligence": "ذكاء المشترين",
-    "sellers_ecosystem": "نظام البائعين",
-    "taxonomy_management": "إدارة التصنيفات",
+    "sellers_ecosystem": "شبكة البائعين",
+    "taxonomy_management": "إدارة الفئات",
     "user_moderation": "إدارة المستخدمين",
     "admin_settings": "إعدادات المسؤول",
     "cloud_logs": "سجلات السحابة",
-    "support": "المساعدة والدعم"
+    "support": "الدعم والمساعدة"
   },
   "user_dropdown": {
     "role": "الدور",

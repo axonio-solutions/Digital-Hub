@@ -21,7 +21,8 @@
   "columns": {
     "part": "البياسة (Piece)",
     "vehicle": "الطوموبيل",
-    "price": "السومة",
+    "category": "الفئة (Catégorie)",
+    "price": "السومة (Prix)",
     "status": "الحالة",
     "date": "التاريخ",
     "actions": "الإجراءات",
@@ -29,6 +30,11 @@
       "accepted": "مقبول",
       "pending": "فالانتظار",
       "rejected": "مرفوض"
+    },
+    "currency": "د.ج",
+    "conditions": {
+      "new": "جديد",
+      "used": "مستعمل"
     }
   },
   "table": {

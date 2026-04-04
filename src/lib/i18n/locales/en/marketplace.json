@@ -64,7 +64,8 @@
     "defaults": {
       "general": "General",
       "part": "Part",
-      "id_prefix": "ID:"
+      "id_prefix": "ID:",
+      "currency": "DZD"
     }
   },
   "offer_details": {

@@ -27,6 +27,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import i18n from '@/lib/i18n/config'
 
 export function SellerQuotesHub() {
   const { t } = useTranslation('quotes')
@@ -123,7 +124,9 @@ export function SellerQuotesHub() {
             <Banknote className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pipelineValue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {pipelineValue.toLocaleString(i18n.language)} <span className="text-sm font-normal text-muted-foreground">{t('columns.currency')}</span>
+            </div>
             <p className="text-xs text-muted-foreground">{t('hub.stats.pipeline_sub')}</p>
           </CardContent>
         </Card>
@@ -139,7 +142,7 @@ export function SellerQuotesHub() {
         </Card>
       </div>
 
-      <Tabs defaultValue="active" className="space-y-4">
+      <Tabs defaultValue="active" className="space-y-4" dir={i18n.dir()}>
         <TabsList>
           <TabsTrigger value="active">
             {t('hub.tabs.active')} ({pendingQuotes.length})
@@ -187,6 +190,7 @@ export function SellerQuotesHub() {
                   model: selectedQuote.request?.vehicleModel || 'Unknown',
                   year: selectedQuote.request?.modelYear || 'Unknown'
                 }}
+                category={selectedQuote.request?.category?.name || selectedQuote.request?.category}
                 oemNumber={selectedQuote.request?.oemNumber}
                 notes={selectedQuote.request?.notes}
                 initialData={{

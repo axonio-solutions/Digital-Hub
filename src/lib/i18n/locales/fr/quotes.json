@@ -29,6 +29,11 @@
       "accepted": "Accepté",
       "pending": "En attente",
       "rejected": "Rejeté"
+    },
+    "currency": "DA",
+    "conditions": {
+      "new": "Neuf",
+      "used": "Occasion"
     }
   },
   "table": {

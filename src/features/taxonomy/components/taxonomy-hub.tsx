@@ -55,6 +55,7 @@ type Brand = {
 }
 
 import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
 
 export function TaxonomyHub() {
   const { t } = useTranslation('dashboard/taxonomy')
@@ -110,7 +111,7 @@ export function TaxonomyHub() {
           <div className="flex items-center gap-2">
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-slate-900 dark:text-white truncate max-w-[200px] leading-tight group-hover:text-blue-600 transition-colors">
-                {String(row.original.name ?? 'Unknown')}
+                {tCategory(row.original.name, t)}
               </span>
               <span className="text-[10px] font-mono font-bold text-slate-400 opacity-60">#{String(row.original.id ?? '').substring(0, 8)}</span>
             </div>

@@ -185,7 +185,7 @@ export function MarketplaceHub() {
 
         <div className="flex flex-col gap-8">
           <main className="flex flex-col gap-6">
-            <Tabs defaultValue="open" className="w-full">
+            <Tabs defaultValue="open" className="w-full" dir={i18n.dir()}>
               <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <TabsList className="grid w-full grid-cols-2 max-w-md">
                   <TabsTrigger value="open" className="font-bold uppercase tracking-wider text-[10px]">
@@ -336,9 +336,10 @@ export function MarketplaceHub() {
              <div className="grid grid-cols-2 gap-4">
               <div className="p-6 rounded-2xl border bg-muted/50 text-center space-y-1">
                 <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t('offer_details.price')}</div>
-                <div className="text-2xl font-black text-primary">
-                  {new Intl.NumberFormat(i18n.language).format(selectedRequest?.quotePrice)} <span className="text-sm font-black opacity-60">DZD</span>
-                </div>
+                  {new Intl.NumberFormat(i18n.language).format(selectedRequest?.quotePrice)}{' '}
+                  <span className="text-sm font-black opacity-60 uppercase">
+                    {t('table.defaults.currency')}
+                  </span>
               </div>
               <div className="p-6 rounded-2xl border bg-muted/50 text-center space-y-1">
                 <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t('offer_details.condition')}</div>

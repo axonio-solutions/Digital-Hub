@@ -31,6 +31,7 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useOpenRequests } from '@/features/requests/hooks/use-requests'
 import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
 
 export function MarketplaceFeed() {
   const { t } = useTranslation('marketplace')
@@ -236,6 +237,10 @@ export function MarketplaceFeed() {
                   <div className="font-bold">{selectedRequest.vehicleBrand} ({selectedRequest.modelYear})</div>
                 </div>
                 <div>
+                  <div className="text-muted-foreground mb-1">{t('form.category', { defaultValue: 'Category' })}</div>
+                  <div className="font-bold">{tCategory(selectedRequest.category?.name || selectedRequest.category, t)}</div>
+                </div>
+                <div>
                   <div className="text-muted-foreground mb-1">{t('form.part_name')}</div>
                   <div className="font-bold">{selectedRequest.partName}</div>
                 </div>
@@ -244,7 +249,7 @@ export function MarketplaceFeed() {
             <SubmitQuoteForm
               requestId={selectedRequest.id}
               sellerId={sellerId}
-              category={selectedRequest.category?.name || selectedRequest.category}
+              category={selectedRequest.category?.name || selectedRequest.category || selectedRequest.category_id}
               vehicleInfo={{
                 brand: selectedRequest.vehicleBrand,
                 model: selectedRequest.vehicleModel,

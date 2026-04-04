@@ -30,7 +30,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export function SellerOverview() {
-  const { t } = useTranslation(['dashboard/seller', 'dashboard/layout'])
+  const { t, i18n } = useTranslation(['dashboard/seller', 'dashboard/layout'])
   const { data: user } = useAuth()
   const sellerId = user?.id || ''
 
@@ -145,7 +145,7 @@ export function SellerOverview() {
           <CardHeader>
             <CardDescription>{t('stats.earnings.label')}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-purple-600 dark:text-purple-500">
-              {stats.totalRevenue.toLocaleString()}
+              {stats.totalRevenue.toLocaleString(i18n.language)} <span className="text-sm font-normal text-muted-foreground">{t('currency')}</span>
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
@@ -181,7 +181,7 @@ export function SellerOverview() {
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
-                    tickFormatter={(value) => `${value.toLocaleString()}`}
+                    tickFormatter={(value) => `${value.toLocaleString(i18n.language)} ${t('currency')}`}
                   />
                   <Tooltip
                     content={({ active, payload }) => {
@@ -190,10 +190,10 @@ export function SellerOverview() {
                           <div className="rounded-lg border bg-background p-2 shadow-sm">
                             <div className="grid grid-cols-2 gap-2">
                               <span className="text-[0.70rem] uppercase text-muted-foreground">
-                                DZD
+                                {t('currency')}
                               </span>
                               <span className="font-bold text-muted-foreground text-[0.70rem]">
-                                {payload[0].value?.toLocaleString()}
+                                {payload[0].value?.toLocaleString(i18n.language)}
                               </span>
                             </div>
                           </div>
@@ -313,7 +313,7 @@ export function SellerOverview() {
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">{q.request?.partName}</p>
                     <p className="text-xs text-muted-foreground">
-                      {(q.price || 0).toLocaleString()} DZD
+                      {(q.price || 0).toLocaleString(i18n.language)} {t('currency')}
                     </p>
                   </div>
                   <p className="text-[10px] text-muted-foreground font-mono">

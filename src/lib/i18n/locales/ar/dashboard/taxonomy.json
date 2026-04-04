@@ -1,34 +1,34 @@
 {
-  "title": "مركز التصنيف",
-  "description": "نظم التصنيف الداخلي للقطع ومجموعات المركبات للحفاظ على إشارات طلب السوق عالية الدقة.",
+  "title": "مركز التصنيفات",
+  "description": "نظم التصنيف الداخلي للقطع ومجموعات المركبات للحفاظ على دقة إشارات الطلب في السوق.",
   "buttons": {
     "export": "تصدير",
     "add_new": "إضافة جديد"
   },
   "tabs": {
-    "categories": "الأصناف",
-    "brands": "البراندات"
+    "categories": "الفئات",
+    "brands": "علامات السيارات"
   },
   "table": {
     "columns": {
-      "category_label": "اسم الصنف",
-      "demand_logic": "منطق الطلب (الطلبات)",
-      "manufacturer_spec": "مواصفات المصنع",
+      "category_label": "اسم الفئة",
+      "demand_logic": "منطق الطلب (طلبات)",
+      "manufacturer_spec": "مواصفات الشركة المصنعة",
       "cluster_origin": "أصل المجموعة",
       "cluster_region": "منطقة المجموعة",
       "active_demand": "الطلب النشط",
       "status": "الحالة",
       "actions": "الإجراءات",
-      "no_description": "لا يوجد وصف مقدم.",
-      "manufacturer_cluster": "مجموعة المصنع"
+      "no_description": "لم يتم تقديم وصف.",
+      "manufacturer_cluster": "مجموعة الشركة المصنعة"
     },
     "search_placeholder": "بحث في {{tab}}...",
     "actions": {
-      "category_label": "إجراءات الصنف",
-      "brand_label": "إجراءات البراند",
-      "update_label": "تحديث الاسم",
+      "category_label": "إجراءات الفئة",
+      "brand_label": "إجراءات العلامة",
+      "update_label": "تحديث التسمية",
       "update_cluster": "تحديث المجموعة",
-      "delete_entry": "حذف الإدخال",
+      "delete_entry": "حذف القيد",
       "delete_cluster": "حذف المجموعة",
       "open_menu": "فتح القائمة"
     }

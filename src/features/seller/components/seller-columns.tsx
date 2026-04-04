@@ -10,7 +10,10 @@ import {
 } from 'lucide-react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatDistanceToNow } from 'date-fns'
+import { arDZ, fr, enUS } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
+import { cn } from '@/lib/utils'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -26,7 +29,19 @@ import {
 export const useSellerColumns = (
   onAction: (action: { type: string; item: any }) => void
 ): ColumnDef<any>[] => {
-  const { t } = useTranslation('quotes')
+  const { t, i18n } = useTranslation('quotes')
+
+  const currentLocale = useMemo(() => {
+    switch (i18n.language) {
+      case 'ar':
+      case 'ar-DZ':
+        return arDZ
+      case 'fr':
+        return fr
+      default:
+        return enUS
+    }
+  }, [i18n.language])
 
   return useMemo(
     () => [
@@ -65,19 +80,39 @@ export const useSellerColumns = (
         },
       },
       {
+        accessorKey: 'category',
+        header: t('columns.category', { defaultValue: 'Category' }),
+        cell: ({ row }) => {
+          const category = row.original.request?.category?.name || row.original.request?.category
+          return (
+            <Badge variant="secondary" className="text-[10px]">
+              {tCategory(category, t)}
+            </Badge>
+          )
+        }
+      },
+      {
         accessorKey: 'price',
         header: t('columns.price'),
-        cell: ({ row }) => (
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1 font-semibold">
-              <span className="text-sm">{(row.original.price || 0).toLocaleString()}</span>
-              <span className="text-[10px] text-muted-foreground">DZD</span>
+        cell: ({ row }) => {
+          const price = row.original.price || 0
+          const condition = row.original.condition
+          return (
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1 font-semibold">
+                <span className="text-sm">
+                  {price.toLocaleString(i18n.language === 'ar' ? 'ar-DZ' : i18n.language)}
+                </span>
+                <span className="text-[10px] text-muted-foreground uppercase">
+                  {t('columns.currency')}
+                </span>
+              </div>
+              <span className="text-[10px] text-muted-foreground">
+                {t(`columns.conditions.${condition}`, { defaultValue: condition })}
+              </span>
             </div>
-            <span className="text-[10px] text-muted-foreground">
-              {row.original.condition}
-            </span>
-          </div>
-        ),
+          )
+        },
       },
       {
         accessorKey: 'status',
@@ -91,7 +126,7 @@ export const useSellerColumns = (
                 status === 'rejected' ? 'destructive' :
                 'secondary'
               }
-              className="capitalize"
+              className={cn(i18n.language === 'ar' ? '' : 'capitalize')}
             >
               {t(`columns.statuses.${status}`)}
             </Badge>
@@ -105,7 +140,10 @@ export const useSellerColumns = (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-3 w-3" />
             <span className="text-xs">
-              {formatDistanceToNow(new Date(row.original.createdAt), { addSuffix: true })}
+              {formatDistanceToNow(new Date(row.original.createdAt), { 
+                addSuffix: true,
+                locale: currentLocale
+              })}
             </span>
           </div>
         ),

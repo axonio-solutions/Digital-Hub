@@ -29,6 +29,11 @@
       "accepted": "Accepted",
       "pending": "Pending",
       "rejected": "Rejected"
+    },
+    "currency": "DZD",
+    "conditions": {
+      "new": "New",
+      "used": "Used"
     }
   },
   "table": {

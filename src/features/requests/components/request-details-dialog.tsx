@@ -20,6 +20,7 @@ import {
 import { ImageSlider } from '@/components/ui/image-slider'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { format } from 'date-fns'
+import { tCategory } from '@/utils/category-utils'
 
 interface RequestDetailsDialogProps {
   request: any | null
@@ -68,7 +69,7 @@ export function RequestDetailsDialog({
                 </div>
                 <div className="p-3 rounded-lg bg-muted/50 border">
                   <div className="text-[10px] text-muted-foreground uppercase font-bold">{t('labels.part_category')}</div>
-                  <div className="font-semibold">{request?.category?.name || request?.category || t('labels.general')}</div>
+                  <div className="font-semibold">{tCategory(request?.category || request?.category_id, t)}</div>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/50 border col-span-2">
                   <div className="text-[10px] text-muted-foreground uppercase font-bold">{t('labels.model_year')}</div>

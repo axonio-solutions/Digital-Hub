@@ -2,41 +2,41 @@
   "filters": {
     "categories": "فئات القطع",
     "all_categories": "جميع الفئات",
-    "brands": "علامات السيارات",
-    "condition": "حالة القطعة",
+    "brands": "علامات المركبات",
+    "condition": "تفضيل الحالة",
     "urgency": "الاستعجال",
-    "any_time": "أي وقت",
-    "asap": "عاجل جداً (السيارة معطلة)",
+    "any_time": "في أي وقت",
+    "asap": "في أقرب وقت (السيارة معطلة)",
     "within_week": "خلال أسبوع",
     "conditions": {
-      "new": "جديدة (أصلية/بديلة)",
-      "used": "مستعملة / خردة",
-      "refurbished": "مجددة"
+      "new": "جديد (أصلي/تجاري)",
+      "used": "مستعمل / تشليح",
+      "refurbished": "مجدد"
     }
   },
   "header": {
     "title": "إشارات الطلب",
-    "badge": "موجز الطلب الحي",
-    "description": "اكتشف طلبات المشترين النشطة عبر شبكتنا. وفر لهم القطعة الدقيقة التي يبحثون عنها."
+    "badge": "طلبات السوق المباشرة",
+    "description": "اكتشف طلبات المشترين النشطة في شبكتنا. وفر لهم القطعة التي يبحثون عنها بدقة."
   },
   "controls": {
     "filters_btn": "تصفية",
     "requests_count": "{{count}} طلبات",
-    "search_placeholder": "ابحث باسم القطعة، العلامة، أو رقم OEM...",
-    "grid_view": "عرض الشبكة",
-    "list_view": "عرض القائمة"
+    "search_placeholder": "ابحث باسم القطعة، العلامة، أو الرقم الأصلي...",
+    "grid_view": "عرض شبكي",
+    "list_view": "عرض قائمة"
   },
   "empty": {
-    "title": "لم يتم العثور على طلبات تطابق اختياراتك.",
-    "description": "حاول تعديل معايير البحث أو إزالة بعض الفلاتر."
+    "title": "لم يتم العثور على طلبات تطابق معاييرك.",
+    "description": "جرب تعديل شروط البحث أو إزالة بعض الفلاتر."
   },
   "card": {
-    "badge_looking": "مطلوب قطعة",
-    "badge_offers": "تم استلام عروض",
+    "badge_looking": "يبحث عن قطعة",
+    "badge_offers": "تم تلقي عروض",
     "quotes_count": "{{count}} عروض",
     "model_year": "سنة {{year}}",
-    "default_category": "قطعة زينة",
+    "default_category": "قطعة غيار",
     "action_btn": "سجل الدخول لتقديم عرض",
-    "request_summary": "يطلب {{partName}} لـ {{brand}} {{year}}."
+    "request_summary": "طلب {{partName}} لسيارة {{brand}} موديل {{year}}."
   }
 }

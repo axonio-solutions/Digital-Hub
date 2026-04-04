@@ -3,6 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
 import { cn } from '@/lib/utils'
 
 interface MarketplaceGridViewProps {
@@ -72,6 +73,11 @@ export function MarketplaceGridView({
                 <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-1 italic uppercase tracking-tighter">
                   {item.partName}
                 </h3>
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-none text-[9px] font-bold uppercase px-1.5 py-0 h-4">
+                    {tCategory(item.category?.name || item.category, t)}
+                  </Badge>
+                </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <CarFront className="size-3.5" />
                   <p className="text-xs font-medium">

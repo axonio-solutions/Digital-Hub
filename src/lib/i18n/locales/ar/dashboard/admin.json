@@ -1,6 +1,6 @@
 {
-  "welcome": "أهلاً بك من جديد، إليك ملخص نشاط منصة مليلة اليوم.",
-  "export": "صدّر التقرير",
+  "welcome": "مرحباً بعودتك، إليك آخر المستجدات في ميليلة اليوم.",
+  "export": "تصدير التقرير",
   "intelligence": {
     "buyer": "ذكاء المشترين",
     "seller": "ذكاء البائعين",
@@ -8,8 +8,8 @@
   },
   "subtitle": {
     "buyer": "تحليلات الطلب في الوقت الفعلي وتوقعات السوق",
-    "seller": "توزيع الإمدادات الاستراتيجي والربط العالمي للتجار",
-    "marketplace": "إشارات الطلب الفورية وسرعة التلبية"
+    "seller": "التوزيع الاستراتيجي للعرض والاتصال العالمي للتجار",
+    "marketplace": "إشارات الطلب في الوقت الفعلي وسرعة التنفيذ"
   },
   "metrics": {
     "inquiries_tracked": "الاستفسارات المتتبعة",
@@ -18,98 +18,82 @@
     "market_liquidity": "سيولة السوق",
     "avg_offers_desc": "متوسط العروض لكل استفسار",
     "conversion_rate": "معدل التحويل",
-    "fulfillment_success": "نجاح التلبية",
-    "fulfillment_success_desc": "الطلبات المطابقة للعروض",
+    "fulfillment_success": "نجاح التنفيذ",
+    "fulfillment_success_desc": "الطلبات التي تمت مطابقتها مع عروض",
     "response_time": "وقت الاستجابة",
     "market_velocity": "سرعة السوق",
-    "avg_response_time_desc": "السرعة المتوسطة للعرض الأول",
+    "avg_response_time_desc": "متوسط السرعة لأول عرض",
     "buyer_pool": "مجمع المشترين",
-    "network_scale": "حجم الشبكة",
-    "verified_buyers": "المشترون المعتمدون في المنصة",
-    "quotes_frequency": "تكرار العروض",
-    "supply_engagement": "تفاعل الموردين",
-    "win_rate": "معدل الفوز في الشبكة",
-    "lead_conversion": "تحويل العملاء",
-    "win_rate_desc": "مطابقات العروض للطلبات الناجحة",
-    "turnaround": "متوسط الإنجاز",
+    "network_scale": "نطاق الشبكة",
+    "verified_buyers": "المشترون الموثقون في المنصة",
+    "quotes_frequency": "تردد عروض الأسعار",
+    "supply_engagement": "تفاعل التوريد",
+    "win_rate": "معدل فوز الشبكة",
+    "lead_conversion": "تحويل العملاء المحتملين",
+    "win_rate_desc": "المطابقات الناجحة بين العروض والطلبات",
+    "turnaround": "متوسط وقت الإنجاز",
     "response_velocity": "سرعة الاستجابة",
     "merchant_base": "قاعدة التجار",
     "merchant_capacity": "قدرة التجار",
-    "verified_sellers": "نقاط التوريد النشطة والمعتمدة"
+    "verified_sellers": "نقاط التوريد النشطة الموثقة"
   },
   "charts": {
     "demand_velocity": "سرعة الطلب",
-    "brand_origin": "أصل العلامة التجارية",
-    "request_volume_title": "سرعة الطلبات",
+    "brand_origin": "منشأ العلامة",
+    "request_volume_title": "سرعة الطلب",
     "supply_density": "كثافة التوريد",
-    "category_focus": "التركيز على الفئة",
-    "quote_velocity": "سرعة العروض",
+    "category_focus": "التركيز على الفئات",
+    "quote_velocity": "سرعة عروض الأسعار",
     "market_throughput": "إنتاجية السوق خلال 30 يوماً",
     "request_volume": {
       "title": "حجم الطلبات",
-      "desc": "طلب السوق خلال آخر 10 نقاط",
-      "insufficient": "بيانات غير كافية لتوقع الحجم..."
+      "desc": "الطلب في السوق خلال آخر 10 نقاط",
+      "insufficient": "بيانات غير كافية لتوقعات الحجم..."
     },
     "market_analytics": {
       "title": "تحليلات السوق",
-      "desc": "متوسط العروض لكل طلب في السوق",
-      "label": "عرض/طلب",
+      "desc": "متوسط العروض لكل طلب سوق",
+      "label": "عروض/طلب",
       "health": "صحة السوق"
     }
   },
   "distribution": {
     "buyer_title": "توزيع شبكة المشترين",
     "seller_title": "توزيع شبكة التجار",
-    "regional_concentration": "التركيز الإقليمي حسب الولايات"
+    "regional_concentration": "التركيز الإقليمي الموزع عبر الولايات"
   },
   "stats": {
-    "buyers": {
-      "label": "المشترون النشطون",
-      "sub": "مشاركون معتمدون",
-      "desc": "إجمالي المشترين المسجلين في المنصة"
-    },
-    "sellers": {
-      "label": "البائعون الحاليون",
-      "sub": "تجار معتمدون",
-      "desc": "شركاء التوريد النشطون"
-    },
-    "demands": {
-      "label": "الطلبات المفتوحة",
-      "sub": "نشاط السوق",
-      "desc": "إجمالي الطلبات المفتوحة حالياً"
-    },
-    "supply": {
-      "label": "إمدادات السوق",
-      "sub": "الأسعار والعروض",
-      "desc": "إجمالي التوفر عبر الشبكة"
-    }
+    "buyers": { "label": "المشترون النشطون", "sub": "المشاركون المعتمدون", "desc": "إجمالي المشترين المسجلين في المنصة" },
+    "sellers": { "label": "البائعون المباشرون", "sub": "التجار الموثقون", "desc": "شركاء جانب التوريد النشطون" },
+    "demands": { "label": "الطلبات المفتوحة", "sub": "نشاط السوق", "desc": "إجمالي الطلبات المفتوحة حالياً" },
+    "supply": { "label": "عرض السوق", "sub": "الأسعار والعروض", "desc": "إجمالي التوفر عبر الشبكة" }
   },
   "table": {
     "intelligence": "ذكاء السوق",
-    "signals": "إشارات الطلب الفورية وسرعة التلبية",
-    "full_audit": "عرض التدقيق الكامل",
+    "signals": "إشارات الطلب في الوقت الفعلي وسرعة التنفيذ",
+    "full_audit": "عرض السجل الكامل",
     "columns": {
       "part_name": "اسم القطعة",
       "created_at": "تاريخ الإنشاء"
     },
-    "submitted": "تم الإرسال منذ {{time}}",
+    "submitted": "تم التقديم {{time}}",
     "vehicle": "المركبة",
     "year": "السنة",
     "buyer": "المشتري",
-    "lifecycle": "حالة الطلب",
+    "lifecycle": "حالة دورة الحياة",
     "status_placeholder": "الحالة",
-    "update": "حدّث الحالة",
-    "close": "أغلق",
-    "liquidity": "سيولة السوق مثالية. تم رصد إمكانية تحويل عالية خلال آخر 24 ساعة.",
+    "update": "تحديث دورة الحياة",
+    "close": "إغلاق",
+    "liquidity": "سيولة السوق مثالية. تم اكتشاف إمكانات تحويل عالية خلال آخر 24 ساعة.",
     "status": {
-      "fulfilled": "تمت التلبية",
+      "fulfilled": "منفذ",
       "open": "طلب مفتوح",
       "cancelled": "ملغى"
     }
   },
   "users": {
     "title": "إدارة المستخدمين",
-    "search": "ابحث عن مستخدمين...",
+    "search": "بحث عن مستخدمين...",
     "columns": {
       "name": "الاسم",
       "role": "الدور",
@@ -125,7 +109,7 @@
     "roles": {
       "admin": "مسؤول",
       "seller": "بائع",
-      "buyer": "مشتري"
+      "buyer": "مشترٍ"
     },
     "integrity": {
       "secure": "آمن",
@@ -137,12 +121,12 @@
       "active": "نشط"
     },
     "actions": {
-      "activate": "فعّل",
-      "view": "اعرض",
-      "ban": "احظر المحدد",
+      "activate": "تنشيط",
+      "view": "عرض",
+      "ban": "حظر المحدد",
       "selected": "تم تحديد {{count}}",
-      "banned_success": "تم حظر {{count}} مستخدم",
-      "activated_success": "تم تفعيل البائع"
+      "banned_success": "تم حظر {{count}} مستخدمين",
+      "activated_success": "تم تنشيط البائع"
     },
     "profile": {
       "title": "ملف المستخدم",
@@ -150,41 +134,41 @@
       "suspended": "موقوف",
       "account_intelligence": "ذكاء الحساب",
       "account_meta": "بيانات الحساب",
-      "business_perf": "سجل النطاقات المتقاطعة وأداء الأعمال",
-      "markers": "علامات التفاعل المعتمدة",
-      "authority_ops": "عمليات الصلاحيات",
-      "authority_desc": "تطبيق تغييرات الوصول على مستوى النظام",
-      "activate": "فعّل",
-      "restore": "استعد الحساب",
-      "suspend": "أوقف الوصول",
+      "business_perf": "السجل المشترك وأداء الأعمال",
+      "markers": "علامات التفاعل الموثقة",
+      "authority_ops": "عمليات السلطة",
+      "authority_desc": "تنفيذ تغييرات الوصول على مستوى النظام",
+      "activate": "تنشيط",
+      "restore": "استعادة الحساب",
+      "suspend": "إيقاف الوصول",
       "terminate": "إنهاء الجلسة",
       "health_score": "درجة الصحة",
-      "security": "الأمان",
-      "registry_email": "البريد الإلكتروني المسجل",
-      "contact_line": "خط الاتصال",
+      "security": "الأمن",
+      "registry_email": "البريد المسجل",
+      "contact_line": "خط التواصل",
       "origin_node": "نقطة الأصل",
       "member_since": "عضو منذ",
       "entity_name": "اسم الكيان",
       "commercial_index": "السجل التجاري",
-      "priority_score": "درجة الأولويّة",
+      "priority_score": "درجة الأولوية",
       "active_quotes": "العروض النشطة",
       "success_rate": "معدل النجاح",
       "response_time": "وقت الاستجابة",
       "account_tier": "فئة الحساب",
       "registry_node": "نقطة التسجيل",
-      "jurisdictions": "الاختصاصات العملياتية",
-      "no_entries": "لا توجد بيانات موثقة",
+      "jurisdictions": "الاختصاصات التشغيلية",
+      "no_entries": "لا توجد مدخلات موثقة",
       "market_position": "موضع السوق",
       "registry_age": "عمر السجل",
       "auth_method": "طريقة المصادقة",
       "last_origin": "آخر نقطة أصل",
-      "elevated_access": "وصول مرتفع",
-      "system_integrity": "سلامة النظام والأذونات",
-      "authority_matrix": "مصفوفة الصلاحيات",
+      "elevated_access": "وصول متميز",
+      "system_integrity": "سلامة النظام والصلاحيات",
+      "authority_matrix": "مصفوفة السلطة",
       "days": "{{count}} يوم",
       "success": {
-        "activated": "تم تفعيل الحساب بنجاح",
-        "restored": "تمت استعادة الحساب",
+        "activated": "تم تنشيط الحساب بنجاح",
+        "restored": "تم استعادة الحساب",
         "suspended": "تم إيقاف الحساب"
       }
     },

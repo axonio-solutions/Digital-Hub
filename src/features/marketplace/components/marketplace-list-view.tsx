@@ -11,6 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
 import { cn } from '@/lib/utils'
 
 const dateLocaleMap: Record<string, any> = {
@@ -93,7 +94,7 @@ export function MarketplaceListView({
                 <div className="min-w-0 flex-1 text-left rtl:text-right">
                   <div className="flex items-center gap-2 mb-0.5">
                     <Badge variant="outline" className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-none text-[9px] font-bold uppercase tracking-wide px-1.5 py-0 h-4 w-fit">
-                      {item.category && typeof item.category === 'object' ? item.category.name : item.category || t('list.spare_part')}
+                      {tCategory(item.category?.name || item.category, t)}
                     </Badge>
                     <span className="text-text-sec-light dark:text-text-sec-dark text-[11px] flex items-center gap-1">
                       <MapPin className="size-2.5" /> {item.location || t('list.algiers')}

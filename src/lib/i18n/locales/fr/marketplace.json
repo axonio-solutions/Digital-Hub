@@ -54,7 +54,8 @@
     "defaults": {
       "general": "Général",
       "part": "Pièce",
-      "id_prefix": "ID:"
+      "id_prefix": "ID:",
+      "currency": "DA"
     }
   },
   "offer_details": {

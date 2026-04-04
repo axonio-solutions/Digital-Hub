@@ -34,6 +34,7 @@ import {
 } from '@/components/ui/select'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
+import { tCategory } from '@/utils/category-utils'
 
 interface NewPartRequestFormProps {
   initialData?: any
@@ -211,7 +212,7 @@ export function NewPartRequestForm({
                       <SelectContent>
                         {taxonomy?.categories.map((c: any) => (
                           <SelectItem key={c.id} value={c.id}>
-                            {c.name}
+                            {tCategory(c.name, t)}
                           </SelectItem>
                         ))}
                       </SelectContent>
