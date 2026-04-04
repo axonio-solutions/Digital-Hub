@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useInView } from "react-intersection-observer";
 import { Link, useRouter } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const conditionOptions = [
   { id: "new", label: "New (OEM/Aftermarket)" },
@@ -282,7 +283,8 @@ export function PublicMarketplace() {
               FAQ
             </Link>
           </nav>
-          <div className="flex gap-4">
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
             <Link to="/login">
               <Button
                 variant="outline"

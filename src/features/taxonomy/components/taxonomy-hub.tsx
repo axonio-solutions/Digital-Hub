@@ -327,7 +327,7 @@ export function TaxonomyHub() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="h-12 px-5 border-slate-200 dark:border-slate-800 font-bold text-xs uppercase tracking-wider gap-2 hover:bg-slate-50 transition-all rounded-xl">
+          <Button variant="outline" className="h-12 px-5 border-slate-200 dark:border-slate-800 font-bold text-xs uppercase tracking-wider gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all rounded-xl">
             <Download size={16} /> Export
           </Button>
           <Button
@@ -336,7 +336,7 @@ export function TaxonomyHub() {
               if (activeTab === 'categories') setIsCategoryDialogOpen(true)
               else setIsBrandDialogOpen(true)
             }}
-            className="h-12 px-6 bg-primary hover:bg-primary-dark text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 gap-2 transition-all hover:scale-105 active:scale-95 rounded-xl border-none shadow-[0_10px_20px_-10px_rgba(59,130,246,0.5)]"
+            className="h-12 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 gap-2 transition-all hover:scale-105 active:scale-95 rounded-xl border-none shadow-[0_10px_20px_-10px_rgba(59,130,246,0.5)]"
           >
             <Plus size={16} /> Add New
           </Button>
