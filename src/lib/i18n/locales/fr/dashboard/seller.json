@@ -24,5 +24,56 @@
     "pending": "En Attente",
     "missed": "Manquées"
   },
+  "hub": {
+    "title": "Pipeline des Ventes",
+    "desc": "Propulsez votre activité avec une gestion fluide des devis.",
+    "stats": {
+      "total": "Volume Total",
+      "total_sub": "Offres soumises",
+      "success_rate": "Taux d'Atterrissage",
+      "success_rate_sub": "Conversion réelle",
+      "pipeline": "Valeur Latente",
+      "pipeline_sub": "DZD en attente",
+      "accepted_count": "Transactions",
+      "accepted_sub": "Ventes confirmées"
+    },
+    "tabs": {
+      "active": "Opportunités",
+      "won": "Gagnées",
+      "lost": "Archives"
+    },
+    "dialog": {
+      "update_title": "Optimiser l'Offre",
+      "update_desc": "Ajustez vos paramètres pour maximiser vos chances de vente.",
+      "update_btn": "Enregistrer les modifications",
+      "close": "Retour"
+    },
+    "confirm": {
+      "withdraw": "Voulez-vous vraiment retirer cette offre ? Cette action pourrait impacter votre visibilité."
+    },
+    "toasts": {
+      "withdrawn": "Offre retirée avec succès"
+    }
+  },
+  "settings": {
+    "title": "Identité Commerciale",
+    "desc": "Configurez les informations officielles de votre boutique.",
+    "labels": {
+      "store_name": "Nom de la Boutique",
+      "rc_number": "Registre du Commerce (RC)",
+      "address": "Adresse Physique",
+      "submit": "Mettre à jour le profil",
+      "submitting": "Mise à jour..."
+    },
+    "placeholders": {
+      "store_name": "ex: DZ Parts Distribution",
+      "rc_number": "00A1234567-00/00",
+      "address": "Adresse complète du point de vente"
+    },
+    "toasts": {
+      "success": "Informations de la boutique mises à jour",
+      "error": "Erreur lors de la mise à jour"
+    }
+  },
   "currency": "DZD"
 }

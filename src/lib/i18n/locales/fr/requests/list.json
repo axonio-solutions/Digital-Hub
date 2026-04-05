@@ -1,0 +1,56 @@
+{
+  "columns": {
+    "part": "Nom de la pièce",
+    "vehicle": "Véhicule",
+    "category": "Catégorie",
+    "posted": "Date de publication",
+    "offers": "Offres",
+    "status": "Statut"
+  },
+  "empty": {
+    "general": "N/D",
+    "inquiry": "Demande Générale",
+    "market_avg": "Moy. Marché"
+  },
+  "actions": {
+    "open_menu": "Ouvrir les actions",
+    "title": "Actions",
+    "view_details": "Voir les détails",
+    "edit_request": "Modifier la demande",
+    "cancel_request": "Annuler la demande",
+    "reopen_request": "Réouvrir la demande",
+    "delete_permanently": "Supprimer définitivement",
+    "close": "Fermer",
+    "cancel": "Annuler"
+  },
+  "dialogs": {
+    "cancel": {
+      "title": "Annuler la demande?",
+      "description": "Cette demande ne recevra plus de nouvelles offres une fois clôturée.",
+      "cancelling": "Annulation en cours...",
+      "confirm": "Confirmer l'annulation"
+    },
+    "delete": {
+      "title": "Délétition permanente?",
+      "description": "Cette action est irréversible et supprimera la demande de votre historique.",
+      "deleting": "Suppression en cours...",
+      "confirm": "Supprimer définitivement"
+    },
+    "reopen": {
+      "title": "Réouvrir la demande?",
+      "description": "Les vendeurs recommenceront à voir cette demande et à soumettre des offres.",
+      "reopening": "Réouverture en cours...",
+      "confirm": "Réouvrir la demande"
+    }
+  },
+  "filters": {
+    "search_placeholder": "Rechercher des pièces...",
+    "status": "Statut",
+    "brand": "Marque",
+    "statuses": {
+      "open": "Ouvert",
+      "fulfilled": "Exécuté",
+      "cancelled": "Annulé"
+    }
+  }
+}

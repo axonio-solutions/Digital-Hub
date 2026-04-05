@@ -69,7 +69,7 @@ export function RequestDetailsDialog({
                 </div>
                 <div className="p-3 rounded-lg bg-muted/50 border">
                   <div className="text-[10px] text-muted-foreground uppercase font-bold">{t('labels.part_category')}</div>
-                  <div className="font-semibold">{tCategory(request?.category || request?.category_id, t)}</div>
+                  <div className="font-semibold">{tCategory(request?.category || request?.categoryId, t)}</div>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/50 border col-span-2">
                   <div className="text-[10px] text-muted-foreground uppercase font-bold">{t('labels.model_year')}</div>
@@ -94,7 +94,7 @@ export function RequestDetailsDialog({
               <div className="p-4 rounded-xl border bg-slate-50">
                 <div className="text-[10px] text-muted-foreground uppercase font-bold mb-1">{t('labels.buyer_notes')}</div>
                 <p className="text-sm italic leading-relaxed text-slate-600">
-                  "{request?.notes || request?.description || t('labels.no_notes')}"
+                  "{request?.notes || t('labels.no_notes')}"
                 </p>
               </div>
             </div>

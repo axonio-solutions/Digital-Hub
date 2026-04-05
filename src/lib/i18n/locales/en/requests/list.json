@@ -1,0 +1,56 @@
+{
+  "columns": {
+    "part": "Part Name",
+    "vehicle": "Vehicle",
+    "category": "Category",
+    "posted": "Posted Date",
+    "offers": "Offers",
+    "status": "Status"
+  },
+  "empty": {
+    "general": "N/A",
+    "inquiry": "General Inquiry",
+    "market_avg": "Market Avg"
+  },
+  "actions": {
+    "open_menu": "Open actions",
+    "title": "Actions",
+    "view_details": "View Detail",
+    "edit_request": "Edit Request",
+    "cancel_request": "Cancel Request",
+    "reopen_request": "Reopen Request",
+    "delete_permanently": "Delete Permanently",
+    "close": "Close",
+    "cancel": "Cancel"
+  },
+  "dialogs": {
+    "cancel": {
+      "title": "Cancel Request?",
+      "description": "This request will no longer receive any new offers once closed.",
+      "cancelling": "Cancelling...",
+      "confirm": "Confirm Cancellation"
+    },
+    "delete": {
+      "title": "Permanently Delete?",
+      "description": "This action cannot be undone and will remove the request from your history.",
+      "deleting": "Deleting...",
+      "confirm": "Delete Permanently"
+    },
+    "reopen": {
+      "title": "Reopen Request?",
+      "description": "Sellers will start seeing this request and submitting offers again.",
+      "reopening": "Reopening...",
+      "confirm": "Reopen Request"
+    }
+  },
+  "filters": {
+    "search_placeholder": "Search parts...",
+    "status": "Status",
+    "brand": "Brand",
+    "statuses": {
+      "open": "Open",
+      "fulfilled": "Fulfilled",
+      "cancelled": "Cancelled"
+    }
+  }
+}
