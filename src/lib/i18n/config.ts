@@ -4,7 +4,7 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 
 export const defaultNS = 'common'
 export const fallbackLng = 'en'
-export const languages = ['en', 'fr', 'ar', 'ar-DZ']
+export const languages = ['en', 'fr', 'ar']
 
 // Dynamically load all JSON files in the locales folder
 const modules = import.meta.glob('./locales/**/*.json', { eager: true })
@@ -13,7 +13,6 @@ export const resources: Record<string, Record<string, any>> = {
   en: {},
   fr: {},
   ar: {},
-  'ar-DZ': {},
 }
 
 // Process the glob-imported modules into the resources object
@@ -21,7 +20,7 @@ Object.entries(modules).forEach(([path, module]) => {
   const parts = path.split('/')
   // Example path: ./locales/en.json or ./locales/en/home.json
   // parts: ['.', 'locales', 'en.json'] or ['.', 'locales', 'en', 'home.json']
-  
+
   const langWithExt = parts[2]
   let lang: string
   let ns: string
@@ -62,7 +61,7 @@ i18n
 // Update document direction and language on change
 i18n.on('languageChanged', (lng) => {
   if (typeof document !== 'undefined') {
-    document.documentElement.dir = (lng === 'ar' || lng === 'ar-DZ') ? 'rtl' : 'ltr'
+    document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr'
     document.documentElement.lang = lng
   }
 })

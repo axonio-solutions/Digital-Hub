@@ -24,10 +24,12 @@ import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
 import i18n from '@/lib/i18n/config'
+import { Badge } from '@/components/ui/badge'
 
 export function SellerQuotesHub() {
   const { t, i18n } = useTranslation(['dashboard/seller', 'dashboard/layout', 'quotes'])
@@ -94,10 +96,10 @@ export function SellerQuotesHub() {
             {t('hub.title')}
           </h2>
           <div className="flex items-center gap-3">
-             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-1">
-               {t('hub.desc')}
-             </span>
-             <span className="h-[1px] w-12 bg-primary/20" />
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-1">
+              {t('hub.desc')}
+            </span>
+            <span className="h-[1px] w-12 bg-primary/20" />
           </div>
         </div>
       </div>
@@ -115,7 +117,7 @@ export function SellerQuotesHub() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-             <p className="text-[10px] font-bold text-slate-500 uppercase">{t('hub.stats.total_sub')}</p>
+            <p className="text-[10px] font-bold text-slate-500 uppercase">{t('hub.stats.total_sub')}</p>
           </CardContent>
         </Card>
 
@@ -130,7 +132,7 @@ export function SellerQuotesHub() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-             <p className="text-[10px] font-bold text-slate-500 uppercase">{t('hub.stats.success_rate_sub')}</p>
+            <p className="text-[10px] font-bold text-slate-500 uppercase">{t('hub.stats.success_rate_sub')}</p>
           </CardContent>
         </Card>
 
@@ -145,7 +147,7 @@ export function SellerQuotesHub() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-             <p className="text-[10px] font-bold text-slate-500 uppercase">{t('hub.stats.pipeline_sub')}</p>
+            <p className="text-[10px] font-bold text-slate-500 uppercase">{t('hub.stats.pipeline_sub')}</p>
           </CardContent>
         </Card>
 
@@ -160,7 +162,7 @@ export function SellerQuotesHub() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-             <p className="text-[10px] font-bold text-slate-500 uppercase">{t('hub.stats.accepted_sub')}</p>
+            <p className="text-[10px] font-bold text-slate-500 uppercase">{t('hub.stats.accepted_sub')}</p>
           </CardContent>
         </Card>
       </div>
@@ -181,21 +183,21 @@ export function SellerQuotesHub() {
         </div>
 
         <TabsContent value="active" className="mt-0 ring-offset-background focus-visible:outline-none animate-in fade-in zoom-in-95 duration-500">
-           <Card className="border-slate-200 dark:border-slate-800 dark:bg-slate-950/20 rounded-[2rem] overflow-hidden">
-             <SellerQuotesTable data={pendingQuotes} onAction={handleAction} />
-           </Card>
+          <Card className="border-slate-200 dark:border-slate-800 dark:bg-slate-950/20 rounded-[2rem] overflow-hidden">
+            <SellerQuotesTable data={pendingQuotes} onAction={handleAction} />
+          </Card>
         </TabsContent>
 
         <TabsContent value="won" className="mt-0 ring-offset-background focus-visible:outline-none animate-in fade-in zoom-in-95 duration-500">
-           <Card className="border-slate-200 dark:border-slate-800 dark:bg-slate-950/20 rounded-[2rem] overflow-hidden">
-             <SellerQuotesTable data={wonQuotes} onAction={handleAction} />
-           </Card>
+          <Card className="border-slate-200 dark:border-slate-800 dark:bg-slate-950/20 rounded-[2rem] overflow-hidden">
+            <SellerQuotesTable data={wonQuotes} onAction={handleAction} />
+          </Card>
         </TabsContent>
 
         <TabsContent value="lost" className="mt-0 ring-offset-background focus-visible:outline-none animate-in fade-in zoom-in-95 duration-500">
-           <Card className="border-slate-200 dark:border-slate-800 dark:bg-slate-950/20 rounded-[2rem] overflow-hidden">
-             <SellerQuotesTable data={lostQuotes} onAction={handleAction} />
-           </Card>
+          <Card className="border-slate-200 dark:border-slate-800 dark:bg-slate-950/20 rounded-[2rem] overflow-hidden">
+            <SellerQuotesTable data={lostQuotes} onAction={handleAction} />
+          </Card>
         </TabsContent>
       </Tabs>
 
