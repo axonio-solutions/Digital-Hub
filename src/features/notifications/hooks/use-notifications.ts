@@ -132,11 +132,42 @@ export function useMarkNotificationRead() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (id: string) => markNotificationReadServerFn({ data: id }),
-    onSuccess: () => {
+    onMutate: async (id) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['notifications'] })
+
+      // Snapshot previous data
+      const previousNotifications = queryClient.getQueryData(['notifications'])
+
+      // Optimistically update: Filter out the read notification
+      queryClient.setQueryData(['notifications'], (old: any) => {
+        if (!Array.isArray(old)) return old
+        return old.filter((n: any) => n.id !== id)
+      })
+
+      // We also try to patch any unread specific queries we can find in the cache
+      // This is a "best effort" optimistic update for nested keys
+      queryClient.getQueryCache().findAll({ queryKey: ['notifications', 'unread'] }).forEach(query => {
+        queryClient.setQueryData(query.queryKey, (old: any) => {
+          if (!Array.isArray(old)) return old
+          return old.filter((n: any) => n.id !== id)
+        })
+      })
+
+      return { previousNotifications }
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousNotifications) {
+        queryClient.setQueryData(['notifications'], context.previousNotifications)
+      }
+    },
+
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
 }
+
 
 /**
  * Mutation to mark all notifications as read
@@ -145,8 +176,30 @@ export function useMarkAllNotificationsRead() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (_userId: string) => markAllNotificationsReadServerFn(),
-    onSuccess: () => {
+    onMutate: async (userId) => {
+      await queryClient.cancelQueries({ queryKey: ['notifications'] })
+      
+      const previousNotifications = queryClient.getQueryData(['notifications'])
+      const previousUnread = queryClient.getQueryData(['notifications', 'unread', userId])
+
+      // Optimistically clear everything
+      queryClient.setQueryData(['notifications'], [])
+      queryClient.setQueryData(['notifications', 'unread', userId], [])
+
+      return { previousNotifications, previousUnread }
+    },
+    onError: (_err, _userId, context) => {
+      if (context?.previousNotifications) {
+        queryClient.setQueryData(['notifications'], context.previousNotifications)
+      }
+      if (context?.previousUnread) {
+        queryClient.setQueryData(['notifications', 'unread', _userId], context.previousUnread)
+      }
+    },
+
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
 }
+

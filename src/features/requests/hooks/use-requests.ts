@@ -75,12 +75,41 @@ export function useCreateRequest() {
       if (!res.success) throw new Error(res.error)
       return res.data
     },
-    onSuccess: () => {
+    onMutate: async (newRequestPayload) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: requestKeys.all })
+      await queryClient.cancelQueries({ queryKey: ['buyer'] })
+
+      // Snapshot previous requests
+      const previousRequests = queryClient.getQueryData(requestKeys.allRequests())
+
+      // Optimistically add the new request
+      queryClient.setQueryData(requestKeys.allRequests(), (old: any) => {
+        const optimisticRequest = {
+          ...newRequestPayload,
+          id: `temp-${Date.now()}`,
+          status: 'PENDING',
+          createdAt: new Date().toISOString(),
+        }
+        if (!Array.isArray(old)) return [optimisticRequest]
+        return [optimisticRequest, ...old]
+      })
+
+      return { previousRequests }
+    },
+    onError: (_err, _newRequest, context) => {
+      if (context?.previousRequests) {
+        queryClient.setQueryData(requestKeys.allRequests(), context.previousRequests)
+      }
+    },
+
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: requestKeys.all })
       queryClient.invalidateQueries({ queryKey: ['buyer'] })
     },
   })
 }
+
 
 export function useInfinitePublicOpenRequests(filters?: {
   categoryId?: string;
@@ -137,15 +166,40 @@ export function useCancelRequest() {
       if (!res.success) throw new Error(res.error)
       return res.data
     },
-    onSuccess: (_, requestId) => {
-      queryClient.invalidateQueries({
-        queryKey: requestKeys.details(requestId),
+    onMutate: async (requestId) => {
+      await queryClient.cancelQueries({ queryKey: requestKeys.all })
+      await queryClient.cancelQueries({ queryKey: requestKeys.details(requestId) })
+
+      const previousDetails = queryClient.getQueryData(requestKeys.details(requestId))
+      const previousAll = queryClient.getQueryData(requestKeys.allRequests())
+
+      // Update Details
+      queryClient.setQueryData(requestKeys.details(requestId), (old: any) => ({
+        ...old,
+        status: 'CANCELLED'
+      }))
+
+      // Update List
+      queryClient.setQueryData(requestKeys.allRequests(), (old: any) => {
+        if (!Array.isArray(old)) return old
+        return old.map(r => r.id === requestId ? { ...r, status: 'CANCELLED' } : r)
       })
+
+      return { previousDetails, previousAll }
+    },
+    onError: (_err, requestId, context) => {
+      if (context?.previousDetails) queryClient.setQueryData(requestKeys.details(requestId), context.previousDetails)
+      if (context?.previousAll) queryClient.setQueryData(requestKeys.allRequests(), context.previousAll)
+    },
+    onSettled: (_data, _error, requestId) => {
+      queryClient.invalidateQueries({ queryKey: requestKeys.details(requestId) })
       queryClient.invalidateQueries({ queryKey: requestKeys.all })
       queryClient.invalidateQueries({ queryKey: ['buyer'] })
     },
+
   })
 }
+
 
 export function useReopenRequest() {
   const queryClient = useQueryClient()
@@ -155,15 +209,38 @@ export function useReopenRequest() {
       if (!res.success) throw new Error(res.error)
       return res.data
     },
-    onSuccess: (_, requestId) => {
-      queryClient.invalidateQueries({
-        queryKey: requestKeys.details(requestId),
+    onMutate: async (requestId) => {
+      await queryClient.cancelQueries({ queryKey: requestKeys.all })
+      await queryClient.cancelQueries({ queryKey: requestKeys.details(requestId) })
+
+      const previousDetails = queryClient.getQueryData(requestKeys.details(requestId))
+      const previousAll = queryClient.getQueryData(requestKeys.allRequests())
+
+      queryClient.setQueryData(requestKeys.details(requestId), (old: any) => ({
+        ...old,
+        status: 'OPEN'
+      }))
+
+      queryClient.setQueryData(requestKeys.allRequests(), (old: any) => {
+        if (!Array.isArray(old)) return old
+        return old.map(r => r.id === requestId ? { ...r, status: 'OPEN' } : r)
       })
+
+      return { previousDetails, previousAll }
+    },
+    onError: (_err, requestId, context) => {
+      if (context?.previousDetails) queryClient.setQueryData(requestKeys.details(requestId), context.previousDetails)
+      if (context?.previousAll) queryClient.setQueryData(requestKeys.allRequests(), context.previousAll)
+    },
+    onSettled: (_data, _error, requestId) => {
+      queryClient.invalidateQueries({ queryKey: requestKeys.details(requestId) })
       queryClient.invalidateQueries({ queryKey: requestKeys.all })
       queryClient.invalidateQueries({ queryKey: ['buyer'] })
     },
+
   })
 }
+
 
 export function useDeleteRequest() {
   const queryClient = useQueryClient()
@@ -173,12 +250,30 @@ export function useDeleteRequest() {
       if (!res.success) throw new Error(res.error)
       return res.data
     },
-    onSuccess: () => {
+    onMutate: async (requestId) => {
+      await queryClient.cancelQueries({ queryKey: requestKeys.all })
+      
+      const previousAll = queryClient.getQueryData(requestKeys.allRequests())
+
+      // Optimistically remove from list
+      queryClient.setQueryData(requestKeys.allRequests(), (old: any) => {
+        if (!Array.isArray(old)) return old
+        return old.filter(r => r.id !== requestId)
+      })
+
+      return { previousAll }
+    },
+    onError: (_err, _requestId, context) => {
+      if (context?.previousAll) queryClient.setQueryData(requestKeys.allRequests(), context.previousAll)
+    },
+
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: requestKeys.all })
       queryClient.invalidateQueries({ queryKey: ['buyer'] })
     },
   })
 }
+
 
 export function useUpdateRequest() {
   const queryClient = useQueryClient()
@@ -188,10 +283,37 @@ export function useUpdateRequest() {
       if (!res.success) throw new Error(res.error)
       return res.data
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: requestKeys.details(variables.id) })
+    onMutate: async ({ id, payload }) => {
+      await queryClient.cancelQueries({ queryKey: requestKeys.all })
+      await queryClient.cancelQueries({ queryKey: requestKeys.details(id) })
+
+      const previousDetails = queryClient.getQueryData(requestKeys.details(id))
+      const previousAll = queryClient.getQueryData(requestKeys.allRequests())
+
+      // Update Details
+      queryClient.setQueryData(requestKeys.details(id), (old: any) => ({
+        ...old,
+        ...payload
+      }))
+
+      // Update List
+      queryClient.setQueryData(requestKeys.allRequests(), (old: any) => {
+        if (!Array.isArray(old)) return old
+        return old.map(r => r.id === id ? { ...r, ...payload } : r)
+      })
+
+      return { previousDetails, previousAll }
+    },
+    onError: (_err, { id }, context) => {
+      if (context?.previousDetails) queryClient.setQueryData(requestKeys.details(id), context.previousDetails)
+      if (context?.previousAll) queryClient.setQueryData(requestKeys.allRequests(), context.previousAll)
+    },
+    onSettled: (_data, _error, { id }) => {
+      queryClient.invalidateQueries({ queryKey: requestKeys.details(id) })
       queryClient.invalidateQueries({ queryKey: requestKeys.all })
       queryClient.invalidateQueries({ queryKey: ['buyer'] })
     },
+
   })
 }
+
