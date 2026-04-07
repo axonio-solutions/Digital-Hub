@@ -25,7 +25,10 @@
     "full_name": "الاسم الكامل *",
     "email": "البريد الإلكتروني *",
     "phone": "رقم الهاتف *",
-    "whatsapp": "رقم الواتساب *"
+    "whatsapp": "رقم الواتساب *",
+    "name_placeholder": "مثلاً: أحمد كروم",
+    "email_placeholder": "contact@mlila.dz",
+    "phone_placeholder": "05xx xx xx xx"
   },
   "location_step": {
     "buyer_title": "المعلومات الشخصية",
@@ -38,8 +41,11 @@
     "city": "المدينة *",
     "address": "العنوان الكامل *",
     "company_address": "عنوان الشركة/المنزل",
-    "company_placeholder": "عنوان الفوترة الاختياري",
-    "rc": "السجل التجاري (اختياري)"
+    "company_placeholder": "عنوان الفوترة اختياري",
+    "rc": "السجل التجاري (اختياري)",
+    "store_placeholder": "جراند لقطع الغيار",
+    "city_placeholder": "الحراش",
+    "address_placeholder": "08 نهج الشهداء..."
   },
   "specialties_step": {
     "title": "محفظة تخصصك",

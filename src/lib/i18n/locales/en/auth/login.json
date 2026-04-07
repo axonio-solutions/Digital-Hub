@@ -1,0 +1,27 @@
+{
+  "login": {
+    "title": "Welcome to MLILA",
+    "subtitle": "Enter your email and password to proceed",
+    "footer_text": "By continuing, you agree to our Terms of Service and Privacy Policy.",
+    "email_label": "Email Address",
+    "email_placeholder": "name@example.com",
+    "password_label": "Password",
+    "password_placeholder": "Enter your password",
+    "submit_btn": "Sign In / Join",
+    "errors": {
+      "invalid_email": "Please enter a valid email address",
+      "invalid_password": "Password must be at least 6 characters",
+      "server_error": "Server error. Please try again later.",
+      "signup_error": "Failed to sign up.",
+      "user_exists": "User already exists. Try a different password.",
+      "auth_failed": "Authentication failed",
+      "check_credentials": "Please check your credentials and try again.",
+      "failed_to_join": "Failed to join"
+    },
+    "toasts": {
+      "success_title": "Welcome back!",
+      "success_desc": "You have successfully logged in.",
+      "error_title": "Error"
+    }
+  }
+}

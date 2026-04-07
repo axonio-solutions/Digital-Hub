@@ -1,4 +1,6 @@
+import { useTranslation } from 'react-i18next'
 import { LoginForm } from './login-form'
+import { LanguageToggle } from '@/components/language-toggle'
 import { cn } from '@/lib/utils'
 import {
   Card,
@@ -14,13 +16,18 @@ import {
  */
 
 export function AuthForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const { t } = useTranslation('auth/login')
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card className="border-primary/10 shadow-lg">
+      <Card className="border-primary/10 shadow-lg relative overflow-hidden">
+        <div className="absolute top-4 right-4 z-20 rtl:right-auto rtl:left-4">
+          <LanguageToggle />
+        </div>
         <CardHeader className="text-center pb-2">
-          <CardTitle className="text-2xl">Welcome to MLILA</CardTitle>
+          <CardTitle className="text-2xl">{t('login.title')}</CardTitle>
           <CardDescription>
-            Enter your email and password to proceed
+            {t('login.subtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -31,7 +38,7 @@ export function AuthForm({ className, ...props }: React.ComponentProps<'div'>) {
       </Card>
 
       <p className="text-center text-xs text-muted-foreground">
-        By continuing, you agree to our Terms of Service and Privacy Policy.
+        {t('login.footer_text')}
       </p>
     </div>
   )

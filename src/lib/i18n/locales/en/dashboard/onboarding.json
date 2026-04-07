@@ -25,7 +25,10 @@
     "full_name": "Full Name *",
     "email": "Email *",
     "phone": "Phone Number *",
-    "whatsapp": "WhatsApp Number *"
+    "whatsapp": "WhatsApp Number *",
+    "name_placeholder": "e.g. Ahmed Kerroum",
+    "email_placeholder": "contact@mlila.dz",
+    "phone_placeholder": "05xx xx xx xx"
   },
   "location_step": {
     "buyer_title": "Personal Information",
@@ -39,7 +42,10 @@
     "address": "Full Address *",
     "company_address": "Company/Home Address",
     "company_placeholder": "Optional billing address",
-    "rc": "Commercial Register (optional)"
+    "rc": "Commercial Register (optional)",
+    "store_placeholder": "Grand Auto Parts",
+    "city_placeholder": "El Harrach",
+    "address_placeholder": "08 Rue des Martyrs..."
   },
   "specialties_step": {
     "title": "Your Portfolio",

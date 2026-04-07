@@ -6,6 +6,7 @@ import { authQueries } from '@/features/auth/queries/auth-queries'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LanguageToggle } from '@/components/language-toggle'
 import { logoutFn } from '@/fn/auth'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
@@ -36,6 +37,7 @@ function WaitlistPage() {
   return (
     <div className="min-h-svh w-full flex items-center justify-center p-4 bg-background relative overflow-hidden">
       <div className="absolute top-6 right-6 z-50 flex items-center gap-3">
+        <LanguageToggle />
         <ThemeToggle />
         <Button 
           variant="outline" 

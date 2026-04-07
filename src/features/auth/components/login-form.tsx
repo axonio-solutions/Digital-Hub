@@ -84,7 +84,7 @@ export function LoginForm() {
               throw new Error(t('login.errors.user_exists'))
             }
 
-            throw new Error(signUpError.message || 'Failed to join')
+            throw new Error(signUpError.message || t('login.errors.failed_to_join'))
           }
 
           console.log('[LoginForm] signUp.email successful')

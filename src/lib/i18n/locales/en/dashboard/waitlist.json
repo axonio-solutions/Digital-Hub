@@ -1,0 +1,29 @@
+{
+  "nav": {
+    "logout": "Logout"
+  },
+  "hero": {
+    "title": "Welcome to the Waitlist",
+    "desc_prefix": "Thank you for joining",
+    "desc_main": "Your account is currently under",
+    "moderation": "moderation"
+  },
+  "steps": {
+    "reviewing": {
+      "title": "Reviewing",
+      "desc": "We are verifying your business details."
+    },
+    "notification": {
+      "title": "Notification",
+      "desc": "You will receive an email once approved."
+    },
+    "access": {
+      "title": "Full Access",
+      "desc": "Unlock all marketplace features."
+    }
+  },
+  "buttons": {
+    "check_status": "Check Status",
+    "contact_support": "Contact Support"
+  }
+}

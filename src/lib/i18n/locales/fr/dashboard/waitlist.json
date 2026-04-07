@@ -1,0 +1,29 @@
+{
+  "nav": {
+    "logout": "Déconnexion"
+  },
+  "hero": {
+    "title": "Bienvenue sur la liste d'attente",
+    "desc_prefix": "Merci d'avoir rejoint",
+    "desc_main": "Votre compte est actuellement en cours de",
+    "moderation": "modération"
+  },
+  "steps": {
+    "reviewing": {
+      "title": "Examen",
+      "desc": "Nous vérifions vos informations professionnelles."
+    },
+    "notification": {
+      "title": "Notification",
+      "desc": "Vous recevrez un email une fois approuvé."
+    },
+    "access": {
+      "title": "Accès complet",
+      "desc": "Débloquez toutes les fonctionnalités."
+    }
+  },
+  "buttons": {
+    "check_status": "Vérifier le statut",
+    "contact_support": "Contacter le support"
+  }
+}

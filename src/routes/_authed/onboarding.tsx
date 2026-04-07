@@ -12,6 +12,7 @@ import {
   Store,
 } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LanguageToggle } from '@/components/language-toggle'
 import { Badge } from '@/components/ui/badge'
 import { useTranslation } from 'react-i18next'
 
@@ -250,7 +251,7 @@ function OnboardingFlow() {
                   <Input
                     id="name"
                     className="ps-9 rtl:pe-9"
-                    placeholder="Ahmed Kerroum"
+                    placeholder={t('contact_step.name_placeholder')}
                     value={formData.name}
                     onChange={(e) => updateFormData('name', e.target.value)}
                   />
@@ -261,7 +262,7 @@ function OnboardingFlow() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="contact@mlila.dz"
+                  placeholder={t('contact_step.email_placeholder')}
                   value={formData.email}
                   onChange={(e) => updateFormData('email', e.target.value)}
                 />
@@ -273,7 +274,7 @@ function OnboardingFlow() {
                   <Input
                     id="phoneNumber"
                     className="ps-9 rtl:pe-9"
-                    placeholder="05xx xx xx xx"
+                    placeholder={t('contact_step.phone_placeholder')}
                     value={formData.phoneNumber}
                     onChange={(e) => updateFormData('phoneNumber', e.target.value)}
                   />
@@ -314,7 +315,7 @@ function OnboardingFlow() {
                     <Input
                       id="storeName"
                       className="ps-9"
-                      placeholder="Grand Auto Parts"
+                      placeholder={t('location_step.store_placeholder')}
                       value={formData.storeName}
                       onChange={(e) => updateFormData('storeName', e.target.value)}
                     />
@@ -346,7 +347,7 @@ function OnboardingFlow() {
                   <Input
                     id="city"
                     className="ps-9 rtl:pe-9"
-                    placeholder="El Harrach"
+                    placeholder={t('location_step.city_placeholder')}
                     value={formData.city}
                     onChange={(e) => updateFormData('city', e.target.value)}
                   />
@@ -356,7 +357,7 @@ function OnboardingFlow() {
                 <Label htmlFor="address">{t('location_step.address')}</Label>
                 <Input
                   id="address"
-                  placeholder="08 Rue des Martyrs..."
+                  placeholder={t('location_step.address_placeholder')}
                   value={formData.address}
                   onChange={(e) => updateFormData('address', e.target.value)}
                 />
@@ -375,7 +376,7 @@ function OnboardingFlow() {
                   <Label htmlFor="rcNumber">{t('location_step.rc')}</Label>
                   <Input
                     id="rcNumber"
-                    placeholder="00B1234567"
+                    placeholder={t('location_step.rc_placeholder')}
                     value={formData.commercialRegister}
                     onChange={(e) => updateFormData('commercialRegister', e.target.value)}
                   />
@@ -395,7 +396,8 @@ function OnboardingFlow() {
 
   return (
     <div className="flex min-h-svh items-center justify-center p-4 bg-muted/20 relative">
-      <div className="absolute top-6 right-6 z-50">
+      <div className="absolute top-6 right-6 z-50 flex items-center gap-2">
+        <LanguageToggle />
         <ThemeToggle />
       </div>
       <Card className="w-full max-w-5xl shadow-2xl border-none max-h-[min(90vh,700px)] flex flex-col overflow-hidden bg-card">
