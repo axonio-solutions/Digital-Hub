@@ -347,7 +347,7 @@ export function SellerOverview() {
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
         <React.Suspense fallback={<Skeleton className="h-[400px] w-full rounded-[2rem]" />}>
           <Await promise={feedPromise}>
-            {(openRequests) => <OpenDemandsTable openRequests={openRequests} t={t} />}
+            {(res: any) => <OpenDemandsTable openRequests={res?.data || []} t={t} />}
           </Await>
         </React.Suspense>
         
