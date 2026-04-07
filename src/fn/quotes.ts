@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { acceptQuoteSchema, quoteSchema } from '@/types/quote-schemas'
 import { sellerMiddleware, buyerMiddleware } from '@/features/auth/guards/auth'
 import { db } from '@/db'
-import { eq } from 'drizzle-orm'
+import { eq, sql, and, desc, gte } from 'drizzle-orm'
 import { quotes, sparePartRequests } from '@/db/schema'
 import { type User } from '@/lib/auth'
 
@@ -150,3 +150,57 @@ export const unrejectQuoteServerFn = createServerFn({ method: 'POST' })
     const { unrejectQuoteUseCase } = await import('@/use-cases/quotes/index')
     return await unrejectQuoteUseCase(data.quoteId)
   })
+
+export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
+  .middleware([sellerMiddleware])
+  .handler(async ({ context }) => {
+    // 1. Native Database Aggregation (No massive payload transfers)
+    const queryStats = db.execute(sql`
+      SELECT 
+        COUNT(*) as total_quotes,
+        SUM(CASE WHEN ${quotes.status} = 'accepted' THEN 1 ELSE 0 END) as won_quotes,
+        SUM(CASE WHEN ${quotes.status} = 'pending' THEN 1 ELSE 0 END) as pending_quotes,
+        SUM(CASE WHEN ${quotes.status} = 'accepted' THEN ${quotes.price} ELSE 0 END) as total_revenue
+      FROM ${quotes}
+      WHERE ${quotes.sellerId} = ${context.user.id}
+    `);
+
+    // 2. Fetch only the strictly necessary rows for the UI (Sales limits & Date range for charts)
+    const queryRecentSales = db.query.quotes.findMany({
+      where: and(eq(quotes.sellerId, context.user.id as any), eq(quotes.status, 'accepted')),
+      with: { request: true },
+      orderBy: desc(quotes.updatedAt),
+      limit: 4
+    });
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const queryChartQuotes = db.query.quotes.findMany({
+      where: and(
+        eq(quotes.sellerId, context.user.id as any),
+        eq(quotes.status, 'accepted'),
+        gte(quotes.updatedAt, sevenDaysAgo)
+      ),
+      columns: { price: true, updatedAt: true }
+    });
+
+    // Run parallel
+    const [statsResult, recentSales, chartQuotes] = await Promise.all([
+      queryStats,
+      queryRecentSales,
+      queryChartQuotes
+    ]);
+
+    const row = statsResult[0] as any;
+    const totalQuotes = Number(row.total_quotes || 0);
+    const won = Number(row.won_quotes || 0);
+    const pending = Number(row.pending_quotes || 0);
+    const totalRevenue = Number(row.total_revenue || 0);
+    const winRate = totalQuotes > 0 ? (won / totalQuotes) * 100 : 0;
+
+    return {
+      stats: { won, pending, winRate, totalRevenue, totalQuotes },
+      recentSales,
+      chartQuotes
+    };
+  });

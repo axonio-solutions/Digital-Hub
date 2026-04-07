@@ -1,4 +1,4 @@
-import { and, count, desc, eq, ilike, inArray, or } from 'drizzle-orm'
+import { and, count, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
 import { db } from '@/db'
 import { partCategories, quotes, sparePartRequests, vehicleBrands } from '@/db/schema'
 
@@ -101,14 +101,12 @@ export async function fetchOpenRequestsQuery(options?: {
       updatedAt: sparePartRequests.updatedAt,
       category: partCategories,
       brand: vehicleBrands,
-      quotesCount: count(quotes.id).mapWith(Number),
+      quotesCount: sql<number>`(SELECT COUNT(*)::int FROM ${quotes} WHERE ${quotes.requestId} = ${sparePartRequests.id})`,
     })
     .from(sparePartRequests)
-    .leftJoin(quotes, eq(sparePartRequests.id, quotes.requestId))
     .leftJoin(partCategories, eq(sparePartRequests.categoryId, partCategories.id))
     .leftJoin(vehicleBrands, eq(sparePartRequests.brandId, vehicleBrands.id))
     .where(whereClause)
-    .groupBy(sparePartRequests.id, partCategories.id, vehicleBrands.id)
     .orderBy(desc(sparePartRequests.createdAt))
     .limit(limit)
     .offset(offset);

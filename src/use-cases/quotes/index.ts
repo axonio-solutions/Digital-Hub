@@ -10,12 +10,14 @@ import { quotes } from '@/db/schema'
  */
 
 export async function createQuoteUseCase(data: QuoteInput) {
-  return await db.transaction(async (tx) => {
+  let createdQuoteId: string | undefined;
+
+  const result = await db.transaction(async (tx) => {
     try {
       const newQuote = await insertQuote(data, tx)
       
       if (newQuote?.[0]?.id) {
-        await NotificationTriggers.onQuoteCreated(newQuote[0].id, tx)
+        createdQuoteId = newQuote[0].id
       }
 
       return { success: true, data: newQuote[0] }
@@ -25,6 +27,13 @@ export async function createQuoteUseCase(data: QuoteInput) {
       return { success: false, error: 'Failed to create quote' }
     }
   })
+
+  // Decoupled side-effect: Execute outside the transaction block!
+  if (result.success && createdQuoteId) {
+    NotificationTriggers.onQuoteCreated(createdQuoteId).catch(console.error)
+  }
+
+  return result
 }
 
 export async function acceptQuoteUseCase(quoteId: string, requestId: string) {

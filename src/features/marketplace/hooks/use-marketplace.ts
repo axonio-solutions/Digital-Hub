@@ -24,6 +24,14 @@ export function useSellerQuotes(sellerId: string) {
   })
 }
 
+export function useSellerDashboardData(sellerId: string) {
+  return useQuery({
+    queryKey: [...sellerKeys.all, 'dashboard-data', sellerId],
+    queryFn: async () => await import('@/fn/quotes').then(m => m.fetchSellerStatsServerFn()),
+    enabled: !!sellerId,
+  })
+}
+
 export function useSubmitQuote() {
   const queryClient = useQueryClient()
   return useMutation({

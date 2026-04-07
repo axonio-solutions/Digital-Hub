@@ -18,7 +18,6 @@ import { Route as AuthedCompleteRegistrationRouteImport } from './routes/_authed
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthedDashboardRouteRouteImport } from './routes/_authed/dashboard/route'
 import { Route as AuthedDashboardIndexRouteImport } from './routes/_authed/dashboard/index'
-import { Route as ApiNotificationsStreamRouteImport } from './routes/api/notifications.stream'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AuthedDashboardAdminRouteRouteImport } from './routes/_authed/dashboard/admin/route'
 import { Route as AuthedDashboardUsersIndexRouteImport } from './routes/_authed/dashboard/users/index'
@@ -79,11 +78,6 @@ const AuthedDashboardIndexRoute = AuthedDashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthedDashboardRouteRoute,
-} as any)
-const ApiNotificationsStreamRoute = ApiNotificationsStreamRouteImport.update({
-  id: '/api/notifications/stream',
-  path: '/api/notifications/stream',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -185,7 +179,6 @@ export interface FileRoutesByFullPath {
   '/explore/': typeof ExploreIndexRoute
   '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/notifications/stream': typeof ApiNotificationsStreamRoute
   '/dashboard/': typeof AuthedDashboardIndexRoute
   '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
@@ -210,7 +203,6 @@ export interface FileRoutesByTo {
   '/explore': typeof ExploreIndexRoute
   '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/notifications/stream': typeof ApiNotificationsStreamRoute
   '/dashboard': typeof AuthedDashboardIndexRoute
   '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
@@ -238,7 +230,6 @@ export interface FileRoutesById {
   '/explore/': typeof ExploreIndexRoute
   '/_authed/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/notifications/stream': typeof ApiNotificationsStreamRoute
   '/_authed/dashboard/': typeof AuthedDashboardIndexRoute
   '/_authed/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/_authed/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
@@ -266,7 +257,6 @@ export interface FileRouteTypes {
     | '/explore/'
     | '/dashboard/admin'
     | '/api/auth/$'
-    | '/api/notifications/stream'
     | '/dashboard/'
     | '/dashboard/admin/buyers'
     | '/dashboard/admin/categories'
@@ -291,7 +281,6 @@ export interface FileRouteTypes {
     | '/explore'
     | '/dashboard/admin'
     | '/api/auth/$'
-    | '/api/notifications/stream'
     | '/dashboard'
     | '/dashboard/admin/buyers'
     | '/dashboard/admin/categories'
@@ -318,7 +307,6 @@ export interface FileRouteTypes {
     | '/explore/'
     | '/_authed/dashboard/admin'
     | '/api/auth/$'
-    | '/api/notifications/stream'
     | '/_authed/dashboard/'
     | '/_authed/dashboard/admin/buyers'
     | '/_authed/dashboard/admin/categories'
@@ -341,7 +329,6 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  ApiNotificationsStreamRoute: typeof ApiNotificationsStreamRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -408,13 +395,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/'
       preLoaderRoute: typeof AuthedDashboardIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
-    }
-    '/api/notifications/stream': {
-      id: '/api/notifications/stream'
-      path: '/api/notifications/stream'
-      fullPath: '/api/notifications/stream'
-      preLoaderRoute: typeof ApiNotificationsStreamRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -598,7 +578,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   ExploreIndexRoute: ExploreIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
-  ApiNotificationsStreamRoute: ApiNotificationsStreamRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

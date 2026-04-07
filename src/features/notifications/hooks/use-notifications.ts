@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { createBrowserClient } from '@supabase/ssr'
 import {
   fetchUnreadNotificationsServerFn,
   markAllNotificationsReadServerFn,
@@ -8,8 +9,8 @@ import {
 } from '@/fn/notifications'
 
 /**
- * SSE Subscription Hook
- * Connects to the server-sent events stream for real-time updates
+ * Supabase Realtime Subscription Hook
+ * Connects directly to Postgres via WebSockets for real-time updates
  */
 export function useNotifications(_userId?: string) {
   const queryClient = useQueryClient()
@@ -17,84 +18,98 @@ export function useNotifications(_userId?: string) {
   useEffect(() => {
     if (!_userId) return
 
-    console.log('[SSE Client] Connecting to /api/notifications/stream...')
-    const eventSource = new EventSource('/api/notifications/stream')
+    console.log('[Supabase Realtime] Connecting to notifications table...')
+    
+    // SSR-safe Supabase client instantiation
+    const supabase = createBrowserClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY
+    )
 
-    eventSource.onopen = () => {
-      console.log('[SSE Client] Connection established.')
-    }
+    // Using a random suffix prevents React StrictMode double mounts from reusing
+    // a channel that is already in the 'SUBSCRIBED' state.
+    const channelName = `notifications_${_userId}_${Math.random().toString(36).substring(7)}`
+    
+    const channel = supabase
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${_userId}`,
+        },
+        (payload) => {
+          try {
+            if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+              const notification = payload.new
+              console.log('[Supabase Realtime] Notification received:', notification)
 
-    eventSource.onmessage = (event) => {
-      try {
-        const notification = JSON.parse(event.data)
-        console.log('[SSE Client] Notification received:', notification)
-        
-        // 1. Broadly invalidate related caches for real-time updates
-        queryClient.invalidateQueries({ queryKey: ['notifications'] })
-        
-        // If the notification has a referenceId (like requestId), target it specifically
-        if (notification.referenceId) {
-          console.log(`[SSE Client] Invalidating specific request/quote data for ID: ${notification.referenceId}`)
-          
-          // Fix: Align with requestKeys.details structure -> ['requests', 'details', requestId]
-          queryClient.invalidateQueries({ queryKey: ['requests', 'details', notification.referenceId] })
-          
-          // Also invalidate generic lists if this is a new lead or status change
-          if (notification.type === 'NEW_LEAD') {
-            queryClient.invalidateQueries({ queryKey: ['requests', 'open'] })
-            queryClient.invalidateQueries({ queryKey: ['marketplace'] })
-          }
-          
-          queryClient.invalidateQueries({ queryKey: ['quotes', notification.referenceId] })
-        } else {
-          // If no specific reference, invalidate general collections
-          queryClient.invalidateQueries({ queryKey: ['requests'] })
-          queryClient.invalidateQueries({ queryKey: ['quotes'] })
-        }
-        
-        // Ensure immediate refetch for active queries to provide "instant" feel
-        queryClient.refetchQueries({ type: 'active' })
+              // Optimistically update the unread notification cache array
+              // Do NOT use refetchQueries per execution protocol
+              queryClient.setQueryData(['notifications'], (oldData: any) => {
+                if (!Array.isArray(oldData)) return [notification]
+                
+                if (payload.eventType === 'UPDATE') {
+                  return oldData.map(n => n.id === notification.id ? notification : n)
+                }
+                
+                // Avoid duplicate entries if already in cache
+                if (oldData.some(n => n.id === notification.id)) return oldData
+                return [notification, ...oldData]
+              })
+              
+              // Patch the specific unread query as well to ensure UI consistency
+              queryClient.setQueryData(['notifications', 'unread', _userId], (oldData: any) => {
+                if (!Array.isArray(oldData)) return [notification]
+                if (payload.eventType === 'UPDATE') {
+                  return oldData.map(n => n.id === notification.id ? notification : n)
+                }
+                if (oldData.some(n => n.id === notification.id)) return oldData
+                return [notification, ...oldData]
+              })
 
-        // 2. Optimistically update the unread notification cache
-        queryClient.setQueryData(['notifications'], (oldData: any) => {
-          if (!Array.isArray(oldData)) return [notification]
-          // Avoid duplicate entries if already in cache
-          if (oldData.some(n => n.id === notification.id)) return oldData
-          return [notification, ...oldData]
-        })
-
-        // 3. Trigger Visual Feedback (Default Sonner Design)
-        const isErrorType = ['ABANDONED_REQUEST', 'SPAM_FLAG', 'BOTTLENECK_ALERT'].includes(notification.type)
-        
-        if (isErrorType) {
-          toast.error(notification.title, {
-            description: notification.message,
-            duration: 8000,
-          })
-        } else {
-          toast.success(notification.title, {
-            description: notification.message,
-            duration: 5000,
-            action: notification.linkUrl ? {
-              label: 'View',
-              onClick: () => {
-                window.location.href = notification.linkUrl
+              // Trigger Visual Feedback for new notifications
+              if (payload.eventType === 'INSERT') {
+                const isErrorType = ['ABANDONED_REQUEST', 'SPAM_FLAG', 'BOTTLENECK_ALERT'].includes(notification.type)
+                
+                if (isErrorType) {
+                  toast.error(notification.title || 'Alert', {
+                    description: notification.message,
+                    duration: 8000,
+                  })
+                } else {
+                  toast.success(notification.title || 'New Notification', {
+                    description: notification.message,
+                    duration: 5000,
+                    action: notification.linkUrl ? {
+                      label: 'View',
+                      onClick: () => {
+                        window.location.href = notification.linkUrl
+                      }
+                    } : undefined,
+                  })
+                }
               }
-            } : undefined,
-          })
+            }
+          } catch (err) {
+            console.error('[Supabase Realtime] Error handling notification payload:', err)
+          }
         }
-      } catch (err) {
-        console.error('[SSE Client] Error parsing notification:', err)
-      }
-    }
-
-    eventSource.onerror = (err) => {
-      console.error('[SSE Client] connection error:', err)
-      eventSource.close()
-    }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('[Supabase Realtime] Connection established.')
+        }
+        if (status === 'CHANNEL_ERROR') {
+          console.error('[Supabase Realtime] connection error')
+        }
+      })
 
     return () => {
-      eventSource.close()
+      console.log('[Supabase Realtime] Cleaning up subscription...')
+      supabase.removeChannel(channel)
     }
   }, [queryClient, _userId])
 }

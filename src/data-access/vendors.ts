@@ -51,36 +51,56 @@ export function calculatePriorityScore(
 }
 
 export async function fetchWaitlistedSellers() {
-  const waitlisted = await db.query.users.findMany({
-    where: eq(users.account_status, 'waitlisted'),
-    with: {
-      sellerBrands: {
-        with: {
-          brand: true
-        }
-      },
-      sellerCategories: {
-        with: {
-          category: true
-        }
-      }
+  // Using explicit SQL group by to eliminate the N+1 problem (Pillar 2 fix)
+  const result = await db.execute(sql`
+    SELECT 
+      row_to_json(u.*) as user_data,
+      COALESCE(
+        json_agg(DISTINCT jsonb_build_object('brandId', b.id, 'brand', jsonb_build_object('id', b.id, 'name', b.name)))
+        FILTER (WHERE b.id IS NOT NULL), '[]'
+      ) as "sellerBrands",
+      COALESCE(
+        json_agg(DISTINCT jsonb_build_object('categoryId', c.id, 'category', jsonb_build_object('id', c.id, 'name', c.name)))
+        FILTER (WHERE c.id IS NOT NULL), '[]'
+      ) as "sellerCategories"
+    FROM ${users} u
+    LEFT JOIN ${sellerBrands} sb ON u.id = sb.seller_id
+    LEFT JOIN vehicle_brands b ON sb.brand_id = b.id
+    LEFT JOIN ${sellerCategories} sc ON u.id = sc.seller_id
+    LEFT JOIN part_categories c ON sc.category_id = c.id
+    WHERE u.account_status = 'waitlisted'
+    GROUP BY u.id
+  `)
+
+  const { demandMap, supplyMap } = await getMarketPriorityMap()
+
+  const sellersWithPlus = result.map((row: any) => {
+    const rawUser = typeof row.user_data === 'string' ? JSON.parse(row.user_data) : row.user_data
+    const sb = typeof row.sellerBrands === 'string' ? JSON.parse(row.sellerBrands) : row.sellerBrands
+    const sc = typeof row.sellerCategories === 'string' ? JSON.parse(row.sellerCategories) : row.sellerCategories
+
+    // Reconstruct the user object to match the frontend expected Typescript interface
+    const seller = {
+      ...rawUser,
+      createdAt: new Date(rawUser.created_at || rawUser.createdAt || new Date()),
+      accountStatus: rawUser.account_status || rawUser.accountStatus,
+      sellerBrands: sb,
+      sellerCategories: sc,
+    }
+
+    return {
+      ...seller,
+      priorityScore: calculatePriorityScore(sb, demandMap, supplyMap),
     }
   })
-
-  const { demandMap, supplyMap } = await getMarketPriorityMap();
-
-  const sellersWithPlus = waitlisted.map(seller => ({
-    ...seller,
-    priorityScore: calculatePriorityScore(seller.sellerBrands, demandMap, supplyMap)
-  }));
 
   // Rank: Sort by Priority Score DESC, then created_at ASC
   return sellersWithPlus.sort((a, b) => {
     if (b.priorityScore !== a.priorityScore) {
-      return b.priorityScore - a.priorityScore;
+      return b.priorityScore - a.priorityScore
     }
-    return a.createdAt.getTime() - b.createdAt.getTime();
-  });
+    return a.createdAt.getTime() - b.createdAt.getTime()
+  })
 }
 
 export async function updateSellerSpecialties(

@@ -392,20 +392,35 @@ export async function fetchMarketHealth() {
  * Fetch consolidated dashboard stats for the Admin Overview.
  */
 export async function fetchAdminDashboardStats() {
-  const [buyers, sellers, health, openRequests] = await Promise.all([
-    db.select({ value: count() }).from(users).where(eq(users.role, 'buyer')),
-    db.select({ value: count() }).from(users).where(eq(users.role, 'seller')),
-    fetchMarketHealth(),
-    db.select({ value: count() }).from(sparePartRequests).where(eq(sparePartRequests.status, 'open')),
-  ])
+  const result = await db.execute(sql`
+    SELECT 
+      (SELECT COUNT(*) FROM users WHERE role = 'buyer')::int as total_buyers,
+      (SELECT COUNT(*) FROM users WHERE role = 'seller')::int as total_sellers,
+      (SELECT COUNT(*) FROM spare_part_requests)::int as total_requests,
+      (SELECT COUNT(*) FROM spare_part_requests WHERE status = 'open')::int as open_requests,
+      (SELECT COUNT(*) FROM quotes)::int as total_quotes
+  `)
+
+  const data = result[0] as {
+    total_buyers: number
+    total_sellers: number
+    total_requests: number
+    open_requests: number
+    total_quotes: number
+  }
+
+  const avgOffersPerRequest =
+    data.total_requests > 0
+      ? parseFloat((data.total_quotes / data.total_requests).toFixed(1))
+      : 0
 
   return {
-    totalBuyers: buyers[0].value,
-    totalSellers: sellers[0].value,
-    totalQuotes: health.totalQuotes,
-    totalRequests: health.totalRequests,
-    openRequests: openRequests[0].value,
-    marketHealth: health.status,
-    avgOffersPerRequest: health.avgOffersPerRequest,
+    totalBuyers: data.total_buyers,
+    totalSellers: data.total_sellers,
+    totalQuotes: data.total_quotes,
+    totalRequests: data.total_requests,
+    openRequests: data.open_requests,
+    marketHealth: avgOffersPerRequest >= 3 ? 'Healthy' : 'Low Supply',
+    avgOffersPerRequest,
   }
 }
