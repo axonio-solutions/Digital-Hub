@@ -169,7 +169,13 @@ export async function activateSellerUseCase(userId: string) {
 
   await updateUserStatus(userId, 'active')
 
-  await NotificationTriggers.onAccountApproved(userId)
+  Promise.resolve().then(async () => {
+    try {
+      await NotificationTriggers.onAccountApproved(userId)
+    } catch (error) {
+      console.error('Failed to launch account approved notifications:', error)
+    }
+  })
 
   return { success: true }
 }

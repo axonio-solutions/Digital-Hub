@@ -26,13 +26,26 @@ export async function updateUserMetadata(userId: string, data: any) {
     .where(eq(users.id, userId))
 }
 
-export async function fetchAllUsers() {
+export async function fetchAllUsers(page = 1, pageSize = 50) {
+  const offset = (page - 1) * pageSize
+
   return await db.query.users.findMany({
+    limit: pageSize,
+    offset: offset,
     orderBy: (users, { desc }) => [desc(users.createdAt)],
+    columns: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      role: true,
+      account_status: true,
+      banned: true,
+    },
     // @ts-ignore
     with: {
-      sellerBrands: { with: { brand: true } },
-      sellerCategories: { with: { category: true } }
+      sellerBrands: { columns: { brandId: true } },
+      sellerCategories: { columns: { categoryId: true } }
     },
   })
 }

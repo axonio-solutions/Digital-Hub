@@ -388,10 +388,18 @@ export async function fetchMarketHealth() {
   }
 }
 
+let dashboardStatsCache: { data: any, timestamp: number } | null = null;
+const CACHE_TTL = 60 * 1000; // 60 seconds
+
 /**
  * Fetch consolidated dashboard stats for the Admin Overview.
  */
 export async function fetchAdminDashboardStats() {
+  const now = Date.now();
+  if (dashboardStatsCache && now - dashboardStatsCache.timestamp < CACHE_TTL) {
+    return dashboardStatsCache.data;
+  }
+
   const result = await db.execute(sql`
     SELECT 
       (SELECT COUNT(*) FROM users WHERE role = 'buyer')::int as total_buyers,
@@ -414,7 +422,7 @@ export async function fetchAdminDashboardStats() {
       ? parseFloat((data.total_quotes / data.total_requests).toFixed(1))
       : 0
 
-  return {
+  const finalData = {
     totalBuyers: data.total_buyers,
     totalSellers: data.total_sellers,
     totalQuotes: data.total_quotes,
@@ -423,4 +431,7 @@ export async function fetchAdminDashboardStats() {
     marketHealth: avgOffersPerRequest >= 3 ? 'Healthy' : 'Low Supply',
     avgOffersPerRequest,
   }
+
+  dashboardStatsCache = { data: finalData, timestamp: now };
+  return finalData;
 }
