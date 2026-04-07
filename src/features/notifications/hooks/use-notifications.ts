@@ -70,6 +70,51 @@ export function useNotifications(_userId?: string) {
                 return [notification, ...oldData]
               })
 
+              // --- Real-time Request Cache Patching ---
+              // If the notification contains request metadata, update relevant caches
+              if (notification.metadata && notification.metadata.requestId) {
+                const { requestId, status, quotesCount } = notification.metadata
+                console.log(`[Supabase Realtime] Patching cache for request ${requestId}: status=${status}, quotesCount=${quotesCount}`)
+
+                // 1. Patch Request Details
+                queryClient.setQueryData(['requests', 'details', requestId], (old: any) => {
+                  if (!old) return old
+                  return { ...old, status, quotesCount }
+                })
+
+                // 2. Patch Buyer Requests List (matching by ID)
+                queryClient.setQueryData(['buyer', 'requests', _userId], (old: any) => {
+                  if (!Array.isArray(old)) return old
+                  return old.map((r: any) => r.id === requestId ? { ...r, status, quotesCount } : r)
+                })
+
+                // 3. Patch Seller Marketplace / Open Requests
+                const fullRequest = notification.metadata.request
+                queryClient.getQueryCache().findAll({ queryKey: ['requests', 'open'] }).forEach(query => {
+                  queryClient.setQueryData(query.queryKey, (old: any) => {
+                    if (!Array.isArray(old)) return old
+                    const exists = old.some((r: any) => r.id === requestId)
+                    if (exists) {
+                      return old.map((r: any) => r.id === requestId ? { ...r, status, quotesCount } : r)
+                    }
+                    // If it's a NEW_LEAD and we have the full request snapshot, prepend it
+                    if (fullRequest && notification.type === 'NEW_LEAD') {
+                      return [fullRequest, ...old]
+                    }
+                    return old
+                  })
+                })
+
+                // 4. Patch Seller Quote Statuses (My Quotes)
+                const { quoteId, quoteStatus } = notification.metadata
+                if (quoteId && quoteStatus) {
+                  queryClient.setQueryData(['seller', 'quotes', _userId], (old: any) => {
+                    if (!Array.isArray(old)) return old
+                    return old.map((q: any) => q.id === quoteId ? { ...q, status: quoteStatus } : q)
+                  })
+                }
+              }
+
               // Trigger Visual Feedback for new notifications
               if (payload.eventType === 'INSERT') {
                 const isErrorType = ['ABANDONED_REQUEST', 'SPAM_FLAG', 'BOTTLENECK_ALERT'].includes(notification.type)

@@ -81,25 +81,36 @@ export function useCreateRequest() {
       await queryClient.cancelQueries({ queryKey: ['buyer'] })
 
       // Snapshot previous requests
-      const previousRequests = queryClient.getQueryData(requestKeys.allRequests())
+      const previousGlobalRequests = queryClient.getQueryData(requestKeys.allRequests())
+      
+      const optimisticRequest = {
+        ...newRequestPayload,
+        id: `temp-${Date.now()}`,
+        status: 'PENDING',
+        createdAt: new Date().toISOString(),
+        quotesCount: 0,
+      }
 
-      // Optimistically add the new request
+      // 1. Optimistically add to the global requests list
       queryClient.setQueryData(requestKeys.allRequests(), (old: any) => {
-        const optimisticRequest = {
-          ...newRequestPayload,
-          id: `temp-${Date.now()}`,
-          status: 'PENDING',
-          createdAt: new Date().toISOString(),
-        }
         if (!Array.isArray(old)) return [optimisticRequest]
         return [optimisticRequest, ...old]
       })
 
-      return { previousRequests }
+      // 2. Optimistically add to the Buyer's personal requests list
+      // We try to find all 'buyer' 'requests' queries in the cache
+      queryClient.getQueryCache().findAll({ queryKey: ['buyer', 'requests'] }).forEach(query => {
+        queryClient.setQueryData(query.queryKey, (old: any) => {
+          if (!Array.isArray(old)) return [optimisticRequest]
+          return [optimisticRequest, ...old]
+        })
+      })
+
+      return { previousGlobalRequests }
     },
     onError: (_err, _newRequest, context) => {
-      if (context?.previousRequests) {
-        queryClient.setQueryData(requestKeys.allRequests(), context.previousRequests)
+      if (context?.previousGlobalRequests) {
+        queryClient.setQueryData(requestKeys.allRequests(), context.previousGlobalRequests)
       }
     },
 

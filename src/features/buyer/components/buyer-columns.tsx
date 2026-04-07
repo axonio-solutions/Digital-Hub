@@ -231,7 +231,7 @@ export const useBuyerColumns = (onAction?: (action: { type: string, item: any })
       accessorKey: "quotes",
       header: t('columns.offers'),
       cell: ({ row }: { row: any }) => {
-        const count = row.original.quotes?.length || 0;
+        const count = row.original.quotesCount ?? row.original.quotes?.length ?? 0;
         return (
           <div className="flex items-center gap-1.5">
             <MessageSquare className={`size-3 ${count > 0 ? "text-primary" : "text-muted-foreground"}`} />

@@ -11,6 +11,14 @@ export type NotificationTrigger = {
   message: string
   referenceId?: string
   linkUrl?: string
+  metadata?: {
+    requestId?: string
+    status?: string
+    quotesCount?: number
+    request?: any
+    quoteId?: string
+    quoteStatus?: string
+  }
   isPriority?: boolean
 }
 
@@ -20,7 +28,7 @@ export class NotificationService {
    */
   static async send(payload: NotificationTrigger, tx?: any) {
     const client = tx || db
-    const { userId, type, title, message, referenceId, linkUrl, isPriority } = payload
+    const { userId, type, title, message, referenceId, linkUrl, isPriority, metadata } = payload
 
     // 1. Get user preferences
     let prefs = await client.query.notificationPreferences.findFirst({
@@ -44,6 +52,7 @@ export class NotificationService {
         message,
         referenceId,
         linkUrl,
+        metadata,
         isPriority: isPriority ?? false,
       }).returning()
       

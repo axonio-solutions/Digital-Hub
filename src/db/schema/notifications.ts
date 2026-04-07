@@ -1,4 +1,4 @@
-import { boolean, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, pgEnum, pgTable, text, timestamp, uuid, jsonb } from 'drizzle-orm/pg-core'
 import { users } from './auth'
 
 export const alertFrequencyEnum = pgEnum('alert_frequency', [
@@ -64,6 +64,13 @@ export const notifications = pgTable('notifications', {
   // Link to the specific object (request_id, quote_id, etc.)
   referenceId: text('reference_id'),
   linkUrl: text('link_url'),
+
+  // For real-time UI updates (e.g., { requestId: '...', status: 'open', quotesCount: 5 })
+  metadata: jsonb('metadata').$type<{
+    requestId?: string
+    status?: string
+    quotesCount?: number
+  }>(),
 
   isRead: boolean('is_read').default(false).notNull(),
   isPriority: boolean('is_priority').default(false).notNull(),

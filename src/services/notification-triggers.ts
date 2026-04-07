@@ -30,6 +30,12 @@ export class NotificationTriggers {
       .from(quotes)
       .where(eq(quotes.requestId, quote.requestId))
 
+    const metadata = {
+      requestId: quote.requestId,
+      status: quote.request.status,
+      quotesCount: Number(rowCount.value),
+    }
+
     if (rowCount.value === 1) {
       await NotificationService.send({
         userId: quote.request.buyerId,
@@ -38,6 +44,7 @@ export class NotificationTriggers {
         message: `Good news! Your first offer for ${quote.request.partName} is here.`,
         referenceId: quote.requestId,
         linkUrl: `/dashboard/requests/${quote.requestId}`,
+        metadata,
       }, tx)
     } else if (rowCount.value === 3) {
       await NotificationService.send({
@@ -48,6 +55,7 @@ export class NotificationTriggers {
         referenceId: quote.requestId,
         linkUrl: `/dashboard/requests/${quote.requestId}`,
         isPriority: true,
+        metadata,
       }, tx)
     } else {
       await NotificationService.send({
@@ -57,6 +65,7 @@ export class NotificationTriggers {
         message: `A seller has submitted a new offer for ${quote.request.partName}.`,
         referenceId: quote.requestId,
         linkUrl: `/dashboard/requests/${quote.requestId}`,
+        metadata,
       }, tx)
     }
   }
@@ -69,6 +78,11 @@ export class NotificationTriggers {
     })
     if (!quote || !quote.request) return
 
+    const [rowCount] = await client
+      .select({ value: count() })
+      .from(quotes)
+      .where(eq(quotes.requestId, quote.requestId))
+
     await NotificationService.send({
       userId: quote.request.buyerId,
       type: 'QUOTE_STATUS_CHANGE',
@@ -76,6 +90,11 @@ export class NotificationTriggers {
       message: `A seller has updated their quote for ${quote.request.partName}.`,
       referenceId: quote.requestId,
       linkUrl: `/dashboard/requests/${quote.requestId}`,
+      metadata: {
+        requestId: quote.requestId,
+        status: quote.request.status,
+        quotesCount: Number(rowCount.value),
+      },
     }, tx)
   }
 
@@ -115,6 +134,25 @@ export class NotificationTriggers {
         message: `A buyer is looking for ${request.partName} (${request.vehicleBrand}). Check it out!`,
         referenceId: request.id,
         linkUrl: `/dashboard/marketplace/${request.id}`,
+        metadata: {
+          requestId: request.id,
+          status: request.status,
+          quotesCount: 0,
+          // Snapshot for real-time list insertion
+          request: {
+            id: request.id,
+            partName: request.partName,
+            vehicleBrand: request.vehicleBrand,
+            vehicleModel: request.vehicleModel,
+            vehicleYear: request.vehicleYear,
+            status: request.status,
+            createdAt: request.createdAt,
+            deadline: request.deadline,
+            buyerId: request.buyerId,
+            categoryId: request.categoryId,
+            brandId: request.brandId,
+          }
+        },
       }, tx)
     }
   }
@@ -127,6 +165,11 @@ export class NotificationTriggers {
     })
     if (!quote) return
 
+    const [rowCount] = await client
+      .select({ value: count() })
+      .from(quotes)
+      .where(eq(quotes.requestId, quote.requestId))
+
     await NotificationService.send({
       userId: quote.sellerId,
       type: 'QUOTE_WON',
@@ -135,6 +178,14 @@ export class NotificationTriggers {
       referenceId: quote.requestId,
       linkUrl: `/dashboard/orders`,
       isPriority: true,
+      metadata: {
+        requestId: quote.requestId,
+        status: quote.request.status,
+        quotesCount: Number(rowCount.value),
+        // Seller specific quote tracking
+        quoteId: quote.id,
+        quoteStatus: 'accepted'
+      },
     }, tx)
   }
 
@@ -146,6 +197,11 @@ export class NotificationTriggers {
     })
     if (!quote) return
 
+    const [rowCount] = await client
+      .select({ value: count() })
+      .from(quotes)
+      .where(eq(quotes.requestId, quote.requestId))
+
     await NotificationService.send({
       userId: quote.sellerId,
       type: 'QUOTE_STATUS_CHANGE',
@@ -153,6 +209,13 @@ export class NotificationTriggers {
       message: `Your offer for ${quote.request.partName} was not selected.`,
       referenceId: quote.requestId,
       linkUrl: `/dashboard/quotes`,
+      metadata: {
+        requestId: quote.requestId,
+        status: quote.request.status,
+        quotesCount: Number(rowCount.value),
+        quoteId: quote.id,
+        quoteStatus: 'rejected'
+      },
     }, tx)
   }
 
@@ -164,6 +227,11 @@ export class NotificationTriggers {
     })
     if (!quote) return
 
+    const [rowCount] = await client
+      .select({ value: count() })
+      .from(quotes)
+      .where(eq(quotes.requestId, quote.requestId))
+
     await NotificationService.send({
       userId: quote.sellerId,
       type: 'QUOTE_STATUS_CHANGE',
@@ -171,6 +239,13 @@ export class NotificationTriggers {
       message: `Your offer for ${quote.request.partName} is back in consideration.`,
       referenceId: quote.requestId,
       linkUrl: `/dashboard/quotes`,
+      metadata: {
+        requestId: quote.requestId,
+        status: quote.request.status,
+        quotesCount: Number(rowCount.value),
+        quoteId: quote.id,
+        quoteStatus: 'pending'
+      },
     }, tx)
   }
 
@@ -182,6 +257,11 @@ export class NotificationTriggers {
     })
     if (!quote) return
 
+    const [rowCount] = await client
+      .select({ value: count() })
+      .from(quotes)
+      .where(eq(quotes.requestId, quote.requestId))
+
     await NotificationService.send({
       userId: quote.sellerId,
       type: 'QUOTE_STATUS_CHANGE',
@@ -189,6 +269,13 @@ export class NotificationTriggers {
       message: `The acceptance of your offer for ${quote.request.partName} has been revoked.`,
       referenceId: quote.requestId,
       linkUrl: `/dashboard/quotes`,
+      metadata: {
+        requestId: quote.requestId,
+        status: quote.request.status,
+        quotesCount: Number(rowCount.value),
+        quoteId: quote.id,
+        quoteStatus: 'revoked'
+      },
     }, tx)
   }
 
