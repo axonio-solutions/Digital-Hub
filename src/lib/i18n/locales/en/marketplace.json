@@ -146,6 +146,13 @@
     "view_btn": "View Details",
     "no_results": "No results matching your filters."
   },
+  "card": {
+    "badge_looking": "Looking for Part",
+    "badge_offers": "Offers Sent",
+    "quotes_count": "{{count}} Offers",
+    "quote_now": "Quote Now",
+    "my_request": "My Request"
+  },
   "defaults": {
     "unknown": "Unknown"
   }

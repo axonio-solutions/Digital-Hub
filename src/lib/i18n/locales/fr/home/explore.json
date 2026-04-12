@@ -37,6 +37,7 @@
     "model_year": "Année {{year}}",
     "default_category": "Pièce",
     "action_btn": "Connectez-vous pour chiffrer",
+    "submit_quote": "Soumettre un devis",
     "request_summary": "Demande {{partName}} pour {{brand}} {{year}}."
   }
 }

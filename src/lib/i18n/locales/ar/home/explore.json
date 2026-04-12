@@ -37,6 +37,8 @@
     "model_year": "سنة {{year}}",
     "default_category": "قطعة غيار",
     "action_btn": "سجل الدخول لتقديم عرض",
+    "submit_quote": "تقديم عرض سعر",
+    "show_details": "عرض التفاصيل",
     "request_summary": "طلب {{partName}} لسيارة {{brand}} موديل {{year}}."
   }
 }

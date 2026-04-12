@@ -146,6 +146,13 @@
     "view_btn": "عرض التفاصيل",
     "no_results": "لا توجد نتائج تطابق فلاترك."
   },
+  "card": {
+    "badge_looking": "بحث عن قطعة",
+    "badge_offers": "عروض مرسلة",
+    "quotes_count": "{{count}} عروض",
+    "quote_now": "قدم عرضاً الآن",
+    "my_request": "طلبي"
+  },
   "defaults": {
     "unknown": "غير معروف"
   }

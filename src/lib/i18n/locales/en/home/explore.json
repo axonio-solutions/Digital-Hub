@@ -37,6 +37,8 @@
     "model_year": "FY {{year}}",
     "default_category": "Part",
     "action_btn": "Sign In to Quote",
+    "submit_quote": "Submit Quote",
+    "show_details": "Show Details",
     "request_summary": "Requesting {{partName}} for {{brand}} {{year}}."
   }
 }
