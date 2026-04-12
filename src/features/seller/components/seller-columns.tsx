@@ -9,8 +9,7 @@ import {
   Calendar,
 } from 'lucide-react'
 import type { ColumnDef } from '@tanstack/react-table'
-import { formatDistanceToNow } from 'date-fns'
-import { arDZ, fr, enUS } from 'date-fns/locale'
+import { formatRelativeTime } from '@/lib/utils/date-format'
 import { useTranslation } from 'react-i18next'
 import { tCategory } from '@/utils/category-utils'
 import { cn } from '@/lib/utils'
@@ -31,17 +30,6 @@ export const useSellerColumns = (
 ): ColumnDef<any>[] => {
   const { t, i18n } = useTranslation('quotes')
 
-  const currentLocale = useMemo(() => {
-    switch (i18n.language) {
-      case 'ar':
-      case 'ar-DZ':
-        return arDZ
-      case 'fr':
-        return fr
-      default:
-        return enUS
-    }
-  }, [i18n.language])
 
   return useMemo(
     () => [
@@ -140,10 +128,7 @@ export const useSellerColumns = (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-3 w-3" />
             <span className="text-xs">
-              {formatDistanceToNow(new Date(row.original.createdAt), { 
-                addSuffix: true,
-                locale: currentLocale
-              })}
+              {formatRelativeTime(row.original.createdAt)}
             </span>
           </div>
         ),

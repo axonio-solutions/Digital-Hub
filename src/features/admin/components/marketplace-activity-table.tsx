@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { formatDistanceToNow } from "date-fns";
+import { formatRelativeTime } from "@/lib/utils/date-format";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ function TableCellViewer({ item }: { item: MarketplaceActivity }) {
           <DrawerHeader>
             <DrawerTitle>{item.partName}</DrawerTitle>
             <DrawerDescription>
-              {t('table.submitted', { time: formatDistanceToNow(new Date(item.createdAt), { addSuffix: true }) })}
+              {t('table.submitted', { time: formatRelativeTime(item.createdAt) })}
             </DrawerDescription>
           </DrawerHeader>
           <div className="px-4 py-2 space-y-6">

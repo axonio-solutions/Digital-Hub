@@ -1,6 +1,6 @@
 'use client'
 
-import { formatDistanceToNow } from 'date-fns'
+import { formatRelativeTime } from '@/lib/utils/date-format'
 import { useTranslation } from 'react-i18next'
 import { 
   MapPin, 
@@ -83,7 +83,7 @@ export function QuoteCard({
                 </div>
                 <div className="flex items-center gap-1.5 text-[12px] font-bold text-muted-foreground opacity-80">
                   <Clock className="size-3.5 text-primary" />
-                  <span>{formatDistanceToNow(new Date(quote.createdAt))} {t('card.ago')}</span>
+                  <span>{formatRelativeTime(quote.createdAt)}</span>
                 </div>
               </div>
             </div>

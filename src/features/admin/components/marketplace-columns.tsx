@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { formatDistanceToNow } from "date-fns";
+import { formatRelativeTime } from "@/lib/utils/date-format";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { z } from "zod";
@@ -118,7 +118,7 @@ export const marketplaceColumns = (
     header: t('table.columns.created_at'),
     cell: ({ row }) => (
       <div className="text-muted-foreground text-xs">
-        {formatDistanceToNow(new Date(row.original.createdAt), { addSuffix: true })}
+        {formatRelativeTime(row.original.createdAt)}
       </div>
     )
   }

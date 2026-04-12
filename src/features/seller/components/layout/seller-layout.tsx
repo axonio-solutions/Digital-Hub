@@ -25,7 +25,7 @@ export function SellerLayout({ children }: { children: React.ReactNode }) {
       },
       {
         title: t('nav.live_requests'),
-        url: '/dashboard/marketplace',
+        url: '/explore',
         icon: IconPick,
       },
       {

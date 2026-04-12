@@ -10,10 +10,11 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { Activity } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { format, subDays, isSameDay, startOfDay } from 'date-fns'
 import { Link } from '@tanstack/react-router'
+import { Activity } from 'lucide-react'
+import { format, subDays, isSameDay, startOfDay } from 'date-fns'
+import { useAuth } from '@/features/auth/hooks/use-auth'
 import {
   Card,
   CardContent,
@@ -22,9 +23,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { useAuth } from '@/features/auth/hooks/use-auth'
-import { useSellerDashboardData } from '@/features/marketplace/hooks/use-marketplace'
-import { useOpenRequests } from '@/features/requests/hooks/use-requests'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -208,34 +206,6 @@ const OfferDistribution = memo(({ stats, myQuotesLength, t }: { stats: any; myQu
   </Card>
 ))
 
-const OpenDemandsTable = memo(({ openRequests, t }: { openRequests: any[]; t: any }) => (
-  <Card className="bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:shadow-lg transition-all duration-300">
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
-      <div className="space-y-1">
-        <CardTitle className="text-lg font-bold text-foreground tracking-tight uppercase underline decoration-primary/30 underline-offset-8">{t('tables.open_demands')}</CardTitle>
-        <CardDescription className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-2">{t('tables.latest_requests')}</CardDescription>
-      </div>
-      <Badge variant="outline" className="rounded-full bg-primary/5 text-primary border-primary/20 font-bold uppercase tracking-tighter text-[10px] px-3 py-1">
-        {openRequests.length} {t('pie.pending')}
-      </Badge>
-    </CardHeader>
-    <CardContent>
-      <div className="space-y-4">
-        {openRequests.slice(0, 4).map((req: any) => (
-          <div key={req.id} className="flex items-center justify-between border-b border-slate-50 dark:border-slate-900 pb-4 last:border-0 last:pb-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/30 p-2 rounded-xl transition-colors cursor-pointer group/item">
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-slate-950 dark:text-slate-100 uppercase tracking-tight">{req.partName}</p>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{req.vehicleBrand} • {req.modelYear}</p>
-            </div>
-            <Link to="/dashboard">
-              <Button variant="outline" size="sm" className="h-7 px-3 text-[10px] font-bold uppercase tracking-tight rounded-lg border-border group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:border-primary transition-all">{t('tables.review')}</Button>
-            </Link>
-          </div>
-        ))}
-      </div>
-    </CardContent>
-  </Card>
-))
 
 const SalesHistoryTable = memo(({ myQuotes, language, t }: { myQuotes: any[]; language: string; t: any }) => (
   <Card className="bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:shadow-lg transition-all duration-300">
@@ -315,7 +285,7 @@ export function SellerOverview() {
   const { t, i18n } = useTranslation(['dashboard/seller', 'dashboard/layout'])
   const { data: user } = useAuth()
   
-  const { statsPromise, feedPromise } = routeApi.useLoaderData()
+  const { statsPromise } = routeApi.useLoaderData() as { statsPromise: any }
 
   return (
     <div className="flex-1 space-y-8 p-6 md:p-10 pt-6 animate-in fade-in duration-700 max-w-[1600px] mx-auto w-full pb-20">
@@ -344,16 +314,6 @@ export function SellerOverview() {
         </Await>
       </React.Suspense>
 
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
-        <React.Suspense fallback={<Skeleton className="h-[400px] w-full rounded-[2rem]" />}>
-          <Await promise={feedPromise}>
-            {(res: any) => <OpenDemandsTable openRequests={res?.data || []} t={t} />}
-          </Await>
-        </React.Suspense>
-        
-        {/* SalesHistoryTable was moved into StatsSection to consume statsPromise without an extra grid wrapper. To correct layout: */}
-        <div className="hidden"></div> 
-      </div>
     </div>
   )
 }

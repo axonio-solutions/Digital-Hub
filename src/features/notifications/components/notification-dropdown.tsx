@@ -23,7 +23,7 @@ import {
   CheckCircle2,
   Check,
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { formatRelativeTime } from "@/lib/utils/date-format";
 import { 
   Tooltip,
   TooltipContent,
@@ -150,7 +150,7 @@ export const NotificationDropdown = ({
                       <div className="flex items-center gap-2 shrink-0">
                         <div className="flex flex-col items-end gap-1 px-1">
                           <p className="text-[10px] font-medium text-slate-400">
-                            {notification.createdAt ? formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true }) : ''}
+                            {formatRelativeTime(notification.createdAt)}
                           </p>
                           {!notification.isRead && <div className="size-1.5 bg-primary rounded-full shadow-[0_0_8px_rgba(var(--primary),0.5)]" />}
                         </div>

@@ -148,11 +148,23 @@ export function useInfinitePublicOpenRequests(filters?: {
   })
 }
 
-export function usePublicOpenRequests() {
+export function usePublicOpenRequests(filters?: {
+  categoryId?: string;
+  brandIds?: string[];
+  search?: string;
+  limit?: number;
+  offset?: number;
+}) {
   return useQuery({
-    queryKey: requestKeys.public(),
+    queryKey: [...requestKeys.public(), filters],
     queryFn: async () => {
-      const res = await fetchPublicOpenRequestsServerFn({ data: {} })
+      const res = await fetchPublicOpenRequestsServerFn({ 
+        data: {
+          ...filters,
+          limit: filters?.limit || 12,
+          offset: filters?.offset || 0,
+        } 
+      })
       return res.data || []
     },
   })
