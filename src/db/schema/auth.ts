@@ -1,4 +1,3 @@
-import { relations } from 'drizzle-orm'
 import { boolean, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
@@ -26,9 +25,6 @@ export const users = pgTable('users', {
   city: text('city'),
   companyAddress: text('company_address'),
   commercialRegister: text('commercial_register'),
-  viewModeGeneralBroadcast: boolean('view_mode_general_broadcast')
-    .default(true)
-    .notNull(),
 })
 
 export const sessions = pgTable(

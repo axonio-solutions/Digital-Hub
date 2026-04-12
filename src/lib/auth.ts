@@ -87,12 +87,6 @@ export const auth = betterAuth({
         required: false,
         input: true,
       },
-      viewModeGeneralBroadcast: {
-        type: 'boolean',
-        required: false,
-        defaultValue: true,
-        input: true,
-      },
     },
   },
   plugins: [
@@ -144,7 +138,6 @@ export interface User {
   sellerBrands?: { brand: { id: string; brand: string } }[]
   sellerCategories?: { category: { id: string; name: string } }[]
   priorityScore?: number | null
-  viewModeGeneralBroadcast?: boolean | null
 }
 
 export type Auth = typeof auth
