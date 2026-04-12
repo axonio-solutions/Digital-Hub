@@ -11,14 +11,11 @@ export const Route = createFileRoute('/_authed/dashboard/')({
     const role = (context.user as any)?.role || 'buyer'
     if (role === 'seller') {
       const { fetchSellerStatsServerFn } = await import('@/fn/quotes')
-      const { fetchOpenRequestsServerFn } = await import('@/fn/requests')
       
       const statsPromise = fetchSellerStatsServerFn()
-      const feedPromise = fetchOpenRequestsServerFn({ data: {} })
       
       return { 
         statsPromise: defer(statsPromise), 
-        feedPromise: defer(feedPromise) 
       }
     }
     return {}

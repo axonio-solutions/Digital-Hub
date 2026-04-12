@@ -25,7 +25,6 @@ import { Route as AuthedDashboardRequestsIndexRouteImport } from './routes/_auth
 import { Route as AuthedDashboardQuotesIndexRouteImport } from './routes/_authed/dashboard/quotes/index'
 import { Route as AuthedDashboardProfileIndexRouteImport } from './routes/_authed/dashboard/profile/index'
 import { Route as AuthedDashboardOffersIndexRouteImport } from './routes/_authed/dashboard/offers/index'
-import { Route as AuthedDashboardMarketplaceIndexRouteImport } from './routes/_authed/dashboard/marketplace/index'
 import { Route as AuthedDashboardHistoryIndexRouteImport } from './routes/_authed/dashboard/history/index'
 import { Route as AuthedDashboardGarageIndexRouteImport } from './routes/_authed/dashboard/garage/index'
 import { Route as AuthedDashboardAuditIndexRouteImport } from './routes/_authed/dashboard/audit/index'
@@ -120,12 +119,6 @@ const AuthedDashboardOffersIndexRoute =
     path: '/offers/',
     getParentRoute: () => AuthedDashboardRouteRoute,
   } as any)
-const AuthedDashboardMarketplaceIndexRoute =
-  AuthedDashboardMarketplaceIndexRouteImport.update({
-    id: '/marketplace/',
-    path: '/marketplace/',
-    getParentRoute: () => AuthedDashboardRouteRoute,
-  } as any)
 const AuthedDashboardHistoryIndexRoute =
   AuthedDashboardHistoryIndexRouteImport.update({
     id: '/history/',
@@ -187,7 +180,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
   '/dashboard/garage/': typeof AuthedDashboardGarageIndexRoute
   '/dashboard/history/': typeof AuthedDashboardHistoryIndexRoute
-  '/dashboard/marketplace/': typeof AuthedDashboardMarketplaceIndexRoute
   '/dashboard/offers/': typeof AuthedDashboardOffersIndexRoute
   '/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
   '/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
@@ -211,7 +203,6 @@ export interface FileRoutesByTo {
   '/dashboard/audit': typeof AuthedDashboardAuditIndexRoute
   '/dashboard/garage': typeof AuthedDashboardGarageIndexRoute
   '/dashboard/history': typeof AuthedDashboardHistoryIndexRoute
-  '/dashboard/marketplace': typeof AuthedDashboardMarketplaceIndexRoute
   '/dashboard/offers': typeof AuthedDashboardOffersIndexRoute
   '/dashboard/profile': typeof AuthedDashboardProfileIndexRoute
   '/dashboard/quotes': typeof AuthedDashboardQuotesIndexRoute
@@ -238,7 +229,6 @@ export interface FileRoutesById {
   '/_authed/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
   '/_authed/dashboard/garage/': typeof AuthedDashboardGarageIndexRoute
   '/_authed/dashboard/history/': typeof AuthedDashboardHistoryIndexRoute
-  '/_authed/dashboard/marketplace/': typeof AuthedDashboardMarketplaceIndexRoute
   '/_authed/dashboard/offers/': typeof AuthedDashboardOffersIndexRoute
   '/_authed/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
   '/_authed/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
@@ -265,7 +255,6 @@ export interface FileRouteTypes {
     | '/dashboard/audit/'
     | '/dashboard/garage/'
     | '/dashboard/history/'
-    | '/dashboard/marketplace/'
     | '/dashboard/offers/'
     | '/dashboard/profile/'
     | '/dashboard/quotes/'
@@ -289,7 +278,6 @@ export interface FileRouteTypes {
     | '/dashboard/audit'
     | '/dashboard/garage'
     | '/dashboard/history'
-    | '/dashboard/marketplace'
     | '/dashboard/offers'
     | '/dashboard/profile'
     | '/dashboard/quotes'
@@ -315,7 +303,6 @@ export interface FileRouteTypes {
     | '/_authed/dashboard/audit/'
     | '/_authed/dashboard/garage/'
     | '/_authed/dashboard/history/'
-    | '/_authed/dashboard/marketplace/'
     | '/_authed/dashboard/offers/'
     | '/_authed/dashboard/profile/'
     | '/_authed/dashboard/quotes/'
@@ -445,13 +432,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardOffersIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
     }
-    '/_authed/dashboard/marketplace/': {
-      id: '/_authed/dashboard/marketplace/'
-      path: '/marketplace'
-      fullPath: '/dashboard/marketplace/'
-      preLoaderRoute: typeof AuthedDashboardMarketplaceIndexRouteImport
-      parentRoute: typeof AuthedDashboardRouteRoute
-    }
     '/_authed/dashboard/history/': {
       id: '/_authed/dashboard/history/'
       path: '/history'
@@ -529,7 +509,6 @@ interface AuthedDashboardRouteRouteChildren {
   AuthedDashboardAuditIndexRoute: typeof AuthedDashboardAuditIndexRoute
   AuthedDashboardGarageIndexRoute: typeof AuthedDashboardGarageIndexRoute
   AuthedDashboardHistoryIndexRoute: typeof AuthedDashboardHistoryIndexRoute
-  AuthedDashboardMarketplaceIndexRoute: typeof AuthedDashboardMarketplaceIndexRoute
   AuthedDashboardOffersIndexRoute: typeof AuthedDashboardOffersIndexRoute
   AuthedDashboardProfileIndexRoute: typeof AuthedDashboardProfileIndexRoute
   AuthedDashboardQuotesIndexRoute: typeof AuthedDashboardQuotesIndexRoute
@@ -544,7 +523,6 @@ const AuthedDashboardRouteRouteChildren: AuthedDashboardRouteRouteChildren = {
   AuthedDashboardAuditIndexRoute: AuthedDashboardAuditIndexRoute,
   AuthedDashboardGarageIndexRoute: AuthedDashboardGarageIndexRoute,
   AuthedDashboardHistoryIndexRoute: AuthedDashboardHistoryIndexRoute,
-  AuthedDashboardMarketplaceIndexRoute: AuthedDashboardMarketplaceIndexRoute,
   AuthedDashboardOffersIndexRoute: AuthedDashboardOffersIndexRoute,
   AuthedDashboardProfileIndexRoute: AuthedDashboardProfileIndexRoute,
   AuthedDashboardQuotesIndexRoute: AuthedDashboardQuotesIndexRoute,

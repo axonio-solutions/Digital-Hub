@@ -1,14 +1,12 @@
 import { db } from '@/db'
 import { 
-  notificationPreferences, 
   quotes, 
   sparePartRequests, 
   users,
-  sellerBrands,
-  sellerCategories
 } from '@/db/schema'
-import { eq, and, or, count } from 'drizzle-orm'
+import { eq, count } from 'drizzle-orm'
 import { NotificationService } from './notification-service'
+import { supabase } from '@/lib/supabase-client'
 
 /**
  * Higher-level triggers that map business events to notifications
@@ -107,54 +105,25 @@ export class NotificationTriggers {
     })
     if (!request) return
 
-    // Find all sellers who match this brand/category or have "ALL_BRANDS" scope
-    const sellersToNotify = await client
-      .selectDistinct({ id: users.id })
-      .from(users)
-      .innerJoin(notificationPreferences, eq(users.id, notificationPreferences.userId))
-      .leftJoin(sellerBrands, eq(users.id, sellerBrands.sellerId))
-      .leftJoin(sellerCategories, eq(users.id, sellerCategories.sellerId))
-      .where(
-        and(
-          eq(users.role, 'seller'),
-          eq(notificationPreferences.sellerAlertFrequency, 'IMMEDIATE'),
-          or(
-            eq(notificationPreferences.sellerBrandScope, 'ALL_BRANDS'),
-            eq(sellerBrands.brandId, request.brandId as any),
-            eq(sellerCategories.categoryId, request.categoryId as any)
-          )
-        )
-      )
-
-    for (const seller of sellersToNotify) {
-      await NotificationService.send({
-        userId: seller.id,
-        type: 'NEW_LEAD',
-        title: 'New Lead: ' + request.partName,
-        message: `A buyer is looking for ${request.partName} (${request.vehicleBrand}). Check it out!`,
-        referenceId: request.id,
-        linkUrl: `/dashboard/marketplace/${request.id}`,
-        metadata: {
-          requestId: request.id,
-          status: request.status,
-          quotesCount: 0,
-          // Snapshot for real-time list insertion
-          request: {
-            id: request.id,
-            partName: request.partName,
-            vehicleBrand: request.vehicleBrand,
-            vehicleModel: request.vehicleModel,
-            vehicleYear: request.vehicleYear,
-            status: request.status,
-            createdAt: request.createdAt,
-            deadline: request.deadline,
-            buyerId: request.buyerId,
-            categoryId: request.categoryId,
-            brandId: request.brandId,
-          }
-        },
-      }, tx)
-    }
+    // BROADCAST: Send a single lightweight event to the public marketplace channel
+    // Active sellers listening on the board will receive this instantly.
+    await supabase.channel('public-marketplace').send({
+      type: 'broadcast',
+      event: 'NEW_REQUEST',
+      payload: {
+        id: request.id,
+        partName: request.partName,
+        vehicleBrand: request.vehicleBrand,
+        vehicleModel: request.vehicleModel,
+        vehicleYear: request.vehicleYear,
+        status: request.status,
+        createdAt: request.createdAt,
+        deadline: request.deadline,
+        buyerId: request.buyerId,
+        categoryId: request.categoryId,
+        brandId: request.brandId,
+      },
+    })
   }
 
   static async onQuoteAccepted(quoteId: string, tx?: any) {

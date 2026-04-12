@@ -13,13 +13,19 @@ const locales: Record<string, any> = {
  * @param date The date to format
  * @param addSuffix Whether to add "ago" or "dans" suffixes
  */
-export function formatRelativeTime(date: Date | string | number, addSuffix: boolean = true) {
+export function formatRelativeTime(date: Date | string | number | null | undefined, addSuffix: boolean = true) {
   const currentLang = i18next.language || 'en'
   const locale = locales[currentLang] || enUS
   
+  if (!date) return '---'
+
   const dateObj = typeof date === 'string' || typeof date === 'number' 
     ? new Date(date) 
     : date
+
+  if (!dateObj || isNaN(dateObj.getTime())) {
+    return '---'
+  }
 
   return formatDistanceToNow(dateObj, { 
     addSuffix,
