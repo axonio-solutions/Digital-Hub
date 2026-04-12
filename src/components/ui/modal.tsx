@@ -35,10 +35,10 @@ export function Modal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={cn(
-        "sm:max-w-[600px] rounded-[3rem] border-none shadow-[0_32px_128px_-16px_rgba(0,0,0,0.1)] p-0 overflow-hidden bg-white dark:bg-slate-950 transition-all",
+        "rounded-[3rem] border-none shadow-[0_32px_128px_-16px_rgba(0,0,0,0.1)] p-0 overflow-hidden bg-white dark:bg-slate-950 transition-all",
         className
       )}>
-        <div className="p-8 md:p-12 pb-4">
+        <div className="p-4 md:p-6 pb-2">
           <DialogHeader>
             <DialogTitle className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-slate-900 dark:text-white leading-none">
               {title}
@@ -51,12 +51,12 @@ export function Modal({
           </DialogHeader>
         </div>
 
-        <div className={cn("p-8 md:p-12 pt-0", contentClassName)}>
+        <div className={cn("p-4 md:p-6 pt-0", contentClassName)}>
           {children}
         </div>
 
         {footer && (
-          <DialogFooter className="p-8 md:p-12 pt-0">
+          <DialogFooter className="p-4 md:p-6 pt-0">
             {footer}
           </DialogFooter>
         )}

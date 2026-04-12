@@ -1,8 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
-import { authMiddleware, sellerMiddleware } from '@/features/auth/guards/auth'
+import { sellerMiddleware } from '@/features/auth/guards/auth'
 import { db } from '@/db'
 import { eq } from 'drizzle-orm'
-import { users } from '@/db/schema/auth'
 import { sellerBrands, sellerCategories } from '@/db/schema/vendors'
 import { z } from 'zod'
 
@@ -63,15 +62,3 @@ export const updateSellerSpecialtiesServerFn = createServerFn({ method: 'POST' }
     return { success: true }
   })
 
-export const toggleUserViewModeServerFn = createServerFn({ method: 'POST' })
-  .middleware([authMiddleware])
-  .inputValidator(z.boolean())
-  .handler(async ({ data: viewMode, context }) => {
-    const userId = context.user?.id as string
-    
-    await db.update(users)
-      .set({ viewModeGeneralBroadcast: viewMode })
-      .where(eq(users.id, userId))
-      
-    return { success: true }
-  })
