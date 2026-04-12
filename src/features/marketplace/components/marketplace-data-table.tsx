@@ -2,23 +2,24 @@
 
 import { useMemo } from 'react'
 import {
+  CarFront,
+  Clock,
+  Eye,
+  FileText,
+  Layers,
+  MoreHorizontal,
+  Pencil,
+  Send,
+  Trash2,
+} from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { arDZ, enUS, fr } from 'date-fns/locale'
+import { useTranslation } from 'react-i18next'
+import type {
   ColumnDef,
 } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Clock,
-  Eye,
-  MoreHorizontal,
-  Send,
-  Pencil,
-  FileText,
-  Trash2,
-  CarFront,
-  Layers,
-} from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
-import { arDZ, fr, enUS } from 'date-fns/locale'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +30,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { DataTable } from '@/components/ui/data-table/data-table'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
-import { useTranslation } from 'react-i18next'
 import { tCategory } from '@/utils/category-utils'
 import { cn } from '@/lib/utils'
 
@@ -187,17 +187,13 @@ export function MarketplaceDataTable({
         accessorKey: 'vehicleBrand',
         header: t('table.headers.vehicle'),
         cell: ({ row }) => {
-          const brand = row.original.vehicleBrand || row.original.brand?.brand
           return (
-            <div className={cn(
-              "flex flex-col w-full",
-              i18n.dir() === 'rtl' ? "items-start text-right" : "items-start text-left"
-            )}>
-              <span className="text-sm font-medium w-fit" dir="auto">
-                {brand} {row.original.vehicleModel || ''}
+            <div className="flex flex-col">
+              <span className="font-bold text-slate-900 dark:text-white">
+                {row.original.vehicleBrand}
               </span>
-              <span className="text-xs text-muted-foreground w-fit" dir="auto">
-                {row.original.modelYear} • {row.original.brand?.clusterRegion || t('table.defaults.general')}
+              <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">
+                {row.original.modelYear}
               </span>
             </div>
           )
