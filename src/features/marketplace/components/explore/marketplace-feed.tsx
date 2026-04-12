@@ -4,7 +4,7 @@ import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { PartCard } from "./part-card"
+import { RequestCard } from "../request-card"
 
 interface MarketplaceFeedProps {
   requests: any[] | undefined
@@ -76,7 +76,7 @@ export function MarketplaceFeed({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 animate-in fade-in duration-500">
       {requests.map((req) => (
-        <PartCard
+        <RequestCard
           key={req.id}
           request={req}
           isOwner={req.buyerId === userId}
