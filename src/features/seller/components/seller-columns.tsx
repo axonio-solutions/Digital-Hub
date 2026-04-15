@@ -15,6 +15,7 @@ import { tCategory } from '@/utils/category-utils'
 import { cn } from '@/lib/utils'
 
 import { Badge } from '@/components/ui/badge'
+import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -108,16 +109,17 @@ export const useSellerColumns = (
         cell: ({ row }) => {
           const status = row.original.status
           return (
-            <Badge
+            <GlowingBadge
               variant={
-                status === 'accepted' ? 'default' :
-                status === 'rejected' ? 'destructive' :
-                'secondary'
+                status === 'accepted' ? 'success' :
+                status === 'rejected' ? 'neutral' :
+                'info'
               }
+              pulse={status === 'pending'}
               className={cn(i18n.language === 'ar' ? '' : 'capitalize')}
             >
               {t(`columns.statuses.${status}`)}
-            </Badge>
+            </GlowingBadge>
           )
         },
       },

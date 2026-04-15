@@ -12,6 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
+import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -246,16 +247,16 @@ export const useBuyerColumns = (onAction?: (action: { type: string, item: any })
       cell: ({ row }: { row: any }) => {
         const status = row.original.status;
         return (
-          <Badge
+          <GlowingBadge
             variant={
-              status === "open" ? "default" :
-                status === "fulfilled" ? "secondary" :
-                  "outline"
+              status === "open" ? "success" :
+                status === "fulfilled" ? "neutral" :
+                  "default"
             }
-            className="capitalize"
+            pulse={status === "open"}
           >
             {t(`filters.statuses.${status}`)}
-          </Badge>
+          </GlowingBadge>
         );
       },
       filterFn: (row: any, id: string, value: any) => value.includes(row.getValue(id)),

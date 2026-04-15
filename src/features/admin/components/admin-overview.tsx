@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from "@/components/ui/badge";
+import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, CardAction } from "@/components/ui/card";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
@@ -153,9 +154,17 @@ export function AdminOverview() {
               {totalQuotes.toLocaleString()}
             </CardTitle>
             <CardAction>
-              <Badge variant="outline" className="gap-1">
+              <GlowingBadge 
+                variant={
+                  marketHealthStatus.toLowerCase() === 'high' ? 'success' : 
+                  marketHealthStatus.toLowerCase() === 'medium' ? 'info' : 
+                  'warning'
+                }
+                pulse={marketHealthStatus.toLowerCase() === 'low'}
+                className="gap-1"
+              >
                 {marketHealthStatus}
-              </Badge>
+              </GlowingBadge>
             </CardAction>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">

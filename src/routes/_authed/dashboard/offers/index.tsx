@@ -24,10 +24,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Button } from '@/components/ui/button'
 
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import {} from '@/features/buyer/hooks/use-buyer'
+import { useBuyerRequests } from '@/features/buyer/hooks/use-buyer'
 import { useAcceptQuote } from '@/features/quotes/hooks/use-quotes'
 
 import {
@@ -140,13 +141,13 @@ function OffersReceivedRoute() {
                       </TableCell>
                       <TableCell>{req.vehicleBrand}</TableCell>
                       <TableCell>
-                        <Badge
-                          variant="default"
-                          className="bg-primary hover:bg-primary/80"
+                        <GlowingBadge
+                          variant="info"
+                          pulse
                         >
                           {req.quotes.length} Offer
                           {req.quotes.length > 1 ? 's' : ''}
-                        </Badge>
+                        </GlowingBadge>
                       </TableCell>
                       <TableCell className="text-end">
                         <Dialog>
@@ -191,19 +192,21 @@ function OffersReceivedRoute() {
                                                   'Verified Seller'}
                                               </h4>
                                               {quote.condition === 'new' ? (
-                                                <Badge
-                                                  variant="outline"
-                                                  className="text-blue-600 border-blue-200 bg-blue-50 text-[10px] uppercase"
+                                                <GlowingBadge
+                                                  variant="success"
+                                                  pulse={false}
+                                                  className="text-[10px]"
                                                 >
                                                   New Part
-                                                </Badge>
+                                                </GlowingBadge>
                                               ) : (
-                                                <Badge
-                                                  variant="outline"
-                                                  className="text-orange-600 border-orange-200 bg-orange-50 text-[10px] uppercase"
+                                                <GlowingBadge
+                                                  variant="warning"
+                                                  pulse={false}
+                                                  className="text-[10px]"
                                                 >
                                                   Used/Casse
-                                                </Badge>
+                                                </GlowingBadge>
                                               )}
                                             </div>
                                             <div className="text-sm text-muted-foreground">

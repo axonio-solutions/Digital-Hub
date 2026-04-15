@@ -19,15 +19,16 @@ import {
   useDeleteRequest,
   useReopenRequest
 } from '@/features/requests/hooks/use-requests'
-import { 
-  useAcceptQuote, 
-  useRejectQuote, 
-  useUnrejectQuote, 
-  useRevokeQuote 
+import {
+  useAcceptQuote,
+  useRejectQuote,
+  useUnrejectQuote,
+  useRevokeQuote
 } from '@/features/quotes/hooks/use-quotes'
 import { ImageSlider } from '@/components/ui/image-slider'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Link, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { useState } from 'react'
@@ -48,6 +49,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { EditRequestDialog } from '@/features/requests/components/edit-request-dialog'
 import { QuoteList } from '@/features/quotes/components/quote-list'
+import { cn } from '@/lib/utils'
 
 export function BuyerRequestDetails() {
   const { t } = useTranslation(['requests/details', 'requests/list'])
@@ -57,7 +59,7 @@ export function BuyerRequestDetails() {
   const { mutate: cancelRequest, isPending: isCancelling } = useCancelRequest()
   const { mutate: deleteRequest, isPending: isDeleting } = useDeleteRequest()
   const { mutate: reopenRequest, isPending: isReopening } = useReopenRequest()
-  
+
   const { mutate: acceptQuote, isPending: isAccepting } = useAcceptQuote()
   const { mutate: rejectQuote, isPending: isRejecting } = useRejectQuote()
   const { mutate: unrejectQuote, isPending: isUnrejecting } = useUnrejectQuote()
@@ -222,8 +224,8 @@ export function BuyerRequestDetails() {
             <div className="bg-white dark:bg-card rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden sticky top-24">
 
               <div className="bg-gray-50 dark:bg-gray-900 w-full overflow-hidden">
-                <ImageSlider 
-                  images={request.imageUrls || []} 
+                <ImageSlider
+                  images={request.imageUrls || []}
                   aspectRatio="4/3"
                   className="rounded-none border-none shadow-none"
                 />
@@ -261,12 +263,13 @@ export function BuyerRequestDetails() {
                         </DropdownMenuContent>
                       </DropdownMenu>
 
-                      <Badge className={`uppercase text-[10px] font-black tracking-widest px-2.5 py-1 ${request.status === 'open'
-                          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-                        }`}>
+                      <GlowingBadge
+                        variant={request.status === 'open' ? 'success' : 'neutral'}
+                        pulse={request.status === 'open'}
+                        className="px-2.5 py-1"
+                      >
                         {request.status}
-                      </Badge>
+                      </GlowingBadge>
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -304,6 +307,7 @@ export function BuyerRequestDetails() {
                     <div className="flex flex-col">
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('columns.status', { ns: 'requests/list' })}</span>
                       <div className="flex items-center gap-2 text-sm font-bold text-foreground capitalize">
+                        <div className={cn("size-2 rounded-full", request.status === 'open' ? "bg-emerald-500 animate-pulse" : "bg-gray-400")} />
                         <span>{t(`filters.statuses.${request.status}`, { ns: 'requests/list' })}</span>
                       </div>
                     </div>

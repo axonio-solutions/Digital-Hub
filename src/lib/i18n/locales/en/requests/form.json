@@ -1,15 +1,80 @@
 {
   "title": "Part Information",
   "description": "Specify what part you need and add details.",
+  "steps": {
+    "brand": {
+      "title": "Select Vehicle Brand",
+      "description": "Choose your vehicle's manufacturer to ensure part compatibility."
+    },
+    "category": {
+      "title": "Select Category",
+      "description": "Choose the category that best matches the part you need."
+    },
+    "part_details": {
+      "title": "What part do you need?",
+      "description": "Provide clear details about the part you're looking for."
+    },
+    "vehicle_info": {
+      "title": "Vehicle Information",
+      "description": "Provide accurate vehicle details to ensure part compatibility.",
+      "why_title": "Why model & year matter?",
+      "why_description": "Accurate vehicle specs ensure compatible parts are recommended, saving time and avoiding mismatches."
+    },
+    "photos": {
+      "title": "Photos & Media",
+      "description": "Add photos to help sellers understand exactly what you need.",
+      "dropzone_hint": "Drag images here or click to browse",
+      "pending_count_one": "{{count}} Photo Pending",
+      "pending_count_other": "{{count}} Photos Pending",
+      "ready": "Ready"
+    },
+    "review": {
+      "title": "Confirm your details",
+      "description": "Review your request before publishing. Click edit to make changes.",
+      "ready_status": "Ready for publication",
+      "no_media": "No media attached",
+      "no_details": "No additional details provided.",
+      "not_provided": "Not provided",
+      "cards": {
+        "part": "Part Details",
+        "vehicle": "Vehicle Info",
+        "media": "Media Gallery"
+      }
+    }
+  },
+  "wizard": {
+    "step_progress": "Step {{current}} of {{total}}",
+    "complete_percent": "{{percent}}% Complete",
+    "publish_btn": "Publish Request",
+    "publishing": "Publishing...",
+    "config": {
+      "part_details_title": "Part Details",
+      "part_details_desc": "Tell us what part you are looking for.",
+      "category_title": "Select Category",
+      "category_desc": "Pick a category to help sellers find your request.",
+      "brand_title": "Pick a Brand",
+      "brand_desc": "Select your vehicle's manufacturer.",
+      "vehicle_specs_title": "Vehicle Specs",
+      "vehicle_specs_desc": "Provide model and year for compatibility.",
+      "add_media_title": "Add Media",
+      "add_media_desc": "Upload photos of the part or your car.",
+      "final_review_title": "Final Review",
+      "final_review_desc": "Review your request before publishing."
+    }
+  },
   "labels": {
     "part_name": "Part Name",
     "category": "Category",
     "description": "Detailed Description",
     "vehicle": "Vehicle Specification",
     "brand": "Brand",
+    "manufacturer": "Manufacturer",
     "model": "Model",
+    "model_version": "Model / Version",
+    "model_year": "Model Year",
     "year": "Year",
     "vin": "VIN Number",
+    "vin_number": "VIN Number",
     "optional": "(Optional)",
     "required_star": "*",
     "photos": "Part Photos",
@@ -30,8 +95,11 @@
     "brand_loading": "Loading brands...",
     "brand_select": "Select Brand",
     "model": "Camry, Golf, etc.",
+    "model_version": "e.g. Golf 7 GTI, Series 3 320d",
+    "model_year": "e.g. 2018",
     "year": "2018",
     "vin": "Chassis No.",
+    "vin_number": "Enter 17-digit VIN",
     "status_select": "Select Status",
     "photos_empty": "Select part media",
     "garage_select": "Select a saved vehicle...",
@@ -40,13 +108,18 @@
   },
   "hints": {
     "category": "Choose the closest category for accurate seller matching.",
+    "category_tip": "Correct categorization speeds up expert matching by up to 40%.",
+    "vehicle_tip": "Accurate vehicle details help sellers verify part compatibility instantly.",
     "photos": "Add live photos of your broken parts for best results.",
     "photos_empty": "Files will be encrypted on submission",
+    "no_photos": "No photos attached yet",
     "status": "\"Broadcasting\" sends your request to verified sellers instantly. Sellers can then bid with price and availability.",
     "guidelines1": "Clear VIN plate photos help sellers identify OEM parts accurately.",
     "guidelines2": "Specify the condition (New/Used/Genuine) in the detailed description.",
     "media_speed": "High-quality photos speed up your quotes",
-    "browse_drop": "Tap to browse or drop here"
+    "browse_drop": "Tap to browse or drop here",
+    "vin_help": "The Vehicle Identification Number (VIN) is a unique 17-character code. You can find it on your registration document or the windshield base.",
+    "description_help": "Mention any specific variants, engine types, or if you need original (OEM) or aftermarket parts."
   },
   "buttons": {
     "add_photos": "Add Photos",
@@ -54,9 +127,15 @@
     "add_more_photos": "Add More photos",
     "remove": "Remove",
     "clear_local": "Clear Local",
+    "clear": "Clear",
+    "upload": "Upload",
+    "edit": "Edit",
     "cancel": "Cancel",
+    "next": "Next",
+    "back": "Back",
     "update": "Update Request",
     "broadcast": "Broadcast Request",
+    "publish": "Publish",
     "submit": "Submit Request",
     "uploading": "Uploading",
     "syncing": "Syncing...",

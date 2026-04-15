@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/card'
 import i18n from '@/lib/i18n/config'
 import { Badge } from '@/components/ui/badge'
+import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 
 export function SellerQuotesHub() {
   const { t, i18n } = useTranslation(['dashboard/seller', 'dashboard/layout', 'quotes'])
@@ -171,10 +172,10 @@ export function SellerQuotesHub() {
         <div className="flex items-center justify-between">
           <TabsList className="h-11 bg-slate-100/80 dark:bg-slate-900/50 p-1 rounded-xl backdrop-blur-md border border-slate-200 dark:border-slate-800">
             <TabsTrigger value="active" className="rounded-lg px-6 font-bold uppercase text-[10px] tracking-widest transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm">
-              {t('hub.tabs.active')} <Badge variant="secondary" className="ml-2 h-4 px-1.5 min-w-4 flex items-center justify-center rounded-md font-black text-[9px]">{pendingQuotes.length}</Badge>
+              {t('hub.tabs.active')} <GlowingBadge variant="info" pulse={pendingQuotes.length > 0} className="ml-2 h-4 px-1.5 min-w-4 flex items-center justify-center rounded-md font-black text-[9px]">{pendingQuotes.length}</GlowingBadge>
             </TabsTrigger>
             <TabsTrigger value="won" className="rounded-lg px-6 font-bold uppercase text-[10px] tracking-widest transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm">
-              {t('hub.tabs.won')} <Badge variant="secondary" className="ml-2 h-4 px-1.5 min-w-4 flex items-center justify-center rounded-md font-black text-[9px]">{wonQuotes.length}</Badge>
+              {t('hub.tabs.won')} <GlowingBadge variant="success" className="ml-2 h-4 px-1.5 min-w-4 flex items-center justify-center rounded-md font-black text-[9px]">{wonQuotes.length}</GlowingBadge>
             </TabsTrigger>
             <TabsTrigger value="lost" className="rounded-lg px-6 font-bold uppercase text-[10px] tracking-widest transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm">
               {t('hub.tabs.lost')}

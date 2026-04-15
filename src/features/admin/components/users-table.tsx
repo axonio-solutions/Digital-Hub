@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { UserProfileDialog } from './user-profile-dialog'
 import { Badge } from '@/components/ui/badge'
+import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -95,9 +96,9 @@ export function AdminUsersTable({
         cell: ({ row }) => {
           const role = row.original.role;
           return (
-            <Badge variant="outline" className="capitalize">
+            <GlowingBadge variant="neutral" dot={false} className="capitalize">
               {t(`users.roles.${role}`)}
-            </Badge>
+            </GlowingBadge>
           );
         },
       },
@@ -107,16 +108,17 @@ export function AdminUsersTable({
         cell: ({ row }) => {
           const status = row.original.account_status || 'new';
           return (
-            <Badge 
+            <GlowingBadge 
               variant={
-                status === 'active' ? 'default' : 
-                status === 'waitlisted' ? 'secondary' : 
-                'outline'
+                status === 'active' ? 'success' : 
+                status === 'waitlisted' ? 'warning' : 
+                'neutral'
               }
+              pulse={status === 'waitlisted'}
               className="capitalize"
             >
               {t(`users.account_status.${status}`)}
-            </Badge>
+            </GlowingBadge>
           )
         },
       },
@@ -147,12 +149,13 @@ export function AdminUsersTable({
         cell: ({ row }) => {
           const isBanned = row.original.banned;
           return (
-            <Badge 
-              variant={isBanned ? "destructive" : "outline"}
+            <GlowingBadge 
+              variant={isBanned ? "error" : "success"}
+              pulse={isBanned}
               className="text-[10px]"
             >
               {isBanned ? t('users.integrity.compromised') : t('users.integrity.secure')}
-            </Badge>
+            </GlowingBadge>
           )
         },
       },

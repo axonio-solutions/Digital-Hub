@@ -24,6 +24,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -214,7 +215,7 @@ const SalesHistoryTable = memo(({ myQuotes, language, t }: { myQuotes: any[]; la
         <CardTitle className="text-lg font-bold text-foreground tracking-tight uppercase underline decoration-emerald-500/30 underline-offset-8">{t('tables.sales_history')}</CardTitle>
         <CardDescription className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-2">{t('tables.recent_deals')}</CardDescription>
       </div>
-      <Badge variant="outline" className="rounded-full bg-emerald-500/5 text-emerald-600 border-emerald-500/20 font-bold uppercase tracking-tighter text-[10px] px-3 py-1">Verified</Badge>
+      <GlowingBadge variant="success" className="rounded-full font-bold uppercase tracking-tighter text-[10px] px-3 py-1">Verified</GlowingBadge>
     </CardHeader>
     <CardContent>
       <div className="space-y-4">

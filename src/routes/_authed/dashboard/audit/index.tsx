@@ -9,6 +9,7 @@ import {
 import type { User } from '@/lib/auth'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
+import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -193,29 +194,29 @@ function AdminRequestsRoute() {
           
           return (
             <div className="flex flex-wrap items-center gap-2">
-              <Badge
-                className={cn(
-                  "font-bold uppercase text-[10px] tracking-wider px-2 py-0.5 rounded-md border shadow-sm",
-                  status === 'open' ? "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800" :
-                  status === 'fulfilled' ? "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800" :
-                  "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-900 dark:text-slate-400 dark:border-slate-800"
-                )}
+              <GlowingBadge
+                variant={
+                  status === 'open' ? "success" :
+                  status === 'fulfilled' ? "info" :
+                  "neutral"
+                }
+                pulse={status === 'open'}
               >
                 {status === 'open' ? t('table.filters.status.open') : 
                  status === 'fulfilled' ? t('table.filters.status.fulfilled') : 
                  status}
-              </Badge>
+              </GlowingBadge>
               {isPriority && (
-                <Badge className="bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800 font-bold uppercase text-[10px] tracking-wider px-2 py-0.5 rounded-md border shadow-sm flex items-center gap-1">
+                <GlowingBadge variant="warning" pulse dot={false} className="flex items-center gap-1">
                   <Star className="size-3" />
                   {t('table.columns.status_types.priority')}
-                </Badge>
+                </GlowingBadge>
               )}
               {isSpam && (
-                <Badge className="bg-red-50 text-red-700 border-red-100 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800 font-bold uppercase text-[10px] tracking-wider px-2 py-0.5 rounded-md border shadow-sm flex items-center gap-1">
+                <GlowingBadge variant="error" pulse={false} className="flex items-center gap-1">
                   <TriangleAlert className="size-3" />
                   {t('table.columns.status_types.spam')}
-                </Badge>
+                </GlowingBadge>
               )}
             </div>
           )

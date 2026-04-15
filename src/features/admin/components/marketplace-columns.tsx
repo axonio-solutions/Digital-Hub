@@ -4,6 +4,7 @@ import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatRelativeTime } from "@/lib/utils/date-format";
 import { Badge } from "@/components/ui/badge";
+import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { z } from "zod";
 
@@ -85,12 +86,13 @@ export const marketplaceColumns = (
     cell: ({ row }) => {
       const status = row.original.status as 'fulfilled' | 'open' | 'cancelled';
       return (
-        <Badge 
-          variant={status === "fulfilled" ? "default" : "secondary"} 
+        <GlowingBadge 
+          variant={status === "fulfilled" ? "success" : "info"} 
+          pulse={status === "open"}
           className="capitalize"
         >
           {t(`table.status.${status}`)}
-        </Badge>
+        </GlowingBadge>
       );
 
     }

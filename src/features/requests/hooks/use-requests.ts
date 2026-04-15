@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import {
   createRequestServerFn,
   fetchAllRequestsServerFn,
@@ -145,6 +145,9 @@ export function useInfinitePublicOpenRequests(filters?: {
       return allPages.length * (filters?.limit || 12)
     },
     initialPageParam: 0,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10,   // 10 minutes
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -167,6 +170,9 @@ export function usePublicOpenRequests(filters?: {
       })
       return res.data || []
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10,   // 10 minutes
+    placeholderData: keepPreviousData,
   })
 }
 

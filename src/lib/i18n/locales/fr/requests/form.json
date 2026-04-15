@@ -1,6 +1,67 @@
 {
   "title": "Informations sur la pièce",
   "description": "Précisez la pièce dont vous avez besoin et ajoutez des détails.",
+  "steps": {
+    "brand": {
+      "title": "Sélectionner la Marque",
+      "description": "Choisissez le fabricant de votre véhicule pour garantir la compatibilité des pièces."
+    },
+    "category": {
+      "title": "Sélectionner la Catégorie",
+      "description": "Choisissez la catégorie qui correspond le mieux à la pièce dont vous avez besoin."
+    },
+    "part_details": {
+      "title": "De quelle pièce avez-vous besoin ?",
+      "description": "Fournissez des détails clairs sur la pièce que vous recherchez."
+    },
+    "vehicle_info": {
+      "title": "Informations sur le Véhicule",
+      "description": "Fournissez des détails précis sur le véhicule pour garantir la compatibilité.",
+      "why_title": "Pourquoi le modèle et l'année comptent ?",
+      "why_description": "Des spécifications précises garantissent que les pièces recommandées sont compatibles, ce qui permet de gagner du temps et d'éviter les erreurs."
+    },
+    "photos": {
+      "title": "Photos & Médias",
+      "description": "Ajoutez des photos pour aider les vendeurs à comprendre exactement ce dont vous avez besoin.",
+      "dropzone_hint": "Faites glisser des images ici ou cliquez pour parcourir",
+      "pending_count_one": "{{count}} photo en attente",
+      "pending_count_other": "{{count}} photos en attente",
+      "ready": "Prêt"
+    },
+    "review": {
+      "title": "Confirmez vos détails",
+      "description": "Vérifiez votre demande avant de la publier. Cliquez sur modifier pour effectuer des changements.",
+      "ready_status": "Prêt pour la publication",
+      "no_media": "Aucun média joint",
+      "no_details": "Aucun détail supplémentaire fourni.",
+      "not_provided": "Non fourni",
+      "cards": {
+        "part": "Détails de la pièce",
+        "vehicle": "Infos véhicule",
+        "media": "Galerie média"
+      }
+    }
+  },
+  "wizard": {
+    "step_progress": "Étape {{current}} sur {{total}}",
+    "complete_percent": "{{percent}}% terminé",
+    "publish_btn": "Publier la demande",
+    "publishing": "Publication...",
+    "config": {
+      "part_details_title": "Détails de la pièce",
+      "part_details_desc": "Dites-nous quelle pièce vous recherchez.",
+      "category_title": "Sélectionner la Catégorie",
+      "category_desc": "Choisissez une catégorie pour aider les vendeurs à trouver votre demande.",
+      "brand_title": "Choisir une Marque",
+      "brand_desc": "Sélectionnez le fabricant de votre véhicule.",
+      "vehicle_specs_title": "Spécifications du Véhicule",
+      "vehicle_specs_desc": "Indiquez le modèle et l'année pour la compatibilité.",
+      "add_media_title": "Ajouter des Médias",
+      "add_media_desc": "Téléchargez des photos de la pièce ou de votre voiture.",
+      "final_review_title": "Révision Finale",
+      "final_review_desc": "Vérifiez votre demande avant de la publier."
+    }
+  },
   "labels": {
     "part_name": "Nom de la pièce",
     "category": "Catégorie",
@@ -8,8 +69,11 @@
     "vehicle": "Spécifications du véhicule",
     "brand": "Marque",
     "model": "Modèle",
+    "model_version": "Modèle / Version",
+    "model_year": "Année du modèle",
     "year": "Année",
     "vin": "Numéro VIN",
+    "vin_number": "Numéro de châssis (VIN)",
     "optional": "(Optionnel)",
     "required_star": "*",
     "photos": "Photos de la pièce",
@@ -30,8 +94,11 @@
     "brand_loading": "Chargement des marques...",
     "brand_select": "Choisir une marque",
     "model": "Camry, Golf, etc.",
+    "model_version": "ex: Golf 7 GTI, Série 3 320d",
+    "model_year": "ex: 2018",
     "year": "2018",
     "vin": "N° de châssis",
+    "vin_number": "Entrez les 17 caractères du VIN",
     "status_select": "Choisir un statut",
     "photos_empty": "Sélectionner les médias de la pièce",
     "garage_select": "Sélectionnez un véhicule enregistré...",
@@ -40,13 +107,18 @@
   },
   "hints": {
     "category": "Choisissez la catégorie la plus proche pour une mise en relation précise avec les vendeurs.",
+    "category_tip": "Une catégorisation correcte accélère la mise en relation avec les experts jusqu'à 40%.",
+    "vehicle_tip": "Des détails précis sur le véhicule aident les vendeurs à vérifier instantanément la compatibilité.",
     "photos": "Ajoutez des photos de vos pièces défectueuses pour de meilleurs résultats.",
     "photos_empty": "Les fichiers seront cryptés lors de la soumission",
+    "no_photos": "Aucune photo jointe pour le moment",
     "status": "La \"Diffusion\" envoie instantanément votre demande aux vendeurs vérifiés. Ils pourront ensuite répondre avec prix et disponibilité.",
     "guidelines1": "Des photos claires de la plaque VIN aident les vendeurs à identifier précisément les pièces OEM.",
     "guidelines2": "Précisez l'état (Neuf/Occasion/D'origine) dans la description détaillée.",
     "media_speed": "Des photos de haute qualité accélèrent vos devis",
-    "browse_drop": "Appuyez pour parcourir ou déposez ici"
+    "browse_drop": "Appuyez pour parcourir ou déposez ici",
+    "vin_help": "Le numéro d'identification du véhicule (VIN) est un code unique de 17 caractères. Vous pouvez le trouver sur votre carte grise ou à la base du pare-brise.",
+    "description_help": "Mentionnez toute variante spécifique, type de moteur, ou si vous avez besoin de pièces d'origine (OEM) ou adaptables."
   },
   "buttons": {
     "add_photos": "Ajouter des photos",
