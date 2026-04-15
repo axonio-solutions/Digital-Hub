@@ -83,22 +83,10 @@ export function ThemeProvider({
   const value = React.useMemo(() => ({
     theme,
     setTheme: (newTheme: Theme) => {
-      // Check for View Transitions API support safely
-      const hasViewTransition = 
-        typeof window !== "undefined" && 
-        "startViewTransition" in window.document;
-
-      if (!hasViewTransition) {
+      if (typeof window !== "undefined") {
         localStorage.setItem(storageKey, newTheme)
-        setTheme(newTheme)
-        return
       }
-
-      // High-fidelity transition
-      (window.document as any).startViewTransition(() => {
-        localStorage.setItem(storageKey, newTheme)
-        setTheme(newTheme)
-      })
+      setTheme(newTheme)
     },
   }), [theme, storageKey])
 
