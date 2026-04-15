@@ -9,14 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthedRouteImport } from './routes/_authed'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ExploreIndexRouteImport } from './routes/explore/index'
+import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as AuthedWaitlistRouteImport } from './routes/_authed/waitlist'
 import { Route as AuthedOnboardingRouteImport } from './routes/_authed/onboarding'
 import { Route as AuthedCompleteRegistrationRouteImport } from './routes/_authed/complete-registration'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthedDashboardRouteRouteImport } from './routes/_authed/dashboard/route'
+import { Route as PublicExploreIndexRouteImport } from './routes/_public/explore/index'
 import { Route as AuthedDashboardIndexRouteImport } from './routes/_authed/dashboard/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AuthedDashboardAdminRouteRouteImport } from './routes/_authed/dashboard/admin/route'
@@ -33,19 +34,18 @@ import { Route as AuthedDashboardAdminSellersRouteImport } from './routes/_authe
 import { Route as AuthedDashboardAdminCategoriesRouteImport } from './routes/_authed/dashboard/admin/categories'
 import { Route as AuthedDashboardAdminBuyersRouteImport } from './routes/_authed/dashboard/admin/buyers'
 
+const PublicRoute = PublicRouteImport.update({
+  id: '/_public',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthedRoute = AuthedRouteImport.update({
   id: '/_authed',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExploreIndexRoute = ExploreIndexRouteImport.update({
-  id: '/explore/',
-  path: '/explore/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PublicRoute,
 } as any)
 const AuthedWaitlistRoute = AuthedWaitlistRouteImport.update({
   id: '/waitlist',
@@ -72,6 +72,11 @@ const AuthedDashboardRouteRoute = AuthedDashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthedRoute,
+} as any)
+const PublicExploreIndexRoute = PublicExploreIndexRouteImport.update({
+  id: '/explore/',
+  path: '/explore/',
+  getParentRoute: () => PublicRoute,
 } as any)
 const AuthedDashboardIndexRoute = AuthedDashboardIndexRouteImport.update({
   id: '/',
@@ -163,16 +168,16 @@ const AuthedDashboardAdminBuyersRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof PublicIndexRoute
   '/dashboard': typeof AuthedDashboardRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/complete-registration': typeof AuthedCompleteRegistrationRoute
   '/onboarding': typeof AuthedOnboardingRoute
   '/waitlist': typeof AuthedWaitlistRoute
-  '/explore/': typeof ExploreIndexRoute
   '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/dashboard/': typeof AuthedDashboardIndexRoute
+  '/explore/': typeof PublicExploreIndexRoute
   '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
   '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
@@ -187,15 +192,15 @@ export interface FileRoutesByFullPath {
   '/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof PublicIndexRoute
   '/login': typeof AuthLoginRoute
   '/complete-registration': typeof AuthedCompleteRegistrationRoute
   '/onboarding': typeof AuthedOnboardingRoute
   '/waitlist': typeof AuthedWaitlistRoute
-  '/explore': typeof ExploreIndexRoute
   '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/dashboard': typeof AuthedDashboardIndexRoute
+  '/explore': typeof PublicExploreIndexRoute
   '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
   '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
@@ -211,17 +216,18 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/_authed': typeof AuthedRouteWithChildren
+  '/_public': typeof PublicRouteWithChildren
   '/_authed/dashboard': typeof AuthedDashboardRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_authed/complete-registration': typeof AuthedCompleteRegistrationRoute
   '/_authed/onboarding': typeof AuthedOnboardingRoute
   '/_authed/waitlist': typeof AuthedWaitlistRoute
-  '/explore/': typeof ExploreIndexRoute
+  '/_public/': typeof PublicIndexRoute
   '/_authed/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authed/dashboard/': typeof AuthedDashboardIndexRoute
+  '/_public/explore/': typeof PublicExploreIndexRoute
   '/_authed/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/_authed/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
   '/_authed/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
@@ -244,10 +250,10 @@ export interface FileRouteTypes {
     | '/complete-registration'
     | '/onboarding'
     | '/waitlist'
-    | '/explore/'
     | '/dashboard/admin'
     | '/api/auth/$'
     | '/dashboard/'
+    | '/explore/'
     | '/dashboard/admin/buyers'
     | '/dashboard/admin/categories'
     | '/dashboard/admin/sellers'
@@ -267,10 +273,10 @@ export interface FileRouteTypes {
     | '/complete-registration'
     | '/onboarding'
     | '/waitlist'
-    | '/explore'
     | '/dashboard/admin'
     | '/api/auth/$'
     | '/dashboard'
+    | '/explore'
     | '/dashboard/admin/buyers'
     | '/dashboard/admin/categories'
     | '/dashboard/admin/sellers'
@@ -285,17 +291,18 @@ export interface FileRouteTypes {
     | '/dashboard/users'
   id:
     | '__root__'
-    | '/'
     | '/_authed'
+    | '/_public'
     | '/_authed/dashboard'
     | '/_auth/login'
     | '/_authed/complete-registration'
     | '/_authed/onboarding'
     | '/_authed/waitlist'
-    | '/explore/'
+    | '/_public/'
     | '/_authed/dashboard/admin'
     | '/api/auth/$'
     | '/_authed/dashboard/'
+    | '/_public/explore/'
     | '/_authed/dashboard/admin/buyers'
     | '/_authed/dashboard/admin/categories'
     | '/_authed/dashboard/admin/sellers'
@@ -311,15 +318,21 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthedRoute: typeof AuthedRouteWithChildren
+  PublicRoute: typeof PublicRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
-  ExploreIndexRoute: typeof ExploreIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PublicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authed': {
       id: '/_authed'
       path: ''
@@ -327,19 +340,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_public/': {
+      id: '/_public/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/explore/': {
-      id: '/explore/'
-      path: '/explore'
-      fullPath: '/explore/'
-      preLoaderRoute: typeof ExploreIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRoute
     }
     '/_authed/waitlist': {
       id: '/_authed/waitlist'
@@ -375,6 +381,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthedDashboardRouteRouteImport
       parentRoute: typeof AuthedRoute
+    }
+    '/_public/explore/': {
+      id: '/_public/explore/'
+      path: '/explore'
+      fullPath: '/explore/'
+      preLoaderRoute: typeof PublicExploreIndexRouteImport
+      parentRoute: typeof PublicRoute
     }
     '/_authed/dashboard/': {
       id: '/_authed/dashboard/'
@@ -550,11 +563,23 @@ const AuthedRouteChildren: AuthedRouteChildren = {
 const AuthedRouteWithChildren =
   AuthedRoute._addFileChildren(AuthedRouteChildren)
 
+interface PublicRouteChildren {
+  PublicIndexRoute: typeof PublicIndexRoute
+  PublicExploreIndexRoute: typeof PublicExploreIndexRoute
+}
+
+const PublicRouteChildren: PublicRouteChildren = {
+  PublicIndexRoute: PublicIndexRoute,
+  PublicExploreIndexRoute: PublicExploreIndexRoute,
+}
+
+const PublicRouteWithChildren =
+  PublicRoute._addFileChildren(PublicRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthedRoute: AuthedRouteWithChildren,
+  PublicRoute: PublicRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
-  ExploreIndexRoute: ExploreIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

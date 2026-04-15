@@ -4,7 +4,7 @@ import { Bell, Search } from 'lucide-react'
 import { NotificationDropdown } from '@/features/notifications'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import { ThemeToggle } from '@/components/theme-toggle'
+import { ThemeSwitch } from '@/components/unlumen-ui/theme-switch'
 import {
   useUnreadNotifications,
   useMarkNotificationRead,
@@ -42,7 +42,7 @@ export function SiteHeader() {
         </div>
 
         <div className="ms-auto flex items-center gap-3">
-          <ThemeToggle />
+          <ThemeSwitch />
           {/* Notifications */}
           <NotificationDropdown
             notifications={notifications}
