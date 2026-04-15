@@ -49,14 +49,14 @@ export function MarketplaceSidebar({
           <button
             onClick={() => setSelectedCategory("all")}
             className={cn(
-              "flex items-center justify-between px-4 py-2.5 rounded-2xl text-sm font-bold transition-all group",
+              "flex items-center justify-between px-5 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 group shadow-sm",
               selectedCategory === "all"
-                ? "bg-primary text-white shadow-lg shadow-primary/20"
-                : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                ? "bg-primary text-white shadow-lg shadow-primary/30 scale-[1.02]"
+                : "bg-white/50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/50 dark:border-slate-800/50 hover:shadow-md"
             )}
           >
-            <span>{t('filters.all_categories')}</span>
-            {selectedCategory === "all" && <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />}
+            <span className="tracking-wide">{t('filters.all_categories')}</span>
+            {selectedCategory === "all" && <div className="w-2 h-2 rounded-full bg-white shadow-sm" />}
           </button>
           
           {categories?.map((cat) => (
@@ -64,14 +64,14 @@ export function MarketplaceSidebar({
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
               className={cn(
-                "flex items-center justify-between px-4 py-2.5 rounded-2xl text-sm font-bold transition-all group",
+                "flex items-center justify-between px-5 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 group shadow-sm",
                 selectedCategory === cat.id
-                  ? "bg-primary text-white shadow-lg shadow-primary/20"
-                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl shadow-slate-900/20 dark:shadow-white/10 scale-[1.02]"
+                  : "bg-white/50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/50 dark:border-slate-800/50 hover:shadow-md"
               )}
             >
-              <span className="truncate pr-2">{cat.name}</span>
-              {selectedCategory === cat.id && <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />}
+              <span className="truncate pr-2 tracking-wide">{cat.name}</span>
+              {selectedCategory === cat.id && <div className="w-2 h-2 rounded-full bg-white dark:bg-slate-900 shadow-sm" />}
             </button>
           ))}
         </div>
@@ -89,15 +89,18 @@ export function MarketplaceSidebar({
         <Button
           variant="outline"
           onClick={() => setIsBrandDialogOpen(true)}
-          className="w-full h-12 justify-between px-4 rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:scale-[1.02] active:scale-95 transition-all"
+          className={cn(
+            "w-full h-14 justify-between px-5 rounded-2xl border-slate-200/50 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/50 shadow-sm hover:shadow-md hover:bg-white dark:hover:bg-slate-800 hover:scale-[1.02] active:scale-95 transition-all duration-300",
+            selectedBrands.length > 0 && "bg-slate-900 dark:bg-white border-transparent text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100"
+          )}
         >
           <div className="flex items-center gap-2 truncate">
-            <span className="text-sm font-bold">
+            <span className="text-sm font-bold tracking-wide">
               {selectedBrands.length === 0 ? 'All Brands' : `${selectedBrands.length} Selected`}
             </span>
           </div>
           {selectedBrands.length > 0 && (
-            <Badge className="bg-primary text-white border-none h-5 min-w-5 flex items-center justify-center p-0 text-[10px] font-black">
+            <Badge className="bg-primary text-white border-none h-6 min-w-[24px] flex items-center justify-center p-0 text-[10px] font-black rounded-full shadow-sm">
               {selectedBrands.length}
             </Badge>
           )}
@@ -121,30 +124,37 @@ export function MarketplaceSidebar({
           <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Timeframe</h3>
         </div>
         
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-1 gap-3">
           <button
             onClick={() => setUrgency("any")}
             className={cn(
-              "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all border-2",
+              "flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-bold transition-all duration-300 border-2 shadow-sm relative overflow-hidden",
               urgency === "any"
-                ? "bg-slate-50 dark:bg-slate-800/50 border-primary text-primary"
-                : "bg-white dark:bg-slate-900 border-transparent text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800"
+                ? "bg-slate-900 dark:bg-white border-slate-900 dark:border-white text-white dark:text-slate-900 transform scale-[1.02] shadow-xl shadow-slate-900/20 dark:shadow-white/10"
+                : "bg-white/50 dark:bg-slate-900/50 border-slate-200/50 dark:border-slate-800/50 text-slate-500 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700"
             )}
           >
-            <div className={cn("w-2 h-2 rounded-full", urgency === "any" ? "bg-primary" : "bg-slate-300")} />
-            Standard
+            <div className={cn("w-2.5 h-2.5 rounded-full z-10 transition-colors", urgency === "any" ? "bg-primary" : "bg-slate-300 dark:bg-slate-600")} />
+            <span className="z-10 tracking-wide">Standard</span>
+            {urgency === "any" && (
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] animate-shimmer" />
+            )}
           </button>
+          
           <button
             onClick={() => setUrgency("asap")}
             className={cn(
-              "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all border-2",
+              "flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-bold transition-all duration-300 border-2 shadow-sm relative overflow-hidden",
               urgency === "asap"
-                ? "bg-red-50 dark:bg-red-950/20 border-red-500 text-red-600"
-                : "bg-white dark:bg-slate-900 border-transparent text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800"
+                ? "bg-red-500 border-red-500 text-white transform scale-[1.02] shadow-xl shadow-red-500/30"
+                : "bg-white/50 dark:bg-slate-900/50 border-slate-200/50 dark:border-slate-800/50 text-slate-500 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:border-red-200 dark:hover:border-red-900/50"
             )}
           >
-            <div className={cn("w-2 h-2 rounded-full", urgency === "asap" ? "bg-red-500" : "bg-slate-300")} />
-            Immediate (ASAP)
+            <div className={cn("w-2.5 h-2.5 rounded-full z-10 transition-colors", urgency === "asap" ? "bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]" : "bg-slate-300 dark:bg-slate-600")} />
+            <span className="z-10 tracking-wide">Immediate (ASAP)</span>
+            {urgency === "asap" && (
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] animate-shimmer" />
+            )}
           </button>
         </div>
       </section>

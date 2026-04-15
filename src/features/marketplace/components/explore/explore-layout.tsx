@@ -26,8 +26,8 @@ export function ExploreLayout({
   setIsMobileFilterOpen
 }: ExploreLayoutProps) {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <div className="max-w-[1700px] mx-auto px-6 lg:px-12 py-8 lg:py-12">
+    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50">
+      <div className="max-w-[1700px] mx-auto px-6 lg:px-14 py-12 lg:py-16">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-14">
           
           {/* Desktop Sidebar - Sticky */}
