@@ -1,22 +1,20 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
-import { AnimatePresence, motion } from 'framer-motion'
-import { 
-  BadgeCheck, 
-  Cpu, 
-  FileText, 
-  Info, 
+import { motion } from 'framer-motion'
+import {
+  BadgeCheck,
+  Cpu,
+  FileText,
+  Info,
   MapPin,
   Package,
-  Zap
+  Zap,
 } from 'lucide-react'
 import { SubmitQuoteForm } from './submit-quote-form'
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
 } from '@/components/ui/dialog'
 import { tCategory } from '@/utils/category-utils'
 
@@ -39,132 +37,132 @@ export function SendOfferDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-6xl w-[95vw] max-h-[90vh] p-0 border-none sm:rounded-[2.5rem] shadow-[0_32px_128px_-16px_rgba(0,0,0,0.3)] bg-white dark:bg-slate-950 overflow-hidden">
+      <DialogContent className="sm:max-w-6xl w-[95vw] max-h-[90vh] p-0 border-none rounded-2xl shadow-2xl bg-card overflow-hidden">
         <div className="flex flex-col lg:flex-row h-full overflow-hidden">
-          {/* Left Panel: Technical Dossier */}
-          <div className="w-full lg:w-1/2 bg-slate-50 dark:bg-slate-900/40 p-8 lg:p-12 overflow-y-auto border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800 flex flex-col gap-8">
-            <motion.div 
+          {/* Left: Technical Dossier */}
+          <div className="w-full lg:w-1/2 bg-muted/30 p-6 lg:p-10 overflow-y-auto border-b lg:border-b-0 lg:border-r border-border flex flex-col gap-6">
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-6"
+              transition={{ duration: 0.4 }}
+              className="space-y-5"
             >
-              <div className="flex items-start justify-between gap-4">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary">
+                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
                     <Cpu className="w-3 h-3" /> Technical Dossier
                   </div>
-                  <h1 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic leading-none">
+                  <h2 className="text-2xl lg:text-3xl font-black text-foreground uppercase tracking-tight leading-none">
                     {request.partName}
-                  </h1>
+                  </h2>
                 </div>
                 {request.urgency === 'asap' && (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-[10px] font-black uppercase tracking-widest animate-pulse">
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-[10px] font-black uppercase tracking-wider">
                     <Zap className="w-3 h-3 fill-current" /> Priority
                   </div>
                 )}
               </div>
 
-              {/* Main Image View */}
-              <div className="relative group aspect-video rounded-[2rem] overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-2xl">
+              {/* Image */}
+              <div className="relative group aspect-video rounded-xl overflow-hidden border border-border bg-card">
                 {request.imageUrls?.[0] ? (
-                  <img 
-                    src={request.imageUrls[0]} 
+                  <img
+                    src={request.imageUrls[0]}
                     alt={request.partName}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-slate-300 dark:text-slate-800">
-                    <Package className="w-16 h-16 stroke-[1]" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">No Visual Signal Found</span>
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-muted-foreground/30">
+                    <Package className="w-12 h-12" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">No Visual Available</span>
                   </div>
                 )}
-                {/* Image Overlay Label */}
-                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                   <div className="px-4 py-2 rounded-2xl bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-[10px] font-black uppercase tracking-wider">Asset Inspection: 01</span>
-                   </div>
+                <div className="absolute bottom-3 left-3 px-3 py-1.5 rounded-lg bg-background/80 backdrop-blur-md border border-border text-foreground flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider">Inspection Image</span>
                 </div>
               </div>
 
-              {/* Technical Specifications Grid */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-[1.5rem] bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-primary/30">
-                  <div className="text-[9px] font-black uppercase text-slate-400 mb-2 tracking-[0.2em] flex items-center gap-1.5">
-                    <BadgeCheck className="w-3 h-3" /> Vehicle Origin
+              {/* Specs grid */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3.5 rounded-xl bg-card border border-border hover:border-primary/20 transition-all">
+                  <div className="text-[9px] font-black uppercase text-muted-foreground mb-1.5 tracking-widest flex items-center gap-1.5">
+                    <BadgeCheck className="w-3 h-3" /> Vehicle
                   </div>
-                  <div className="text-lg font-black text-slate-800 dark:text-slate-200 uppercase leading-none">
+                  <div className="text-base font-black text-foreground uppercase leading-tight">
                     {request.vehicleBrand}
                   </div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase mt-1">
-                    Model Year: {request.modelYear}
+                  <div className="text-[10px] font-semibold text-muted-foreground mt-0.5">
+                    Year: {request.modelYear}
                   </div>
                 </div>
 
-                <div className="p-4 rounded-[1.5rem] bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-primary/30">
-                  <div className="text-[9px] font-black uppercase text-slate-400 mb-2 tracking-[0.2em] flex items-center gap-1.5">
-                    <FileText className="w-3 h-3" /> Identification
+                <div className="p-3.5 rounded-xl bg-card border border-border hover:border-primary/20 transition-all">
+                  <div className="text-[9px] font-black uppercase text-muted-foreground mb-1.5 tracking-widest flex items-center gap-1.5">
+                    <FileText className="w-3 h-3" /> OEM
                   </div>
-                  <div className="text-lg font-black text-slate-800 dark:text-slate-200 uppercase leading-none truncate">
+                  <div className="text-base font-black text-foreground uppercase leading-tight truncate">
                     {request.oemNumber || 'N/A'}
                   </div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase mt-1">
-                    OEM SERIAL NUMBER
+                  <div className="text-[10px] font-semibold text-muted-foreground mt-0.5">
+                    Serial Number
                   </div>
                 </div>
 
-                <div className="p-4 rounded-[1.5rem] bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-primary/30">
-                  <div className="text-[9px] font-black uppercase text-slate-400 mb-2 tracking-[0.2em] flex items-center gap-1.5">
-                    <MapPin className="w-3 h-3" /> Terminal Location
+                <div className="p-3.5 rounded-xl bg-card border border-border hover:border-primary/20 transition-all">
+                  <div className="text-[9px] font-black uppercase text-muted-foreground mb-1.5 tracking-widest flex items-center gap-1.5">
+                    <MapPin className="w-3 h-3" /> Location
                   </div>
-                  <div className="text-lg font-black text-slate-800 dark:text-slate-200 uppercase leading-none">
+                  <div className="text-base font-black text-foreground uppercase leading-tight">
                     {request.location || 'Algeria'}
                   </div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase mt-1">
+                  <div className="text-[10px] font-semibold text-muted-foreground mt-0.5">
                     Buyer Terminal
                   </div>
                 </div>
 
-                <div className="p-4 rounded-[1.5rem] bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-primary/30">
-                  <div className="text-[9px] font-black uppercase text-slate-400 mb-2 tracking-[0.2em] flex items-center gap-1.5">
-                    <Info className="w-3 h-3" /> Classification
+                <div className="p-3.5 rounded-xl bg-card border border-border hover:border-primary/20 transition-all">
+                  <div className="text-[9px] font-black uppercase text-muted-foreground mb-1.5 tracking-widest flex items-center gap-1.5">
+                    <Info className="w-3 h-3" /> Category
                   </div>
-                  <div className="text-sm font-black text-primary uppercase leading-none">
+                  <div className="text-sm font-black text-primary uppercase leading-tight">
                     {tCategory(request.category?.name || request.category || request.categoryId, t)}
                   </div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase mt-1">
-                    Category Tag
+                  <div className="text-[10px] font-semibold text-muted-foreground mt-0.5">
+                    Classification
                   </div>
                 </div>
               </div>
 
-              {/* Note Section */}
+              {/* Notes */}
               {request.description && (
-                <div className="p-6 rounded-[2rem] bg-slate-200/50 dark:bg-slate-800/20 border border-dashed border-slate-300 dark:border-slate-700">
-                  <div className="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-[0.2em]">Procurement Directives</div>
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300 italic">
-                    "{request.description}"
+                <div className="p-4 rounded-xl bg-muted/50 border border-dashed border-border">
+                  <div className="text-[10px] font-black uppercase text-muted-foreground mb-2 tracking-widest">
+                    Procurement Directives
+                  </div>
+                  <p className="text-sm text-foreground/80 italic leading-relaxed">
+                    &ldquo;{request.description}&rdquo;
                   </p>
                 </div>
               )}
             </motion.div>
           </div>
 
-          {/* Right Panel: Offer Submission Console */}
-          <div className="w-full lg:w-1/2 p-8 lg:p-12 overflow-y-auto flex flex-col justify-center bg-white dark:bg-slate-950">
+          {/* Right: Offer Form */}
+          <div className="w-full lg:w-1/2 p-6 lg:p-10 overflow-y-auto flex flex-col justify-center bg-card">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
               className="max-w-md mx-auto w-full"
             >
-              <div className="mb-10 text-center lg:text-left">
-                <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2 italic">
-                  Offer Submission
-                </h2>
-                <p className="text-sm text-slate-500 font-medium">
-                  Configure your technical proposal for this procurement request.
+              <div className="mb-8">
+                <h3 className="text-xl font-black text-foreground uppercase tracking-tight mb-1">
+                  Submit Your Quote
+                </h3>
+                <p className="text-sm text-muted-foreground font-medium">
+                  Configure your offer for this procurement request.
                 </p>
               </div>
 
@@ -178,7 +176,7 @@ export function SendOfferDialog({
                 vehicleInfo={{
                   brand: request.vehicleBrand || t('defaults.unknown'),
                   model: request.vehicleModel || t('defaults.unknown'),
-                  year: request.modelYear || t('defaults.unknown')
+                  year: request.modelYear || t('defaults.unknown'),
                 }}
                 layout="default"
                 showContext={false}

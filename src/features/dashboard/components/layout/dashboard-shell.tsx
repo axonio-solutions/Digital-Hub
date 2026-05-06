@@ -4,7 +4,8 @@ import React from 'react'
 import { useMatches } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { NotificationBell } from '@/features/notifications'
-import { UserDropdown } from './user-dropdown'
+import { UserMenu } from '@/components/navigation/user-menu'
+import { NavControls } from '@/components/navigation/nav-controls'
 import {
   SidebarInset,
   SidebarProvider,
@@ -93,8 +94,6 @@ function DynamicBreadcrumb() {
 }
 
 import { AppSidebar } from './app-sidebar'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { LanguageToggle } from '@/components/language-toggle'
 
 interface DashboardShellProps {
   children: React.ReactNode
@@ -128,11 +127,10 @@ export function DashboardShell({ children, sidebarContent }: DashboardShellProps
               <span className="text-sm font-bold tracking-tight uppercase">MLILA</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 md:gap-4">
-            <LanguageToggle />
-            <ThemeToggle />
+          <div className="flex items-center gap-2 md:gap-3">
+            <NavControls />
             <NotificationBell />
-            <UserDropdown />
+            <UserMenu user={user} role={user?.role || 'buyer'} />
           </div>
         </header>
 

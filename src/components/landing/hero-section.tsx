@@ -3,99 +3,153 @@ import { useTranslation } from 'react-i18next'
 import { ArrowRight, ShieldCheck, Truck, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-function SparkleIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
-    </svg>
-  )
-}
-
-function Badge({
-  children,
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLSpanElement>) {
-  return (
-    <span
-      className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors ${className}`}
-      {...props}
-    >
-      {children}
-    </span>
-  )
-}
-
 export function HeroSection() {
-  const { t: tLayout } = useTranslation('home/layout')
   const { t: tHero } = useTranslation('home/hero')
   const { t: tBenefits } = useTranslation('home/benefits')
 
   return (
-    <section className="relative w-full py-20 lg:py-32 flex flex-col items-center justify-center text-center px-4 md:px-6 overflow-hidden">
-      {/* Background Decoration */}
-      <div className="absolute top-0 inset-x-0 h-96 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none -z-10" />
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/20 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob pointer-events-none -z-10" />
-      <div className="absolute top-20 -left-20 w-72 h-72 bg-accent/20 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000 pointer-events-none -z-10" />
+    <section className="relative w-full min-h-[calc(100vh-3.5rem)] flex items-center overflow-hidden">
+      {/* Dot grid background */}
+      <div
+        className="absolute inset-0 pointer-events-none -z-10 opacity-[0.35] dark:opacity-[0.15]"
+        style={{
+          backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+        }}
+      />
 
-      <Badge className="mb-6 bg-primary/10 text-primary hover:bg-primary/20 border-none transition-all px-4 py-1 text-sm font-semibold rounded-full">
-        <SparkleIcon className="w-4 h-4 me-2" />
-        {tHero('badge')}
-      </Badge>
+      {/* Subtle warm glow top-right */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/4 rounded-full blur-[150px] pointer-events-none -z-10" />
 
-      <div className="max-w-[800px] space-y-6">
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground drop-shadow-sm">
-          {tHero('title_main')} <br className="hidden md:block" />
-          <span className="text-primary">{tHero('title_highlight')}</span>
-        </h1>
-        <p className="mx-auto max-w-[600px] text-lg text-muted-foreground md:text-xl font-medium leading-relaxed">
-          {tHero('description')}
-        </p>
-      </div>
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-16 lg:py-24">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Left: Content */}
+          <div className="space-y-8">
+            {/* Badge */}
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-semibold text-primary">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+              </span>
+              {tHero('badge')}
+            </span>
 
-      <div className="flex flex-col sm:flex-row gap-4 mt-10 w-full max-w-md mx-auto justify-center">
-        <Link to="/dashboard/requests/new" className="w-full sm:w-auto">
-          <Button
-            size="lg"
-            className="h-14 px-8 text-base bg-primary hover:bg-primary/90 text-primary-foreground w-full shadow-lg shadow-primary/30 transition-all font-semibold rounded-xl"
-          >
-            {tHero('buyer_btn')}
-            <ArrowRight className="ms-2 h-5 w-5" />
-          </Button>
-        </Link>
-        <Link to="/login" className="w-full sm:w-auto">
-          <Button
-            size="lg"
-            variant="outline"
-            className="h-14 px-8 text-base border-2 border-border hover:border-primary hover:text-primary hover:bg-primary/5 w-full transition-all font-semibold rounded-xl text-foreground"
-          >
-            {tHero('seller_btn')}
-          </Button>
-        </Link>
-      </div>
+            {/* Headline */}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-foreground leading-[1.05]">
+              {tHero('title_main')}
+              <br />
+              <span className="text-primary">{tHero('title_highlight')}</span>
+            </h1>
 
-      <div className="mt-14 flex items-center gap-8 text-sm font-medium text-muted-foreground">
-        <div className="flex gap-2 items-center">
-          <ShieldCheck className="w-5 h-5 text-emerald-500" />{' '}
-          {tBenefits('trust.secure')}
-        </div>
-        <div className="flex gap-2 items-center">
-          <Zap className="w-5 h-5 text-amber-500" /> {tBenefits('trust.quotes')}
-        </div>
-        <div className="hidden sm:flex gap-2 items-center">
-          <Truck className="w-5 h-5 text-primary" />{' '}
-          {tBenefits('trust.delivery')}
+            {/* Description */}
+            <p className="max-w-lg text-lg text-muted-foreground leading-relaxed">
+              {tHero('description')}
+            </p>
+
+            {/* CTA buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Link to="/dashboard/requests/new">
+                <Button
+                  size="lg"
+                  className="h-13 px-8 text-base font-bold bg-primary text-primary-foreground hover:brightness-110 active:scale-[0.98] transition-all duration-150 rounded-xl shadow-lg shadow-primary/20"
+                >
+                  {tHero('buyer_btn')}
+                  <ArrowRight className="ms-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/login">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-13 px-8 text-base font-semibold border-2 border-border hover:border-primary hover:text-primary hover:bg-primary/5 active:scale-[0.98] transition-all duration-150 rounded-xl text-foreground"
+                >
+                  {tHero('seller_btn')}
+                </Button>
+              </Link>
+            </div>
+
+            {/* Trust badges */}
+            <div className="flex flex-wrap items-center gap-6 pt-4 text-sm font-medium text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                {tBenefits('trust.secure')}
+              </div>
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-amber-500" />
+                {tBenefits('trust.quotes')}
+              </div>
+              <div className="flex items-center gap-2">
+                <Truck className="w-4 h-4 text-primary" />
+                {tBenefits('trust.delivery')}
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Visual preview */}
+          <div className="hidden lg:flex justify-center">
+            <div className="relative w-full max-w-md">
+              {/* Ambient glow */}
+              <div className="absolute -inset-4 bg-primary/10 rounded-3xl blur-3xl pointer-events-none" />
+
+              {/* Main card */}
+              <div className="relative bg-card border border-border rounded-2xl shadow-xl shadow-foreground/5 p-6 space-y-5">
+                {/* Header row */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Zap className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-foreground">New Request</p>
+                      <p className="text-xs text-muted-foreground">Golf 7 · Alternator</p>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-bold">
+                    Active
+                  </span>
+                </div>
+
+                {/* Quotes flowing in */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/60 border border-border">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-[11px] font-black text-primary">A1</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground">12,500 DA</p>
+                      <p className="text-xs text-muted-foreground">Original · 6mo warranty</p>
+                    </div>
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60 opacity-70">
+                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                      <span className="text-[11px] font-black text-muted-foreground">S3</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground">9,800 DA</p>
+                      <p className="text-xs text-muted-foreground">Used · 3mo warranty</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/20 border border-border/40 opacity-50">
+                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                      <span className="text-[11px] font-black text-muted-foreground">R4</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-muted-foreground">11,200 DA</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress indicator */}
+                <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+                  <span className="font-semibold text-primary">4 sellers</span>
+                  competing for this request
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

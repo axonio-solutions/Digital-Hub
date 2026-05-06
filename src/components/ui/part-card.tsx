@@ -1,8 +1,6 @@
-import { Clock, Package, Layers, MapPin, ArrowUpRight, Flame } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+import { Clock, MapPin, ArrowUpRight, MessageSquare, Flame, Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Link } from '@tanstack/react-router'
-import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
+import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 
 interface PartCardProps {
   id: string
@@ -23,6 +21,17 @@ interface PartCardProps {
   className?: string
 }
 
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 60) return `${mins}m ago`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  if (days < 7) return `${days}d ago`
+  return new Date(dateStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+}
+
 export function PartCard({
   id,
   title,
@@ -41,195 +50,143 @@ export function PartCard({
   partNumber,
   className,
 }: PartCardProps) {
-  const { t } = useTranslation('requests/card')
-
-  const isNew = new Date(createdAt).getTime() > Date.now() - 86400000
   const isAsap = status === 'premium'
+  const isNew = new Date(createdAt).getTime() > Date.now() - 86400000
   const hasImage = !!imageUrls?.[0]
   const shortId = id ? String(id).substring(0, 6).toUpperCase() : 'N/A'
-
-  const formattedDate = new Date(createdAt).toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-  })
-
-  const actionNode = (actionHref || onClick) && (
-    <button
-      id={`part-card-action-${id}`}
-      type="button"
-      onClick={(e) => {
-        if (onClick) {
-          e.preventDefault()
-          e.stopPropagation()
-          onClick()
-        }
-      }}
-      className={cn(
-        "group/btn relative flex items-center gap-2 h-9 px-4 rounded-full text-[11px] font-black tracking-widest uppercase",
-        "bg-primary text-primary-foreground",
-        "shadow-[0_4px_20px_-4px_rgba(0,0,0,0.3)] shadow-primary/40",
-        "hover:shadow-[0_6px_28px_-4px_rgba(0,0,0,0.35)] hover:shadow-primary/50",
-        "hover:brightness-110 active:scale-95 transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
-      )}
-    >
-      {actionLabel || t('actions.details', 'Details')}
-      <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-    </button>
-  )
 
   return (
     <article
       className={cn(
-        // Shell
-        "group relative flex flex-col rounded-[20px] overflow-hidden",
-        "bg-white dark:bg-slate-900",
-        "border border-slate-200/80 dark:border-slate-800/80",
-        // Hover elevation
-        "shadow-[0_2px_12px_-2px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_12px_-2px_rgba(0,0,0,0.4)]",
-        "hover:shadow-[0_16px_48px_-8px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_16px_48px_-8px_rgba(0,0,0,0.5)]",
-        "hover:-translate-y-1.5 hover:border-primary/30 dark:hover:border-primary/25",
-        "transition-all duration-350 ease-out",
+        "group relative flex flex-col rounded-2xl overflow-hidden",
+        "bg-card border border-border",
+        "shadow-sm hover:shadow-xl hover:shadow-primary/5",
+        "hover:-translate-y-1 hover:border-primary/20",
+        "transition-all duration-300 ease-out",
         className
       )}
     >
-      {/* ── Image / Placeholder ─────────────────────────────────────────────── */}
-      <div className="relative w-full h-48 bg-slate-100 dark:bg-slate-800 shrink-0 overflow-hidden">
+      {/* Image area */}
+      <div className="relative w-full h-40 bg-muted/50 shrink-0 overflow-hidden">
         {hasImage ? (
           <img
             src={imageUrls![0]}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
-          // Placeholder: abstract colored gradient that still looks intentional
-          <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
-            <div className="w-14 h-14 rounded-2xl bg-white/60 dark:bg-slate-700/60 backdrop-blur-sm flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm">
-              <Package className="w-7 h-7 text-slate-400 dark:text-slate-500" />
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+            <div className="w-12 h-12 rounded-xl bg-card flex items-center justify-center border border-border shadow-sm">
+              <Calendar className="w-6 h-6 text-muted-foreground/40" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-              No Image
-            </span>
           </div>
         )}
 
-        {/* Scrim – only visible when image is present */}
-        {hasImage && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent pointer-events-none" />
+        {/* Image overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+
+        {/* Top-left: quote count */}
+        {quotesCount > 0 && (
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card/90 backdrop-blur-sm border border-border text-foreground text-[11px] font-bold shadow-sm">
+            <MessageSquare className="w-3 h-3 text-primary" />
+            {quotesCount}
+          </div>
         )}
 
-        {/* ── Top-right badges ──────────────────────────────────────────────── */}
-        <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5 z-10">
+        {/* Top-right: badges */}
+        <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
           {isAsap && (
-            <GlowingBadge
-              variant="error"
-              pulse
-              className="h-6 text-[9px]"
-            >
+            <GlowingBadge variant="error" pulse className="h-6 text-[9px]">
               <Flame className="w-2.5 h-2.5 me-1" />
               ASAP
             </GlowingBadge>
           )}
-          {isNew && (
-            <GlowingBadge
-              variant="info"
-              pulse
-              className="h-6 text-[9px]"
-            >
+          {isNew && !isAsap && (
+            <GlowingBadge variant="info" pulse className="h-6 text-[9px]">
               New
             </GlowingBadge>
           )}
         </div>
-
-        {/* ── Bottom-left: Quote count chip (over image) ────────────────────── */}
-        {quotesCount > 0 && (
-          <div className="absolute bottom-3 left-3 z-10 inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-amber-500/90 backdrop-blur-sm text-white text-[10px] font-black tracking-wider uppercase shadow-sm">
-            <span className="text-[11px] font-black leading-none">{quotesCount}</span>
-            {t('labels.quotes', 'Quotes')}
-          </div>
-        )}
       </div>
 
-      {/* ── Body ────────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col flex-1 p-5 gap-4">
-
-        {/* Title row */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <h3
-              className="text-[15px] font-bold text-slate-900 dark:text-slate-50 line-clamp-1 group-hover:text-primary transition-colors duration-200"
-              title={title}
-            >
-              {title}
-            </h3>
-            {partNumber && (
-              <p className="text-[10px] font-mono font-semibold text-primary/70 dark:text-primary/60 mt-0.5 tracking-wider">
-                PN: {partNumber}
-              </p>
-            )}
-          </div>
-
-          {/* Year badge */}
-          <span className="flex-shrink-0 inline-flex items-center h-6 px-2 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-black text-slate-500 dark:text-slate-400 tracking-wider">
-            {modelYear}
-          </span>
+      {/* Content */}
+      <div className="flex flex-col flex-1 p-4 gap-3">
+        {/* Title */}
+        <div className="min-w-0">
+          <h3 className="text-sm font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors duration-200" title={title}>
+            {title}
+          </h3>
+          {partNumber && (
+            <p className="text-[10px] font-mono text-muted-foreground/70 mt-0.5 tracking-wide">
+              PN: {partNumber}
+            </p>
+          )}
         </div>
 
-        {/* Meta chips row */}
+        {/* Meta badges */}
         <div className="flex flex-wrap items-center gap-1.5">
-          {/* Brand */}
-          <span className="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-slate-900 dark:bg-slate-700 text-white dark:text-slate-200 text-[10px] font-bold uppercase tracking-wider">
+          <span className="inline-flex items-center h-5.5 px-2 rounded-md bg-foreground/10 text-foreground text-[10px] font-bold">
             {brand}
           </span>
-
-          {/* Category */}
+          {modelYear && (
+            <span className="inline-flex items-center h-5.5 px-2 rounded-md bg-muted border border-border text-muted-foreground text-[10px] font-semibold">
+              {modelYear}
+            </span>
+          )}
           {category && (
-            <span className="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[10px] font-semibold capitalize">
-              <Layers className="w-2.5 h-2.5" />
+            <span className="inline-flex items-center h-5.5 px-2 rounded-md bg-muted border border-border text-muted-foreground text-[10px] font-medium capitalize">
               {category}
             </span>
           )}
-
-          {/* Region */}
-          {region && (
-            <span className="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-semibold">
-              <MapPin className="w-2.5 h-2.5" />
-              {region}
-            </span>
-          )}
         </div>
 
-        {/* Notes */}
+        {/* Notes preview */}
         {notes && (
-          <p className="text-[13px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed -mt-1">
+          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
             {notes}
           </p>
         )}
 
-        {/* ── Footer ──────────────────────────────────────────────────────────── */}
-        <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
-          {/* Date + ID */}
-          <div className="flex flex-col gap-0.5">
-            <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
-              <Clock className="w-3 h-3" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">{formattedDate}</span>
+        {/* Footer */}
+        <div className="mt-auto pt-3 border-t border-border flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-1 text-muted-foreground text-[10px] font-medium">
+              <Clock className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">{timeAgo(createdAt)}</span>
             </div>
-            <span className="text-[9px] font-mono text-slate-300 dark:text-slate-600 tracking-widest">
-              #{shortId}
-            </span>
+            {region && (
+              <div className="hidden sm:flex items-center gap-1 text-muted-foreground text-[10px] font-medium">
+                <MapPin className="w-3 h-3 flex-shrink-0" />
+                <span className="truncate">{region}</span>
+              </div>
+            )}
           </div>
 
-          {/* CTA — only rendered when `actionLabel` or `onClick` is provided (RBAC guard upstream) */}
-          {actionHref ? (
-            <Link
-              to={actionHref as any}
-              params={id ? ({ requestId: id } as any) : undefined}
-              className="contents"
+          <span className="text-[9px] font-mono text-muted-foreground/40 hidden sm:block">
+            #{shortId}
+          </span>
+
+          {/* CTA button — only rendered when actionLabel or onClick is provided */}
+          {(actionLabel || onClick) && (
+            <button
+              type="button"
+              onClick={(e) => {
+                if (onClick) {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onClick()
+                }
+              }}
+              className={cn(
+                "flex-shrink-0 flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[11px] font-bold transition-all duration-200",
+                isAsap
+                  ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 hover:bg-rose-500/20"
+                  : "bg-primary text-primary-foreground hover:brightness-110 active:scale-95 shadow-sm shadow-primary/20"
+              )}
             >
-              {actionNode}
-            </Link>
-          ) : (
-            actionNode
+              {actionLabel || 'Details'}
+              <ArrowUpRight className="w-3 h-3" />
+            </button>
           )}
         </div>
       </div>

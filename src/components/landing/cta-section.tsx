@@ -1,28 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import {
-  ArrowRight,
-  BarChart3,
-  PackageCheck,
-  Settings,
-  Zap,
-} from 'lucide-react'
+import { ArrowRight, Zap, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-
-function Badge({
-  children,
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLSpanElement>) {
-  return (
-    <span
-      className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors ${className}`}
-      {...props}
-    >
-      {children}
-    </span>
-  )
-}
 
 export function CtaSection() {
   const { t: tMarketing } = useTranslation('home/marketing')
@@ -31,107 +10,116 @@ export function CtaSection() {
   return (
     <>
       {/* For Sellers Section */}
-      <section
-        id="benefits"
-        className="w-full py-24 bg-card text-foreground overflow-hidden relative border-y border-border"
-      >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center relative z-10">
-          <div className="space-y-8">
-            <Badge className="bg-primary/20 text-primary hover:bg-primary/30 px-3 py-1 font-medium border-primary/30">
+      <section id="benefits" className="w-full py-24 bg-card overflow-hidden relative">
+        <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-14 md:gap-20 items-center relative z-10">
+          {/* Text column */}
+          <div className="space-y-7">
+            <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/[0.06] px-3.5 py-1 text-xs font-bold text-primary uppercase tracking-wider">
               {tMarketing('sellers.badge')}
-            </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight">
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground leading-tight">
               {tMarketing('sellers.title')}
             </h2>
-            <p className="text-xl text-muted-foreground leading-relaxed">
+            <p className="text-base text-muted-foreground leading-relaxed">
               {tMarketing('sellers.description')}
             </p>
 
-            <ul className="space-y-5">
-              <li className="flex items-center gap-4 text-lg text-foreground">
-                <div className="bg-emerald-500/10 p-2 rounded-full border border-emerald-500/20 text-emerald-500">
-                  <PackageCheck className="w-5 h-5" />
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center mt-0.5">
+                  <Check className="w-3.5 h-3.5 text-emerald-500" />
                 </div>
-                {tMarketing('sellers.feature1')}
+                <span className="text-foreground font-medium">{tMarketing('sellers.feature1')}</span>
               </li>
-              <li className="flex items-center gap-4 text-lg text-foreground">
-                <div className="bg-primary/10 p-2 rounded-full border border-primary/20 text-primary">
-                  <BarChart3 className="w-5 h-5" />
+              <li className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
+                  <Check className="w-3.5 h-3.5 text-primary" />
                 </div>
-                {tMarketing('sellers.feature2')}
+                <span className="text-foreground font-medium">{tMarketing('sellers.feature2')}</span>
               </li>
             </ul>
 
-            <Link to="/login" className="inline-block mt-4">
+            <Link to="/login" className="inline-block">
               <Button
                 size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold h-14 px-8 rounded-xl shadow-xl shadow-primary/20"
+                className="h-13 px-8 text-base font-bold bg-primary text-primary-foreground hover:brightness-110 active:scale-[0.98] transition-all duration-150 rounded-xl shadow-lg shadow-primary/20"
               >
                 {tMarketing('sellers.btn')}
               </Button>
             </Link>
           </div>
 
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-accent/30 rounded-2xl blur-3xl -z-10" />
-            <div className="bg-background border border-border rounded-2xl shadow-2xl overflow-hidden backdrop-blur-sm">
-              <div className="h-12 border-b border-border flex items-center px-4 gap-2 bg-muted/50">
-                <div className="w-3 h-3 rounded-full bg-red-400/80" />
-                <div className="w-3 h-3 rounded-full bg-amber-400/80" />
-                <div className="w-3 h-3 rounded-full bg-emerald-400/80" />
+          {/* Dashboard mockup */}
+          <div className="relative order-first md:order-last">
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-accent/20 rounded-2xl blur-2xl -z-10" />
+            <div className="bg-background border border-border rounded-2xl shadow-lg overflow-hidden">
+              <div className="h-10 border-b border-border flex items-center px-4 gap-2 bg-muted/50">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
               </div>
-              <div className="p-6">
-                <div className="space-y-4">
-                  {[
-                    'Clio 4 Alternator · REQ-006 · 4 Competing Quotes',
-                    'Golf 7 Bumper · REQ-001',
-                  ].map((label, i) => (
-                    <div
-                      key={i}
-                      className="bg-card p-4 rounded-xl border border-border flex justify-between items-center"
-                    >
-                      <div>
-                        <div className="text-foreground font-semibold mb-1">
-                          {label.split('·')[0]}
-                        </div>
-                        <div className="text-muted-foreground text-xs font-mono">
-                          {label.split('·').slice(1).join('·')}
-                        </div>
+              <div className="p-5 space-y-3">
+                {[
+                  { name: 'Clio 4 Alternator', id: 'REQ-006', quotes: 4, urgent: true },
+                  { name: 'Golf 7 Bumper', id: 'REQ-001', quotes: 2 },
+                  { name: 'Symbol Brake Pads', id: 'REQ-011', quotes: 6 },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border/60"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-foreground">{item.name}</span>
+                        {item.urgent && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary">
+                            Urgent
+                          </span>
+                        )}
                       </div>
-                      <Button
-                        size="sm"
-                        className="bg-primary hover:bg-primary/90 text-xs text-primary-foreground"
-                      >
-                        View & Quote
-                      </Button>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {item.id} · {item.quotes} quotes
+                      </p>
                     </div>
-                  ))}
-                </div>
+                    <Button
+                      size="sm"
+                      className="h-8 text-xs font-bold bg-primary text-primary-foreground hover:brightness-110 rounded-lg"
+                    >
+                      Quote
+                    </Button>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Explore Marketplace CTA */}
-      <section className="w-full py-24 bg-accent relative overflow-hidden">
-        <div className="absolute top-0 end-0 w-1/3 h-full bg-primary/5 -skew-x-12 translate-x-1/2" />
-        <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center gap-16">
+      {/* Live Marketplace Section */}
+      <section className="w-full py-24 bg-primary/[0.04] dark:bg-primary/[0.06] relative overflow-hidden border-t border-border">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/[0.03] -skew-x-12 translate-x-1/4 pointer-events-none" />
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-14 md:gap-20">
           <div className="flex-1 space-y-6">
-            <Badge className="bg-primary text-primary-foreground border-none py-1 px-3 rounded-full font-bold uppercase tracking-wider text-[10px]">
-              {tMarketing('marketplace.badge')}
-            </Badge>
-            <h2 className="text-4xl font-extrabold tracking-tight text-foreground leading-tight">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary px-3.5 py-1.5">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-foreground opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-foreground" />
+              </span>
+              <span className="text-xs font-bold text-primary-foreground uppercase tracking-wider">
+                {tMarketing('marketplace.badge')}
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground leading-tight">
               {tMarketing('marketplace.title')}
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed font-medium">
+            <p className="text-base text-muted-foreground leading-relaxed max-w-md">
               {tMarketing('marketplace.description')}
             </p>
             <Link to="/explore">
               <Button
                 size="lg"
-                className="h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-xl flex items-center"
+                className="h-13 px-8 text-base font-bold bg-primary text-primary-foreground hover:brightness-110 active:scale-[0.98] transition-all duration-150 rounded-xl shadow-lg shadow-primary/20"
               >
                 {tMarketing('marketplace.btn')}
                 <ArrowRight className="ms-2 h-5 w-5" />
@@ -139,49 +127,120 @@ export function CtaSection() {
             </Link>
           </div>
 
+          {/* Preview card */}
           <div className="flex-1 relative">
-            <div className="bg-card rounded-3xl shadow-2xl border border-border p-8 transform rotate-2 hover:rotate-0 transition-all duration-500 scale-105">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Zap className="w-5 h-5 text-primary" />
+            <div className="bg-card rounded-2xl shadow-xl border border-border p-6 transform -rotate-1 hover:rotate-0 transition-transform duration-500">
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Zap className="w-5 h-5 text-primary" />
+                  </div>
+                  <span className="font-bold text-foreground">
+                    {tMarketing('marketplace.active_signals')}
+                  </span>
                 </div>
-                <div className="font-bold text-foreground">
-                  {tMarketing('marketplace.active_signals')}
-                </div>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  {tHero('live')}
+                </span>
               </div>
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
+              <div className="space-y-3">
+                {[
+                  'Alternator · Peugeot 208',
+                  'Headlight · Dacia Logan',
+                  'Fuel Pump · Hyundai i10',
+                ].map((item, i) => (
                   <div
                     key={i}
-                    className="p-4 bg-muted/30 rounded-xl border border-border/50 flex justify-between items-center opacity-70"
+                    className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border/40"
                   >
-                    <div className="h-4 bg-muted rounded w-1/2 animate-pulse" />
-                    <div className="h-6 bg-primary/10 rounded w-16" />
+                    <span className="text-sm font-medium text-foreground/80">{item}</span>
+                    <span className="text-xs text-muted-foreground tabular-nums">
+                      {Math.floor(Math.random() * 5) + 1} quotes
+                    </span>
                   </div>
                 ))}
               </div>
-            </div>
-            <div className="absolute -top-6 -left-6 bg-primary text-primary-foreground p-4 rounded-2xl shadow-xl font-black text-xl z-20">
-              {tHero('live')}
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-background border-t border-border py-12 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="bg-primary rounded-lg p-1.5 flex items-center justify-center">
-              <Settings className="w-5 h-5 text-primary-foreground" />
+      <footer className="bg-background border-t border-border py-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {/* Brand */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+                  <span className="text-primary-foreground font-black text-[11px] leading-none">M</span>
+                </div>
+                <span className="font-black text-lg tracking-tight text-foreground">MLILA</span>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+                {tMarketing('sellers.description')}
+              </p>
             </div>
-            <span className="font-bold text-xl tracking-tight text-foreground">
-              MLILA
-            </span>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-sm font-bold text-foreground mb-4 uppercase tracking-wider">Quick Links</h4>
+              <ul className="space-y-3">
+                <li>
+                  <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    How It Works
+                  </a>
+                </li>
+                <li>
+                  <Link to="/explore" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    Explore Marketplace
+                  </Link>
+                </li>
+                <li>
+                  <a href="#benefits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    For Sellers
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Account */}
+            <div>
+              <h4 className="text-sm font-bold text-foreground mb-4 uppercase tracking-wider">Account</h4>
+              <ul className="space-y-3">
+                <li>
+                  <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    Sign In
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/register" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    Create Account
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard/requests/new" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    Post a Request
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
-          <p className="text-muted-foreground text-sm font-medium">
-            © 2026 MLILA. All rights reserved.
-          </p>
+
+          <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-foreground">
+              &copy; 2026 MLILA. All rights reserved.
+            </p>
+            <p className="text-xs text-muted-foreground/60">
+              The First Reverse-Marketplace in Algeria
+            </p>
+          </div>
         </div>
       </footer>
     </>
