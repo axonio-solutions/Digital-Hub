@@ -19,6 +19,7 @@ export function useVehicles(userId: string) {
       return res.data
     },
     enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
   })
 }
 

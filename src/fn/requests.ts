@@ -5,6 +5,8 @@ import { db } from '@/db'
 import { eq } from 'drizzle-orm'
 import { sparePartRequests } from '@/db/schema'
 import { type User } from '@/lib/auth'
+import { createRequestUseCase, getBuyerRequestsUseCase, getOpenRequestsUseCase, getAllRequestsUseCase, getRequestDetailsUseCase, cancelRequestUseCase, reopenRequestUseCase, deleteRequestUseCase, updateRequestUseCase, flagAsSpamUseCase } from '@/use-cases/requests/index'
+import { getTaxonomyUseCase } from '@/use-cases/admin/index'
 
 /**
  * Axis Layer 3: Requests Actions
@@ -14,7 +16,6 @@ export const createRequestServerFn = createServerFn({ method: 'POST' })
   .inputValidator((data: any) => data)
   .middleware([buyerMiddleware])
   .handler(async ({ data }) => {
-    const { createRequestUseCase } = await import('@/use-cases/requests/index')
     const validated = createRequestSchema.parse(data)
     return await createRequestUseCase(validated)
   })
@@ -26,8 +27,6 @@ export const fetchBuyerRequestsServerFn = createServerFn({ method: 'GET' })
     if (!userId) {
       return { success: false, error: 'Unauthorized' }
     }
-    const { getBuyerRequestsUseCase } =
-      await import('@/use-cases/requests/index')
     return await getBuyerRequestsUseCase(userId)
   })
 
@@ -59,14 +58,11 @@ export const fetchPublicOpenRequestsServerFn = createServerFn({ method: 'GET' })
     search?: string;
   }) => data)
   .handler(async ({ data }) => {
-    const { getOpenRequestsUseCase } =
-      await import('@/use-cases/requests/index')
     return await getOpenRequestsUseCase(data)
   })
 
 export const getPublicTaxonomyServerFn = createServerFn({ method: 'GET' })
   .handler(async () => {
-    const { getTaxonomyUseCase } = await import('@/use-cases/admin/index')
     const res = await getTaxonomyUseCase()
     return { success: true, data: res }
   })
@@ -74,7 +70,6 @@ export const getPublicTaxonomyServerFn = createServerFn({ method: 'GET' })
 export const fetchAllRequestsServerFn = createServerFn({ method: 'GET' })
   .middleware([adminMiddleware])
   .handler(async () => {
-    const { getAllRequestsUseCase } = await import('@/use-cases/requests/index')
     return await getAllRequestsUseCase()
   })
 
@@ -82,8 +77,6 @@ export const fetchRequestDetailsServerFn = createServerFn({ method: 'GET' })
   .middleware([authMiddleware])
   .inputValidator((requestId: string) => requestId)
   .handler(async ({ data: requestId, context }) => {
-    const { getRequestDetailsUseCase } =
-      await import('@/use-cases/requests/index')
     return await getRequestDetailsUseCase(requestId, context.user as User)
   })
 
@@ -101,7 +94,6 @@ export const cancelRequestServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this request')
     }
 
-    const { cancelRequestUseCase } = await import('@/use-cases/requests/index')
     return await cancelRequestUseCase(requestId)
   })
 
@@ -119,7 +111,6 @@ export const reopenRequestServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this request')
     }
 
-    const { reopenRequestUseCase } = await import('@/use-cases/requests/index')
     return await reopenRequestUseCase(requestId)
   })
 
@@ -137,7 +128,6 @@ export const deleteRequestServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this request')
     }
 
-    const { deleteRequestUseCase } = await import('@/use-cases/requests/index')
     return await deleteRequestUseCase(requestId)
   })
 
@@ -155,7 +145,6 @@ export const updateRequestServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this request')
     }
 
-    const { updateRequestUseCase } = await import('@/use-cases/requests/index')
     return await updateRequestUseCase(data.id, data.payload)
   })
 
@@ -163,6 +152,5 @@ export const flagAsSpamServerFn = createServerFn({ method: 'POST' })
   .inputValidator((requestId: string) => requestId)
   .middleware([adminMiddleware])
   .handler(async ({ data: requestId }) => {
-    const { flagAsSpamUseCase } = await import('@/use-cases/requests/index')
     return await flagAsSpamUseCase(requestId)
   })

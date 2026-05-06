@@ -5,6 +5,7 @@ import { db } from '@/db'
 import { eq, sql, and, desc, gte } from 'drizzle-orm'
 import { quotes, sparePartRequests } from '@/db/schema'
 import { type User } from '@/lib/auth'
+import { createQuoteUseCase, getQuotesBySellerUseCase, acceptQuoteUseCase, deleteQuoteUseCase, updateQuoteUseCase, revokeQuoteUseCase, rejectQuoteUseCase, unrejectQuoteUseCase } from '@/use-cases/quotes/index'
 
 /**
  * Axis Layer 3: Quotes Actions
@@ -14,7 +15,6 @@ export const createQuoteServerFn = createServerFn({ method: 'POST' })
   .inputValidator((data: any) => data)
   .middleware([sellerMiddleware])
   .handler(async ({ data }) => {
-    const { createQuoteUseCase } = await import('@/use-cases/quotes/index')
     const validated = quoteSchema.parse(data)
     return await createQuoteUseCase(validated)
   })
@@ -22,8 +22,6 @@ export const createQuoteServerFn = createServerFn({ method: 'POST' })
 export const getSellerQuotesServerFn = createServerFn({ method: 'GET' })
   .middleware([sellerMiddleware])
   .handler(async ({ context }) => {
-    const { getQuotesBySellerUseCase } =
-      await import('@/use-cases/quotes/index')
     return await getQuotesBySellerUseCase(context.user.id)
   })
 
@@ -62,7 +60,6 @@ export const deleteQuoteServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this quote')
     }
 
-    const { deleteQuoteUseCase } = await import('@/use-cases/quotes/index')
     return await deleteQuoteUseCase(data.id)
   })
 
@@ -80,7 +77,6 @@ export const updateQuoteServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this quote')
     }
 
-    const { updateQuoteUseCase } = await import('@/use-cases/quotes/index')
     const validated = quoteSchema.parse(data.data)
     return await updateQuoteUseCase(data.id, validated)
   })
@@ -101,7 +97,6 @@ export const revokeQuoteServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this request')
     }
 
-    const { revokeQuoteUseCase } = await import('@/use-cases/quotes/index')
     return await revokeQuoteUseCase(data.quoteId, data.requestId)
   })
 
@@ -124,7 +119,6 @@ export const rejectQuoteServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this request')
     }
 
-    const { rejectQuoteUseCase } = await import('@/use-cases/quotes/index')
     return await rejectQuoteUseCase(data.quoteId)
   })
 
@@ -147,7 +141,6 @@ export const unrejectQuoteServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this request')
     }
 
-    const { unrejectQuoteUseCase } = await import('@/use-cases/quotes/index')
     return await unrejectQuoteUseCase(data.quoteId)
   })
 

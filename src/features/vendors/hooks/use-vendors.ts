@@ -9,6 +9,7 @@ export function useSellerSpecialties() {
   return useQuery({
     queryKey: ['seller-specialties'],
     queryFn: () => fetchSellerSpecialtiesServerFn(),
+    staleTime: 5 * 60 * 1000,
   })
 }
 

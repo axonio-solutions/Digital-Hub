@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
-import { useAuth } from '@/features/auth/hooks/use-auth'
 
 // 1. Dynamic Imports with Named Export Handling
 const AdminLayout = React.lazy(() =>
@@ -41,14 +40,10 @@ function DashboardSkeleton() {
 }
 
 function DashboardLayoutSelector() {
-  const { data: user, isLoading } = useAuth()
+  const { user } = Route.useRouteContext()
 
-  // Provide an immediate skeleton block while verifying session metadata
-  if (isLoading) return <DashboardSkeleton />
+  const role = (user as any)?.role || 'buyer'
 
-  const role = user?.role || 'buyer'
-
-  // 3. Render conditionally within Suspense Boundary
   return (
     <React.Suspense fallback={<DashboardSkeleton />}>
       {role === 'admin' && (

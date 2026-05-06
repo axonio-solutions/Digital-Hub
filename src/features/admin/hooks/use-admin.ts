@@ -5,5 +5,6 @@ export function useAdminMetrics() {
   return useQuery({
     queryKey: ['admin', 'metrics'],
     queryFn: () => (getAdminMetricsServerFn as any)(),
+    staleTime: 5 * 60 * 1000,
   })
 }

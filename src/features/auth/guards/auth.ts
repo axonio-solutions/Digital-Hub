@@ -7,11 +7,6 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
 
   const session = await auth.api.getSession({
     headers: req?.headers,
-    query: {
-      // ensure session is fresh
-      // https://www.better-auth.com/docs/concepts/session-management#session-caching
-      disableCookieCache: true,
-    },
   })
 
   if (!session) {
@@ -33,9 +28,6 @@ export const optionalAuthMiddleware = createMiddleware().server(
 
     const session = await auth.api.getSession({
       headers: req?.headers,
-      query: {
-        disableCookieCache: true,
-      },
     })
 
     return next({

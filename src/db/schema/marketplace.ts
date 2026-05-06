@@ -60,6 +60,8 @@ export const sparePartRequests = pgTable(
         table.brandId,
         table.categoryId
       ),
+      idx_requests_buyer: index('idx_requests_buyer_id').on(table.buyerId),
+      idx_requests_created: index('idx_requests_created_at').on(table.createdAt),
       gin_idx_part_search: index('gin_idx_part_search').using(
         'gin',
         sql`${table.partName} gin_trgm_ops`
@@ -82,4 +84,7 @@ export const quotes = pgTable('quotes', {
   status: quoteStatusEnum('status').default('pending').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-})
+}, (table) => [
+  index('idx_quotes_seller_id').on(table.sellerId),
+  index('idx_quotes_request_id').on(table.requestId),
+])

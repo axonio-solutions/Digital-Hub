@@ -6,6 +6,7 @@ export function useAdminUsers() {
     queryKey: ['admin', 'users'],
     // @ts-ignore
     queryFn: () => getAllUsersServerFn(),
+    staleTime: 2 * 60 * 1000,
   })
 }
 

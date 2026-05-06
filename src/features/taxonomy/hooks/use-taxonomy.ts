@@ -23,6 +23,7 @@ export function useTaxonomy() {
       if (!res.success) throw new Error(res.error || 'Failed to fetch taxonomy')
       return res.data
     },
+    staleTime: 10 * 60 * 1000,
   })
 }
 

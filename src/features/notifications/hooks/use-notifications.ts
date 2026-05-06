@@ -167,6 +167,7 @@ export function useUnreadNotifications(userId: string) {
     queryKey: ['notifications', 'unread', userId],
     queryFn: () => fetchUnreadNotificationsServerFn(),
     enabled: !!userId,
+    staleTime: 10 * 1000,
   })
 }
 

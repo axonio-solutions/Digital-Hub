@@ -3,6 +3,8 @@ import { getRequest } from '@tanstack/react-start/server'
 import type { User } from '@/lib/auth'
 import { auth } from '@/lib/auth'
 import { loginSchema, registerSchema } from '@/types/auth-schemas'
+import { updateUserMetadata } from '@/data-access/users'
+import { updateSellerSpecialties } from '@/data-access/vendors'
 
 /**
  * Axis Layer 3: Auth Actions
@@ -12,9 +14,6 @@ export const getUser = createServerFn({ method: 'GET' }).handler(async () => {
   const request = getRequest()
   const data = await auth.api.getSession({
     headers: request?.headers,
-    query: {
-      disableCookieCache: true,
-    },
   })
 
   if (!data || !data?.user) {
@@ -80,7 +79,6 @@ export const registerSellerFn = createServerFn({ method: 'POST' })
     if (!user) throw new Error('Registration failed')
 
     // 2. Update Enhanced Profile (Role + Status + Business Data)
-    const { updateUserMetadata } = await import('@/data-access/users')
     await updateUserMetadata(user.id, {
       role: 'seller',
       account_status: 'waitlisted',
@@ -94,7 +92,6 @@ export const registerSellerFn = createServerFn({ method: 'POST' })
     })
 
     // 3. Persist Market Specialties (Junction Tables)
-    const { updateSellerSpecialties } = await import('@/data-access/vendors')
     await updateSellerSpecialties(user.id, data.brandIds || [], data.categoryIds || [])
 
     return { success: true, userId: user.id }

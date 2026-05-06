@@ -1,4 +1,4 @@
-import { boolean, pgEnum, pgTable, text, timestamp, uuid, jsonb } from 'drizzle-orm/pg-core'
+import { boolean, pgEnum, pgTable, text, timestamp, uuid, jsonb, index } from 'drizzle-orm/pg-core'
 import { users } from './auth'
 
 export const alertFrequencyEnum = pgEnum('alert_frequency', [
@@ -76,4 +76,6 @@ export const notifications = pgTable('notifications', {
   isPriority: boolean('is_priority').default(false).notNull(),
 
   createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+}, (table) => [
+  index('idx_notifications_user_id').on(table.userId),
+])

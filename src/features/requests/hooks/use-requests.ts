@@ -40,6 +40,7 @@ export function useOpenRequests(filters?: {
       if (!res.success) throw new Error(res.error)
       return res.data
     },
+    staleTime: 30 * 1000,
   })
 }
 
@@ -52,6 +53,7 @@ export function useRequestDetails(requestId: string) {
       return res.data
     },
     enabled: !!requestId,
+    staleTime: 30 * 1000,
   })
 }
 
@@ -63,6 +65,7 @@ export function useAllRequests() {
       if (!res.success) throw new Error(res.error)
       return res.data
     },
+    staleTime: 2 * 60 * 1000,
   })
 }
 
@@ -184,6 +187,7 @@ export function usePublicTaxonomy() {
       if (!res.success) throw new Error(res.error || 'Failed to fetch taxonomy')
       return res.data
     },
+    staleTime: 10 * 60 * 1000,
   })
 }
 

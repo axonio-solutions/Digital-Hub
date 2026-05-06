@@ -1,16 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
+import { useRef, useState, useEffect } from 'react'
+import { Await, getRouteApi } from '@tanstack/react-router'
 import { MessageSquare, Package, Users } from 'lucide-react'
-import { getLandingStatsServerFn } from '@/fn/landing'
+
+const routeApi = getRouteApi('/_public/')
 
 const stats = [
   { key: 'activeSellers', label: 'Active Sellers', icon: Users, suffix: '+' },
   { key: 'partsSourced', label: 'Parts Sourced', icon: Package, suffix: '+' },
-  {
-    key: 'totalQuotes',
-    label: 'Quotes Sent',
-    icon: MessageSquare,
-    suffix: '+',
-  },
+  { key: 'totalQuotes', label: 'Quotes Sent', icon: MessageSquare, suffix: '+' },
 ]
 
 function formatNumber(num: number): string {
@@ -20,44 +17,96 @@ function formatNumber(num: number): string {
   return num.toString()
 }
 
-export function FeaturesSection() {
-  const { data: statsData, isLoading } = useQuery({
-    queryKey: ['landing-stats'],
-    queryFn: () => getLandingStatsServerFn(),
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  })
+function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
+  const [displayValue, setDisplayValue] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const triggered = useRef(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || triggered.current || value === 0) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          triggered.current = true
+          const duration = 1000
+          const start = performance.now()
+
+          const animate = (now: number) => {
+            const elapsed = now - start
+            const progress = Math.min(elapsed / duration, 1)
+            const eased = 1 - Math.pow(1 - progress, 3)
+            setDisplayValue(Math.floor(eased * value))
+            if (progress < 1) requestAnimationFrame(animate)
+            else setDisplayValue(value)
+          }
+
+          requestAnimationFrame(animate)
+          observer.unobserve(el)
+        }
+      },
+      { threshold: 0.5 }
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [value])
 
   return (
-    <section className="w-full py-20 bg-background relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+    <span ref={ref}>
+      {formatNumber(displayValue)}
+      <span className="text-primary">{suffix}</span>
+    </span>
+  )
+}
 
-      <div className="max-w-6xl mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {stats.map((stat) => {
-            const value = statsData?.[stat.key as keyof typeof statsData] ?? 0
-            return (
-              <div key={stat.key} className="relative group">
-                <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-primary/20 to-primary/5 opacity-0 group-hover:opacity-100 transition duration-500 blur-xl" />
-                <div className="relative bg-card border border-border rounded-2xl p-8 text-center hover:shadow-lg transition-all">
-                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <stat.icon className="w-7 h-7 text-primary" />
+export function StatsStrip() {
+  const { landingStats } = routeApi.useLoaderData()
+
+  return (
+    <section className="w-full border-y border-border bg-muted/30">
+      <div className="max-w-5xl mx-auto px-6 py-10">
+        <Await
+          promise={landingStats}
+          fallback={
+            <div className="grid grid-cols-3 divide-x divide-border">
+              {stats.map((stat) => (
+                <div key={stat.key} className="flex flex-col items-center justify-center gap-2 px-6">
+                  <stat.icon className="w-5 h-5 text-primary/60" />
+                  <div className="text-3xl md:text-4xl font-black text-foreground tracking-tight tabular-nums">
+                    <span className="inline-block w-12 h-8 bg-muted animate-pulse rounded" />
                   </div>
-                  <div className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight mb-2">
-                    {isLoading ? (
-                      <span className="inline-block w-16 h-10 bg-muted animate-pulse rounded" />
-                    ) : (
-                      formatNumber(value)
-                    )}
-                    <span className="text-primary">{stat.suffix}</span>
-                  </div>
-                  <div className="text-muted-foreground font-medium">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     {stat.label}
                   </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              ))}
+            </div>
+          }
+        >
+          {(statsData) => (
+            <div className="grid grid-cols-3 divide-x divide-border">
+              {stats.map((stat) => {
+                const value = statsData?.[stat.key as keyof typeof statsData] ?? 0
+                return (
+                  <div
+                    key={stat.key}
+                    className="flex flex-col items-center justify-center gap-2 px-6"
+                  >
+                    <stat.icon className="w-5 h-5 text-primary/60" />
+                    <div className="text-3xl md:text-4xl font-black text-foreground tracking-tight tabular-nums">
+                      <AnimatedCounter value={value} suffix={stat.suffix} />
+                    </div>
+                    <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      {stat.label}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </Await>
       </div>
     </section>
   )

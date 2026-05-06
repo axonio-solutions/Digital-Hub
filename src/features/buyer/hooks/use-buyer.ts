@@ -16,5 +16,6 @@ export function useBuyerRequests(buyerId: string) {
       return res.data
     },
     enabled: !!buyerId,
+    staleTime: 30 * 1000,
   })
 }

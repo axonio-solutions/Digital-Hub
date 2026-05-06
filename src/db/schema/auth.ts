@@ -25,7 +25,11 @@ export const users = pgTable('users', {
   city: text('city'),
   companyAddress: text('company_address'),
   commercialRegister: text('commercial_register'),
-})
+}, (table) => [
+  index('idx_users_role').on(table.role),
+  index('idx_users_account_status').on(table.account_status),
+  index('idx_users_created_at').on(table.createdAt),
+])
 
 export const sessions = pgTable(
   'sessions',

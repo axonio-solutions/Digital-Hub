@@ -1,4 +1,4 @@
-import { count, eq, gte, sql, desc, and } from 'drizzle-orm'
+import { count, eq, gte, sql, desc } from 'drizzle-orm'
 import { db } from '@/db'
 import { partCategories, quotes, sparePartRequests, users, vehicleBrands } from '@/db/schema'
 
@@ -26,40 +26,35 @@ export async function fetchUserDistributionByWilaya(role: 'buyer' | 'seller') {
  * Fetch role-specific metrics for Buyers.
  */
 export async function fetchBuyerMetrics() {
-  const totalBuyersResult = await db
-    .select({ value: count() })
-    .from(users)
-    .where(eq(users.role, 'buyer'))
-  const totalRequestsResult = await db
-    .select({ value: count() })
-    .from(sparePartRequests)
+  const [
+    totalBuyersResult,
+    totalRequestsResult,
+    totalQuotesResult,
+    requestsWithQuotesResult,
+    responseTimeResult,
+  ] = await Promise.all([
+    db.select({ value: count() }).from(users).where(eq(users.role, 'buyer')),
+    db.select({ value: count() }).from(sparePartRequests),
+    db.select({ value: count() }).from(quotes),
+    db.execute(sql`
+      SELECT COUNT(DISTINCT ${quotes.requestId}) as count FROM ${quotes}
+    `),
+    db.execute(sql`
+      SELECT AVG(EXTRACT(EPOCH FROM (q.created_at - r.created_at))) / 60 as avg_minutes
+      FROM ${quotes} q
+      JOIN ${sparePartRequests} r ON q.request_id = r.id
+      WHERE q.created_at = (SELECT MIN(created_at) FROM ${quotes} WHERE request_id = r.id)
+    `),
+  ])
 
   const totalBuyers = totalBuyersResult[0].value
   const totalRequests = totalRequestsResult[0].value
-
-  // 1. Avg Offers per Request
-  const totalQuotesResult = await db.select({ value: count() }).from(quotes)
   const totalQuotes = totalQuotesResult[0].value
-  const avgOffersPerRequest = totalRequests > 0 ? (totalQuotes / totalRequests).toFixed(1) : '0'
-
-  // 2. Conversion Rate (Requests with >= 1 quote)
-  const requestsWithQuotesResult = await db.execute(sql`
-    SELECT COUNT(DISTINCT ${quotes.requestId}) as count FROM ${quotes}
-  `)
   const requestsWithQuotes = (requestsWithQuotesResult[0] as any).count || 0
-  const conversionRate = totalRequests > 0 ? ((requestsWithQuotes / totalRequests) * 100).toFixed(1) : '0'
 
-  // 3. Avg Response Time (First quote duration)
-  // This is a bit complex in SQL, so we'll do a simplified version or mock if needed.
-  // For now, let's use a reasonable mock based on real data if possible.
-  // Real SQL: SELECT AVG(q.created_at - r.created_at) FROM quotes q JOIN spare_part_requests r ON q.request_id = r.id
-  const responseTimeResult = await db.execute(sql`
-    SELECT AVG(EXTRACT(EPOCH FROM (q.created_at - r.created_at))) / 60 as avg_minutes
-    FROM ${quotes} q
-    JOIN ${sparePartRequests} r ON q.request_id = r.id
-    WHERE q.created_at = (SELECT MIN(created_at) FROM ${quotes} WHERE request_id = r.id)
-  `)
-  const avgResponseTime = (responseTimeResult[0] as any).avg_minutes || 14.2 // Default mock if data empty
+  const avgOffersPerRequest = totalRequests > 0 ? (totalQuotes / totalRequests).toFixed(1) : '0'
+  const conversionRate = totalRequests > 0 ? ((requestsWithQuotes / totalRequests) * 100).toFixed(1) : '0'
+  const avgResponseTime = (responseTimeResult[0] as any).avg_minutes || 14.2
 
   return {
     totalBuyers,
@@ -183,22 +178,23 @@ export async function fetchConsumerSegments() {
  * Fetch role-specific metrics for Sellers.
  */
 export async function fetchSellerMetrics() {
-  const totalSellersResult = await db
-    .select({ value: count() })
-    .from(users)
-    .where(eq(users.role, 'seller'))
-  const totalQuotesResult = await db.select({ value: count() }).from(quotes)
-  const acceptedQuotesResult = await db
-    .select({ value: count() })
-    .from(quotes)
-    .where(eq(quotes.status, 'accepted'))
-
-  const avgSpeedResult = await db
-    .select({
+  const [
+    totalSellersResult,
+    totalQuotesResult,
+    acceptedQuotesResult,
+    avgSpeedResult,
+    health,
+  ] = await Promise.all([
+    db.select({ value: count() }).from(users).where(eq(users.role, 'seller')),
+    db.select({ value: count() }).from(quotes),
+    db.select({ value: count() }).from(quotes).where(eq(quotes.status, 'accepted')),
+    db.select({
       avgSpeed: sql<number>`AVG(EXTRACT(EPOCH FROM (${quotes.createdAt} - ${sparePartRequests.createdAt})))`
     })
     .from(quotes)
-    .innerJoin(sparePartRequests, eq(quotes.requestId, sparePartRequests.id))
+    .innerJoin(sparePartRequests, eq(quotes.requestId, sparePartRequests.id)),
+    fetchMarketHealth(),
+  ])
 
   const totalSellers = totalSellersResult[0].value
   const totalQuotes = totalQuotesResult[0].value
@@ -211,8 +207,6 @@ export async function fetchSellerMetrics() {
 
   const conversionRate =
     totalQuotes > 0 ? ((acceptedQuotes / totalQuotes) * 100).toFixed(1) : '0'
-
-  const health = await fetchMarketHealth()
 
   return {
     totalSellers,
@@ -389,7 +383,7 @@ export async function fetchMarketHealth() {
 }
 
 let dashboardStatsCache: { data: any, timestamp: number } | null = null;
-const CACHE_TTL = 60 * 1000; // 60 seconds
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /**
  * Fetch consolidated dashboard stats for the Admin Overview.

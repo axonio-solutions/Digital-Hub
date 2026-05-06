@@ -21,6 +21,7 @@ export function useSellerQuotes(sellerId: string) {
       return res.data
     },
     enabled: !!sellerId,
+    staleTime: 30 * 1000,
   })
 }
 
@@ -29,6 +30,7 @@ export function useSellerDashboardData(sellerId: string) {
     queryKey: [...sellerKeys.all, 'dashboard-data', sellerId],
     queryFn: async () => await import('@/fn/quotes').then(m => m.fetchSellerStatsServerFn()),
     enabled: !!sellerId,
+    staleTime: 30 * 1000,
   })
 }
 
