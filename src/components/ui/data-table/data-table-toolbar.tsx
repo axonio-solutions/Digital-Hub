@@ -56,7 +56,7 @@ export function DataTableToolbar<TData>({
   return (
     <div className={cn("flex flex-col gap-2 md:flex-row md:items-center md:gap-3", className)}>
 
-      <div className="flex items-center gap-2 w-full md:flex-1">
+      <div className="flex items-center gap-2 w-full md:w-auto overflow-hidden">
         {hasSearch && (
           <div className="relative flex-1 min-w-0 md:max-w-[260px]">
             <Search className={cn(
@@ -168,9 +168,9 @@ export function DataTableToolbar<TData>({
         </div>
       </div>
 
-      <div className="hidden md:flex md:items-center md:gap-2 shrink-0">
+      <div className="hidden md:flex md:items-center md:gap-2 overflow-hidden">
         {availableFilters.length > 0 && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {availableFilters.map((config) => (
               table.getColumn(config.column) && (
                 <DataTableFacetedFilter
