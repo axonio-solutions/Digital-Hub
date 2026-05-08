@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Check, PlusCircle } from 'lucide-react'
-import type { Column } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
+import type { Column } from '@tanstack/react-table'
 
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -44,40 +44,15 @@ export function DataTableFacetedFilter<TData, TValue>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8 border-dashed">
-          <PlusCircle />
-          {title}
-          {selectedValues?.size > 0 && (
+        <Button variant="outline" size="sm" className="h-9 border-dashed rounded-xl w-full justify-start gap-2 font-medium text-sm">
+          <PlusCircle className="size-3.5 shrink-0" />
+          <span className="truncate">{title}</span>
+          {selectedValues.size > 0 && (
             <>
-              <Separator orientation="vertical" className="mx-2 h-4" />
-              <Badge
-                variant="secondary"
-                className="rounded-sm px-1 font-normal lg:hidden"
-              >
+              <Separator orientation="vertical" className="mx-1 h-4 shrink-0" />
+              <Badge variant="secondary" className="rounded-md px-1.5 font-semibold text-[10px] shrink-0 ml-auto">
                 {selectedValues.size}
               </Badge>
-              <div className="hidden gap-1 lg:flex">
-                {selectedValues.size > 2 ? (
-                  <Badge
-                    variant="secondary"
-                    className="rounded-sm px-1 font-normal"
-                  >
-                    {selectedValues.size} {t('table.selected')}
-                  </Badge>
-                ) : (
-                  options
-                    .filter((option) => selectedValues.has(option.value))
-                    .map((option) => (
-                      <Badge
-                        variant="secondary"
-                        key={option.value}
-                        className="rounded-sm px-1 font-normal"
-                      >
-                        {option.label}
-                      </Badge>
-                    ))
-                )}
-              </div>
             </>
           )}
         </Button>
