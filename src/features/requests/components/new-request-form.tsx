@@ -8,21 +8,22 @@ import { toast } from 'sonner'
 import { 
   Camera, 
   Car, 
+  ChevronRight, 
+  Info, 
+  LayoutGrid, 
   Loader2, 
   Plus, 
-  UploadCloud, 
-  XIcon, 
   Search, 
   Settings2, 
-  Info, 
-  LayoutGrid,
   ShieldCheck,
-  ChevronRight
+  UploadCloud,
+  XIcon
 } from 'lucide-react'
-import { Progress } from '@/components/ui/progress'
 import { productFormSchema } from '../validations/product-schemas'
 import { useCreateRequest, useUpdateRequest } from '../hooks/use-requests'
 import type { ProductFormData } from '../validations/product-schemas'
+import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
 import { supabase } from '@/lib/supabase-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -44,12 +45,14 @@ interface NewPartRequestFormProps {
   initialData?: any
   onSuccess?: () => void
   onCancel?: () => void
+  dialogMode?: boolean
 }
 
 export function NewPartRequestForm({
   initialData,
   onSuccess,
   onCancel,
+  dialogMode,
 }: NewPartRequestFormProps) {
   const { data: user } = useAuth()
   const createRequest = useCreateRequest()
@@ -534,8 +537,16 @@ export function NewPartRequestForm({
         </div>
 
         {/* Global Action Bar */}
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-4xl px-4 z-50">
-           <div className="bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl border border-white/20 dark:border-slate-800/50 rounded-3xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.15)] flex items-center justify-between gap-4">
+        <div className={dialogMode
+          ? "sticky bottom-0 w-full bg-background/80 backdrop-blur-xl border-t border-border py-4 -mx-4 px-4 z-50"
+          : "fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-4xl px-4 z-50"
+        }>
+           <div className={cn(
+             "flex items-center justify-between gap-4",
+             dialogMode
+               ? ""
+               : "bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl border border-white/20 dark:border-slate-800/50 rounded-3xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
+           )}>
               <Button
                 type="button"
                 variant="ghost"

@@ -4,10 +4,11 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslation } from 'react-i18next'
-import { Loader2, Check, ChevronRight, ChevronLeft, Sparkles } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Loader2, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 
 // Steps
+import { useCreateRequest, useUpdateRequest } from '../hooks/use-requests'
 import { PartDetailsStep } from './wizard-steps/part-details-step-new'
 import { CategoryStep } from './wizard-steps/category-step-new'
 import { BrandStep } from './wizard-steps/brand-step-new'
@@ -16,7 +17,6 @@ import { PhotosStep } from './wizard-steps/photos-step-new'
 import { ReviewStep } from './wizard-steps/review-step-new'
 
 // Hooks & Types
-import { useCreateRequest } from '../hooks/use-requests'
 import type { ProductFormData } from '@/types/product-schemas'
 import { productFormSchema } from '@/types/product-schemas'
 import { useAuth } from '@/features/auth/hooks/use-auth'
@@ -34,6 +34,7 @@ import { cn } from '@/lib/utils'
 interface RequestWizardProps {
   onSuccess?: () => void
   onCancel?: () => void
+  initialData?: any
 }
 
 const STEPS = [
@@ -45,10 +46,12 @@ const STEPS = [
   { id: 6, title: 'Review', description: 'Confirm and publish' },
 ]
 
-export function RequestWizard({ onSuccess, onCancel }: RequestWizardProps) {
+export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizardProps) {
   const { t } = useTranslation('requests/form')
   const { data: user } = useAuth()
   const createRequest = useCreateRequest()
+  const updateRequest = useUpdateRequest()
+  const isEditing = !!initialData
 
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -57,16 +60,21 @@ export function RequestWizard({ onSuccess, onCancel }: RequestWizardProps) {
   const methods = useForm<ProductFormData>({
     resolver: zodResolver(productFormSchema) as any,
     defaultValues: {
-      partName: '',
-      description: '',
-      status: 'published',
-      vehicleBrand: '',
-      vehicleModel: '',
-      modelYear: '',
-      vinNumber: '',
-      categoryId: '',
-      brandId: '',
-      imageUrls: [],
+      partName: initialData?.partName || '',
+      description: initialData?.notes || '',
+      status: initialData ? (initialData?.status || 'open') : 'published',
+      vehicleBrand: initialData?.vehicleBrand || '',
+      vehicleModel: initialData?.modelYear ? initialData.modelYear.split(' ')[0] : '',
+      modelYear: initialData?.modelYear ? initialData.modelYear.split(' ').slice(1).join(' ') : '',
+      categories: initialData?.category ? [initialData.category.name] : [],
+      categoryId: initialData?.categoryId || undefined,
+      brandId: initialData?.brandId || undefined,
+      tags: [],
+      variations: [],
+      expectedPrice: '',
+      budgetType: 'negotiable',
+      template: 'default',
+      imageUrls: initialData?.imageUrls || [],
     },
     mode: 'onChange',
   })
@@ -77,13 +85,13 @@ export function RequestWizard({ onSuccess, onCancel }: RequestWizardProps) {
   const isStepComplete = (step: number) => {
     switch (step) {
       case 1:
-        return !!formData.partName?.trim()
+        return !!formData.partName.trim()
       case 2:
         return !!formData.categoryId
       case 3:
         return !!formData.brandId
       case 4:
-        return !!formData.vehicleModel?.trim() && !!formData.modelYear?.trim()
+        return !!formData.vehicleModel.trim() && !!formData.modelYear.trim()
       default:
         return true
     }
@@ -123,9 +131,14 @@ export function RequestWizard({ onSuccess, onCancel }: RequestWizardProps) {
     }
 
     try {
-      await createRequest.mutateAsync(payload)
+      if (isEditing && initialData?.id) {
+        await updateRequest.mutateAsync({ id: initialData.id, payload })
+        toast.success(t('toasts.update_success'))
+      } else {
+        await createRequest.mutateAsync(payload)
+        toast.success(t('toasts.create_success'))
+      }
       setIsSuccess(true)
-      toast.success(t('toasts.create_success'))
     } catch (error: any) {
       console.error(error)
       toast.error(error.message || t('toasts.process_error'))
@@ -145,9 +158,14 @@ export function RequestWizard({ onSuccess, onCancel }: RequestWizardProps) {
           <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-primary/10">
             <Check className="size-10 text-primary" />
           </div>
-          <h2 className="mb-2 text-2xl font-bold">Request Submitted!</h2>
+          <h2 className="mb-2 text-2xl font-bold">
+            {isEditing ? 'Request Updated!' : 'Request Submitted!'}
+          </h2>
           <p className="mb-6 text-muted-foreground">
-            Your part request has been published successfully. Sellers will now be able to view and respond to your request.
+            {isEditing
+              ? 'Your request has been updated successfully.'
+              : 'Your part request has been published successfully. Sellers will now be able to view and respond to your request.'
+            }
           </p>
           <Button
             onClick={() => {

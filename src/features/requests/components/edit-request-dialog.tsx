@@ -1,6 +1,8 @@
+'use client'
+
 import { useTranslation } from 'react-i18next'
-import { Modal } from '@/components/ui/modal'
-import { NewPartRequestForm } from '@/features/requests/components/new-request-form'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { RequestWizard } from '@/features/requests/components/request-wizard-new'
 
 interface EditRequestDialogProps {
   request: any
@@ -16,21 +18,19 @@ export function EditRequestDialog({
   const { t } = useTranslation('requests/form')
 
   return (
-    <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      title={t('dialogs.edit_title')}
-      description={t('dialogs.edit_description')}
-      className="sm:max-w-[1000px] max-h-[90vh]"
-      contentClassName="p-0 overflow-y-auto"
-    >
-      <div className="p-4 md:p-8">
-        <NewPartRequestForm
-          initialData={request}
-          onSuccess={() => onOpenChange(false)}
-          onCancel={() => onOpenChange(false)}
-        />
-      </div>
-    </Modal>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
+        <DialogHeader className="sr-only">
+          <DialogTitle>{t('dialogs.edit_title')}</DialogTitle>
+        </DialogHeader>
+        <div className="h-[600px] max-h-[85dvh]">
+          <RequestWizard
+            initialData={request}
+            onSuccess={() => onOpenChange(false)}
+            onCancel={() => onOpenChange(false)}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
