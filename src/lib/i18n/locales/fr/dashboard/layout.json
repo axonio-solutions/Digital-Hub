@@ -3,6 +3,8 @@
     "overview": "Vue d'ensemble",
     "demands_hub": "Centre de Demandes",
     "my_garage": "Mon Garage",
+    "offers": "Offres Recues",
+    "history": "Historique",
     "live_requests": "Demandes en Direct",
     "my_quotes": "Mes Devis",
     "global_metrics": "Statistiques Globales",
@@ -25,6 +27,9 @@
     "dashboard": "Tableau de Bord",
     "overview": "Vue d'ensemble",
     "demands_hub": "Centre de Demandes",
+    "offers": "Offres Reçues",
+    "history": "Historique",
+    "profile": "Mon Profil",
     "live_feed": "Flux en Direct",
     "my_quotes": "Mes Devis",
     "audit_log": "Journal d'Audit",
@@ -35,7 +40,8 @@
     "user_moderation": "Modération Utilisateurs",
     "admin_settings": "Paramètres Admin",
     "cloud_logs": "Logs Cloud",
-    "support": "Aide & Support"
+    "support": "Aide & Support",
+    "request_detail": "Détail de la Demande"
   },
   "user_dropdown": {
     "role": "Rôle",

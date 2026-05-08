@@ -3,6 +3,8 @@
     "overview": "نظرة عامة",
     "demands_hub": "مركز الطلبات",
     "my_garage": "مرآبي",
+    "offers": "العروض المستلمة",
+    "history": "سجل الطلبات",
     "live_requests": "طلبات حية",
     "my_quotes": "عروضي",
     "global_metrics": "إحصائيات عامة",
@@ -25,6 +27,9 @@
     "dashboard": "لوحة التحكم",
     "overview": "نظرة عامة",
     "demands_hub": "مركز الطلبات",
+    "offers": "العروض المستلمة",
+    "history": "سجل الطلبات",
+    "profile": "ملفي الشخصي",
     "live_feed": "البث المباشر",
     "my_quotes": "عروضي",
     "audit_log": "سجل التدقيق",
@@ -35,7 +40,8 @@
     "user_moderation": "إدارة المستخدمين",
     "admin_settings": "إعدادات المسؤول",
     "cloud_logs": "سجلات السحابة",
-    "support": "الدعم والمساعدة"
+    "support": "الدعم والمساعدة",
+    "request_detail": "تفاصيل الطلب"
   },
   "user_dropdown": {
     "role": "الدور",

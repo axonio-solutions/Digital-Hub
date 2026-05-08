@@ -2,11 +2,11 @@
 
 import React from 'react'
 import {
-  IconDashboard,
-  IconClipboardList,
   IconCar,
-  IconSettings,
+  IconClipboardList,
+  IconDashboard,
   IconHelpCircle,
+  IconSettings,
 } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import { NavMain } from '@/features/dashboard/components/layout/nav-main'
@@ -37,7 +37,7 @@ export function BuyerLayout({ children }: { children: React.ReactNode }) {
     secondary: [
       {
         title: t('nav.settings'),
-        url: '/dashboard/settings',
+        url: '/dashboard/profile',
         icon: IconSettings,
       },
       {

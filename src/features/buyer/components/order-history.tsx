@@ -7,7 +7,7 @@ import {
   XOctagon,
 } from 'lucide-react'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import {} from '@/features/buyer/hooks/use-buyer'
+import { useBuyerRequests } from '@/features/buyer/hooks/use-buyer'
 
 import {
   Table,
