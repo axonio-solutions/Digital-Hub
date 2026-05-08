@@ -38,6 +38,9 @@ function DynamicBreadcrumb() {
       let title = t('breadcrumbs.dashboard')
       if (match.id === '/dashboard/') title = t('breadcrumbs.overview')
       if (match.id === '/dashboard/requests/') title = t('breadcrumbs.demands_hub')
+      if (match.id === '/dashboard/offers/') title = t('breadcrumbs.offers')
+      if (match.id === '/dashboard/history/') title = t('breadcrumbs.history')
+      if (match.id === '/dashboard/profile/') title = t('breadcrumbs.profile')
       if (match.id === '/dashboard/marketplace/') title = t('breadcrumbs.live_feed')
       if (match.id === '/dashboard/quotes/') title = t('breadcrumbs.my_quotes')
       if (match.id === '/dashboard/audit/') title = t('breadcrumbs.audit_log')
@@ -49,6 +52,7 @@ function DynamicBreadcrumb() {
       if (match.id === '/dashboard/admin/settings') title = t('breadcrumbs.admin_settings')
       if (match.id === '/dashboard/admin/logs') title = t('breadcrumbs.cloud_logs')
       if (match.id === '/dashboard/support') title = t('breadcrumbs.support')
+      if (match.id === '/dashboard/requests/$requestId') title = t('breadcrumbs.request_detail')
 
       return { id: match.id, pathname: match.pathname, title }
     })
@@ -123,7 +127,7 @@ export function DashboardShell({ children, sidebarContent }: DashboardShellProps
             </div>
             {/* On mobile, show a simplified title or just the trigger */}
             <div className="md:hidden flex items-center gap-2 ms-1">
-              <div className="size-2 rounded-full bg-primary animate-pulse" />
+              <div className="size-2 rounded-full bg-primary" />
               <span className="text-sm font-bold tracking-tight uppercase">MLILA</span>
             </div>
           </div>
@@ -135,7 +139,7 @@ export function DashboardShell({ children, sidebarContent }: DashboardShellProps
         </header>
 
 
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:p-8 pt-0 mt-6 md:mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <main className="flex flex-1 flex-col gap-4 p-3 sm:p-4 md:p-6 pt-0 mt-4 md:mt-6">
           {children}
         </main>
       </SidebarInset>

@@ -4,8 +4,8 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from 'lucide-react'
-import type { Table } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
+import type { Table } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -18,10 +18,14 @@ import {
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>
+  pageSizeOptions?: Array<number>
 }
+
+const DEFAULT_PAGE_SIZES = [10, 20, 25, 30, 40, 50]
 
 export function DataTablePagination<TData>({
   table,
+  pageSizeOptions = DEFAULT_PAGE_SIZES,
 }: DataTablePaginationProps<TData>) {
   const { t, i18n } = useTranslation('common')
   const isRtl = i18n.dir() === 'rtl'
@@ -47,7 +51,7 @@ export function DataTablePagination<TData>({
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 25, 30, 40, 50].map((pageSize) => (
+              {pageSizeOptions.map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>

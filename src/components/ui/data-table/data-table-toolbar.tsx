@@ -1,10 +1,10 @@
 'use client'
 
 import { X } from 'lucide-react'
-import type { Table } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { DataTableViewOptions } from './data-table-view-options'
 import { DataTableFacetedFilter } from './data-table-faceted-filter'
+import type { Table } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,9 +24,10 @@ interface DataTableToolbarProps<TData> {
   table: Table<TData>
   searchColumn?: string
   searchPlaceholder?: string
-  facetedFilters?: FacetedFilterConfig[]
+  facetedFilters?: Array<FacetedFilterConfig>
   children?: React.ReactNode
   className?: string
+  hideViewOptions?: boolean
 }
 
 export function DataTableToolbar<TData>({
@@ -36,6 +37,7 @@ export function DataTableToolbar<TData>({
   facetedFilters = [],
   children,
   className,
+  hideViewOptions,
 }: DataTableToolbarProps<TData>) {
   const { t } = useTranslation('common')
   const isFiltered = table.getState().columnFilters.length > 0
@@ -46,7 +48,7 @@ export function DataTableToolbar<TData>({
         {searchColumn && table.getColumn(searchColumn) && (
           <Input
             placeholder={searchPlaceholder}
-            value={(table.getColumn(searchColumn)?.getFilterValue() as string) ?? ''}
+            value={(table.getColumn(searchColumn)?.getFilterValue() as string) || ''}
             onChange={(event) =>
               table.getColumn(searchColumn)?.setFilterValue(event.target.value)
             }
@@ -79,7 +81,7 @@ export function DataTableToolbar<TData>({
 
       <div className="flex items-center gap-2">
         {children}
-        <DataTableViewOptions table={table} />
+        {!hideViewOptions && <DataTableViewOptions table={table} />}
       </div>
     </div>
   )

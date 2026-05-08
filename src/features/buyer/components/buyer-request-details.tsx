@@ -1,52 +1,44 @@
-import { useParams } from '@tanstack/react-router'
+import { Link, useNavigate, useParams  } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
   ArrowLeft,
   Calendar,
-  MapPin,
-  Phone,
   CheckCircle2,
   Clock,
-  MessageCircle,
-  MoreVertical,
   Edit,
-  Trash2,
+  MapPin,
+  MessageCircle,
+  Phone,
   Share2,
+  Trash2,
 } from 'lucide-react'
+import { toast } from 'sonner'
+import { useState } from 'react'
 import {
-  useRequestDetails,
   useCancelRequest,
   useDeleteRequest,
-  useReopenRequest
+  useReopenRequest,
+  useRequestDetails
 } from '@/features/requests/hooks/use-requests'
 import {
   useAcceptQuote,
   useRejectQuote,
-  useUnrejectQuote,
-  useRevokeQuote
+  useRevokeQuote,
+  useUnrejectQuote
 } from '@/features/quotes/hooks/use-quotes'
 import { ImageSlider } from '@/components/ui/image-slider'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
-import { Link, useNavigate } from '@tanstack/react-router'
-import { toast } from 'sonner'
-import { useState } from 'react'
+
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
 import { EditRequestDialog } from '@/features/requests/components/edit-request-dialog'
 import { QuoteList } from '@/features/quotes/components/quote-list'
 import { cn } from '@/lib/utils'
@@ -208,22 +200,21 @@ export function BuyerRequestDetails() {
   }
 
   return (
-    <div className="layout-container flex justify-center w-full py-2 px-2 sm:px-4 lg:px-6">
-      <div className="flex w-full max-w-6xl flex-col gap-4">
-        <div className="mb-2">
+    <div className="flex-1 flex flex-col gap-4 w-full pb-8">
+        <div className="mb-1">
           <Link to="/dashboard/requests">
-            <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 font-black uppercase text-[10px] tracking-widest hover:bg-secondary dark:hover:bg-muted transition-all" onClick={() => window.history.back()}>
+            <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 font-black uppercase text-[10px] tracking-widest" onClick={() => window.history.back()}>
               <ArrowLeft className="size-3.5" /> {t('actions.back_to_list')}
             </Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:col-span-12 xl:grid-cols-12 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
 
-          <aside className="lg:col-span-4 flex flex-col gap-6">
-            <div className="bg-white dark:bg-card rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden sticky top-24">
+          <aside className="xl:col-span-4 flex flex-col gap-4">
+            <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden xl:sticky xl:top-24">
 
-              <div className="bg-gray-50 dark:bg-gray-900 w-full overflow-hidden">
+              <div className="bg-muted/50 w-full overflow-hidden">
                 <ImageSlider
                   images={request.imageUrls || []}
                   aspectRatio="4/3"
@@ -231,7 +222,7 @@ export function BuyerRequestDetails() {
                 />
               </div>
 
-              <div className="p-6">
+              <div className="p-4 sm:p-5">
                 <div className="flex flex-col gap-2 mb-4">
                   <div className="flex justify-between items-start">
                     <div className="min-w-0 flex-1">
@@ -239,30 +230,7 @@ export function BuyerRequestDetails() {
                         {request.partName}
                       </h1>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="size-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <MoreVertical className="size-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 rounded-2xl border-none shadow-xl bg-white dark:bg-slate-900">
-                          <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)} className="gap-2 font-bold uppercase text-[10px] tracking-widest p-3 cursor-pointer">
-                            <Edit className="size-3.5" /> {t('actions.edit_details')}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={handleShare} className="gap-2 font-bold uppercase text-[10px] tracking-widest p-3 cursor-pointer">
-                            <Share2 className="size-3.5" /> {t('actions.copy_link')}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
-                          <DropdownMenuItem
-                            onClick={() => setIsDeleteDialogOpen(true)}
-                            className="gap-2 font-bold uppercase text-[10px] tracking-widest p-3 cursor-pointer text-red-600 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
-                          >
-                            <Trash2 className="size-3.5" /> {t('actions.delete_request')}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-
+                    <div className="flex items-center gap-1.5">
                       <GlowingBadge
                         variant={request.status === 'open' ? 'success' : 'neutral'}
                         pulse={request.status === 'open'}
@@ -270,6 +238,15 @@ export function BuyerRequestDetails() {
                       >
                         {request.status}
                       </GlowingBadge>
+                      <Button variant="ghost" size="icon" className="size-8 rounded-xl hover:bg-accent" onClick={() => setIsEditDialogOpen(true)} title={t('actions.edit_details')}>
+                        <Edit className="size-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="size-8 rounded-xl hover:bg-accent" onClick={handleShare} title={t('actions.copy_link')}>
+                        <Share2 className="size-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="size-8 rounded-xl hover:bg-destructive/10 hover:text-destructive" onClick={() => setIsDeleteDialogOpen(true)} title={t('actions.delete_request')}>
+                        <Trash2 className="size-3.5" />
+                      </Button>
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -307,7 +284,7 @@ export function BuyerRequestDetails() {
                     <div className="flex flex-col">
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('columns.status', { ns: 'requests/list' })}</span>
                       <div className="flex items-center gap-2 text-sm font-bold text-foreground capitalize">
-                        <div className={cn("size-2 rounded-full", request.status === 'open' ? "bg-emerald-500 animate-pulse" : "bg-gray-400")} />
+                        <div className={cn("size-2 rounded-full", request.status === 'open' ? "bg-emerald-500" : "bg-gray-400")} />
                         <span>{t(`filters.statuses.${request.status}`, { ns: 'requests/list' })}</span>
                       </div>
                     </div>
@@ -320,7 +297,7 @@ export function BuyerRequestDetails() {
                       onClick={handleCancel}
                       disabled={isCancelling}
                       variant="outline"
-                      className="w-full flex items-center justify-center gap-2 h-12 transition-all hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800 font-black uppercase text-xs tracking-widest rounded-2xl"
+                      className="w-full flex items-center justify-center gap-2 h-12 border-slate-200 dark:border-slate-800 font-black uppercase text-xs tracking-widest rounded-2xl"
                     >
                       <CheckCircle2 className="size-4 text-green-600" />
                       {isCancelling ? t('dialogs.cancel.cancelling', { ns: 'requests/list' }) : t('actions.close_request')}
@@ -330,7 +307,7 @@ export function BuyerRequestDetails() {
                       onClick={handleReopen}
                       disabled={isReopening}
                       variant="outline"
-                      className="w-full flex items-center justify-center gap-2 h-12 transition-all hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-800 font-black uppercase text-xs tracking-widest rounded-2xl"
+                      className="w-full flex items-center justify-center gap-2 h-12 border-slate-200 dark:border-slate-800 font-black uppercase text-xs tracking-widest rounded-2xl"
                     >
                       <Clock className="size-4 text-primary" />
                       {isReopening ? t('dialogs.reopen.reopening', { ns: 'requests/list' }) : t('actions.reopen_request')}
@@ -381,9 +358,9 @@ export function BuyerRequestDetails() {
             </DialogContent>
           </Dialog>
 
-          <section className="lg:col-span-8 flex flex-col gap-6">
+          <section className="xl:col-span-8 flex flex-col gap-4">
             <QuoteList
-              quotes={request.quotes || []}
+              quotes={request.quotes}
               isRequestOpen={request.status === 'open'}
               onAccept={handleAccept}
               onReject={handleReject}
@@ -441,7 +418,7 @@ export function BuyerRequestDetails() {
               <div className="grid grid-cols-1 gap-3">
                 <Button
                   onClick={() => handleContactWhatsApp(contactingSeller)}
-                  className="bg-[#25D366] hover:bg-[#128C7E] text-white font-black uppercase text-xs tracking-widest h-14 rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-[#25D366]/20 transition-all active:scale-95"
+                  className="bg-[#25D366] hover:bg-[#128C7E] text-white font-black uppercase text-xs tracking-widest h-14 rounded-2xl flex items-center justify-center gap-3"
                 >
                   <MessageCircle className="size-5 fill-current" />
                   {t('contact.whatsapp')}
@@ -450,7 +427,7 @@ export function BuyerRequestDetails() {
                 <Button
                   onClick={() => handleContactCall(contactingSeller?.phoneNumber)}
                   variant="outline"
-                  className="border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-900 dark:text-white font-black uppercase text-xs tracking-widest h-14 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95"
+                  className="border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-black uppercase text-xs tracking-widest h-14 rounded-2xl flex items-center justify-center gap-3"
                 >
                   <Phone className="size-5" />
                   {t('contact.call')}
@@ -464,7 +441,6 @@ export function BuyerRequestDetails() {
           </DialogContent>
         </Dialog>
 
-      </div>
     </div>
   )
 }

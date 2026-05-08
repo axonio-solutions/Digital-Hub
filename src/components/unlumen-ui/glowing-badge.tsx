@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const glowingBadgeVariants = cva(
-  "relative inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest rounded-full border transition-all duration-300 shadow-sm",
+  "relative inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest rounded-full border shadow-sm",
   {
     variants: {
       variant: {
@@ -77,15 +76,11 @@ function GlowingBadge({
       {...props}
     >
       {pulse && (
-        <motion.div
-          initial={{ scale: 1, opacity: 0.4 }}
-          animate={{ scale: 1.5, opacity: 0 }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeOut",
-          }}
-          className={cn(pulseVariants({ variant }))}
+        <div
+          className={cn(
+            pulseVariants({ variant }),
+            "animate-pulse"
+          )}
         />
       )}
       {dot && <div className={cn(dotVariants({ variant }))} />}

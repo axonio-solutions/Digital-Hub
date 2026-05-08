@@ -12,8 +12,10 @@
     "subtitle": "Surveillez votre activité récente sur le marché",
     "view_all": "Voir tout"
   },
+  "new_demand": "Nouvelle Demande",
   "empty": {
     "title": "Aucune Demande pour le Moment",
-    "desc": "Publiez votre première demande de pièce pour commencer à recevoir des offres."
+    "desc": "Publiez votre première demande de pièce pour commencer à recevoir des offres.",
+    "cta": "Publiez Votre Première Demande"
   }
 }

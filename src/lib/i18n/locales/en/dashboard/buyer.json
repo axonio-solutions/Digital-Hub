@@ -12,8 +12,10 @@
     "subtitle": "Monitor your latest marketplace activity",
     "view_all": "View all"
   },
+  "new_demand": "New Demand",
   "empty": {
     "title": "No Requests Yet",
-    "desc": "Post your first part request to start receiving offers."
+    "desc": "Post your first part request to start receiving offers.",
+    "cta": "Post Your First Request"
   }
 }

@@ -1,4 +1,5 @@
-import { Clock, MapPin, ArrowUpRight, MessageSquare, Flame, Calendar } from 'lucide-react'
+import React from 'react'
+import { ArrowUpRight, Calendar, Clock, Flame, MessageSquare, Pencil, RefreshCcw, Trash2, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 
@@ -9,7 +10,7 @@ interface PartCardProps {
   modelYear: string
   category?: string
   region?: string
-  imageUrls?: string[]
+  imageUrls?: Array<string>
   quotesCount?: number
   status?: string
   createdAt: string
@@ -19,6 +20,10 @@ interface PartCardProps {
   onClick?: () => void
   partNumber?: string
   className?: string
+  onEdit?: () => void
+  onClose?: () => void
+  onReopen?: () => void
+  onDelete?: () => void
 }
 
 function timeAgo(dateStr: string): string {
@@ -32,50 +37,57 @@ function timeAgo(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
 }
 
-export function PartCard({
-  id,
+export const PartCard = React.memo(function PartCard({
   title,
   brand,
   modelYear,
   category,
-  region,
+  region: _region,
   imageUrls,
   quotesCount = 0,
   status,
   createdAt,
   notes,
-  actionLabel,
-  actionHref,
+  actionLabel: _actionLabel,
+  actionHref: _actionHref,
   onClick,
   partNumber,
   className,
+  onEdit,
+  onClose,
+  onReopen,
+  onDelete,
 }: PartCardProps) {
   const isAsap = status === 'premium'
   const isNew = new Date(createdAt).getTime() > Date.now() - 86400000
   const hasImage = !!imageUrls?.[0]
-  const shortId = id ? String(id).substring(0, 6).toUpperCase() : 'N/A'
 
   return (
     <article
       className={cn(
         "group relative flex flex-col rounded-2xl overflow-hidden",
         "bg-card border border-border",
-        "shadow-sm hover:shadow-xl hover:shadow-primary/5",
-        "hover:-translate-y-1 hover:border-primary/20",
-        "transition-all duration-300 ease-out",
+        "shadow-sm",
+        onClick && "cursor-pointer",
         className
       )}
+      onClick={(e) => {
+        const target = e.target as HTMLElement
+        if (target.closest('[data-no-navigate]') || target.closest('button')) return
+        onClick?.()
+      }}
     >
       {/* Image area */}
-      <div className="relative w-full h-40 bg-muted/50 shrink-0 overflow-hidden">
+      <div className="relative w-full aspect-[4/3] bg-muted/50 shrink-0 overflow-hidden">
         {hasImage ? (
           <img
-            src={imageUrls![0]}
+            src={imageUrls[0]}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+          <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
             <div className="w-12 h-12 rounded-xl bg-card flex items-center justify-center border border-border shadow-sm">
               <Calendar className="w-6 h-6 text-muted-foreground/40" />
             </div>
@@ -113,7 +125,7 @@ export function PartCard({
       <div className="flex flex-col flex-1 p-4 gap-3">
         {/* Title */}
         <div className="min-w-0">
-          <h3 className="text-sm font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors duration-200" title={title}>
+          <h3 className="text-sm font-bold text-foreground line-clamp-1" title={title}>
             {title}
           </h3>
           {partNumber && (
@@ -149,47 +161,45 @@ export function PartCard({
 
         {/* Footer */}
         <div className="mt-auto pt-3 border-t border-border flex items-center justify-between gap-2">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex items-center gap-1 text-muted-foreground text-[10px] font-medium">
-              <Clock className="w-3 h-3 flex-shrink-0" />
-              <span className="truncate">{timeAgo(createdAt)}</span>
-            </div>
-            {region && (
-              <div className="hidden sm:flex items-center gap-1 text-muted-foreground text-[10px] font-medium">
-                <MapPin className="w-3 h-3 flex-shrink-0" />
-                <span className="truncate">{region}</span>
-              </div>
+          <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] font-medium min-w-0">
+            <Clock className="w-3 h-3 flex-shrink-0" />
+            <span className="truncate">{timeAgo(createdAt)}</span>
+            {quotesCount > 0 && (
+              <span className="flex items-center gap-0.5 shrink-0 text-[10px] text-primary font-bold">
+                · <MessageSquare className="w-2.5 h-2.5" />{quotesCount}
+              </span>
             )}
           </div>
 
-          <span className="text-[9px] font-mono text-muted-foreground/40 hidden sm:block">
-            #{shortId}
-          </span>
-
-          {/* CTA button — only rendered when actionLabel or onClick is provided */}
-          {(actionLabel || onClick) && (
-            <button
-              type="button"
-              onClick={(e) => {
-                if (onClick) {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  onClick()
-                }
-              }}
-              className={cn(
-                "flex-shrink-0 flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[11px] font-bold transition-all duration-200",
-                isAsap
-                  ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 hover:bg-rose-500/20"
-                  : "bg-primary text-primary-foreground hover:brightness-110 active:scale-95 shadow-sm shadow-primary/20"
-              )}
-            >
-              {actionLabel || 'Details'}
-              <ArrowUpRight className="w-3 h-3" />
-            </button>
-          )}
+          <div className="flex items-center gap-1.5">
+            {onEdit && (
+              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onEdit() }} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+                <Pencil className="size-3" /> Edit
+              </button>
+            )}
+            {onClose && (
+              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onClose() }} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800">
+                <XCircle className="size-3" /> Close
+              </button>
+            )}
+            {onReopen && (
+              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onReopen() }} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800">
+                <RefreshCcw className="size-3" /> Reopen
+              </button>
+            )}
+            {onDelete && (
+              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onDelete() }} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800">
+                <Trash2 className="size-3" /> Delete
+              </button>
+            )}
+            {!onEdit && !onClose && !onReopen && !onDelete && onClick && (
+              <span data-no-navigate onClick={(e) => { e.stopPropagation(); onClick() }} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 cursor-pointer">
+                Details <ArrowUpRight className="w-2.5 h-2.5" />
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </article>
   )
-}
+})

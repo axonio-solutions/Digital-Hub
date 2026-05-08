@@ -1,16 +1,16 @@
 import { useMemo, useState } from "react";
 import {
   Calendar,
+  Eye,
   MessageSquare,
   MoreHorizontal,
+  RefreshCcw,
   SquarePen,
-  Eye,
   Trash2,
-  XCircle,
-  RefreshCcw
+  XCircle
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Button } from "@/components/ui/button";
@@ -28,19 +28,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  useCancelRequest,
-  useDeleteRequest,
-  useReopenRequest
-} from "@/features/requests/hooks/use-requests";
 import { NewPartRequestForm } from "@/features/requests/components/new-request-form";
 
-const ActionCell = ({ row, onAction }: { row: any, onAction?: (action: { type: string, item: any }) => void }) => {
+const ActionCell = ({ row, onAction, mutations }: { row: any, onAction?: (action: { type: string, item: any }) => void, mutations?: any }) => {
   const { t } = useTranslation('requests/list');
   const request = row.original;
-  const { mutate: cancelRequest, isPending: isCancelling } = useCancelRequest();
-  const { mutate: deleteRequest, isPending: isDeleting } = useDeleteRequest();
-  const { mutate: reopenRequest, isPending: isReopening } = useReopenRequest();
+  const cancelRequest = mutations?.cancelRequest
+  const deleteRequest = mutations?.deleteRequest
+  const reopenRequest = mutations?.reopenRequest
+  const isCancelling = mutations?.isCancelling
+  const isDeleting = mutations?.isDeleting
+  const isReopening = mutations?.isReopening
 
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -51,20 +49,20 @@ const ActionCell = ({ row, onAction }: { row: any, onAction?: (action: { type: s
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
+          <Button variant="ghost" size="icon" className="h-9 w-9 p-0 rounded-xl hover:bg-accent" title={t('actions.open_menu')}>
             <span className="sr-only">{t('actions.open_menu')}</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>{t('actions.title')}</DropdownMenuLabel>
+        <DropdownMenuContent align="end" className="w-48 rounded-2xl p-1">
+          <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-2">{t('actions.title')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => onAction?.({ type: 'view_request', item: request })}>
-            <Eye className="me-2 h-4 w-4" /> {t('actions.view_details')}
+          <DropdownMenuItem onClick={() => onAction?.({ type: 'view_request', item: request })} className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl">
+            <Eye className="size-4" /> {t('actions.view_details')}
           </DropdownMenuItem>
           {request.status === "open" && (
-            <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
-              <SquarePen className="me-2 h-4 w-4" /> {t('actions.edit_request')}
+            <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)} className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl">
+              <SquarePen className="size-4" /> {t('actions.edit_request')}
             </DropdownMenuItem>
           )}
 
@@ -73,26 +71,26 @@ const ActionCell = ({ row, onAction }: { row: any, onAction?: (action: { type: s
           {request.status === "open" && (
             <DropdownMenuItem
               onClick={() => setIsCancelDialogOpen(true)}
-              className="text-amber-600 focus:text-amber-700"
+              className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-amber-600 focus:text-amber-700"
             >
-              <XCircle className="me-2 h-4 w-4" /> {t('actions.cancel_request')}
+              <XCircle className="size-4" /> {t('actions.cancel_request')}
             </DropdownMenuItem>
           )}
 
           {request.status !== "open" && (
             <DropdownMenuItem
               onClick={() => setIsReopenDialogOpen(true)}
-              className="text-blue-600 focus:text-blue-700"
+              className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-blue-600 focus:text-blue-700"
             >
-              <RefreshCcw className="me-2 h-4 w-4" /> {t('actions.reopen_request')}
+              <RefreshCcw className="size-4" /> {t('actions.reopen_request')}
             </DropdownMenuItem>
           )}
 
           <DropdownMenuItem
             onClick={() => setIsDeleteDialogOpen(true)}
-            className="text-destructive focus:text-destructive"
+            className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-destructive focus:text-destructive"
           >
-            <Trash2 className="me-2 h-4 w-4" /> {t('actions.delete_permanently')}
+            <Trash2 className="size-4" /> {t('actions.delete_permanently')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -165,7 +163,7 @@ const ActionCell = ({ row, onAction }: { row: any, onAction?: (action: { type: s
   );
 };
 
-export const useBuyerColumns = (onAction?: (action: { type: string, item: any }) => void): ColumnDef<any>[] => {
+export const useBuyerColumns = (onAction?: (action: { type: string, item: any }) => void, mutations?: any): Array<ColumnDef<any>> => {
   const { t } = useTranslation('requests/list');
 
   return useMemo(() => [
@@ -263,7 +261,11 @@ export const useBuyerColumns = (onAction?: (action: { type: string, item: any })
     },
     {
       id: "actions",
-      cell: ({ row }: { row: any }) => <ActionCell row={row} onAction={onAction} />,
+      cell: ({ row }: { row: any }) => (
+        <div className="sticky right-0 bg-background pl-2 -mr-2" onClick={(e) => e.stopPropagation()}>
+          <ActionCell row={row} onAction={onAction} mutations={mutations} />
+        </div>
+      ),
     },
   ], [onAction, t]);
 };

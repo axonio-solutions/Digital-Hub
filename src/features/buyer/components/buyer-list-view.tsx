@@ -2,14 +2,15 @@
 
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import {
+  IconCircleCheckFilled,
+  IconCircleXFilled,
+  IconLoader
+} from '@tabler/icons-react'
+import { useBuyerColumns } from './buyer-columns'
 import { DataTable } from '@/components/ui/data-table/data-table'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
-import { useBuyerColumns } from './buyer-columns'
-import { 
-  IconCircleCheckFilled, 
-  IconLoader,
-  IconCircleXFilled 
-} from '@tabler/icons-react'
+import { useCancelRequest, useDeleteRequest, useReopenRequest } from '@/features/requests/hooks/use-requests'
 
 interface RequestsListViewProps {
   data: Array<any>
@@ -18,7 +19,10 @@ interface RequestsListViewProps {
 
 export function BuyerListView({ data, onAction }: RequestsListViewProps) {
   const { t } = useTranslation('requests/list')
-  const columns = useBuyerColumns(onAction)
+  const { mutate: cancelRequest, isPending: isCancelling } = useCancelRequest()
+  const { mutate: deleteRequest, isPending: isDeleting } = useDeleteRequest()
+  const { mutate: reopenRequest, isPending: isReopening } = useReopenRequest()
+  const columns = useBuyerColumns(onAction, { cancelRequest, deleteRequest, reopenRequest, isCancelling, isDeleting, isReopening })
 
   const brandOptions = useMemo(() => {
     const brands = new Set<string>()
