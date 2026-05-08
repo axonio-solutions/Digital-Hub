@@ -1,15 +1,15 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query'
+import { keepPreviousData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  cancelRequestServerFn,
   createRequestServerFn,
+  deleteRequestServerFn,
   fetchAllRequestsServerFn,
   fetchOpenRequestsServerFn,
-  fetchRequestDetailsServerFn,
-  cancelRequestServerFn,
-  reopenRequestServerFn,
-  deleteRequestServerFn,
-  updateRequestServerFn,
   fetchPublicOpenRequestsServerFn,
+  fetchRequestDetailsServerFn,
   getPublicTaxonomyServerFn,
+  reopenRequestServerFn,
+  updateRequestServerFn,
 } from '@/fn/requests'
 
 export const requestKeys = {
@@ -26,11 +26,11 @@ export function useOpenRequests(filters?: {
   limit?: number;
   offset?: number;
   categoryId?: string;
-  brandIds?: string[];
+  brandIds?: Array<string>;
   search?: string;
   specialtyFilter?: {
-    brandIds: string[];
-    categoryIds: string[];
+    brandIds: Array<string>;
+    categoryIds: Array<string>;
   };
 }) {
   return useQuery({
@@ -81,7 +81,7 @@ export function useCreateRequest() {
     onMutate: async (newRequestPayload) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: requestKeys.all })
-      await queryClient.cancelQueries({ queryKey: ['buyer'] })
+      await queryClient.cancelQueries({ queryKey: ['buyer', 'requests'] })
 
       // Snapshot previous requests
       const previousGlobalRequests = queryClient.getQueryData(requestKeys.allRequests())
@@ -89,7 +89,7 @@ export function useCreateRequest() {
       const optimisticRequest = {
         ...newRequestPayload,
         id: `temp-${Date.now()}`,
-        status: 'PENDING',
+        status: 'open',
         createdAt: new Date().toISOString(),
         quotesCount: 0,
       }
@@ -119,7 +119,7 @@ export function useCreateRequest() {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: requestKeys.all })
-      queryClient.invalidateQueries({ queryKey: ['buyer'] })
+      queryClient.invalidateQueries({ queryKey: ['buyer', 'requests'] })
     },
   })
 }
@@ -127,7 +127,7 @@ export function useCreateRequest() {
 
 export function useInfinitePublicOpenRequests(filters?: {
   categoryId?: string;
-  brandIds?: string[];
+  brandIds?: Array<string>;
   search?: string;
   limit?: number;
 }) {
@@ -144,7 +144,7 @@ export function useInfinitePublicOpenRequests(filters?: {
       return res.data || []
     },
     getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage || lastPage.length < (filters?.limit || 12)) return undefined
+      if (lastPage.length < (filters?.limit || 12)) return undefined
       return allPages.length * (filters?.limit || 12)
     },
     initialPageParam: 0,
@@ -156,7 +156,7 @@ export function useInfinitePublicOpenRequests(filters?: {
 
 export function usePublicOpenRequests(filters?: {
   categoryId?: string;
-  brandIds?: string[];
+  brandIds?: Array<string>;
   search?: string;
   limit?: number;
   offset?: number;
@@ -209,13 +209,21 @@ export function useCancelRequest() {
       // Update Details
       queryClient.setQueryData(requestKeys.details(requestId), (old: any) => ({
         ...old,
-        status: 'CANCELLED'
+        status: 'cancelled'
       }))
 
       // Update List
       queryClient.setQueryData(requestKeys.allRequests(), (old: any) => {
         if (!Array.isArray(old)) return old
-        return old.map(r => r.id === requestId ? { ...r, status: 'CANCELLED' } : r)
+        return old.map(r => r.id === requestId ? { ...r, status: 'cancelled' } : r)
+      })
+
+      // Update buyer queries optimistically
+      queryClient.getQueryCache().findAll({ queryKey: ['buyer', 'requests'] }).forEach(query => {
+        queryClient.setQueryData(query.queryKey, (old: any) => {
+          if (!Array.isArray(old)) return old
+          return old.map(r => r.id === requestId ? { ...r, status: 'cancelled' } : r)
+        })
       })
 
       return { previousDetails, previousAll }
@@ -227,7 +235,7 @@ export function useCancelRequest() {
     onSettled: (_data, _error, requestId) => {
       queryClient.invalidateQueries({ queryKey: requestKeys.details(requestId) })
       queryClient.invalidateQueries({ queryKey: requestKeys.all })
-      queryClient.invalidateQueries({ queryKey: ['buyer'] })
+      queryClient.invalidateQueries({ queryKey: ['buyer', 'requests'] })
     },
 
   })
@@ -251,12 +259,20 @@ export function useReopenRequest() {
 
       queryClient.setQueryData(requestKeys.details(requestId), (old: any) => ({
         ...old,
-        status: 'OPEN'
+        status: 'open'
       }))
 
       queryClient.setQueryData(requestKeys.allRequests(), (old: any) => {
         if (!Array.isArray(old)) return old
-        return old.map(r => r.id === requestId ? { ...r, status: 'OPEN' } : r)
+        return old.map(r => r.id === requestId ? { ...r, status: 'open' } : r)
+      })
+
+      // Update buyer queries optimistically
+      queryClient.getQueryCache().findAll({ queryKey: ['buyer', 'requests'] }).forEach(query => {
+        queryClient.setQueryData(query.queryKey, (old: any) => {
+          if (!Array.isArray(old)) return old
+          return old.map(r => r.id === requestId ? { ...r, status: 'open' } : r)
+        })
       })
 
       return { previousDetails, previousAll }
@@ -268,7 +284,7 @@ export function useReopenRequest() {
     onSettled: (_data, _error, requestId) => {
       queryClient.invalidateQueries({ queryKey: requestKeys.details(requestId) })
       queryClient.invalidateQueries({ queryKey: requestKeys.all })
-      queryClient.invalidateQueries({ queryKey: ['buyer'] })
+      queryClient.invalidateQueries({ queryKey: ['buyer', 'requests'] })
     },
 
   })
@@ -294,6 +310,14 @@ export function useDeleteRequest() {
         return old.filter(r => r.id !== requestId)
       })
 
+      // Update buyer queries optimistically
+      queryClient.getQueryCache().findAll({ queryKey: ['buyer', 'requests'] }).forEach(query => {
+        queryClient.setQueryData(query.queryKey, (old: any) => {
+          if (!Array.isArray(old)) return old
+          return old.filter(r => r.id !== requestId)
+        })
+      })
+
       return { previousAll }
     },
     onError: (_err, _requestId, context) => {
@@ -302,7 +326,7 @@ export function useDeleteRequest() {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: requestKeys.all })
-      queryClient.invalidateQueries({ queryKey: ['buyer'] })
+      queryClient.invalidateQueries({ queryKey: ['buyer', 'requests'] })
     },
   })
 }
@@ -344,7 +368,7 @@ export function useUpdateRequest() {
     onSettled: (_data, _error, { id }) => {
       queryClient.invalidateQueries({ queryKey: requestKeys.details(id) })
       queryClient.invalidateQueries({ queryKey: requestKeys.all })
-      queryClient.invalidateQueries({ queryKey: ['buyer'] })
+      queryClient.invalidateQueries({ queryKey: ['buyer', 'requests'] })
     },
 
   })

@@ -1,11 +1,9 @@
 import { createServerFn } from '@tanstack/react-start'
-import { createRequestSchema } from '@/types/request-schemas'
-import { authMiddleware, adminMiddleware, buyerMiddleware, sellerMiddleware } from '@/features/auth/guards/auth'
-import { db } from '@/db'
-import { eq } from 'drizzle-orm'
-import { sparePartRequests } from '@/db/schema'
-import { type User } from '@/lib/auth'
-import { createRequestUseCase, getBuyerRequestsUseCase, getOpenRequestsUseCase, getAllRequestsUseCase, getRequestDetailsUseCase, cancelRequestUseCase, reopenRequestUseCase, deleteRequestUseCase, updateRequestUseCase, flagAsSpamUseCase } from '@/use-cases/requests/index'
+import { z } from 'zod'
+import type {User} from '@/lib/auth';
+import { createRequestSchema, requestIdSchema, updateRequestSchema } from '@/types/request-schemas'
+import { adminMiddleware, authMiddleware, buyerMiddleware, sellerMiddleware } from '@/features/auth/guards/auth'
+import { cancelRequestUseCase, createRequestUseCase, deleteRequestUseCase, flagAsSpamUseCase, getAllRequestsUseCase, getBuyerRequestsUseCase, getOpenRequestsUseCase, getRequestDetailsUseCase, reopenRequestUseCase, updateRequestUseCase } from '@/use-cases/requests/index'
 import { getTaxonomyUseCase } from '@/use-cases/admin/index'
 
 /**
@@ -13,50 +11,51 @@ import { getTaxonomyUseCase } from '@/use-cases/admin/index'
  */
 
 export const createRequestServerFn = createServerFn({ method: 'POST' })
-  .inputValidator((data: any) => data)
+  .inputValidator(createRequestSchema)
   .middleware([buyerMiddleware])
   .handler(async ({ data }) => {
-    const validated = createRequestSchema.parse(data)
-    return await createRequestUseCase(validated)
+    return await createRequestUseCase(data)
   })
 
 export const fetchBuyerRequestsServerFn = createServerFn({ method: 'GET' })
   .middleware([buyerMiddleware])
   .handler(async (ctx) => {
-    const userId = ctx.context?.user?.id as string | undefined
+    const userId = ctx.context.user.id
     if (!userId) {
       return { success: false, error: 'Unauthorized' }
     }
     return await getBuyerRequestsUseCase(userId)
   })
 
+const openRequestFiltersSchema = z.object({
+  limit: z.number().optional(),
+  offset: z.number().optional(),
+  categoryId: z.string().optional(),
+  brandIds: z.array(z.string()).optional(),
+  search: z.string().optional(),
+  specialtyFilter: z.object({
+    brandIds: z.array(z.string()),
+    categoryIds: z.array(z.string()),
+  }).optional(),
+}).optional()
+
 export const fetchOpenRequestsServerFn = createServerFn({ method: 'GET' })
+  .inputValidator(openRequestFiltersSchema)
   .middleware([sellerMiddleware])
-  .inputValidator((data: {
-    limit?: number;
-    offset?: number;
-    categoryId?: string;
-    brandIds?: string[];
-    search?: string;
-    specialtyFilter?: {
-      brandIds: string[];
-      categoryIds: string[];
-    };
-  } | undefined) => data)
   .handler(async ({ data }) => {
-    const { getOpenRequestsUseCase } =
-      await import('@/use-cases/requests/index')
     return await getOpenRequestsUseCase(data)
   })
 
+const publicRequestFiltersSchema = z.object({
+  limit: z.number().optional(),
+  offset: z.number().optional(),
+  categoryId: z.string().optional(),
+  brandIds: z.array(z.string()).optional(),
+  search: z.string().optional(),
+}).optional()
+
 export const fetchPublicOpenRequestsServerFn = createServerFn({ method: 'GET' })
-  .inputValidator((data: {
-    limit?: number;
-    offset?: number;
-    categoryId?: string;
-    brandIds?: string[];
-    search?: string;
-  }) => data)
+  .inputValidator(publicRequestFiltersSchema)
   .handler(async ({ data }) => {
     return await getOpenRequestsUseCase(data)
   })
@@ -74,82 +73,54 @@ export const fetchAllRequestsServerFn = createServerFn({ method: 'GET' })
   })
 
 export const fetchRequestDetailsServerFn = createServerFn({ method: 'GET' })
+  .inputValidator(requestIdSchema)
   .middleware([authMiddleware])
-  .inputValidator((requestId: string) => requestId)
   .handler(async ({ data: requestId, context }) => {
     return await getRequestDetailsUseCase(requestId, context.user as User)
   })
 
 export const cancelRequestServerFn = createServerFn({ method: 'POST' })
+  .inputValidator(requestIdSchema)
   .middleware([authMiddleware])
-  .inputValidator((requestId: string) => requestId)
   .handler(async ({ data: requestId, context }) => {
     const user = context.user as User
-    const request = await db.query.sparePartRequests.findFirst({
-      where: eq(sparePartRequests.id, requestId as any),
-    })
-
-    if (!request) throw new Error('Request not found')
-    if (request.buyerId !== user.id && user.role !== 'admin') {
-      throw new Error('Forbidden: You do not own this request')
-    }
-
+    const details = await getRequestDetailsUseCase(requestId, user)
+    if ('error' in details) throw new Error(details.error)
     return await cancelRequestUseCase(requestId)
   })
 
 export const reopenRequestServerFn = createServerFn({ method: 'POST' })
+  .inputValidator(requestIdSchema)
   .middleware([authMiddleware])
-  .inputValidator((requestId: string) => requestId)
   .handler(async ({ data: requestId, context }) => {
     const user = context.user as User
-    const request = await db.query.sparePartRequests.findFirst({
-      where: eq(sparePartRequests.id, requestId as any),
-    })
-
-    if (!request) throw new Error('Request not found')
-    if (request.buyerId !== user.id && user.role !== 'admin') {
-      throw new Error('Forbidden: You do not own this request')
-    }
-
+    const details = await getRequestDetailsUseCase(requestId, user)
+    if ('error' in details) throw new Error(details.error)
     return await reopenRequestUseCase(requestId)
   })
 
 export const deleteRequestServerFn = createServerFn({ method: 'POST' })
+  .inputValidator(requestIdSchema)
   .middleware([authMiddleware])
-  .inputValidator((requestId: string) => requestId)
   .handler(async ({ data: requestId, context }) => {
     const user = context.user as User
-    const request = await db.query.sparePartRequests.findFirst({
-      where: eq(sparePartRequests.id, requestId as any),
-    })
-
-    if (!request) throw new Error('Request not found')
-    if (request.buyerId !== user.id && user.role !== 'admin') {
-      throw new Error('Forbidden: You do not own this request')
-    }
-
+    const details = await getRequestDetailsUseCase(requestId, user)
+    if ('error' in details) throw new Error(details.error)
     return await deleteRequestUseCase(requestId)
   })
 
 export const updateRequestServerFn = createServerFn({ method: 'POST' })
+  .inputValidator(updateRequestSchema)
   .middleware([authMiddleware])
-  .inputValidator((data: { id: string; payload: any }) => data)
   .handler(async ({ data, context }) => {
     const user = context.user as User
-    const request = await db.query.sparePartRequests.findFirst({
-      where: eq(sparePartRequests.id, data.id as any),
-    })
-
-    if (!request) throw new Error('Request not found')
-    if (request.buyerId !== user.id && user.role !== 'admin') {
-      throw new Error('Forbidden: You do not own this request')
-    }
-
+    const details = await getRequestDetailsUseCase(data.id, user)
+    if ('error' in details) throw new Error(details.error)
     return await updateRequestUseCase(data.id, data.payload)
   })
 
 export const flagAsSpamServerFn = createServerFn({ method: 'POST' })
-  .inputValidator((requestId: string) => requestId)
+  .inputValidator(requestIdSchema)
   .middleware([adminMiddleware])
   .handler(async ({ data: requestId }) => {
     return await flagAsSpamUseCase(requestId)

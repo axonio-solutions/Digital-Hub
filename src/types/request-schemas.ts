@@ -13,4 +13,12 @@ export const createRequestSchema = z.object({
   status: z.string().optional(),
 })
 
+export const requestIdSchema = z.string().min(1, 'Request ID is required')
+
+export const updateRequestSchema = z.object({
+  id: z.string().min(1),
+  payload: createRequestSchema.partial(),
+})
+
 export type CreateRequestInput = z.infer<typeof createRequestSchema>
+export type UpdateRequestInput = z.infer<typeof updateRequestSchema>

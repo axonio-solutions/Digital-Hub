@@ -6,14 +6,18 @@ import { AdminOverview } from '@/features/admin/components/admin-overview'
 
 export const Route = createFileRoute('/_authed/dashboard/')({
   loader: async ({ context }) => {
-    const role = (context.user as any)?.role || 'buyer'
+    const role = (context.user)?.role || 'buyer'
     if (role === 'seller') {
       const { fetchSellerStatsServerFn } = await import('@/fn/quotes')
-      
       const statsPromise = fetchSellerStatsServerFn()
-      
-      return { 
-        statsPromise: defer(statsPromise), 
+      return { statsPromise: defer(statsPromise) }
+    }
+    if (role === 'buyer') {
+      const { fetchBuyerRequestsServerFn } = await import('@/fn/requests')
+      const buyerId = (context.user)?.id
+      if (buyerId) {
+        const requestsPromise = fetchBuyerRequestsServerFn()
+        return { buyerRequests: defer(requestsPromise) }
       }
     }
     return {}
@@ -24,7 +28,7 @@ export const Route = createFileRoute('/_authed/dashboard/')({
 function DashboardOverview() {
   const { user } = Route.useRouteContext()
 
-  const role = (user as any as User)?.role || 'buyer'
+  const role = (user as User).role || 'buyer'
 
   if (role === 'admin') return <AdminOverview />
   if (role === 'seller') return <SellerOverview />

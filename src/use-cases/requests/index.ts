@@ -53,9 +53,9 @@ export async function flagAsSpamUseCase(requestId: string) {
   }
 }
 
-export async function getBuyerRequestsUseCase(buyerId: string) {
+export async function getBuyerRequestsUseCase(buyerId: string, options?: { limit?: number; offset?: number }) {
   try {
-    const requests = await fetchBuyerRequestsQuery(buyerId)
+    const requests = await fetchBuyerRequestsQuery(buyerId, options)
     return { success: true, data: requests }
   } catch (error) {
     console.error('Error fetching buyer requests:', error)

@@ -2,10 +2,13 @@ import { and, count, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
 import { db } from '@/db'
 import { partCategories, quotes, sparePartRequests, vehicleBrands } from '@/db/schema'
 
-export async function fetchBuyerRequestsQuery(buyerId: string) {
+export async function fetchBuyerRequestsQuery(buyerId: string, options?: { limit?: number; offset?: number }) {
+  const { limit, offset } = options || {}
   return await db.query.sparePartRequests.findMany({
     where: eq(sparePartRequests.buyerId, buyerId),
     orderBy: [desc(sparePartRequests.createdAt)],
+    limit,
+    offset,
     with: {
       category: true,
       brand: true,
