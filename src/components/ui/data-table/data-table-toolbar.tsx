@@ -56,9 +56,9 @@ export function DataTableToolbar<TData>({
   return (
     <div className={cn("flex flex-col gap-2 md:flex-row md:items-center md:gap-3", className)}>
 
-      <div className="flex items-center gap-2 w-full md:w-auto overflow-hidden">
+      <div className="flex items-center gap-2 w-full md:flex-1 md:min-w-0">
         {hasSearch && (
-          <div className="relative flex-1 min-w-0 md:max-w-[260px]">
+          <div className="relative flex-1 min-w-0 md:max-w-[320px]">
             <Search className={cn(
               "absolute left-3 top-1/2 -translate-y-1/2 size-4 pointer-events-none",
               searchFocused ? "text-primary" : "text-muted-foreground/60"
