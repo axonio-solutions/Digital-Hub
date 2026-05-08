@@ -150,6 +150,18 @@ export const PartCard = React.memo(function PartCard({
               {category}
             </span>
           )}
+          {status && (
+            <span className={cn(
+              "inline-flex items-center h-5.5 px-2 rounded-md text-[10px] font-bold capitalize",
+              status === 'open'
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800"
+                : status === 'fulfilled'
+                  ? "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
+                  : "bg-muted border border-border text-muted-foreground"
+            )}>
+              {status}
+            </span>
+          )}
         </div>
 
         {/* Notes preview */}
