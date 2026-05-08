@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>
@@ -36,7 +35,7 @@ export function DataTablePagination<TData>({
   const canNext = table.getCanNextPage()
 
   return (
-    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between px-2">
+    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full">
 
       {/* Row selection count — hidden on mobile */}
       <div className="hidden md:block text-muted-foreground text-sm flex-1">
@@ -75,14 +74,14 @@ export function DataTablePagination<TData>({
         </div>
       </div>
 
-      {/* Navigation buttons */}
-      <div className="flex items-center justify-between gap-1.5">
+      {/* Navigation buttons — centered, no overflow */}
+      <div className="flex items-center gap-1.5 w-full md:w-auto max-w-full overflow-hidden">
 
         {/* First page — desktop only */}
         <Button
           variant="outline"
           size="icon"
-          className="hidden size-8 lg:flex rounded-lg"
+          className="hidden size-8 lg:flex rounded-lg shrink-0"
           onClick={() => table.setPageIndex(0)}
           disabled={!canPrev}
         >
@@ -93,38 +92,30 @@ export function DataTablePagination<TData>({
         {/* Previous */}
         <Button
           variant="outline"
-          className={cn(
-            "gap-2 rounded-xl font-medium",
-            "md:size-8 md:p-0 md:justify-center",
-            "h-12 flex-1 text-sm justify-center"
-          )}
+          className="gap-1.5 rounded-xl font-medium h-12 flex-1 min-w-0 text-sm md:size-8 md:p-0 md:flex-none md:min-w-0 shrink-0"
           onClick={() => table.previousPage()}
           disabled={!canPrev}
         >
-          {isRtl ? <ChevronRight className="size-5 md:size-4" /> : <ChevronLeft className="size-5 md:size-4" />}
-          <span className="md:hidden">{t('pagination.previous')}</span>
+          {isRtl ? <ChevronRight className="size-4 shrink-0" /> : <ChevronLeft className="size-4 shrink-0" />}
+          <span className="md:hidden truncate">{t('pagination.previous')}</span>
         </Button>
 
         {/* Next */}
         <Button
           variant="outline"
-          className={cn(
-            "gap-2 rounded-xl font-medium",
-            "md:size-8 md:p-0 md:justify-center",
-            "h-12 flex-1 text-sm justify-center"
-          )}
+          className="gap-1.5 rounded-xl font-medium h-12 flex-1 min-w-0 text-sm md:size-8 md:p-0 md:flex-none md:min-w-0 shrink-0"
           onClick={() => table.nextPage()}
           disabled={!canNext}
         >
-          <span className="md:hidden">{t('pagination.next')}</span>
-          {isRtl ? <ChevronLeft className="size-5 md:size-4" /> : <ChevronRight className="size-5 md:size-4" />}
+          <span className="md:hidden truncate">{t('pagination.next')}</span>
+          {isRtl ? <ChevronLeft className="size-4 shrink-0" /> : <ChevronRight className="size-4 shrink-0" />}
         </Button>
 
         {/* Last page — desktop only */}
         <Button
           variant="outline"
           size="icon"
-          className="hidden size-8 lg:flex rounded-lg"
+          className="hidden size-8 lg:flex rounded-lg shrink-0"
           onClick={() => table.setPageIndex(pageCount - 1)}
           disabled={!canNext}
         >
