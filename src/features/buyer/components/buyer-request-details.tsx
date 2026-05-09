@@ -9,7 +9,6 @@ import {
   MapPin,
   MessageCircle,
   MessageSquare,
-  MoreHorizontal,
   Phone,
   Share2,
   Tag,
@@ -32,13 +31,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import {
   Dialog,
   DialogContent,
@@ -137,8 +129,8 @@ export function BuyerRequestDetails() {
         {request.partName}
       </h1>
 
-      {/* Status + Offer count */}
-      <div className="flex items-center gap-3">
+      {/* Status + Offer count + Actions */}
+      <div className="flex items-center gap-2 flex-wrap">
         <GlowingBadge
           variant={isOpen ? 'success' : 'neutral'}
           pulse={isOpen}
@@ -152,6 +144,15 @@ export function BuyerRequestDetails() {
             {quotesCount} {quotesCount === 1 ? 'offer' : 'offers'}
           </span>
         )}
+        <Button variant="ghost" size="sm" className="h-8 gap-1.5 rounded-lg text-xs font-bold ml-auto" onClick={() => setIsEditDialogOpen(true)}>
+          <Edit className="size-3" /> Edit
+        </Button>
+        <Button variant="ghost" size="sm" className="h-8 gap-1.5 rounded-lg text-xs font-bold" onClick={handleShare}>
+          <Share2 className="size-3" /> Share
+        </Button>
+        <Button variant="ghost" size="sm" className="h-8 gap-1.5 rounded-lg text-xs font-bold text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setIsDeleteDialogOpen(true)}>
+          <Trash2 className="size-3" /> Delete
+        </Button>
       </div>
 
       {/* Separator */}
@@ -186,31 +187,11 @@ export function BuyerRequestDetails() {
     <div className="flex-1 flex flex-col w-full pb-20 lg:pb-8">
 
       {/* TOP NAV */}
-      <div className="flex items-center justify-between px-3 py-2">
+      <div className="flex items-center px-3 py-2">
         <Button variant="ghost" size="sm" className="h-9 gap-1.5 rounded-xl text-sm font-bold" onClick={() => window.history.back()}>
           <ArrowLeft className="size-4" />
           {t('actions.back_to_list')}
         </Button>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="size-9 rounded-xl">
-              <MoreHorizontal className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40 rounded-xl">
-            <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)} className="gap-2 text-xs font-bold rounded-lg cursor-pointer">
-              <Edit className="size-3.5" /> Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleShare} className="gap-2 text-xs font-bold rounded-lg cursor-pointer">
-              <Share2 className="size-3.5" /> Copy link
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="gap-2 text-xs font-bold rounded-lg cursor-pointer text-destructive">
-              <Trash2 className="size-3.5" /> Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       {/* CONTENT */}
@@ -309,9 +290,8 @@ export function BuyerRequestDetails() {
 function DetailsSkeleton() {
   return (
     <div className="flex-1 flex flex-col w-full pb-20 lg:pb-8">
-      <div className="flex items-center justify-between px-3 py-2">
+      <div className="flex items-center px-3 py-2">
         <Skeleton className="h-9 w-20 rounded-xl" />
-        <Skeleton className="size-9 rounded-xl" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 px-3 sm:px-4 lg:px-0">
         <aside className="lg:col-span-5 flex flex-col gap-4">
