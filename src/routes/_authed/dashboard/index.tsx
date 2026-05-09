@@ -1,8 +1,9 @@
 import { createFileRoute, defer } from '@tanstack/react-router'
-import type {User} from '@/lib/auth';
+import type { User } from '@/lib/auth'
 import { BuyerOverview } from '@/features/buyer'
 import { SellerOverview } from '@/features/seller'
 import { AdminOverview } from '@/features/admin/components/admin-overview'
+import { sellerKeys } from '@/features/marketplace/hooks/use-marketplace'
 
 export const Route = createFileRoute('/_authed/dashboard/')({
   loader: async ({ context }) => {
@@ -10,6 +11,11 @@ export const Route = createFileRoute('/_authed/dashboard/')({
     if (role === 'seller') {
       const { fetchSellerStatsServerFn } = await import('@/fn/quotes')
       const statsPromise = fetchSellerStatsServerFn()
+      await context.queryClient.ensureQueryData({
+        queryKey: sellerKeys.dashboard(context.user.id),
+        queryFn: async () => await statsPromise,
+        staleTime: 60 * 1000,
+      }).catch(() => {})
       return { statsPromise: defer(statsPromise) }
     }
     if (role === 'buyer') {

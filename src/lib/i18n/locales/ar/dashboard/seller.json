@@ -1,6 +1,12 @@
 {
   "welcome": "مرحباً بعودتك، {{name}}. إليك ما يحدث اليوم.",
   "go_to_market": "اذهب إلى السوق",
+  "actions": {
+    "browse_requests": "تصفح الطلبات",
+    "view_quotes": "عروضي",
+    "explore_cta": "استكشف السوق",
+    "explore_subtitle": "اعثر على مشترين جدد ونمّ مبيعاتك"
+  },
   "stats": {
     "won": { "label": "صفقات ناجحة", "sub": "نجاح الصفقة", "desc": "عمليات البيع المؤكدة في السوق" },
     "active": { "label": "مقترحات نشطة", "sub": "مفاوضات مفتوحة", "desc": "عروض بانتظار مراجعة المشتري" },
@@ -9,7 +15,11 @@
   },
   "charts": {
     "revenue_velocity": { "title": "سرعة الإيرادات", "desc": "مسار الأرباح خلال آخر 7 أيام." },
-    "offer_distribution": { "title": "توزيع العروض", "desc": "تحليل الأداء." }
+    "offer_distribution": { "title": "توزيع العروض", "desc": "تحليل أداء عروضك." },
+    "performance_summary": { "title": "ملخص الأداء", "desc": "مقاييس سريعة وصحة التحويل." }
+  },
+  "summary": {
+    "quote_volume": "حجم العروض"
   },
   "tables": {
     "open_demands": "الطلبات المفتوحة",
@@ -22,7 +32,8 @@
   "pie": {
     "accepted": "مقبول",
     "pending": "قيد الانتظار",
-    "missed": "فائت"
+    "missed": "فائت",
+    "total": "عروض"
   },
   "currency": "د.ج"
 }

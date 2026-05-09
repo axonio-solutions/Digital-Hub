@@ -1,11 +1,11 @@
 import { createServerFn } from '@tanstack/react-start'
+import { and, desc, eq, gte, sql } from 'drizzle-orm'
+import type { User } from '@/lib/auth'
+import { buyerMiddleware, sellerMiddleware } from '@/features/auth/guards/auth'
 import { acceptQuoteSchema, quoteSchema } from '@/types/quote-schemas'
-import { sellerMiddleware, buyerMiddleware } from '@/features/auth/guards/auth'
 import { db } from '@/db'
-import { eq, sql, and, desc, gte } from 'drizzle-orm'
 import { quotes, sparePartRequests } from '@/db/schema'
-import { type User } from '@/lib/auth'
-import { createQuoteUseCase, getQuotesBySellerUseCase, acceptQuoteUseCase, deleteQuoteUseCase, updateQuoteUseCase, revokeQuoteUseCase, rejectQuoteUseCase, unrejectQuoteUseCase } from '@/use-cases/quotes/index'
+import { acceptQuoteUseCase, createQuoteUseCase, deleteQuoteUseCase, getQuotesBySellerUseCase, rejectQuoteUseCase, revokeQuoteUseCase, unrejectQuoteUseCase, updateQuoteUseCase } from '@/use-cases/quotes/index'
 
 /**
  * Axis Layer 3: Quotes Actions
@@ -42,7 +42,6 @@ export const acceptQuoteServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this request')
     }
 
-    const { acceptQuoteUseCase } = await import('@/use-cases/quotes/index')
     return await acceptQuoteUseCase(validated.quoteId, validated.requestId)
   })
 
@@ -147,6 +146,9 @@ export const unrejectQuoteServerFn = createServerFn({ method: 'POST' })
 export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
   .middleware([sellerMiddleware])
   .handler(async ({ context }) => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
     // 1. Native Database Aggregation (No massive payload transfers)
     const queryStats = db.execute(sql`
       SELECT 
@@ -156,44 +158,61 @@ export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
         SUM(CASE WHEN ${quotes.status} = 'accepted' THEN ${quotes.price} ELSE 0 END) as total_revenue
       FROM ${quotes}
       WHERE ${quotes.sellerId} = ${context.user.id}
-    `);
+    `)
 
-    // 2. Fetch only the strictly necessary rows for the UI (Sales limits & Date range for charts)
+    // 2. Today's stats for trend comparison
+    const queryTodayStats = db.execute(sql`
+      SELECT 
+        SUM(CASE WHEN ${quotes.status} = 'accepted' THEN 1 ELSE 0 END) as today_won,
+        SUM(CASE WHEN ${quotes.status} = 'pending' THEN 1 ELSE 0 END) as today_pending,
+        SUM(CASE WHEN ${quotes.status} = 'accepted' THEN ${quotes.price} ELSE 0 END) as today_revenue
+      FROM ${quotes}
+      WHERE ${quotes.sellerId} = ${context.user.id}
+        AND ${quotes.createdAt} >= ${today.toISOString()}
+    `)
+
+    // 3. Fetch only the strictly necessary rows for the UI
     const queryRecentSales = db.query.quotes.findMany({
       where: and(eq(quotes.sellerId, context.user.id as any), eq(quotes.status, 'accepted')),
       with: { request: true },
       orderBy: desc(quotes.updatedAt),
-      limit: 4
-    });
+      limit: 4,
+    })
 
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
     const queryChartQuotes = db.query.quotes.findMany({
       where: and(
         eq(quotes.sellerId, context.user.id as any),
         eq(quotes.status, 'accepted'),
         gte(quotes.updatedAt, sevenDaysAgo)
       ),
-      columns: { price: true, updatedAt: true }
-    });
+      columns: { price: true, updatedAt: true },
+    })
 
-    // Run parallel
-    const [statsResult, recentSales, chartQuotes] = await Promise.all([
+    const [statsResult, todayResult, recentSales, chartQuotes] = await Promise.all([
       queryStats,
+      queryTodayStats,
       queryRecentSales,
-      queryChartQuotes
-    ]);
+      queryChartQuotes,
+    ])
 
-    const row = statsResult[0] as any;
-    const totalQuotes = Number(row.total_quotes || 0);
-    const won = Number(row.won_quotes || 0);
-    const pending = Number(row.pending_quotes || 0);
-    const totalRevenue = Number(row.total_revenue || 0);
-    const winRate = totalQuotes > 0 ? (won / totalQuotes) * 100 : 0;
+    const row = statsResult[0] as any
+    const todayRow = todayResult[0] as any
+    const totalQuotes = Number(row.total_quotes || 0)
+    const won = Number(row.won_quotes || 0)
+    const pending = Number(row.pending_quotes || 0)
+    const totalRevenue = Number(row.total_revenue || 0)
+    const winRate = totalQuotes > 0 ? (won / totalQuotes) * 100 : 0
 
     return {
       stats: { won, pending, winRate, totalRevenue, totalQuotes },
+      todayStats: {
+        won: Number(todayRow.today_won || 0),
+        pending: Number(todayRow.today_pending || 0),
+        revenue: Number(todayRow.today_revenue || 0),
+      },
       recentSales,
-      chartQuotes
-    };
-  });
+      chartQuotes,
+    }
+  })

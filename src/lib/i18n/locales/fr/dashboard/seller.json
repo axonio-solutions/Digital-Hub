@@ -1,6 +1,12 @@
 {
   "welcome": "Bon retour, {{name}}. Voici ce qui se passe aujourd'hui.",
   "go_to_market": "Aller au Marché",
+  "actions": {
+    "browse_requests": "Parcourir les Demandes",
+    "view_quotes": "Mes Devis",
+    "explore_cta": "Explorer le Marché",
+    "explore_subtitle": "Trouvez de nouveaux acheteurs et développez vos ventes"
+  },
   "stats": {
     "won": { "label": "Ventes Conclues", "sub": "Succès de la Transaction", "desc": "Acquisitions confirmées sur le marché" },
     "active": { "label": "Offres Actives", "sub": "Négociations Ouvertes", "desc": "Offres actuellement en attente de révision" },
@@ -9,7 +15,11 @@
   },
   "charts": {
     "revenue_velocity": { "title": "Vélocité des Revenus", "desc": "Trajectoire des gains au cours des 7 derniers jours." },
-    "offer_distribution": { "title": "Distribution des Offres", "desc": "Analyse de la performance." }
+    "offer_distribution": { "title": "Distribution des Offres", "desc": "Analyse de la performance de vos devis." },
+    "performance_summary": { "title": "Résumé de Performance", "desc": "Métriques rapides et santé de la conversion." }
+  },
+  "summary": {
+    "quote_volume": "Volume de Devis"
   },
   "tables": {
     "open_demands": "Demandes Ouvertes",
@@ -22,7 +32,8 @@
   "pie": {
     "accepted": "Acceptées",
     "pending": "En Attente",
-    "missed": "Manquées"
+    "missed": "Manquées",
+    "total": "Devis"
   },
   "hub": {
     "title": "Pipeline des Ventes",

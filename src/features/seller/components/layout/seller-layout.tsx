@@ -3,10 +3,9 @@
 import React from 'react'
 import {
   IconDashboard,
-  IconPick,
+  IconHelpCircle,
   IconMessages,
   IconSettings,
-  IconHelpCircle,
 } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import { NavMain } from '@/features/dashboard/components/layout/nav-main'
@@ -22,11 +21,6 @@ export function SellerLayout({ children }: { children: React.ReactNode }) {
         title: t('nav.overview'),
         url: '/dashboard',
         icon: IconDashboard,
-      },
-      {
-        title: t('nav.live_requests'),
-        url: '/explore',
-        icon: IconPick,
       },
       {
         title: t('nav.my_quotes'),

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   createQuoteServerFn,
   deleteQuoteServerFn,
+  fetchSellerStatsServerFn,
   getSellerQuotesServerFn,
   updateQuoteServerFn,
 } from '@/fn/quotes'
@@ -9,6 +10,7 @@ import {
 export const sellerKeys = {
   all: ['seller'] as const,
   quotes: (sellerId: string) => [...sellerKeys.all, 'quotes', sellerId] as const,
+  dashboard: (sellerId: string) => [...sellerKeys.all, 'dashboard', sellerId] as const,
   marketplace: ['marketplace'] as const,
 }
 
@@ -25,12 +27,13 @@ export function useSellerQuotes(sellerId: string) {
   })
 }
 
-export function useSellerDashboardData(sellerId: string) {
+export function useSellerDashboardStats(sellerId: string) {
   return useQuery({
-    queryKey: [...sellerKeys.all, 'dashboard-data', sellerId],
-    queryFn: async () => await import('@/fn/quotes').then(m => m.fetchSellerStatsServerFn()),
+    queryKey: sellerKeys.dashboard(sellerId),
+    queryFn: () => fetchSellerStatsServerFn(),
     enabled: !!sellerId,
-    staleTime: 30 * 1000,
+    staleTime: 60 * 1000,
+    gcTime: 5 * 60 * 1000,
   })
 }
 

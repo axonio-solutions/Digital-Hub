@@ -1,348 +1,267 @@
-import { useMemo, memo } from 'react'
-import {
-  Area,
-  AreaChart,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+'use client'
+
+import React, { memo, useMemo } from 'react'
+import { Await, Link, getRouteApi } from '@tanstack/react-router'
+import { ArrowRight, BarChart3, CheckCircle2, MessageSquare, ShoppingBag, Sparkles, TrendingUp, Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Link } from '@tanstack/react-router'
-import { Activity } from 'lucide-react'
-import { format, subDays, isSameDay, startOfDay } from 'date-fns'
+import { format, isSameDay, startOfDay, subDays } from 'date-fns'
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-
-// --- Memoized Child Components ---
-
-const StatsCards = memo(({ stats, language, t }: { stats: any; language: string; t: any }) => (
-  <div className="grid grid-cols-1 gap-5 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-sm sm:grid-cols-2 lg:grid-cols-4">
-    <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950 rounded-2xl group transition-all duration-300 hover:shadow-lg">
-      <CardHeader className="pb-3">
-        <CardDescription className="dark:text-slate-400 font-bold uppercase tracking-widest text-[10px]">{t('stats.won.label')}</CardDescription>
-        <CardTitle className="text-3xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
-          {stats.won}
-        </CardTitle>
-      </CardHeader>
-      <CardFooter className="flex-col items-start gap-1 text-sm pt-0">
-        <div className="line-clamp-1 flex gap-2 font-bold dark:text-slate-200 uppercase text-[10px]">
-          {t('stats.won.sub')}
-        </div>
-        <div className="text-muted-foreground dark:text-slate-500 text-[11px]">{t('stats.won.desc')}</div>
-      </CardFooter>
-    </Card>
-
-    <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950 rounded-2xl group transition-all duration-300 hover:shadow-lg">
-      <CardHeader className="pb-3">
-        <CardDescription className="dark:text-slate-400 font-bold uppercase tracking-widest text-[10px]">{t('stats.active.label')}</CardDescription>
-        <CardTitle className="text-3xl font-bold tabular-nums text-blue-600 dark:text-blue-400">
-          {stats.pending}
-        </CardTitle>
-      </CardHeader>
-      <CardFooter className="flex-col items-start gap-1 text-sm pt-0">
-        <div className="line-clamp-1 flex gap-2 font-bold dark:text-slate-200 uppercase text-[10px]">
-          {t('stats.active.sub')}
-        </div>
-        <div className="text-muted-foreground dark:text-slate-500 text-[11px]">{t('stats.active.desc')}</div>
-      </CardFooter>
-    </Card>
-
-    <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950 rounded-2xl group transition-all duration-300 hover:shadow-lg">
-      <CardHeader className="pb-3">
-        <CardDescription className="dark:text-slate-400 font-bold uppercase tracking-widest text-[10px]">{t('stats.win_rate.label')}</CardDescription>
-        <CardTitle className="text-3xl font-bold tabular-nums text-orange-600 dark:text-orange-400">
-          {stats.winRate.toFixed(1)}%
-        </CardTitle>
-      </CardHeader>
-      <CardFooter className="flex-col items-start gap-1 text-sm pt-0">
-        <div className="line-clamp-1 flex gap-2 font-bold dark:text-slate-200 uppercase text-[10px]">
-          {t('stats.win_rate.sub')}
-        </div>
-        <div className="text-muted-foreground dark:text-slate-500 text-[11px]">{t('stats.win_rate.desc')}</div>
-      </CardFooter>
-    </Card>
-
-    <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950 rounded-2xl group transition-all duration-300 hover:shadow-lg">
-      <CardHeader className="pb-3">
-        <CardDescription className="dark:text-slate-400 font-bold uppercase tracking-widest text-[10px]">{t('stats.earnings.label')}</CardDescription>
-        <CardTitle className="text-3xl font-bold tabular-nums text-purple-600 dark:text-purple-400">
-          {stats.totalRevenue.toLocaleString(language)} <span className="text-xs font-normal text-muted-foreground">{t('currency')}</span>
-        </CardTitle>
-      </CardHeader>
-      <CardFooter className="flex-col items-start gap-1 text-sm pt-0">
-        <div className="line-clamp-1 flex gap-2 font-bold dark:text-slate-200 uppercase text-[10px]">
-          {t('stats.earnings.sub')}
-        </div>
-        <div className="text-muted-foreground dark:text-slate-500 text-[11px]">{t('stats.earnings.desc')}</div>
-      </CardFooter>
-    </Card>
-  </div>
-))
-
-const RevenueChart = memo(({ chartData, language, t }: { chartData: any[]; language: string; t: any }) => (
-  <Card className="col-span-12 lg:col-span-4 bg-background rounded-[2rem] border border-border shadow-sm flex flex-col group transition-all duration-300 hover:shadow-lg overflow-hidden">
-    <CardHeader className="pb-4">
-      <CardTitle className="text-lg font-bold text-foreground tracking-tight uppercase underline decoration-primary/30 underline-offset-8">{t('charts.revenue_velocity.title')}</CardTitle>
-      <CardDescription className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-2">
-        {t('charts.revenue_velocity.desc')}
-      </CardDescription>
-    </CardHeader>
-    <CardContent className="pl-2 pt-4">
-      <div className="h-[300px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <defs>
-              <linearGradient id="revenue-gradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <XAxis dataKey="name" stroke="#888888" fontSize={10} fontWeight="bold" tickLine={false} axisLine={false} className="uppercase" />
-            <YAxis stroke="#888888" fontSize={9} fontWeight="bold" tickLine={false} axisLine={false} tickFormatter={(value) => `${value.toLocaleString(language)} ${t('currency')}`} />
-            <Tooltip
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div className="rounded-xl border border-border bg-card p-3 shadow-xl animate-in zoom-in-95 duration-200">
-                      <div className="grid gap-1">
-                        <span className="text-[10px] font-bold uppercase text-muted-foreground">{t('charts.revenue_velocity.title')}</span>
-                        <span className="text-sm font-bold text-foreground">{payload[0].value?.toLocaleString(language)} {t('currency')}</span>
-                      </div>
-                    </div>
-                  )
-                }
-                return null
-              }}
-            />
-            <Area type="monotone" dataKey="revenue" stroke="var(--primary)" strokeWidth={4} fill="url(#revenue-gradient)" fillOpacity={1} animationDuration={1500} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </CardContent>
-  </Card>
-))
-
-const OfferDistribution = memo(({ stats, myQuotesLength, t }: { stats: any; myQuotesLength: number; t: any }) => (
-  <Card className="col-span-12 lg:col-span-3 bg-background rounded-[2rem] border border-border shadow-sm flex flex-col group transition-all duration-300 hover:shadow-lg overflow-hidden">
-    <CardHeader className="pb-4">
-      <CardTitle className="text-lg font-bold text-foreground tracking-tight uppercase underline decoration-primary/30 underline-offset-8">{t('charts.offer_distribution.title')}</CardTitle>
-      <CardDescription className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-2">{t('charts.offer_distribution.desc')}</CardDescription>
-    </CardHeader>
-    <CardContent className="pt-2">
-      <div className="h-[250px] relative">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={[
-                { name: t('pie.accepted'), value: stats.won, fill: '#10b981' },
-                { name: t('pie.pending'), value: stats.pending, fill: '#3b82f6' },
-                { name: t('pie.missed'), value: Math.max(0, myQuotesLength - stats.won - stats.pending), fill: '#94a3b8' },
-              ]}
-              cx="50%" cy="50%" innerRadius={65} outerRadius={85} paddingAngle={8} dataKey="value" animationDuration={1000} strokeWidth={0}
-            >
-              {[
-                { name: t('pie.accepted'), value: stats.won, fill: '#10b981' },
-                { name: t('pie.pending'), value: stats.pending, fill: '#3b82f6' },
-                { name: t('pie.missed'), value: Math.max(0, myQuotesLength - stats.won - stats.pending), fill: '#94a3b8' },
-              ].map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} className="hover:opacity-80 transition-opacity" />
-              ))}
-            </Pie>
-            <Tooltip
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 p-2.5 shadow-xl">
-                      <div className="flex items-center gap-2">
-                        <div className="size-2 rounded-full" style={{ backgroundColor: payload[0].payload.fill }} />
-                        <span className="text-xs font-bold text-slate-900 dark:text-white">{payload[0].name}: {payload[0].value}</span>
-                      </div>
-                    </div>
-                  )
-                }
-                return null
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-center">
-             <p className="text-2xl font-bold text-slate-900 dark:text-white">{myQuotesLength}</p>
-             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Quotes</p>
-          </div>
-        </div>
-      </div>
-      <div className="mt-8 space-y-3 px-4">
-        <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-500">
-          <div className="flex items-center gap-2">
-            <div className="size-2 rounded-full bg-emerald-500" />
-            <span>{t('pie.accepted')}</span>
-          </div>
-          <span className="text-emerald-600 dark:text-emerald-400">{stats.won}</span>
-        </div>
-        <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-500">
-          <div className="flex items-center gap-2">
-            <div className="size-2 rounded-full bg-blue-500" />
-            <span>{t('pie.pending')}</span>
-          </div>
-          <span className="text-blue-600 dark:text-blue-400">{stats.pending}</span>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-))
-
-
-const SalesHistoryTable = memo(({ myQuotes, language, t }: { myQuotes: any[]; language: string; t: any }) => (
-  <Card className="bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:shadow-lg transition-all duration-300">
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
-      <div className="space-y-1">
-        <CardTitle className="text-lg font-bold text-foreground tracking-tight uppercase underline decoration-emerald-500/30 underline-offset-8">{t('tables.sales_history')}</CardTitle>
-        <CardDescription className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-2">{t('tables.recent_deals')}</CardDescription>
-      </div>
-      <GlowingBadge variant="success" className="rounded-full font-bold uppercase tracking-tighter text-[10px] px-3 py-1">Verified</GlowingBadge>
-    </CardHeader>
-    <CardContent>
-      <div className="space-y-4">
-        {myQuotes.filter((q: any) => q.status === 'accepted').slice(0, 4).map((q: any) => (
-          <div key={q.id} className="flex items-center justify-between border-b border-slate-50 dark:border-slate-900 pb-4 last:border-0 last:pb-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/30 p-2 rounded-xl transition-colors cursor-pointer">
-            <div className="space-y-1">
-              <p className="text-xs font-bold text-foreground uppercase tracking-tight">{q.request?.partName}</p>
-              <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
-                {(q.price || 0).toLocaleString(language)} {t('currency')}
-              </p>
-            </div>
-            <p className="text-[9px] text-slate-400 font-bold uppercase">
-              {new Date(q.updatedAt).toLocaleDateString()}
-            </p>
-          </div>
-        ))}
-        {myQuotes.filter((q: any) => q.status === 'accepted').length === 0 && (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="size-12 rounded-full bg-muted flex items-center justify-center mb-4">
-              <Activity className="size-6 text-muted-foreground/30" />
-            </div>
-            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{t('tables.no_sales')}</p>
-          </div>
-        )}
-      </div>
-    </CardContent>
-  </Card>
-))
-
-// --- Main Layout Component ---
-
-import { Await, getRouteApi } from '@tanstack/react-router'
-import React from 'react'
+import { cn } from '@/lib/utils'
 
 const routeApi = getRouteApi('/_authed/dashboard/')
 
-function StatsSection({ dashboardData, t, language }: { dashboardData: any, t: any, language: string }) {
-  const stats = dashboardData?.stats || { won: 0, pending: 0, winRate: 0, totalRevenue: 0, totalQuotes: 0 }
-  const myQuotesLength = stats.totalQuotes || 0
-  const myQuotes = dashboardData?.recentSales || []
-  
+// --- Types ---
+
+interface DashboardData {
+  stats: { won: number; pending: number; winRate: number; totalRevenue: number; totalQuotes: number }
+  todayStats: { won: number; pending: number; revenue: number }
+  recentSales: Array<{ id: string; price: number; updatedAt: string | Date; status: string; request?: { partName?: string } | null }>
+  chartQuotes: Array<{ price: number; updatedAt: string | Date }>
+}
+
+// --- Revenue Chart ---
+
+const RevenueChart = memo(({ chartData, language }: { chartData: Array<{ name: string; revenue: number }>; language: string }) => {
+  if (chartData.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full py-16 text-center">
+        <BarChart3 className="size-8 text-muted-foreground/15 mb-3" />
+        <p className="text-xs font-bold text-muted-foreground">No revenue data yet</p>
+      </div>
+    )
+  }
+
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+        <defs>
+          <linearGradient id="rvGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 700, fill: 'hsl(var(--muted-foreground))' }} dy={8} />
+        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 600, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={(v) => (v > 0 ? `${(v / 1000).toFixed(0)}k` : '0')} dx={-4} />
+        <Tooltip
+          content={({ active, payload }) => {
+            if (!active || payload.length === 0) return null
+            return (
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 shadow-xl">
+                <p className="text-xs font-bold">{payload[0].value?.toLocaleString(language)} DZD</p>
+              </div>
+            )
+          }}
+        />
+        <Area type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={2.5} fill="url(#rvGrad)" animationDuration={1200} />
+      </AreaChart>
+    </ResponsiveContainer>
+  )
+})
+
+// --- Recent Deals ---
+
+const RecentDeals = memo(({ deals, language }: { deals: Array<{ id: string; price: number; updatedAt: string | Date; request?: { partName?: string } | null }>; language: string }) => (
+  <div className="space-y-1">
+    {deals.length === 0 ? (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <ShoppingBag className="size-6 text-muted-foreground/15 mb-2" />
+        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">No sales yet</p>
+      </div>
+    ) : (
+      deals.map((deal) => (
+        <Link
+          key={deal.id}
+          to="/dashboard/quotes"
+          className="group flex items-center justify-between px-3 py-2.5 -mx-3 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors"
+        >
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-foreground uppercase tracking-tight truncate">{deal.request?.partName || 'Unknown part'}</p>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-0.5">
+              {new Date(deal.updatedAt).toLocaleDateString(language, { month: 'short', day: 'numeric' })}
+            </p>
+          </div>
+          <span className="text-xs font-bold tabular-nums text-emerald-600 dark:text-emerald-400 ml-4 shrink-0">
+            {(deal.price || 0).toLocaleString(language)} DZD
+          </span>
+        </Link>
+      ))
+    )}
+  </div>
+))
+
+// --- Quick Link ---
+
+const QuickLink = memo(({ to, icon: Icon, title, desc }: { to: string; icon: React.ComponentType<{ className?: string }>; title: string; desc: string }) => (
+  <Link
+    to={to}
+    className="group flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-primary/30 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all duration-200"
+  >
+    <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
+      <Icon className="size-5 text-primary" />
+    </div>
+    <div className="min-w-0 flex-1">
+      <p className="text-sm font-black tracking-tight">{title}</p>
+      <p className="text-[11px] text-muted-foreground font-bold mt-0.5">{desc}</p>
+    </div>
+    <ArrowRight className="size-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+  </Link>
+))
+
+// --- Main Content ---
+
+function StatsSection({ dashboardData, t, language }: { dashboardData: DashboardData; t: any; language: string }) {
+  const { stats, todayStats, recentSales, chartQuotes } = dashboardData
+
+  const acceptedDeals = useMemo(() => recentSales.filter((q) => q.status === 'accepted').slice(0, 5), [recentSales])
+
   const chartData = useMemo(() => {
-    if (!dashboardData?.chartQuotes) return []
+    if (chartQuotes.length === 0) return []
     let cumulative = 0
     return Array.from({ length: 7 }, (_, i) => {
       const date = subDays(new Date(), 6 - i)
-      const dayEarnings = dashboardData.chartQuotes
-        .filter((q: any) => isSameDay(startOfDay(new Date(q.updatedAt)), startOfDay(date)))
-        .reduce((sum: number, q: any) => sum + q.price, 0)
+      const dayEarnings = chartQuotes
+        .filter((q) => isSameDay(startOfDay(new Date(q.updatedAt)), startOfDay(date)))
+        .reduce((sum, q) => sum + q.price, 0)
       cumulative += dayEarnings
-      return { name: format(date, 'eee'), revenue: cumulative }
+      return { name: format(date, 'E').slice(0, 3), revenue: cumulative }
     })
-  }, [dashboardData?.chartQuotes])
+  }, [chartQuotes])
+
+  const todaysChange = useMemo(() => {
+    if (todayStats.won === 0) return ''
+    const prev = Math.max(stats.won - todayStats.won, 1)
+    const pct = Math.round((todayStats.won / prev) * 100)
+    return pct > 0 ? `+${pct}% today` : ''
+  }, [stats.won, todayStats.won])
+
+  const revenueChange = useMemo(() => {
+    if (todayStats.revenue === 0) return ''
+    const prev = Math.max(stats.totalRevenue - todayStats.revenue, 1)
+    const pct = Math.round((todayStats.revenue / prev) * 100)
+    return pct > 0 ? `+${pct}% today` : ''
+  }, [stats.totalRevenue, todayStats.revenue])
+
+  const metrics = [
+    { label: t('stats.won.label'), value: stats.won, trend: todaysChange, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50', icon: CheckCircle2 },
+    { label: t('stats.active.label'), value: stats.pending, trend: '', color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50', icon: Zap },
+    { label: t('stats.win_rate.label'), value: `${stats.winRate.toFixed(1)}%`, trend: '', color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/50', icon: MessageSquare, isFormatted: true },
+    { label: t('stats.earnings.label'), value: `${stats.totalRevenue.toLocaleString(language)} DZD`, trend: revenueChange, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/50', icon: TrendingUp, isFormatted: true },
+  ]
 
   return (
-    <>
-      <StatsCards stats={stats} language={language} t={t} />
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
-        <RevenueChart chartData={chartData} language={language} t={t} />
-        <OfferDistribution stats={stats} myQuotesLength={myQuotesLength} t={t} />
+    <div className="flex flex-col gap-4">
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {metrics.map((m) => (
+          <div key={m.label} className={cn('flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all', m.color)}>
+            <div className="flex items-center gap-1.5">
+              <m.icon className="size-4" />
+              <span className="text-xl font-black tabular-nums leading-none">{typeof m.value === 'number' ? m.value : m.value}</span>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">{m.label}</span>
+            {m.trend ? (
+              <span className="text-[9px] font-black uppercase text-emerald-600 dark:text-emerald-400">{m.trend}</span>
+            ) : null}
+          </div>
+        ))}
       </div>
-      <SalesHistoryTable myQuotes={myQuotes} language={language} t={t} />
-    </>
-  )
-}
 
-export function SellerOverview() {
-  const { t, i18n } = useTranslation(['dashboard/seller', 'dashboard/layout'])
-  const { data: user } = useAuth()
-  
-  const { statsPromise } = routeApi.useLoaderData() as { statsPromise: any }
-
-  return (
-    <div className="flex-1 space-y-8 p-6 md:p-10 pt-6 animate-in fade-in duration-700 max-w-[1600px] mx-auto w-full pb-20">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white uppercase leading-none">
-            {t('nav.overview', { ns: 'dashboard/layout' })}
-          </h2>
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">
-              {t('welcome', { name: user?.name || 'Seller' })}
-            </span>
-            <span className="h-[1px] w-8 bg-slate-200 dark:bg-slate-800" />
+      {/* Chart + Deals */}
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm p-5 flex flex-col">
+          <div className="mb-2 shrink-0">
+            <h3 className="text-sm font-black uppercase tracking-tight">{t('charts.revenue_velocity.title')}</h3>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-0.5">{t('charts.revenue_velocity.desc')}</p>
+          </div>
+          <div className="h-[260px] -mx-1">
+            <RevenueChart chartData={chartData} language={language} />
           </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button asChild size="sm" className="rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-bold uppercase tracking-tight">
-            <Link to="/dashboard">{t('go_to_market')}</Link>
-          </Button>
+
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm p-5 flex flex-col">
+          <div className="mb-4 shrink-0">
+            <h3 className="text-sm font-black uppercase tracking-tight">{t('tables.sales_history')}</h3>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-0.5">{t('tables.recent_deals')}</p>
+          </div>
+          <div className="flex-1 min-h-0">
+            <RecentDeals deals={acceptedDeals} language={language} />
+          </div>
         </div>
       </div>
 
-      <React.Suspense fallback={<StatsSkeleton />}>
-        <Await promise={statsPromise}>
-          {(dashboardData) => <StatsSection dashboardData={dashboardData} t={t} language={i18n.language} />}
-        </Await>
-      </React.Suspense>
-
+      {/* Quick Links */}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <QuickLink to="/dashboard/quotes" icon={BarChart3} title={t('actions.view_quotes')} desc={`${stats.totalQuotes} quotes submitted`} />
+        <QuickLink to="/explore" icon={ShoppingBag} title={t('actions.browse_requests')} desc="Discover live requests from buyers" />
+      </div>
     </div>
   )
 }
 
-function StatsSkeleton() {
+// --- Main Component ---
+
+export function SellerOverview() {
+  const { t, i18n } = useTranslation(['dashboard/seller', 'dashboard/layout'])
+  const { data: user } = useAuth()
+
+  const { statsPromise } = routeApi.useLoaderData()
+
   return (
-    <div className="space-y-8 animate-pulse">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="flex-1 flex flex-col gap-4 w-full pb-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground font-black text-sm uppercase shadow-lg shadow-primary/20 shrink-0">
+              {(user?.name || 'S').charAt(0)}
+            </div>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
+                {t('welcome', { name: user?.name || 'Seller' })}
+              </h2>
+              <p className="text-xs text-muted-foreground font-medium">{t('actions.explore_subtitle')}</p>
+            </div>
+          </div>
+        </div>
+
+        <Button asChild className="font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full sm:w-auto">
+          <Link to="/explore">
+            <Sparkles className="size-4 mr-2" />
+            {t('actions.explore_cta')}
+          </Link>
+        </Button>
+      </div>
+
+      {/* Content */}
+      <React.Suspense fallback={<OverviewSkeleton />}>
+        <Await promise={statsPromise!}>
+          {(dashboardData) => <StatsSection dashboardData={dashboardData} t={t} language={i18n.language} />}
+        </Await>
+      </React.Suspense>
+    </div>
+  )
+}
+
+// --- Skeleton ---
+
+function OverviewSkeleton() {
+  return (
+    <div className="flex-1 flex flex-col gap-4 w-full animate-pulse">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="@container/card">
-            <CardHeader>
-              <Skeleton className="h-4 w-[100px]" />
-              <Skeleton className="h-8 w-[80px]" />
-            </CardHeader>
-            <CardFooter className="flex-col items-start gap-2">
-              <Skeleton className="h-4 w-[140px]" />
-              <Skeleton className="h-3 w-[180px]" />
-            </CardFooter>
-          </Card>
+          <Skeleton key={i} className="h-16 w-full rounded-2xl" />
         ))}
       </div>
-      <div className="grid gap-4 md:grid-cols-7 pt-4">
-        <Skeleton className="col-span-4 h-[400px] rounded-[2rem]" />
-        <Skeleton className="col-span-3 h-[400px] rounded-[2rem]" />
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Skeleton className="lg:col-span-2 h-[340px] rounded-2xl" />
+        <Skeleton className="h-[340px] rounded-2xl" />
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
-         {/* Placeholder to match the grid visually if needed */}
-         <div className="h-4"></div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Skeleton className="h-[84px] rounded-2xl" />
+        <Skeleton className="h-[84px] rounded-2xl" />
       </div>
     </div>
   )

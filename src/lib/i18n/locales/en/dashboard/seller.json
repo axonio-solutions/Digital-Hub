@@ -1,6 +1,12 @@
 {
   "welcome": "Welcome back, {{name}}. Here's what's happening today.",
   "go_to_market": "Go to Market",
+  "actions": {
+    "browse_requests": "Browse Requests",
+    "view_quotes": "My Quotes",
+    "explore_cta": "Explore the Marketplace",
+    "explore_subtitle": "Find new buyers and grow your sales"
+  },
   "stats": {
     "won": { "label": "Won Deals", "sub": "Deal Success", "desc": "Confirmed marketplace acquisitions" },
     "active": { "label": "Active Bids", "sub": "Open Negotiations", "desc": "Offers currently awaiting review" },
@@ -9,7 +15,11 @@
   },
   "charts": {
     "revenue_velocity": { "title": "Revenue Velocity", "desc": "Earnings trajectory over the last 7 days." },
-    "offer_distribution": { "title": "Offer Distribution", "desc": "Performance breakdown." }
+    "offer_distribution": { "title": "Offer Distribution", "desc": "Performance breakdown of your quotes." },
+    "performance_summary": { "title": "Performance Summary", "desc": "At-a-glance metrics and conversion health." }
+  },
+  "summary": {
+    "quote_volume": "Quote Volume"
   },
   "tables": {
     "open_demands": "Open Demands",
@@ -22,6 +32,7 @@
   "pie": {
     "accepted": "Accepted",
     "pending": "Pending",
-    "missed": "Missed"
+    "missed": "Missed",
+    "total": "Quotes"
   }
 }
