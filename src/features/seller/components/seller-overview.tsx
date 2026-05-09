@@ -24,6 +24,8 @@ interface DashboardData {
 
 // --- Revenue Chart ---
 
+const CHART_GRADIENT_ID = 'rv-gradient'
+
 const RevenueChart = memo(({ chartData, language }: { chartData: Array<{ name: string; revenue: number }>; language: string }) => {
   if (chartData.length === 0) {
     return (
@@ -35,27 +37,48 @@ const RevenueChart = memo(({ chartData, language }: { chartData: Array<{ name: s
   }
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="100%" debounce={50}>
       <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
         <defs>
-          <linearGradient id="rvGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+          <linearGradient id={CHART_GRADIENT_ID} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.25} />
+            <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 700, fill: 'hsl(var(--muted-foreground))' }} dy={8} />
-        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 600, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={(v) => (v > 0 ? `${(v / 1000).toFixed(0)}k` : '0')} dx={-4} />
+        <XAxis
+          dataKey="name"
+          axisLine={false}
+          tickLine={false}
+          tick={{ fontSize: 11, fontWeight: 700, fill: '#94a3b8' }}
+          dy={8}
+        />
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          tick={{ fontSize: 10, fontWeight: 600, fill: '#94a3b8' }}
+          tickFormatter={(v) => (v > 0 ? `${(v / 1000).toFixed(0)}k` : '0')}
+          dx={-4}
+        />
         <Tooltip
           content={({ active, payload }) => {
             if (!active || payload.length === 0) return null
             return (
-              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 shadow-xl">
-                <p className="text-xs font-bold">{payload[0].value?.toLocaleString(language)} DZD</p>
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 shadow-xl">
+                <p className="text-xs font-bold tabular-nums">
+                  {payload[0].value?.toLocaleString(language)} DZD
+                </p>
               </div>
             )
           }}
         />
-        <Area type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={2.5} fill="url(#rvGrad)" animationDuration={1200} />
+        <Area
+          type="monotone"
+          dataKey="revenue"
+          stroke="var(--primary)"
+          strokeWidth={2.5}
+          fill={`url(#${CHART_GRADIENT_ID})`}
+          animationDuration={400}
+        />
       </AreaChart>
     </ResponsiveContainer>
   )
@@ -181,7 +204,7 @@ function StatsSection({ dashboardData, t, language }: { dashboardData: Dashboard
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm p-5 flex flex-col">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm p-5 flex flex-col min-h-[260px] lg:min-h-0">
           <div className="mb-4 shrink-0">
             <h3 className="text-sm font-black uppercase tracking-tight">{t('tables.sales_history')}</h3>
             <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-0.5">{t('tables.recent_deals')}</p>
