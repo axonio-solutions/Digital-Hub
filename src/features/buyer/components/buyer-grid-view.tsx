@@ -21,6 +21,12 @@ interface RequestsGridViewProps {
 }
 
 const GridCard = memo(function GridCard({ req, t, onAction }: { req: any; t: any; onAction?: (action: { type: string, item: any }) => void }) {
+  const handleView = useCallback(() => onAction?.({ type: 'view_request', item: req }), [onAction, req.id])
+  const handleEdit = useCallback(() => onAction?.({ type: 'edit_request', item: req }), [onAction, req.id])
+  const handleClose = useCallback(() => onAction?.({ type: 'close_request', item: req }), [onAction, req.id])
+  const handleReopen = useCallback(() => onAction?.({ type: 'reopen_request', item: req }), [onAction, req.id])
+  const handleDelete = useCallback(() => onAction?.({ type: 'delete_request', item: req }), [onAction, req.id])
+
   return (
     <PartCard
       id={req.id}
@@ -34,11 +40,11 @@ const GridCard = memo(function GridCard({ req, t, onAction }: { req: any; t: any
       status={req.status}
       createdAt={req.createdAt}
       notes={req.notes}
-      onClick={useCallback(() => onAction?.({ type: 'view_request', item: req }), [onAction, req.id])}
-      onEdit={req.status === 'open' ? useCallback(() => onAction?.({ type: 'edit_request', item: req }), [onAction, req.id]) : undefined}
-      onClose={req.status === 'open' ? useCallback(() => onAction?.({ type: 'close_request', item: req }), [onAction, req.id]) : undefined}
-      onReopen={req.status !== 'open' ? useCallback(() => onAction?.({ type: 'reopen_request', item: req }), [onAction, req.id]) : undefined}
-      onDelete={useCallback(() => onAction?.({ type: 'delete_request', item: req }), [onAction, req.id])}
+      onClick={handleView}
+      onEdit={req.status === 'open' ? handleEdit : undefined}
+      onClose={req.status === 'open' ? handleClose : undefined}
+      onReopen={req.status !== 'open' ? handleReopen : undefined}
+      onDelete={handleDelete}
       className="w-full"
     />
   )
