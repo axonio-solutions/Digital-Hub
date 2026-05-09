@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { MessageSquare } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { ArrowUpDown, MessageSquare } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Badge } from '@/components/ui/badge'
 import { QuoteCard } from './quote-card'
+import { cn } from '@/lib/utils'
 
 interface QuoteListProps {
-  quotes: any[]
+  quotes: Array<any>
   isRequestOpen: boolean
   onAccept: (quoteId: string) => void
   onReject: (quoteId: string) => void
@@ -39,63 +39,88 @@ export function QuoteList({
   const [sortBy, setSortBy] = useState<'price' | 'recent'>('recent')
 
   const sortedQuotes = useMemo(() => {
-    if (!quotes) return []
     return [...quotes].sort((a, b) => {
       if (sortBy === 'price') return a.price - b.price
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
   }, [quotes, sortBy])
 
-  const quotesCount = quotes?.length || 0
+  const quotesCount = quotes.length
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-black text-foreground uppercase tracking-tight flex items-center gap-3">
-          {t('quotes.title')}
-          <Badge className="bg-primary/10 text-primary border-none text-sm px-2.5 h-6 font-black rounded-full">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-lg sm:text-xl font-black text-foreground uppercase tracking-tight flex items-center gap-2 sm:gap-3">
+          {t('quotes.title', 'Offers')}
+          <span className="inline-flex items-center justify-center h-6 min-w-[24px] px-2 rounded-full bg-primary/10 text-primary text-xs font-black">
             {quotesCount}
-          </Badge>
+          </span>
         </h2>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{t('quotes.sort_by')}</span>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as 'price' | 'recent')}
-            className="bg-secondary dark:bg-muted border-border text-xs font-bold rounded-lg px-2 py-1.5 focus:ring-1 focus:ring-primary outline-none cursor-pointer tracking-wide"
-          >
-            <option value="recent">{t('quotes.sort_recent')}</option>
-            <option value="price">{t('quotes.sort_price')}</option>
-          </select>
+        {/* Sort — pill toggle on mobile, select on desktop */}
+        <div className="flex items-center gap-1.5">
+          <ArrowUpDown className="size-3.5 text-muted-foreground hidden sm:block" />
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider hidden sm:inline">
+            {t('quotes.sort_by', 'Sort')}
+          </span>
+          <div className="flex items-center rounded-lg bg-muted/60 p-0.5 gap-0.5">
+            <button
+              onClick={() => setSortBy('recent')}
+              className={cn(
+                'px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors',
+                sortBy === 'recent'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {t('quotes.sort_recent', 'Recent')}
+            </button>
+            <button
+              onClick={() => setSortBy('price')}
+              className={cn(
+                'px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors',
+                sortBy === 'price'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {t('quotes.sort_price', 'Price')}
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      {/* Quote cards */}
+      <div className="flex flex-col gap-3 sm:gap-4">
         {quotesCount > 0 ? (
           sortedQuotes.map((quote) => (
             <QuoteCard
-                key={quote.id}
-                quote={quote}
-                isRequestOpen={isRequestOpen}
-                onAccept={onAccept}
-                onReject={onReject}
-                onUnreject={onUnreject}
-                onRevoke={onRevoke}
-                onContact={onContact}
-                isAccepting={isAccepting && processingQuoteId === quote.id}
-                isRejecting={isRejecting && processingQuoteId === quote.id}
-                isUnrejecting={isUnrejecting && processingQuoteId === quote.id}
-                isRevoking={isRevoking && processingQuoteId === quote.id}
+              key={quote.id}
+              quote={quote}
+              isRequestOpen={isRequestOpen}
+              onAccept={onAccept}
+              onReject={onReject}
+              onUnreject={onUnreject}
+              onRevoke={onRevoke}
+              onContact={onContact}
+              isAccepting={isAccepting && processingQuoteId === quote.id}
+              isRejecting={isRejecting && processingQuoteId === quote.id}
+              isUnrejecting={isUnrejecting && processingQuoteId === quote.id}
+              isRevoking={isRevoking && processingQuoteId === quote.id}
             />
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center p-20 bg-white dark:bg-card rounded-3xl border-2 border-dashed border-gray-100 dark:border-gray-800/50">
-            <div className="size-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl flex items-center justify-center mb-4 text-gray-300 dark:text-gray-600">
-              <MessageSquare className="size-8" />
+          <div className="flex flex-col items-center justify-center py-16 px-6 rounded-2xl border-2 border-dashed border-border/50 bg-muted/20">
+            <div className="size-14 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
+              <MessageSquare className="size-7 text-muted-foreground/30" />
             </div>
-            <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('quotes.empty_title')}</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 italic mt-1">{t('quotes.empty_desc')}</p>
+            <h3 className="text-base font-black text-foreground uppercase tracking-tight">
+              {t('quotes.empty_title', 'No offers yet')}
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1.5 text-center max-w-xs">
+              {t('quotes.empty_desc', 'Sellers will respond soon. Check back later or share this request.')}
+            </p>
           </div>
         )}
       </div>
