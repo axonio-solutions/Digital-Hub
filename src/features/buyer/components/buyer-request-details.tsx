@@ -129,8 +129,8 @@ export function BuyerRequestDetails() {
         {request.partName}
       </h1>
 
-      {/* Status + Offer count + Actions */}
-      <div className="flex items-center gap-2 flex-wrap">
+      {/* Status + Offer count */}
+      <div className="flex items-center gap-3">
         <GlowingBadge
           variant={isOpen ? 'success' : 'neutral'}
           pulse={isOpen}
@@ -144,14 +144,33 @@ export function BuyerRequestDetails() {
             {quotesCount} {quotesCount === 1 ? 'offer' : 'offers'}
           </span>
         )}
-        <Button variant="ghost" size="sm" className="h-8 gap-1.5 rounded-lg text-xs font-bold ml-auto" onClick={() => setIsEditDialogOpen(true)}>
-          <Edit className="size-3" /> Edit
+      </div>
+
+      {/* Actions row */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-primary/10 hover:text-primary"
+          onClick={() => setIsEditDialogOpen(true)}
+        >
+          <Edit className="size-3.5" /> Edit
         </Button>
-        <Button variant="ghost" size="sm" className="h-8 gap-1.5 rounded-lg text-xs font-bold" onClick={handleShare}>
-          <Share2 className="size-3" /> Share
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-accent"
+          onClick={handleShare}
+        >
+          <Share2 className="size-3.5" /> Share
         </Button>
-        <Button variant="ghost" size="sm" className="h-8 gap-1.5 rounded-lg text-xs font-bold text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setIsDeleteDialogOpen(true)}>
-          <Trash2 className="size-3" /> Delete
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-destructive/10 hover:text-destructive"
+          onClick={() => setIsDeleteDialogOpen(true)}
+        >
+          <Trash2 className="size-3.5" /> Delete
         </Button>
       </div>
 
@@ -301,6 +320,11 @@ function DetailsSkeleton() {
           <div className="flex items-center gap-3">
             <Skeleton className="h-6 w-16 rounded-full" />
             <Skeleton className="h-4 w-20 rounded-md" />
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-9 w-16 rounded-xl" />
+            <Skeleton className="h-9 w-16 rounded-xl" />
+            <Skeleton className="h-9 w-16 rounded-xl" />
           </div>
           <Skeleton className="h-px w-full" />
           <Skeleton className="h-4 w-full rounded-md" />
