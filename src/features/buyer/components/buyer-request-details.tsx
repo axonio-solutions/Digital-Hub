@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams  } from '@tanstack/react-router'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
   ArrowLeft,
@@ -10,6 +10,7 @@ import {
   MessageCircle,
   Phone,
   Share2,
+  Tag,
   Trash2,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -18,19 +19,17 @@ import {
   useCancelRequest,
   useDeleteRequest,
   useReopenRequest,
-  useRequestDetails
+  useRequestDetails,
 } from '@/features/requests/hooks/use-requests'
 import {
   useAcceptQuote,
   useRejectQuote,
   useRevokeQuote,
-  useUnrejectQuote
+  useUnrejectQuote,
 } from '@/features/quotes/hooks/use-quotes'
-import { ImageSlider } from '@/components/ui/image-slider'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
-
+import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Dialog,
   DialogContent,
@@ -38,10 +37,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog'
 import { EditRequestDialog } from '@/features/requests/components/edit-request-dialog'
 import { QuoteList } from '@/features/quotes/components/quote-list'
-import { cn } from '@/lib/utils'
 
 export function BuyerRequestDetails() {
   const { t } = useTranslation(['requests/details', 'requests/list'])
@@ -58,389 +56,321 @@ export function BuyerRequestDetails() {
   const { mutate: revokeQuote, isPending: isRevoking } = useRevokeQuote()
 
   const [processingQuoteId, setProcessingQuoteId] = useState<string | null>(null)
-
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-
-  const handleCancel = () => {
-    cancelRequest(requestId, {
-      onSuccess: () => {
-        toast.success('Request closed successfully')
-      },
-      onError: (err: any) => {
-        toast.error(err.message || 'Failed to close request')
-      }
-    })
-  }
-
-  const handleReopen = () => {
-    reopenRequest(requestId, {
-      onSuccess: () => {
-        toast.success('Request reopened successfully')
-      },
-      onError: (err: any) => {
-        toast.error(err.message || 'Failed to reopen request')
-      }
-    })
-  }
-
-  const handleDelete = () => {
-    deleteRequest(requestId, {
-      onSuccess: () => {
-        toast.success('Request deleted successfully')
-        navigate({ to: '/dashboard/requests' })
-      },
-      onError: (err: any) => {
-        toast.error(err.message || 'Failed to delete request')
-      }
-    })
-  }
-
-  const handleShare = () => {
-    const url = window.location.href
-    navigator.clipboard.writeText(url)
-    toast.success('Link copied to clipboard')
-  }
-
-  const handleAccept = (quoteId: string) => {
-    setProcessingQuoteId(quoteId)
-    acceptQuote({ quoteId, requestId }, {
-      onSuccess: () => {
-        toast.success('Quote accepted! You can now contact the seller.')
-        setProcessingQuoteId(null)
-      },
-      onError: (err: any) => {
-        toast.error(err.message || 'Failed to accept quote')
-        setProcessingQuoteId(null)
-      }
-    })
-  }
-
-  const handleReject = (quoteId: string) => {
-    setProcessingQuoteId(quoteId)
-    rejectQuote(quoteId, {
-      onSuccess: () => {
-        toast.success('Offer rejected')
-        setProcessingQuoteId(null)
-      },
-      onError: (err: any) => {
-        toast.error(err.message || 'Failed to reject offer')
-        setProcessingQuoteId(null)
-      }
-    })
-  }
-
-  const handleUnreject = (quoteId: string) => {
-    setProcessingQuoteId(quoteId)
-    unrejectQuote(quoteId, {
-      onSuccess: () => {
-        toast.success('Offer restored to pending')
-        setProcessingQuoteId(null)
-      },
-      onError: (err: any) => {
-        toast.error(err.message || 'Failed to restore offer')
-        setProcessingQuoteId(null)
-      }
-    })
-  }
-
-  const handleRevoke = (quoteId: string) => {
-    setProcessingQuoteId(quoteId)
-    revokeQuote({ quoteId, requestId }, {
-      onSuccess: () => {
-        toast.success('Acceptance revoked. The request is now open again.')
-        setProcessingQuoteId(null)
-      },
-      onError: (err: any) => {
-        toast.error(err.message || 'Failed to revoke acceptance')
-        setProcessingQuoteId(null)
-      }
-    })
-  }
-
   const [contactingSeller, setContactingSeller] = useState<any>(null)
+
+  const handleCancel = () => cancelRequest(requestId, { onSuccess: () => toast.success('Request closed successfully'), onError: (err: any) => toast.error(err.message || 'Failed to close request') })
+  const handleReopen = () => reopenRequest(requestId, { onSuccess: () => toast.success('Request reopened successfully'), onError: (err: any) => toast.error(err.message || 'Failed to reopen request') })
+  const handleDelete = () => deleteRequest(requestId, { onSuccess: () => { toast.success('Request deleted successfully'); navigate({ to: '/dashboard/requests' }) }, onError: (err: any) => toast.error(err.message || 'Failed to delete request') })
+  const handleShare = () => { navigator.clipboard.writeText(window.location.href); toast.success('Link copied to clipboard') }
+
+  const handleAccept = (quoteId: string) => { setProcessingQuoteId(quoteId); acceptQuote({ quoteId, requestId }, { onSuccess: () => setProcessingQuoteId(null), onError: (err: any) => { toast.error(err.message || 'Failed to accept quote'); setProcessingQuoteId(null) } }) }
+  const handleReject = (quoteId: string) => { setProcessingQuoteId(quoteId); rejectQuote(quoteId, { onSuccess: () => setProcessingQuoteId(null), onError: (err: any) => { toast.error(err.message || 'Failed to reject offer'); setProcessingQuoteId(null) } }) }
+  const handleUnreject = (quoteId: string) => { setProcessingQuoteId(quoteId); unrejectQuote(quoteId, { onSuccess: () => setProcessingQuoteId(null), onError: (err: any) => { toast.error(err.message || 'Failed to restore offer'); setProcessingQuoteId(null) } }) }
+  const handleRevoke = (quoteId: string) => { setProcessingQuoteId(quoteId); revokeQuote({ quoteId, requestId }, { onSuccess: () => setProcessingQuoteId(null), onError: (err: any) => { toast.error(err.message || 'Failed to revoke acceptance'); setProcessingQuoteId(null) } }) }
 
   const handleContactWhatsApp = (seller: any) => {
     const number = seller?.whatsappNumber || seller?.phoneNumber
-    if (!number) {
-      toast.error('No WhatsApp number available')
-      return
-    }
+    if (!number) { toast.error('No WhatsApp number available'); return }
     const cleanNumber = number.replace(/\D/g, '')
     const message = encodeURIComponent(`Hi ${seller.storeName || seller.name}, I'm interested in your offer for "${request?.partName || 'part'}".`)
     window.open(`https://wa.me/${cleanNumber}?text=${message}`, '_blank')
   }
-
   const handleContactCall = (phoneNumber?: string) => {
-    if (!phoneNumber) {
-      toast.error('Phone number not available')
-      return
-    }
+    if (!phoneNumber) { toast.error('Phone number not available'); return }
     window.location.href = `tel:${phoneNumber}`
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
+  if (isLoading) return <RequestDetailsSkeleton />
+  if (error || !request) return <ErrorState t={t} />
 
-  if (error || !request) {
-    return (
-      <div className="p-8 text-center bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/20">
-        <h2 className="text-xl font-bold text-red-700 dark:text-red-400 mb-2">{t('errors.not_found', { defaultValue: 'Request Not Found' })}</h2>
-        <p className="text-red-600 dark:text-red-300">{t('errors.not_found_desc', { defaultValue: "We couldn't find the request you're looking for." })}</p>
-        <Link to="/dashboard/requests" className="mt-4 inline-block">
-          <Button variant="outline">{t('actions.back_to_list')}</Button>
-        </Link>
-      </div>
-    )
-  }
+  const hasImage = request.imageUrls && request.imageUrls.length > 0
+  const imageUrl = hasImage && request.imageUrls ? request.imageUrls[0] : null
 
   return (
-    <div className="flex-1 flex flex-col gap-4 w-full pb-8">
-        <div className="mb-1">
-          <Link to="/dashboard/requests">
-            <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 font-black uppercase text-[10px] tracking-widest" onClick={() => window.history.back()}>
+    <div className="flex-1 flex flex-col gap-0 w-full pb-20 lg:pb-8">
+
+      {/* HERO IMAGE — full-bleed on mobile */}
+      {hasImage && imageUrl ? (
+        <div className="relative w-full aspect-video lg:aspect-[4/3] lg:rounded-2xl lg:overflow-hidden bg-muted/50">
+          <img src={imageUrl} alt={request.partName} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute top-0 left-0 right-0 p-3 flex items-center justify-between lg:hidden">
+            <Button variant="ghost" size="sm" className="h-9 gap-1.5 rounded-xl bg-black/20 backdrop-blur-sm text-white hover:bg-black/40" onClick={() => window.history.back()}>
+              <ArrowLeft className="size-3.5" /> Back
+            </Button>
+            <Button variant="ghost" size="icon" className="size-9 rounded-xl bg-black/20 backdrop-blur-sm text-white hover:bg-black/40" onClick={handleShare}>
+              <Share2 className="size-4" />
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="relative w-full aspect-video lg:aspect-[4/3] lg:rounded-2xl lg:overflow-hidden bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center border border-border shadow-sm">
+            <Calendar className="w-8 h-8 text-muted-foreground/40" />
+          </div>
+          <div className="absolute top-0 left-0 right-0 p-3 flex items-center justify-between lg:hidden">
+            <Button variant="ghost" size="sm" className="h-9 gap-1.5 rounded-xl bg-black/20 backdrop-blur-sm text-white hover:bg-black/40" onClick={() => window.history.back()}>
+              <ArrowLeft className="size-3.5" /> Back
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Two-column desktop layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-6 px-3 sm:px-4 lg:px-0 lg:pr-0 pt-4 lg:pt-0">
+
+        {/* LEFT — sticky sidebar */}
+        <aside className="lg:col-span-5 flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start lg:pt-4">
+
+          {/* Desktop back button */}
+          <div className="hidden lg:block">
+            <Button variant="ghost" size="sm" className="h-9 gap-1.5 rounded-xl" onClick={() => window.history.back()}>
               <ArrowLeft className="size-3.5" /> {t('actions.back_to_list')}
             </Button>
-          </Link>
-        </div>
+          </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
-
-          <aside className="xl:col-span-4 flex flex-col gap-4">
-            <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden xl:sticky xl:top-24">
-
-              <div className="bg-muted/50 w-full overflow-hidden">
-                <ImageSlider
-                  images={request.imageUrls || []}
-                  aspectRatio="4/3"
-                  className="rounded-none border-none shadow-none"
-                />
-              </div>
-
-              <div className="p-4 sm:p-5">
-                <div className="flex flex-col gap-2 mb-4">
-                  <div className="flex justify-between items-start">
-                    <div className="min-w-0 flex-1">
-                      <h1 className="text-2xl font-black tracking-tight text-foreground leading-tight mb-1 uppercase">
-                        {request.partName}
-                      </h1>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <GlowingBadge
-                        variant={request.status === 'open' ? 'success' : 'neutral'}
-                        pulse={request.status === 'open'}
-                        className="px-2.5 py-1"
-                      >
-                        {request.status}
-                      </GlowingBadge>
-                      <Button variant="ghost" size="icon" className="size-8 rounded-xl hover:bg-accent" onClick={() => setIsEditDialogOpen(true)} title={t('actions.edit_details')}>
-                        <Edit className="size-3.5" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="size-8 rounded-xl hover:bg-accent" onClick={handleShare} title={t('actions.copy_link')}>
-                        <Share2 className="size-3.5" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="size-8 rounded-xl hover:bg-destructive/10 hover:text-destructive" onClick={() => setIsDeleteDialogOpen(true)} title={t('actions.delete_request')}>
-                        <Trash2 className="size-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-widest border-slate-200 py-0.5 h-auto px-1.5 rounded-md">
-                      {request.brand?.brand || request.vehicleBrand}
-                    </Badge>
-                    <Badge variant="secondary" className="bg-slate-50 text-slate-500 font-bold uppercase text-[9px] tracking-widest border-none px-1.5 py-0.5 rounded-md">
-                      {request.category?.name || t('labels.not_specified')}
-                    </Badge>
-                    <Badge variant="secondary" className="bg-blue-50 text-blue-600 font-bold uppercase text-[9px] tracking-widest border-none px-1.5 py-0.5 rounded-md">
-                      {request.brand?.clusterRegion || t('labels.general')}
-                    </Badge>
-                  </div>
-                  <p className="text-xs font-bold text-muted-foreground italic opacity-80 mt-1">
-                    {t('labels.model_year')}: {request.modelYear}
-                  </p>
-                </div>
-
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-[10px] font-black text-primary uppercase tracking-widest mb-3 border-b border-border pb-1 w-fit">{t('labels.description')}</h3>
-                    <p className="text-sm leading-relaxed text-foreground dark:text-gray-300 font-medium">
-                      {request.notes || t('labels.no_notes')}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-50 dark:border-gray-800">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('columns.posted', { ns: 'requests/list' })}</span>
-                      <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                        <Calendar className="size-3.5 text-primary" />
-                        <span>{new Date(request.createdAt).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('columns.status', { ns: 'requests/list' })}</span>
-                      <div className="flex items-center gap-2 text-sm font-bold text-foreground capitalize">
-                        <div className={cn("size-2 rounded-full", request.status === 'open' ? "bg-emerald-500" : "bg-gray-400")} />
-                        <span>{t(`filters.statuses.${request.status}`, { ns: 'requests/list' })}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800/50">
-                  {request.status === 'open' ? (
-                    <Button
-                      onClick={handleCancel}
-                      disabled={isCancelling}
-                      variant="outline"
-                      className="w-full flex items-center justify-center gap-2 h-12 border-slate-200 dark:border-slate-800 font-black uppercase text-xs tracking-widest rounded-2xl"
-                    >
-                      <CheckCircle2 className="size-4 text-green-600" />
-                      {isCancelling ? t('dialogs.cancel.cancelling', { ns: 'requests/list' }) : t('actions.close_request')}
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={handleReopen}
-                      disabled={isReopening}
-                      variant="outline"
-                      className="w-full flex items-center justify-center gap-2 h-12 border-slate-200 dark:border-slate-800 font-black uppercase text-xs tracking-widest rounded-2xl"
-                    >
-                      <Clock className="size-4 text-primary" />
-                      {isReopening ? t('dialogs.reopen.reopening', { ns: 'requests/list' }) : t('actions.reopen_request')}
-                    </Button>
-                  )}
-                  <p className="text-[10px] text-center text-muted-foreground mt-4 font-medium opacity-60 italic">
-                    {request.status === 'open'
-                      ? t('hints.fulfill_desc', { defaultValue: 'Mark this request as fulfilled or no longer needed.' })
-                      : t('hints.closed_desc', { defaultValue: 'This request is currently closed. Reopen to receive more offers.' })}
-                  </p>
-                </div>
-              </div>
+          {/* Header */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                {request.brand?.brand || request.vehicleBrand}
+              </span>
+              <span className="text-muted-foreground/30">·</span>
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                {request.modelYear}
+              </span>
             </div>
-          </aside>
 
-          <EditRequestDialog
-            open={isEditDialogOpen}
-            onOpenChange={setIsEditDialogOpen}
-            request={request}
+            <h1 className="text-2xl lg:text-3xl font-black text-foreground tracking-tight leading-tight uppercase">
+              {request.partName}
+            </h1>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <GlowingBadge
+                variant={request.status === 'open' ? 'success' : 'neutral'}
+                pulse={request.status === 'open'}
+                className="px-2.5 py-1"
+              >
+                {request.status === 'open' ? 'Open' : request.status === 'fulfilled' ? 'Fulfilled' : request.status}
+              </GlowingBadge>
+
+              <Button variant="ghost" size="sm" className="h-8 gap-1.5 rounded-lg text-xs font-bold" onClick={() => setIsEditDialogOpen(true)}>
+                <Edit className="size-3" /> Edit
+              </Button>
+              <Button variant="ghost" size="sm" className="h-8 gap-1.5 rounded-lg text-xs font-bold" onClick={handleShare}>
+                <Share2 className="size-3" /> Copy link
+              </Button>
+              <Button variant="ghost" size="sm" className="h-8 gap-1.5 rounded-lg text-xs font-bold text-destructive hover:text-destructive" onClick={() => setIsDeleteDialogOpen(true)}>
+                <Trash2 className="size-3" /> Delete
+              </Button>
+            </div>
+          </div>
+
+          {/* Metadata card */}
+          <div className="bg-muted/40 rounded-2xl p-4 space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center gap-2">
+                <Calendar className="size-4 text-muted-foreground shrink-0" />
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    {t('columns.posted', { ns: 'requests/list' })}
+                  </p>
+                  <p className="text-sm font-bold text-foreground">
+                    {new Date(request.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="size-4 text-muted-foreground shrink-0" />
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Location</p>
+                  <p className="text-sm font-bold text-foreground">
+                    {request.brand?.clusterRegion || t('labels.general')}
+                  </p>
+                </div>
+              </div>
+              {request.category?.name && (
+                <div className="flex items-center gap-2">
+                  <Tag className="size-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Category</p>
+                    <p className="text-sm font-bold text-foreground capitalize">{request.category.name}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {request.notes && (
+              <>
+                <div className="border-t border-border/50 pt-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Description</p>
+                  <p className="text-sm leading-relaxed text-foreground/80">{request.notes}</p>
+                </div>
+              </>
+            )}
+
+            {/* Inline Close/Reopen for desktop */}
+            <div className="hidden lg:block pt-2 border-t border-border/50">
+              {request.status === 'open' ? (
+                <Button onClick={handleCancel} disabled={isCancelling} variant="outline" className="w-full h-10 rounded-xl gap-2 text-sm font-bold">
+                  <CheckCircle2 className="size-4 text-green-600" />
+                  {isCancelling ? 'Closing...' : 'Close Request'}
+                </Button>
+              ) : (
+                <Button onClick={handleReopen} disabled={isReopening} variant="outline" className="w-full h-10 rounded-xl gap-2 text-sm font-bold">
+                  <Clock className="size-4 text-primary" />
+                  {isReopening ? 'Reopening...' : 'Reopen Request'}
+                </Button>
+              )}
+            </div>
+          </div>
+        </aside>
+
+        {/* RIGHT — quotes */}
+        <section className="lg:col-span-7 py-4 lg:py-0 px-3 sm:px-4 lg:px-0">
+          <QuoteList
+            quotes={request.quotes}
+            isRequestOpen={request.status === 'open'}
+            onAccept={handleAccept}
+            onReject={handleReject}
+            onUnreject={handleUnreject}
+            onRevoke={handleRevoke}
+            onContact={setContactingSeller}
+            isAccepting={isAccepting}
+            isRejecting={isRejecting}
+            isUnrejecting={isUnrejecting}
+            isRevoking={isRevoking}
+            processingQuoteId={processingQuoteId}
           />
+        </section>
+      </div>
 
-          <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-            <DialogContent className="rounded-3xl border-none shadow-2xl p-8 bg-white dark:bg-slate-950">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-slate-900 dark:text-white">
-                  {t('dialogs.delete.title')}
-                </DialogTitle>
-                <DialogDescription className="text-sm font-medium text-slate-500 italic mt-2 leading-relaxed">
-                  {t('dialogs.delete.description', { ns: 'requests/list' })}
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className="mt-8 gap-3 sm:justify-end">
-                <Button
-                  variant="outline"
-                  onClick={() => setIsDeleteDialogOpen(false)}
-                  className="h-12 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest border-slate-200 dark:border-slate-800"
-                >
-                  {t('dialogs.cancel')}
-                </Button>
-                <Button
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="h-12 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest bg-red-600 hover:bg-red-700 text-white"
-                >
-                  {isDeleting ? t('dialogs.delete.deleting', { ns: 'requests/list' }) : t('dialogs.delete.confirm')}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          <section className="xl:col-span-8 flex flex-col gap-4">
-            <QuoteList
-              quotes={request.quotes}
-              isRequestOpen={request.status === 'open'}
-              onAccept={handleAccept}
-              onReject={handleReject}
-              onUnreject={handleUnreject}
-              onRevoke={handleRevoke}
-              onContact={setContactingSeller}
-              isAccepting={isAccepting}
-              isRejecting={isRejecting}
-              isUnrejecting={isUnrejecting}
-              isRevoking={isRevoking}
-              processingQuoteId={processingQuoteId}
-            />
-          </section>
+      {/* Fixed bottom CTA — mobile only */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border p-3 lg:hidden" style={{ paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))' }}>
+        <div className="flex items-center gap-2">
+          {request.status === 'open' ? (
+            <>
+              <Button onClick={() => setIsEditDialogOpen(true)} variant="outline" className="h-12 rounded-xl gap-2 flex-1 text-sm font-bold">
+                <Edit className="size-4" /> Edit
+              </Button>
+              <Button onClick={handleCancel} disabled={isCancelling} className="h-12 rounded-xl gap-2 flex-1 text-sm font-bold">
+                <CheckCircle2 className="size-4" />
+                {isCancelling ? 'Closing...' : 'Close'}
+              </Button>
+            </>
+          ) : (
+            <Button onClick={handleReopen} disabled={isReopening} className="h-12 rounded-xl gap-2 w-full text-sm font-bold">
+              <Clock className="size-4" />
+              {isReopening ? 'Reopening...' : 'Reopen Request'}
+            </Button>
+          )}
         </div>
+      </div>
 
-        <Dialog open={!!contactingSeller} onOpenChange={(open) => !open && setContactingSeller(null)}>
-          <DialogContent className="sm:max-w-[425px] rounded-3xl border-none shadow-2xl p-0 overflow-hidden bg-white dark:bg-slate-950">
-            <div className="p-8 pb-4">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-slate-900 dark:text-white">
-                  {t('contact.title')}
-                </DialogTitle>
-                <DialogDescription className="text-sm font-medium text-slate-500 italic mt-1 leading-relaxed">
-                  {t('contact.connect_desc', { name: contactingSeller?.storeName || contactingSeller?.name, defaultValue: `Connect with ${contactingSeller?.storeName || contactingSeller?.name} to finalize your purchase.` })}
-                </DialogDescription>
-              </DialogHeader>
-            </div>
-
-            <div className="p-8 pt-0 space-y-6">
-              <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-5 border border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-4 mb-3">
-                  <div className="size-12 rounded-xl bg-primary flex items-center justify-center text-white font-black text-lg">
-                    {(contactingSeller?.storeName || contactingSeller?.name)?.[0]?.toUpperCase()}
-                  </div>
-                  <div>
-                    <h4 className="font-black uppercase text-slate-900 dark:text-white text-sm tracking-tight">{contactingSeller?.storeName || contactingSeller?.name}</h4>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 mt-0.5">
-                      <MapPin className="size-3 text-primary" />
-                      {contactingSeller?.wilaya || t('contact.default_location', { defaultValue: 'Algeria' })}
-                    </p>
-                  </div>
+      {/* Dialogs */}
+      <EditRequestDialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen} request={request} />
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="rounded-2xl max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-black">{t('dialogs.delete.title')}</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              {t('dialogs.delete.description', { ns: 'requests/list' })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:justify-end">
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} className="h-10 rounded-xl text-sm">Cancel</Button>
+            <Button onClick={handleDelete} disabled={isDeleting} className="h-10 rounded-xl text-sm bg-destructive hover:bg-destructive/90">
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={!!contactingSeller} onOpenChange={(open) => !open && setContactingSeller(null)}>
+        <DialogContent className="rounded-2xl max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-black">{t('contact.title')}</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              {t('contact.connect_desc', { name: contactingSeller?.storeName || contactingSeller?.name })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="bg-muted/40 rounded-xl p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="size-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-black text-sm">
+                  {(contactingSeller?.storeName || contactingSeller?.name)?.[0]?.toUpperCase()}
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span className="opacity-60 uppercase tracking-widest text-[9px]">{t('contact.phone_label', { defaultValue: 'Phone' })}</span>
-                    <span className="text-slate-900 dark:text-white font-black">{contactingSeller?.phoneNumber || t('contact.not_listed', { defaultValue: 'Not listed' })}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-                    <span className="opacity-60 uppercase tracking-widest text-[9px]">{t('contact.store_address', { defaultValue: 'Store Address' })}</span>
-                    <span className="text-slate-900 dark:text-white font-black truncate max-w-[180px]">{contactingSeller?.address || t('contact.main_store', { defaultValue: 'Main Store' })}</span>
-                  </div>
+                <div>
+                  <p className="font-black text-sm">{contactingSeller?.storeName || contactingSeller?.name}</p>
+                  <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                    <MapPin className="size-3" />{contactingSeller?.wilaya || 'Algeria'}
+                  </p>
                 </div>
               </div>
-
-              <div className="grid grid-cols-1 gap-3">
-                <Button
-                  onClick={() => handleContactWhatsApp(contactingSeller)}
-                  className="bg-[#25D366] hover:bg-[#128C7E] text-white font-black uppercase text-xs tracking-widest h-14 rounded-2xl flex items-center justify-center gap-3"
-                >
-                  <MessageCircle className="size-5 fill-current" />
-                  {t('contact.whatsapp')}
-                </Button>
-
-                <Button
-                  onClick={() => handleContactCall(contactingSeller?.phoneNumber)}
-                  variant="outline"
-                  className="border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-black uppercase text-xs tracking-widest h-14 rounded-2xl flex items-center justify-center gap-3"
-                >
-                  <Phone className="size-5" />
-                  {t('contact.call')}
-                </Button>
-              </div>
-
-              <p className="text-[10px] text-center text-slate-400 font-bold uppercase tracking-widest opacity-60">
-                {t('contact.hint')}
-              </p>
             </div>
-          </DialogContent>
-        </Dialog>
+            <Button onClick={() => handleContactWhatsApp(contactingSeller)} className="h-12 rounded-xl gap-2 w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold">
+              <MessageCircle className="size-5 fill-current" /> WhatsApp
+            </Button>
+            <Button onClick={() => handleContactCall(contactingSeller?.phoneNumber)} variant="outline" className="h-12 rounded-xl gap-2 w-full font-bold">
+              <Phone className="size-4" /> Call
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
 
+function RequestDetailsSkeleton() {
+  return (
+    <div className="flex-1 flex flex-col gap-0 w-full pb-20 lg:pb-8">
+      <div className="relative w-full aspect-video lg:aspect-[4/3] lg:rounded-2xl lg:overflow-hidden bg-muted animate-pulse" />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-6 px-3 sm:px-4 lg:px-0 pt-4">
+        <aside className="lg:col-span-5 flex flex-col gap-4">
+          <Skeleton className="h-9 w-24 rounded-xl hidden lg:block" />
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-40 rounded-md" />
+            <Skeleton className="h-8 w-72 rounded-lg" />
+            <div className="flex gap-2">
+              <Skeleton className="h-7 w-20 rounded-full" />
+              <Skeleton className="h-7 w-16 rounded-lg" />
+              <Skeleton className="h-7 w-20 rounded-lg" />
+            </div>
+          </div>
+          <Skeleton className="h-48 w-full rounded-2xl" />
+        </aside>
+        <section className="lg:col-span-7 py-4 lg:py-0 px-3 sm:px-4 lg:px-0 space-y-4">
+          <div className="flex justify-between">
+            <Skeleton className="h-7 w-32 rounded-lg" />
+            <Skeleton className="h-7 w-24 rounded-lg" />
+          </div>
+          <Skeleton className="h-32 w-full rounded-2xl" />
+          <Skeleton className="h-32 w-full rounded-2xl" />
+          <Skeleton className="h-32 w-full rounded-2xl" />
+        </section>
+      </div>
+    </div>
+  )
+}
+
+function ErrorState({ t }: { t: any }) {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-4 py-20 px-4">
+      <div className="size-20 rounded-[2rem] bg-destructive/10 flex items-center justify-center">
+        <Calendar className="size-10 text-destructive/50" />
+      </div>
+      <div className="text-center space-y-2">
+        <h2 className="text-lg font-black tracking-tight">
+          {t('errors.not_found', { defaultValue: 'Request Not Found' })}
+        </h2>
+        <p className="text-sm text-muted-foreground max-w-xs">
+          {t('errors.not_found_desc', { defaultValue: "We couldn't find the request you're looking for." })}
+        </p>
+      </div>
+      <Link to="/dashboard/requests">
+        <Button variant="outline" size="sm" className="h-10 rounded-xl">{t('actions.back_to_list')}</Button>
+      </Link>
     </div>
   )
 }
