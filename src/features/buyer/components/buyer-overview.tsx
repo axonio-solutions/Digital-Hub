@@ -1,9 +1,10 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { useCallback, useMemo, useState } from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { ArrowRight, Car, CheckCircle2, MessageSquare, Plus, Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { PartCard } from '@/components/ui/part-card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -11,6 +12,7 @@ import { RequestWizard } from '@/features/requests/components/request-wizard-new
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useBuyerRequests } from '@/features/buyer/hooks/use-buyer'
+import { useCancelRequest, useDeleteRequest, useReopenRequest } from '@/features/requests/hooks/use-requests'
 import { cn } from '@/lib/utils'
 
 export function BuyerOverview() {
@@ -18,8 +20,33 @@ export function BuyerOverview() {
   const { data: user } = useAuth()
   const buyerId = user?.id || ''
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
+  const [editRequestData, setEditRequestData] = useState<any>(null)
+  const navigate = useNavigate()
 
   const { data: requests = [], isLoading } = useBuyerRequests(buyerId)
+  const { mutate: cancelRequest } = useCancelRequest()
+  const { mutate: deleteRequest } = useDeleteRequest()
+  const { mutate: reopenRequest } = useReopenRequest()
+
+  const handleAction = useCallback((action: { type: string; item: any }) => {
+    switch (action.type) {
+      case 'view_request':
+        navigate({ to: '/dashboard/requests/$requestId', params: { requestId: action.item.id } })
+        break
+      case 'edit_request':
+        setEditRequestData(action.item)
+        break
+      case 'close_request':
+        cancelRequest(action.item.id, { onSuccess: () => toast.success('Request closed'), onError: (err: any) => toast.error(err.message) })
+        break
+      case 'reopen_request':
+        reopenRequest(action.item.id, { onSuccess: () => toast.success('Request reopened'), onError: (err: any) => toast.error(err.message) })
+        break
+      case 'delete_request':
+        deleteRequest(action.item.id, { onSuccess: () => toast.success('Request deleted'), onError: (err: any) => toast.error(err.message) })
+        break
+    }
+  }, [navigate, cancelRequest, deleteRequest, reopenRequest])
 
   const { activeRequests, fulfilledRequests, totalQuotes, recentDemands } = useMemo(() => {
     const active = requests.filter((r: any) => r.status === 'open')
@@ -124,9 +151,14 @@ export function BuyerOverview() {
                   region={req.brand?.clusterRegion}
                   imageUrls={req.imageUrls}
                   quotesCount={req.quotes?.length}
+                  status={req.status}
                   createdAt={req.createdAt}
                   notes={req.notes}
-                  actionHref="/dashboard/requests/$requestId"
+                  onClick={() => handleAction({ type: 'view_request', item: req })}
+                  onEdit={req.status === 'open' ? () => handleAction({ type: 'edit_request', item: req }) : undefined}
+                  onClose={req.status === 'open' ? () => handleAction({ type: 'close_request', item: req }) : undefined}
+                  onReopen={req.status !== 'open' ? () => handleAction({ type: 'reopen_request', item: req }) : undefined}
+                  onDelete={() => handleAction({ type: 'delete_request', item: req })}
                   className="w-full"
                 />
               ))}
@@ -162,6 +194,18 @@ export function BuyerOverview() {
           </Dialog>
         </div>
       )}
+
+      <Dialog open={!!editRequestData} onOpenChange={(open) => !open && setEditRequestData(null)}>
+        <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
+          <div className="h-[600px] max-h-[85dvh]">
+            <RequestWizard
+              initialData={editRequestData}
+              onSuccess={() => setEditRequestData(null)}
+              onCancel={() => setEditRequestData(null)}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
