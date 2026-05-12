@@ -1,5 +1,5 @@
 import { fetchGlobalMetrics } from '@/data-access/admin'
-import { fetchAllUsers, toggleUserBan } from '@/data-access/users'
+import { fetchAllUsers, fetchUserDetailsQuery, toggleUserBan } from '@/data-access/users'
 import {
   fetchAdvancedSystemMetrics,
   fetchAdminDashboardStats,
@@ -31,6 +31,20 @@ import { CategoryInput, BrandInput } from '@/features/taxonomy/validations/taxon
 /**
  * Axis Layer 4: Use Cases for Admin
  */
+
+const analyticsCache: Record<string, { data: any; timestamp: number }> = {}
+const ANALYTICS_CACHE_TTL = 60 * 1000 // 60 seconds
+
+async function getCachedAnalytics(key: string, fetcher: () => Promise<any>) {
+  const now = Date.now()
+  const cached = analyticsCache[key]
+  if (cached && now - cached.timestamp < ANALYTICS_CACHE_TTL) {
+    return cached.data
+  }
+  const data = await fetcher()
+  analyticsCache[key] = { data, timestamp: now }
+  return data
+}
 
 export async function getAdminMetricsUseCase() {
   return await fetchGlobalMetrics()
@@ -98,51 +112,55 @@ export async function deleteBrandUseCase(id: string) {
 }
 
 export async function getBuyerAnalyticsUseCase() {
-  const [
-    metrics,
-    distribution,
-    demandByCategory,
-    demandByOrigin,
-    regionalDemand,
-    requestVolume,
-    topBuyers,
-  ] = await Promise.all([
-    fetchBuyerMetrics(),
-    fetchUserDistributionByWilaya('buyer'),
-    fetchDemandByCategory(),
-    fetchDemandByOrigin(),
-    fetchRegionalDemand(),
-    fetchRequestVolume(),
-    fetchTopBuyers(),
-  ])
+  return await getCachedAnalytics('buyer', async () => {
+    const [
+      metrics,
+      distribution,
+      demandByCategory,
+      demandByOrigin,
+      regionalDemand,
+      requestVolume,
+      topBuyers,
+    ] = await Promise.all([
+      fetchBuyerMetrics(),
+      fetchUserDistributionByWilaya('buyer'),
+      fetchDemandByCategory(),
+      fetchDemandByOrigin(),
+      fetchRegionalDemand(),
+      fetchRequestVolume(),
+      fetchTopBuyers(),
+    ])
 
-  return {
-    metrics,
-    distribution,
-    demandByCategory,
-    demandByOrigin,
-    regionalDemand,
-    requestVolume,
-    topBuyers,
-  }
+    return {
+      metrics,
+      distribution,
+      demandByCategory,
+      demandByOrigin,
+      regionalDemand,
+      requestVolume,
+      topBuyers,
+    }
+  })
 }
 
 export async function getSellerAnalyticsUseCase() {
-  const [metrics, distribution, segments, demandByCategory, quoteVolume] = await Promise.all([
-    fetchSellerMetrics(),
-    fetchUserDistributionByWilaya('seller'),
-    fetchMerchantSegmentation(),
-    fetchSellerCategoryFocus(),
-    fetchQuoteVolume()
-  ])
-  
-  return { 
-    metrics, 
-    distribution, 
-    segments, 
-    demandByCategory,
-    requestVolume: quoteVolume 
-  }
+  return await getCachedAnalytics('seller', async () => {
+    const [metrics, distribution, segments, demandByCategory, quoteVolume] = await Promise.all([
+      fetchSellerMetrics(),
+      fetchUserDistributionByWilaya('seller'),
+      fetchMerchantSegmentation(),
+      fetchSellerCategoryFocus(),
+      fetchQuoteVolume()
+    ])
+    
+    return { 
+      metrics, 
+      distribution, 
+      segments, 
+      demandByCategory,
+      requestVolume: quoteVolume 
+    }
+  })
 }
 
 export async function getAdvancedSystemMetricsUseCase() {
@@ -178,4 +196,8 @@ export async function activateSellerUseCase(userId: string) {
   })
 
   return { success: true }
+}
+
+export async function getUserDetailsUseCase(userId: string) {
+  return await fetchUserDetailsQuery(userId)
 }

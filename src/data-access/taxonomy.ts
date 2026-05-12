@@ -1,6 +1,6 @@
 import { db } from '@/db'
 import { partCategories, vehicleBrands, sparePartRequests } from '@/db/schema'
-import { desc, eq, getTableColumns, count } from 'drizzle-orm'
+import { desc, eq, count } from 'drizzle-orm'
 import { CategoryInput, BrandInput } from '@/features/taxonomy/validations/taxonomy'
 
 export async function getPartCategories() {
@@ -8,6 +8,8 @@ export async function getPartCategories() {
     .select({
       id: partCategories.id,
       name: partCategories.name,
+      description: partCategories.description,
+      imageUrl: partCategories.imageUrl,
       status: partCategories.status,
       createdAt: partCategories.createdAt,
       updatedAt: partCategories.updatedAt,
@@ -18,6 +20,8 @@ export async function getPartCategories() {
     .groupBy(
       partCategories.id,
       partCategories.name,
+      partCategories.description,
+      partCategories.imageUrl,
       partCategories.status,
       partCategories.createdAt,
       partCategories.updatedAt
@@ -30,6 +34,7 @@ export async function getVehicleBrands() {
     .select({
       id: vehicleBrands.id,
       brand: vehicleBrands.brand,
+      imageUrl: vehicleBrands.imageUrl,
       clusterOrigin: vehicleBrands.clusterOrigin,
       clusterRegion: vehicleBrands.clusterRegion,
       status: vehicleBrands.status,
@@ -42,6 +47,7 @@ export async function getVehicleBrands() {
     .groupBy(
       vehicleBrands.id,
       vehicleBrands.brand,
+      vehicleBrands.imageUrl,
       vehicleBrands.clusterOrigin,
       vehicleBrands.clusterRegion,
       vehicleBrands.status,

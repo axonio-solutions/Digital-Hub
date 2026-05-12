@@ -115,9 +115,10 @@ export async function fetchOpenRequestsQuery(options?: {
     .offset(offset);
 }
 
-export async function fetchAllRequestsQuery() {
+export async function fetchAllRequestsQuery(limit?: number) {
   return await db.query.sparePartRequests.findMany({
     orderBy: [desc(sparePartRequests.createdAt)],
+    limit,
     with: {
       category: true,
       brand: true,

@@ -1,7 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 import type { User } from '@/lib/auth';
 import { authMiddleware, adminMiddleware } from '@/features/auth/guards/auth'
-import { getAllUsersUseCase, getAdminMetricsUseCase, getBuyerAnalyticsUseCase, getSellerAnalyticsUseCase, getAdvancedSystemMetricsUseCase, getAdminDashboardStatsUseCase, toggleUserBanUseCase, activateSellerUseCase, getTaxonomyUseCase, createCategoryUseCase, updateCategoryUseCase, deleteCategoryUseCase, createBrandUseCase, updateBrandUseCase, deleteBrandUseCase } from '@/use-cases/admin/index'
+import { getAllUsersUseCase, getAdminMetricsUseCase, getBuyerAnalyticsUseCase, getSellerAnalyticsUseCase, getAdvancedSystemMetricsUseCase, getAdminDashboardStatsUseCase, toggleUserBanUseCase, activateSellerUseCase, getTaxonomyUseCase, createCategoryUseCase, updateCategoryUseCase, deleteCategoryUseCase, createBrandUseCase, updateBrandUseCase, deleteBrandUseCase, getUserDetailsUseCase } from '@/use-cases/admin/index'
+import { getAllRequestsUseCase } from '@/use-cases/requests/index'
 
 /**
  * Axis Layer 3: Admin Actions
@@ -47,6 +48,12 @@ export const getAdminDashboardStatsServerFn = createServerFn({
     return await getAdminDashboardStatsUseCase()
   })
 
+export const getRecentActivityServerFn = createServerFn({ method: 'GET' })
+  .middleware([adminMiddleware])
+  .handler(async () => {
+    return await getAllRequestsUseCase(10)
+  })
+
 export const toggleUserBanServerFn = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
   .inputValidator((data: { userId: string; isBanned: boolean }) => data)
@@ -80,8 +87,7 @@ export const updateCategoryServerFn = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
   .inputValidator((data: any) => data)
   .handler(async ({ data }) => {
-    const payload = data.data || data
-    const res = await updateCategoryUseCase(payload.id, payload.data)
+    const res = await updateCategoryUseCase(data.id, data.data)
     return { success: true, data: res }
   })
 
@@ -106,8 +112,7 @@ export const updateBrandServerFn = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
   .inputValidator((data: any) => data)
   .handler(async ({ data }) => {
-    const payload = data.data || data
-    const res = await updateBrandUseCase(payload.id, payload.data)
+    const res = await updateBrandUseCase(data.id, data.data)
     return { success: true, data: res }
   })
 
@@ -118,4 +123,11 @@ export const deleteBrandServerFn = createServerFn({ method: 'POST' })
     const id = typeof data === 'string' ? data : data.data
     const res = await deleteBrandUseCase(id)
     return { success: true, data: res }
+  })
+
+export const getUserDetailsServerFn = createServerFn({ method: 'GET' })
+  .middleware([adminMiddleware])
+  .inputValidator((data: { userId: string }) => data)
+  .handler(async ({ data }) => {
+    return await getUserDetailsUseCase(data.userId)
   })

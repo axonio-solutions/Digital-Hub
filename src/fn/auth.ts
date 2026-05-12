@@ -1,7 +1,10 @@
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
+import { eq } from 'drizzle-orm'
 import type { User } from '@/lib/auth'
 import { auth } from '@/lib/auth'
+import { db } from '@/db'
+import { users } from '@/db/schema/auth'
 import { loginSchema, registerSchema } from '@/types/auth-schemas'
 import { updateUserMetadata } from '@/data-access/users'
 import { updateSellerSpecialties } from '@/data-access/vendors'
@@ -20,9 +23,18 @@ export const getUser = createServerFn({ method: 'GET' }).handler(async () => {
     return null
   }
 
-  // Explicitly cast to include additional fields from our schema
+  // Fetch fresh user data from DB to bypass better-auth's cookieCache
+  // The session proves identity; the DB provides current profile data
+  const [freshUser] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, data.user.id))
+
+  if (!freshUser) return null
+
   return {
     ...data.user,
+    ...freshUser,
   } as User
 })
 

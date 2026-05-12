@@ -24,8 +24,12 @@ export async function fetchUserDistributionByWilaya(role: 'buyer' | 'seller') {
 
 /**
  * Fetch role-specific metrics for Buyers.
+ * Uses 30-day window for expensive aggregations to keep response fast.
  */
 export async function fetchBuyerMetrics() {
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
   const [
     totalBuyersResult,
     totalRequestsResult,
@@ -34,16 +38,18 @@ export async function fetchBuyerMetrics() {
     responseTimeResult,
   ] = await Promise.all([
     db.select({ value: count() }).from(users).where(eq(users.role, 'buyer')),
-    db.select({ value: count() }).from(sparePartRequests),
-    db.select({ value: count() }).from(quotes),
+    db.select({ value: count() }).from(sparePartRequests).where(gte(sparePartRequests.createdAt, thirtyDaysAgo)),
+    db.select({ value: count() }).from(quotes).where(gte(quotes.createdAt, thirtyDaysAgo)),
     db.execute(sql`
       SELECT COUNT(DISTINCT ${quotes.requestId}) as count FROM ${quotes}
+      WHERE ${quotes.createdAt} >= ${thirtyDaysAgo.toISOString()}
     `),
     db.execute(sql`
-      SELECT AVG(EXTRACT(EPOCH FROM (q.created_at - r.created_at))) / 60 as avg_minutes
+      SELECT COALESCE(AVG(EXTRACT(EPOCH FROM (q.created_at - r.created_at))) / 60, 0) as avg_minutes
       FROM ${quotes} q
       JOIN ${sparePartRequests} r ON q.request_id = r.id
       WHERE q.created_at = (SELECT MIN(created_at) FROM ${quotes} WHERE request_id = r.id)
+        AND q.created_at >= ${thirtyDaysAgo.toISOString()}
     `),
   ])
 
@@ -312,22 +318,22 @@ export async function fetchAdvancedSystemMetrics() {
 }
 
 /**
- * Fetch daily request volume for the last 30 days.
+ * Fetch daily request volume for the last 30 days only.
  */
 export async function fetchRequestVolume() {
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
   const result = await db
     .select({
       date: sql<string>`to_char(${sparePartRequests.createdAt}, 'YYYY-MM-DD')`,
       count: count(),
     })
     .from(sparePartRequests)
+    .where(gte(sparePartRequests.createdAt, thirtyDaysAgo))
     .groupBy(sql`to_char(${sparePartRequests.createdAt}, 'YYYY-MM-DD')`)
     .orderBy(sql`to_char(${sparePartRequests.createdAt}, 'YYYY-MM-DD')`)
-
-  console.log('fetchRequestVolume query count:', result.length)
-  if (result.length > 0) {
-    console.log('fetchRequestVolume first node:', result[0])
-  }
+    .limit(30)
 
   return result.map((r) => ({
     date: r.date,

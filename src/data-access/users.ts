@@ -75,3 +75,21 @@ export async function deactivateUserQuery(userId: string) {
 export async function deleteUserQuery(userId: string) {
   return await db.delete(users).where(eq(users.id, userId))
 }
+
+export async function fetchUserDetailsQuery(userId: string) {
+  return await db.query.users.findFirst({
+    where: eq(users.id, userId),
+    with: {
+      requests: {
+        orderBy: (requests, { desc }) => [desc(requests.createdAt)],
+        with: { category: true },
+      },
+      quotes: {
+        orderBy: (q, { desc }) => [desc(q.createdAt)],
+        with: { request: { columns: { partName: true } } },
+      },
+      sellerBrands: { with: { brand: { columns: { id: true, brand: true } } } },
+      sellerCategories: { with: { category: { columns: { id: true, name: true } } } },
+    },
+  })
+}

@@ -83,9 +83,9 @@ export async function getOpenRequestsUseCase(options?: {
   }
 }
 
-export async function getAllRequestsUseCase() {
+export async function getAllRequestsUseCase(limit?: number) {
   try {
-    const requests = await fetchAllRequestsQuery()
+    const requests = await fetchAllRequestsQuery(limit)
     return { success: true, data: requests }
   } catch (error) {
     console.error('Error fetching all requests:', error)
