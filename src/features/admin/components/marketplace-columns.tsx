@@ -1,14 +1,12 @@
 "use client";
 
-import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatRelativeTime } from "@/lib/utils/date-format";
 import { Badge } from "@/components/ui/badge";
 import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { z } from "zod";
 
-// Schema adapted for Marketplace Activity
 export const marketplaceActivitySchema = z.object({
   id: z.string(),
   partName: z.string(),
@@ -23,57 +21,41 @@ export const marketplaceActivitySchema = z.object({
 
 export type MarketplaceActivity = z.infer<typeof marketplaceActivitySchema>;
 
-
-// We'll pass the TableCellViewer as a component or keep it in the main file for now 
-// but for true isolation we should define columns here.
-
 export const marketplaceColumns = (
   t: (key: string) => string,
-  TableCellViewer: React.ComponentType<{ item: MarketplaceActivity }>,
-  showSelection: boolean = true
-): ColumnDef<MarketplaceActivity>[] => {
-  const columns: ColumnDef<MarketplaceActivity>[] = [];
-
-  if (showSelection) {
-    columns.push({
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false
-    });
-  }
-
-  columns.push(
+): ColumnDef<MarketplaceActivity>[] => [
   {
     accessorKey: "partName",
     header: t('table.columns.part_name'),
     cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />;
+      const mainImage = row.original.image
+      return (
+        <div className="flex items-center gap-3">
+          <Avatar className="size-10 border border-slate-200 dark:border-slate-800 shadow-sm rounded-lg overflow-hidden shrink-0">
+            <AvatarImage src={mainImage} className="object-cover" />
+            <AvatarFallback className="bg-blue-100 text-primary dark:bg-blue-900/30 dark:text-blue-300 font-bold text-xs rounded-none">
+              {row.original.partName?.substring(0, 2).toUpperCase() || 'P'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col min-w-0">
+            <span className="font-bold text-sm text-foreground truncate max-w-[180px]">
+              {row.original.partName}
+            </span>
+            <span className="text-[10px] text-muted-foreground font-medium truncate max-w-[180px]">
+              ID: {row.original.id?.substring(0, 12)}
+            </span>
+          </div>
+        </div>
+      )
     },
-    enableHiding: false
+    enableHiding: false,
   },
   {
     accessorKey: "brand",
     header: t('table.vehicle'),
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
-        <Badge variant="outline">
+        <Badge variant="outline" className="text-[10px]">
           {row.original.brand}
         </Badge>
         <span className="text-muted-foreground text-xs">{row.original.year}</span>
@@ -89,19 +71,18 @@ export const marketplaceColumns = (
         <GlowingBadge 
           variant={status === "fulfilled" ? "success" : "info"} 
           pulse={status === "open"}
-          className="capitalize"
+          className="capitalize text-[10px]"
         >
           {t(`table.status.${status}`)}
         </GlowingBadge>
       );
-
     }
   },
   {
     accessorKey: "buyer",
     header: t('table.buyer'),
     cell: ({ row }) => (
-      <span className="text-sm font-medium">
+      <span className="text-sm font-medium text-foreground">
         {row.original.buyer}
       </span>
     )
@@ -110,7 +91,7 @@ export const marketplaceColumns = (
     accessorKey: "offers",
     header: t('metrics.avg_offers'),
     cell: ({ row }) => (
-      <div className="text-center w-12 font-mono">
+      <div className="text-center w-12 font-mono text-sm font-bold tabular-nums">
         {row.original.offers}
       </div>
     )
@@ -124,8 +105,4 @@ export const marketplaceColumns = (
       </div>
     )
   }
-  );
-
-  return columns;
-};
-
+];

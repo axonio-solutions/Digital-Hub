@@ -1,278 +1,215 @@
+'use client'
+
+import { useMemo, useState } from 'react'
 import {
   Store,
   TrendingUp,
   Timer,
-  ShieldCheck,
+  Users,
+  BarChart3,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { AlgeriaMap } from './algeria-map'
 import { useSellerAnalytics } from '@/features/admin/hooks/use-analytics'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, CardAction } from '@/components/ui/card'
 import {
-  PieChart,
-  Pie,
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
   BarChart,
   Bar,
   XAxis,
   Cell,
-  LabelList
 } from 'recharts'
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartStyle } from '@/components/ui/chart'
-import { Badge } from '@/components/ui/badge'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useMemo, useState } from 'react'
+import { cn } from '@/lib/utils'
 
-const CHART_COLORS = [
-  '#10b981', // Emerald
-  '#3b82f6', // Blue
-  '#f59e0b', // Amber
-  '#ef4444', // Red
-  '#8b5cf6', // Violet
-  '#06b6d4', // Cyan
-]
+const CHART_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
 
 export function SellerAnalytics() {
   const { t } = useTranslation('dashboard/admin')
   const { data: analytics, isLoading } = useSellerAnalytics()
 
-  const id = 'category-focus-chart'
   const categoryDistribution = useMemo(() => {
-    return [...(analytics?.demandByCategory || [])].sort((a, b) => a.count - b.count)
+    return [...(analytics?.demandByCategory || [])].sort((a: any, b: any) => b.count - a.count).slice(0, 5)
   }, [analytics?.demandByCategory])
-
-  const totalMerchants = useMemo(() => {
-    return categoryDistribution.reduce((acc: number, curr: any) => acc + curr.count, 0)
-  }, [categoryDistribution])
-
-  const BASE_RADIUS = 70;
-  const SIZE_INCREMENT = 12;
-
-  const chartConfig = useMemo(() => {
-    const config: ChartConfig = {}
-    categoryDistribution.forEach((item: any, i: number) => {
-      config[item.label] = {
-        label: item.label,
-        color: CHART_COLORS[i % CHART_COLORS.length],
-      }
-    })
-    return config
-  }, [categoryDistribution])
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   const activeData = useMemo(() => {
-    if (activeIndex === null || !analytics?.requestVolume) return null;
-    return analytics.requestVolume[activeIndex];
-  }, [activeIndex, analytics?.requestVolume]);
+    if (activeIndex === null || !analytics?.requestVolume) return null
+    return analytics.requestVolume[activeIndex]
+  }, [activeIndex, analytics?.requestVolume])
 
-  if (isLoading) {
-    return <SellerAnalyticsSkeleton />;
+  const totalSellers = analytics?.distribution?.reduce((a: number, b: any) => a + b.count, 0) || 0
+
+  if (isLoading && !analytics) {
+    return <SellerAnalyticsSkeleton />
   }
 
-  const totalSellers = analytics?.distribution?.reduce((a: number, b: any) => a + b.count, 0) || 0;
+  const metrics = [
+    {
+      label: t('metrics.quotes_frequency'),
+      value: analytics?.metrics?.avgQuotesPerRequest || '0',
+      icon: BarChart3,
+      color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30',
+    },
+    {
+      label: t('metrics.win_rate'),
+      value: analytics?.metrics?.conversionRate || '0%',
+      icon: TrendingUp,
+      color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/30',
+    },
+    {
+      label: t('metrics.turnaround'),
+      value: analytics?.metrics?.avgResponseTime || '0m',
+      icon: Timer,
+      color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/30',
+    },
+    {
+      label: t('metrics.merchant_base'),
+      value: totalSellers.toLocaleString(),
+      icon: Users,
+      color: 'text-violet-500 bg-violet-50 dark:bg-violet-950/30',
+    },
+  ]
 
   return (
-    <div className="flex flex-col gap-8 max-w-[1600px] mx-auto w-full pb-20 pt-4 animate-in fade-in duration-700">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-6 md:px-10">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white uppercase leading-none">
-            {t('intelligence.seller')}
-          </h2>
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('subtitle.seller')}</span>
-            <span className="h-[1px] w-8 bg-slate-200 dark:bg-slate-800" />
+    <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="size-10 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-emerald-500/20 shrink-0">
+            <Store className="size-5" />
+          </div>
+          <div className="space-y-0.5">
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
+              {t('intelligence.seller')}
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+              {t('subtitle.seller')}
+            </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-5 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-          <div className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] dark:shadow-[0_0_12px_rgba(16,185,129,0.8)]" />
-          <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider leading-none">
+        <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="size-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]" />
+          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider leading-none">
             {totalSellers} {t('metrics.supply_nodes')}
           </span>
         </div>
       </div>
 
-      {/* Stats Overview - Premium Section Cards Style */}
-      <div className="grid grid-cols-1 gap-4 px-6 md:px-10 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs sm:grid-cols-2 lg:grid-cols-4">
-        {/* Quotes Frequency */}
-        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950">
-          <CardHeader>
-            <CardDescription className="dark:text-slate-400">{t('metrics.quotes_frequency')}</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-emerald-600 dark:text-emerald-400">
-              {analytics?.metrics?.avgQuotesPerRequest || '0'}
-            </CardTitle>
-          </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium dark:text-slate-200">
-              {t('metrics.supply_engagement')}
+      {/* Compact Metrics */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {metrics.map((m) => (
+          <div
+            key={m.label}
+            className={cn('flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all', m.color)}
+          >
+            <div className="flex items-center gap-1.5">
+              <m.icon className="size-4" />
+              <span className="text-xl font-black tabular-nums leading-none">{m.value}</span>
             </div>
-            <div className="text-muted-foreground dark:text-slate-500">{t('metrics.avg_offers_desc')}</div>
-          </CardFooter>
-        </Card>
-
-        {/* Network Win Rate */}
-        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950">
-          <CardHeader>
-            <CardDescription className="dark:text-slate-400">{t('metrics.win_rate')}</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-blue-600 dark:text-blue-400">
-              {analytics?.metrics?.conversionRate || '0%'}
-            </CardTitle>
-          </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium dark:text-slate-200">
-              {t('metrics.lead_conversion')}
-            </div>
-            <div className="text-muted-foreground dark:text-slate-500">{t('metrics.win_rate_desc')}</div>
-          </CardFooter>
-        </Card>
-
-        {/* Avg Turnaround */}
-        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950">
-          <CardHeader>
-            <CardDescription className="dark:text-slate-400">{t('metrics.turnaround')}</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-orange-600 dark:text-orange-400">
-              {analytics?.metrics?.avgResponseTime || '0m'}
-            </CardTitle>
-          </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium dark:text-slate-200">
-              {t('metrics.response_velocity')}
-            </div>
-            <div className="text-muted-foreground dark:text-slate-500">{t('metrics.avg_response_time_desc')}</div>
-          </CardFooter>
-        </Card>
-
-        {/* Merchant Base */}
-        <Card className="@container/card border-slate-200 dark:border-slate-800 dark:bg-slate-950">
-          <CardHeader>
-            <CardDescription className="dark:text-slate-400">{t('metrics.merchant_base')}</CardDescription>
-            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-purple-600 dark:text-purple-400">
-              {totalSellers.toLocaleString()}
-            </CardTitle>
-          </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="line-clamp-1 flex gap-2 font-medium dark:text-slate-200">
-              {t('metrics.merchant_capacity')}
-            </div>
-            <div className="text-muted-foreground dark:text-slate-500">{t('metrics.verified_sellers')}</div>
-          </CardFooter>
-        </Card>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
+              {m.label}
+            </span>
+          </div>
+        ))}
       </div>
 
-      {/* Analytical Insights */}
-      <div className="grid grid-cols-12 gap-8 px-6 md:px-10">
-        <Card className="col-span-12 md:col-span-6 bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col group transition-all duration-300 hover:shadow-md overflow-hidden">
-          <CardHeader className="items-center pb-0">
-            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-emerald-500/30 underline-offset-8">{t('charts.supply_density')}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 pb-0 px-2">
-            <ChartContainer config={{ count: { label: "Quotes", color: "hsl(var(--emerald-500))" } }} className="mx-auto aspect-square max-h-[350px] w-full">
-              <RadarChart data={analytics?.demandByCategory || []} margin={{ top: 10, right: 20, bottom: 10, left: 20 }} cx="50%" cy="50%" outerRadius="75%">
-                <defs>
-                    <linearGradient id="radar-gradient-seller" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.6} />
-                      <stop offset="95%" stopColor="#059669" stopOpacity={0} />
-                    </linearGradient>
-                </defs>
-                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <PolarGrid className="stroke-slate-300/40 dark:stroke-slate-700/40 fill-slate-100/10 dark:fill-slate-800/5" />
-                <PolarAngleAxis dataKey="label" tick={{ fill: "white", fontSize: 10, fontWeight: "bold" }} />
-                <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
-                <Radar name="Supply" dataKey="count" stroke="#10b981" strokeWidth={2.5} fill="url(#radar-gradient-seller)" fillOpacity={0.6} />
-              </RadarChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+      {/* Charts Section */}
+      <div className="space-y-3">
+        <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
+          {t('charts.quote_velocity')}
+        </p>
 
-        <Card className="col-span-12 md:col-span-6 bg-white dark:bg-slate-950 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col group transition-all duration-300 hover:shadow-md overflow-hidden" id={id}>
-          <ChartStyle id={id} config={chartConfig} />
-          <CardHeader className="items-center pb-0">
-            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight uppercase underline decoration-emerald-500/30 underline-offset-8">{t('charts.category_focus')}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 pb-0 px-2">
-            <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[350px]">
-              <PieChart>
-                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel nameKey="label" />} />
-                {categoryDistribution.map((entry, index) => (
-                  <Pie
-                    key={`pie-${index}`}
-                    data={[entry]}
-                    nameKey="label"
-                    innerRadius={50}
-                    outerRadius={BASE_RADIUS + index * SIZE_INCREMENT}
-                    dataKey="count"
-                    cornerRadius={8}
-                    startAngle={(categoryDistribution.slice(0, index).reduce((sum, d) => sum + d.count, 0) / totalMerchants) * 360}
-                    endAngle={(categoryDistribution.slice(0, index + 1).reduce((sum, d) => sum + d.count, 0) / totalMerchants) * 360}
+        <div className="grid gap-4 lg:grid-cols-7">
+          {/* Quote Volume Bar Chart */}
+          <div className="lg:col-span-4 rounded-2xl bg-card border border-border shadow-sm p-5">
+            <div className="flex h-[200px] items-end gap-2 px-2">
+              {(analytics?.requestVolume || []).length === 0 ? (
+                <div className="flex h-full w-full items-center justify-center">
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">No data yet</p>
+                </div>
+              ) : (
+                <ChartContainer
+                  config={{ count: { label: 'Quotes', color: '#10b981' } }}
+                  className="h-full w-full"
+                >
+                  <BarChart
+                    data={analytics?.requestVolume || []}
+                    onMouseLeave={() => setActiveIndex(null)}
+                    margin={{ left: 0, right: 0, top: 20, bottom: 0 }}
                   >
-                    <Cell fill={CHART_COLORS[index % CHART_COLORS.length]} stroke="rgba(255,255,255,0.1)" strokeWidth={1} />
-                    <LabelList 
-                      dataKey="label" 
-                      position="outside" 
-                      offset={16} 
-                      stroke="none" 
-                      fontSize={10} 
-                      fontWeight="bold" 
-                      fill="currentColor" 
-                      className="fill-slate-500 dark:fill-slate-300" 
+                    <XAxis dataKey="date" tickLine={false} tickMargin={8} axisLine={false}
+                      className="text-[9px] font-medium text-slate-400"
+                      tickFormatter={(v: string) => v?.slice(-2) || ''}
                     />
-                  </Pie>
-                ))}
-              </PieChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-
-        <Card className="col-span-12 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[2rem] shadow-sm flex flex-col group transition-all duration-300 hover:shadow-md overflow-hidden">
-          <CardHeader className="pb-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <CardTitle className="text-xl font-bold text-slate-900 dark:text-white uppercase leading-none">{t('charts.quote_velocity')}</CardTitle>
-                <CardDescription className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1 dark:text-slate-400">
-                  {activeData ? `${activeData.date}: ${activeData.count} ${t('table.buyer')}` : t('charts.market_throughput')}
-                </CardDescription>
-              </div>
+                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                    <Bar dataKey="count" radius={[4, 4, 0, 0]} fill="#10b981">
+                      {(analytics?.requestVolume || []).map((_: any, index: number) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fillOpacity={activeIndex === null ? 0.8 : activeIndex === index ? 1 : 0.2}
+                          onMouseEnter={() => setActiveIndex(index)}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ChartContainer>
+              )}
             </div>
-          </CardHeader>
-          <CardContent className="flex-1 pb-6 px-10">
-            <ChartContainer config={{ count: { label: "Quotes", color: "#10b981" } }} className="h-72 w-full mt-4">
-              <BarChart data={analytics?.requestVolume || []} onMouseLeave={() => setActiveIndex(null)} margin={{ left: 10, right: 10, top: 20, bottom: 0 }}>
-                <XAxis dataKey="date" tickLine={false} tickMargin={10} axisLine={false} className="text-[9px] font-bold text-slate-400 uppercase" />
-                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <Bar dataKey="count" radius={6} fill="#10b981">
-                  {(analytics?.requestVolume || []).map((_: any, index: number) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fillOpacity={activeIndex === null ? 0.8 : activeIndex === index ? 1 : 0.2} 
-                      onMouseEnter={() => setActiveIndex(index)} 
-                      className="transition-all duration-300"
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+            {activeData && (
+              <p className="text-center mt-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                {activeData.date}: {activeData.count} quotes
+              </p>
+            )}
+          </div>
+
+          {/* Category Focus Summary */}
+          <div className="lg:col-span-3 rounded-2xl bg-card border border-border shadow-sm p-5">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 text-center">
+              {t('charts.category_focus')}
+            </p>
+            <div className="space-y-3">
+              {categoryDistribution.map((item: any, i: number) => {
+                const total = categoryDistribution.reduce((s: number, d: any) => s + d.count, 0) || 1
+                const pct = ((item.count / total) * 100).toFixed(0)
+                return (
+                  <div key={item.label} className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="size-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                        <span className="font-bold text-slate-700 dark:text-slate-300 truncate max-w-[140px]">{item.label}</span>
+                      </div>
+                      <span className="font-black tabular-nums text-slate-500">{pct}%</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{ width: `${pct}%`, backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="px-6 md:px-10">
-        <div className="bg-white dark:bg-slate-950/50 shadow-sm border border-slate-200 dark:border-slate-800 p-12 rounded-[2.5rem] relative overflow-hidden group">
-          <div className="flex justify-between items-start mb-12">
-            <div className="space-y-1">
-              <h3 className="font-bold text-2xl text-slate-900 dark:text-white uppercase leading-none">{t('distribution.seller_title')}</h3>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{t('distribution.regional_concentration')}</p>
-            </div>
+      {/* Map Section */}
+      <div className="rounded-2xl bg-card border border-border shadow-sm p-5 sm:p-8 overflow-hidden">
+        <div className="flex justify-between items-start mb-6">
+          <div className="space-y-0.5">
+            <h3 className="font-black text-lg text-foreground uppercase leading-tight">
+              {t('distribution.seller_title')}
+            </h3>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+              {t('distribution.regional_concentration')}
+            </p>
           </div>
-          <div className="relative flex items-center justify-center bg-slate-50/5 dark:bg-slate-900/5 rounded-3xl overflow-hidden min-h-[650px]">
-             <AlgeriaMap data={analytics?.distribution || []} role="seller" className="h-full w-full" />
-          </div>
+        </div>
+        <div className="relative flex items-center justify-center bg-slate-50/5 dark:bg-slate-900/5 rounded-3xl overflow-hidden min-h-[350px] sm:min-h-[450px] lg:min-h-[500px]">
+          <AlgeriaMap data={analytics?.distribution || []} role="seller" className="h-full w-full" />
         </div>
       </div>
     </div>
@@ -281,35 +218,28 @@ export function SellerAnalytics() {
 
 function SellerAnalyticsSkeleton() {
   return (
-    <div className="flex flex-col gap-8 max-w-[1600px] mx-auto w-full pb-20 pt-4 animate-pulse">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-6 md:px-10">
-        <div className="space-y-2">
-          <Skeleton className="h-10 w-64 rounded-lg" />
-          <Skeleton className="h-4 w-96 rounded-lg" />
+    <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2 animate-pulse">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Skeleton className="size-10 rounded-2xl shrink-0" />
+          <div className="space-y-1.5">
+            <Skeleton className="h-6 w-48 rounded-lg" />
+            <Skeleton className="h-3.5 w-64 rounded-md" />
+          </div>
         </div>
-        <Skeleton className="h-12 w-48 rounded-2xl" />
+        <Skeleton className="h-9 w-44 rounded-xl" />
       </div>
-
-      <div className="grid grid-cols-1 gap-4 px-6 md:px-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="@container/card">
-            <CardHeader>
-              <Skeleton className="h-4 w-[100px]" />
-              <Skeleton className="h-8 w-[80px]" />
-            </CardHeader>
-            <CardFooter className="flex-col items-start gap-2">
-              <Skeleton className="h-4 w-[140px]" />
-              <Skeleton className="h-3 w-[180px]" />
-            </CardFooter>
-          </Card>
+          <Skeleton key={i} className="h-16 w-full rounded-2xl" />
         ))}
       </div>
-
-      <div className="grid grid-cols-12 gap-8 px-6 md:px-10">
-        <Skeleton className="col-span-12 md:col-span-6 h-[450px] rounded-[2rem]" />
-        <Skeleton className="col-span-12 md:col-span-6 h-[450px] rounded-[2rem]" />
-        <Skeleton className="col-span-12 h-[450px] rounded-[2rem]" />
+      <Skeleton className="h-3.5 w-36 rounded-md" />
+      <div className="grid gap-4 lg:grid-cols-7">
+        <Skeleton className="lg:col-span-4 h-[240px] w-full rounded-2xl" />
+        <Skeleton className="lg:col-span-3 h-[240px] w-full rounded-2xl" />
       </div>
+      <Skeleton className="h-[400px] w-full rounded-2xl" />
     </div>
-  );
+  )
 }

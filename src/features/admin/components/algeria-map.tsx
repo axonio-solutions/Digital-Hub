@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +24,7 @@ const MemoizedWilaya = React.memo(({
   shape, 
   wilayaName,
   density, 
+  fillColor,
   isSignificant,
   isHovered,
   role,
@@ -36,6 +36,7 @@ const MemoizedWilaya = React.memo(({
   shape: any,
   wilayaName: string,
   density: number,
+  fillColor: string,
   isSignificant: boolean,
   isHovered: boolean,
   role: 'buyer' | 'seller',
@@ -43,17 +44,6 @@ const MemoizedWilaya = React.memo(({
   onLeave: () => void,
   isMounted: boolean
 }) => {
-  const getFillColor = (d: number) => {
-    if (d === 0) return '#f8fafc' // Slight slate for visibility
-    if (d < 3) return '#e0f2fe'
-    if (d < 10) return '#bae6fd'
-    if (d < 50) return '#7dd3fc'
-    if (d < 100) return '#38bdf8'
-    return '#0ea5e9'
-  }
-
-  const fillColor = getFillColor(density)
-
   const shapeProps = {
     id: id,
     fill: isHovered
@@ -68,8 +58,8 @@ const MemoizedWilaya = React.memo(({
   }
 
   const pathElement = shape.type === 'path' 
-    ? <motion.path d={shape.d} {...shapeProps} />
-    : <motion.polygon points={shape.points} {...shapeProps} />
+    ? <path d={shape.d} {...shapeProps} />
+    : <polygon points={shape.points} {...shapeProps} />
 
   if (!isMounted) return pathElement
 
@@ -444,6 +434,34 @@ export function AlgeriaMap({
     return map
   }, [data])
 
+  const getFillColor = (d: number) => {
+    if (d === 0) return '#f8fafc'
+    if (d < 3) return role === 'buyer' ? '#e0f2fe' : '#d1fae5'
+    if (d < 10) return role === 'buyer' ? '#bae6fd' : '#a7f3d0'
+    if (d < 50) return role === 'buyer' ? '#7dd3fc' : '#6ee7b7'
+    if (d < 100) return role === 'buyer' ? '#38bdf8' : '#34d399'
+    return role === 'buyer' ? '#0ea5e9' : '#10b981'
+  }
+
+  const wilayaColorMap = useMemo(() => {
+    const colorMap = new Map<string, string>()
+    Object.keys(WILAYA_SHAPES).forEach((id) => {
+      const wilayaName = ID_TO_WILAYA[id]
+      const density = statsMap.get(normalizeWilaya(wilayaName)) || 0
+      colorMap.set(id, getFillColor(density))
+    })
+    return colorMap
+  }, [statsMap, role])
+
+  const wilayaDensityMap = useMemo(() => {
+    const densityMap = new Map<string, number>()
+    Object.keys(WILAYA_SHAPES).forEach((id) => {
+      const wilayaName = ID_TO_WILAYA[id]
+      densityMap.set(id, statsMap.get(normalizeWilaya(wilayaName)) || 0)
+    })
+    return densityMap
+  }, [statsMap])
+
   const SHAPE_IDS = Object.keys(WILAYA_SHAPES)
 
   return (
@@ -458,7 +476,8 @@ export function AlgeriaMap({
           {SHAPE_IDS.map((id) => {
             const shape = WILAYA_SHAPES[id]
             const wilayaName = ID_TO_WILAYA[id]
-            const density = statsMap.get(normalizeWilaya(wilayaName)) || 0
+            const density = wilayaDensityMap.get(id) || 0
+            const fillColor = wilayaColorMap.get(id) || '#f8fafc'
             
             return (
               <MemoizedWilaya 
@@ -467,6 +486,7 @@ export function AlgeriaMap({
                 shape={shape}
                 wilayaName={wilayaName}
                 density={density}
+                fillColor={fillColor}
                 isSignificant={density > 0}
                 isHovered={hoveredWilaya === id}
                 role={role}

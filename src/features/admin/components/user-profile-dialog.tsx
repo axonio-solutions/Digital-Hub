@@ -1,311 +1,227 @@
 'use client'
 
-import { 
-  ShieldCheck, 
-  ShieldAlert, 
-  Store, 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Calendar, 
-  Lock, 
-  UserX,
-  UserCheck,
-  History,
-  Award
-} from 'lucide-react'
-import { Modal } from '@/components/ui/modal'
+import { useState } from 'react'
+import { ShieldCheck, ShieldAlert, UserX, UserCheck, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { useActivateSeller, useToggleUserBan } from '@/features/admin/hooks/use-users' 
+import { useActivateSeller, useToggleUserBan, useUserDetails } from '@/features/admin/hooks/use-users'
 import { useTranslation } from 'react-i18next'
 
+interface UserProfileDialogProps { user: any | null; open: boolean; onOpenChange: (open: boolean) => void }
 
-interface UserProfileDialogProps {
-  user: any | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-export function UserProfileDialog({
-  user,
-  open,
-  onOpenChange,
-}: UserProfileDialogProps) {
+export function UserProfileDialog({ user, open, onOpenChange }: UserProfileDialogProps) {
   const { t } = useTranslation('dashboard/admin')
   const { mutate: activateSeller } = useActivateSeller()
   const { mutate: toggleBan } = useToggleUserBan()
+  const [copied, setCopied] = useState<string | null>(null)
 
-  if (!user) return null
+  const userId = user?.id || ''
+  const { data: details, isLoading } = useUserDetails(userId)
 
-  const isBanned = user.banned
-  const isWaitlisted = user.account_status === 'waitlisted'
-  const role = user.role || 'buyer'
+  // Use details from DB when loaded, fallback to table row data
+  const u = details || user
+  if (!u) return null
 
-  const handleActivate = () => {
-    activateSeller({ userId: user.id })
-    toast.success(t('users.profile.success.activated'))
+  const isBanned = u.banned
+  const isWaitlisted = u.account_status === 'waitlisted'
+  const role = u.role || 'buyer'
+  const accountAgeDays = Math.floor((Date.now() - new Date(u.createdAt).getTime()) / 86400000)
+
+  const coverGradient = role === 'admin' ? 'from-violet-600 to-purple-700' 
+    : role === 'seller' ? 'from-emerald-600 to-teal-700' 
+    : 'from-blue-600 to-cyan-700'
+
+  const copy = (text: string, key: string) => {
+    if (!text) return
+    navigator.clipboard.writeText(text)
+    setCopied(key)
+    setTimeout(() => setCopied(null), 2000)
+    toast.success(t('users.profile.copied'))
   }
 
-  const handleToggleBan = () => {
-    toggleBan({ userId: user.id, isBanned: !isBanned })
-    toast.success(isBanned ? t('users.profile.success.restored') : t('users.profile.success.suspended'))
-  }
+  // Role-specific data
+  const requestCount = u.requests?.length ?? (role === 'buyer' ? '...' : 0)
+  const quoteCount = u.quotes?.length ?? (role === 'seller' ? '...' : 0)
+  const brandCount = u.sellerBrands?.length ?? 0
+  const categoryCount = u.sellerCategories?.length ?? 0
+  const priorityScore = u.priorityScore?.toFixed?.(1)
 
   return (
-    <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      title={t('users.profile.title')}
-      description={t('users.profile.description')}
-      className="sm:max-w-[1000px]"
-      contentClassName="p-8 md:p-10 pt-0"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 max-h-[85vh] overflow-y-auto scrollbar-hide pe-2">
-        {/* Profile Sidebar (4 cols) */}
-        <div className="md:col-span-4 flex flex-col gap-8 border-r border-slate-100 dark:border-slate-800 pe-10">
-          <div className="flex flex-col items-center text-center gap-6">
-             <div className="relative group">
-                <Avatar className="h-32 w-32 border-8 border-slate-50 dark:border-slate-900 shadow-2xl transition-transform group-hover:scale-105 duration-500">
-                  <AvatarImage src={user.image} className="object-cover" />
-                  <AvatarFallback className="bg-muted text-muted-foreground text-4xl font-black uppercase italic">
-                    {user.name?.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div 
-                  className={cn(
-                    "absolute -bottom-2 -end-2 p-3 rounded-full border-4 border-white dark:border-slate-950 shadow-xl",
-                    isBanned ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-emerald-500 text-white"
-                  )}
-                >
-                  {isBanned ? <ShieldAlert size={20} /> : <ShieldCheck size={20} />}
-                </div>
-             </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="w-auto min-w-[380px] max-w-lg max-h-[92vh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
+        
+        {/* Cover Banner */}
+        <div className={cn('h-24 bg-gradient-to-r relative', coverGradient)}>
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_30%_50%,white_0%,transparent_60%)]" />
+          <Avatar className="absolute -bottom-8 left-6 h-16 w-16 border-[4px] border-background shadow-xl rounded-2xl">
+            <AvatarImage src={u.image} className="object-cover" />
+            <AvatarFallback className="bg-slate-100 dark:bg-slate-800 text-slate-500 font-black text-xl uppercase rounded-2xl">
+              {u.name?.substring(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </div>
 
-             <div className="space-y-2">
-                <h2 className="text-2xl font-black tracking-tighter leading-none uppercase italic text-slate-900 dark:text-white">
-                  {user.name}
-                </h2>
-                <div className="flex flex-col items-center gap-3 pt-1">
-                  <Badge variant={isBanned ? "destructive" : "secondary"} className="text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-sm">
-                    {isBanned ? t('users.profile.suspended') : t(`users.roles.${role}`)}
-                  </Badge>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] opacity-60">
-                    {t('users.profile.id')}: {user.id.substring(0, 16)}
-                  </p>
-                </div>
-             </div>
-          </div>
-
-          <div className="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
-             <SidebarItem icon={Mail} label={t('users.profile.registry_email')} value={user.email} />
-             <SidebarItem icon={Phone} label={t('users.profile.contact_line')} value={user.phoneNumber || 'N/A'} />
-             <SidebarItem icon={MapPin} label={t('users.profile.origin_node')} value={`${user.wilaya || 'N/A'}, ${user.city || 'N/A'}`} />
-             <SidebarItem icon={Calendar} label={t('users.profile.member_since')} value={new Date(user.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })} />
+        {/* Name + Badges */}
+        <div className="pt-10 px-6">
+          <h3 className="text-lg font-black tracking-tight text-foreground truncate">{u.name}</h3>
+          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+            <GlowingBadge variant={role === 'admin' ? 'info' : role === 'seller' ? 'success' : 'neutral'} className="capitalize text-[10px]">{role}</GlowingBadge>
+            <span className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border',
+              u.account_status === 'active' ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400' :
+              u.account_status === 'waitlisted' ? 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-400' :
+              'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-800 dark:bg-slate-900/30 dark:text-slate-400'
+            )}>
+              {u.account_status || 'new'}
+            </span>
+            {isBanned && <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400"><ShieldAlert size={10} />Banned</span>}
           </div>
         </div>
 
-        {/* Intelligence Area (8 cols) */}
-        <div className="md:col-span-8 flex flex-col gap-6">
-          
-          {/* Admin Authority Action Block - Horizontal Stretch */}
-          <div className="p-8 rounded-[2.5rem] bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 shadow-inner flex flex-row items-center justify-between gap-8">
-             <div className="flex items-center gap-6">
-                <div className="p-4 rounded-3xl bg-primary/10 text-primary">
-                   <Lock size={20} />
-                </div>
-                <div className="space-y-1">
-                   <h4 className="text-[12px] font-black uppercase tracking-widest text-slate-900 dark:text-white">
-                      {t('users.profile.authority_ops')}
-                   </h4>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter italic">{t('users.profile.authority_desc')}</p>
-                </div>
-             </div>
-
-             <div className="flex gap-3 min-w-[300px]">
-                {isWaitlisted && (
-                  <Button 
-                    onClick={handleActivate}
-                    className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase text-[10px] tracking-widest rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
-                  >
-                    <UserCheck size={14} className="me-2" />
-                    {t('users.profile.activate')}
-                  </Button>
-                )}
-                <Button 
-                  variant={isBanned ? "default" : "destructive"}
-                  onClick={handleToggleBan}
-                  className="flex-1 h-12 font-black uppercase text-[10px] tracking-widest rounded-2xl shadow-lg active:scale-95 transition-all px-8"
-                >
-                  {isBanned ? (
-                    <>
-                      <ShieldCheck size={14} className="me-2" />
-                      {t('users.profile.restore')}
-                    </>
-                  ) : (
-                    <>
-                      <UserX size={14} className="me-2" />
-                      {t('users.profile.suspend')}
-                    </>
-                  )}
-                </Button>
-             </div>
-          </div>
-
-          <div className="flex-1 space-y-8">
-            {role === 'seller' && <SellerContent user={user} t={t} />}
-            {role === 'buyer' && <BuyerContent user={user} t={t} />}
-            {role === 'admin' && <AdminContent t={t} />}
-          </div>
-
-          <div className="mt-8 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
-             <div className="flex gap-4 px-2">
-                <SnapshotItem label={t('users.profile.health_score')} value="98%" color="text-emerald-500" />
-                <SnapshotItem label={t('users.profile.security')} value="LVL_2" color="text-blue-500" />
-             </div>
-             <Button 
-                variant="ghost" 
-                onClick={() => onOpenChange(false)}
-                className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-              >
-                {t('users.profile.terminate')}
-              </Button>
-          </div>
-        </div>
-      </div>
-
-
-
-    </Modal>
-  )
-}
-
-/* Helper Components */
-
-function SidebarItem({ icon: Icon, label, value }: any) {
-  return (
-    <div className="space-y-1 group">
-      <div className="flex items-center gap-2 text-[9px] font-bold uppercase text-slate-400 tracking-widest group-hover:text-primary transition-colors">
-        <Icon size={12} />
-        {label}
-      </div>
-      <p className="text-[12px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-tight">{value}</p>
-    </div>
-  )
-}
-
-function SectionHeading({ icon: Icon, title, sub }: any) {
-  return (
-    <div className="flex flex-col gap-0.5 mb-6">
-      <h3 className="text-[11px] font-black uppercase tracking-widest flex items-center gap-2 text-foreground italic">
-        <Icon size={14} className="text-primary" />
-        {title}
-      </h3>
-      {sub && <p className="text-[10px] font-bold text-muted-foreground ms-5 uppercase tracking-tight opacity-70">{sub}</p>}
-    </div>
-  )
-}
-
-function DataCard({ label, value, mono }: any) {
-  return (
-    <div className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
-      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 group-hover:text-primary transition-colors">{label}</p>
-      <p className={cn("text-[13px] font-black uppercase italic tracking-tight text-slate-900 dark:text-white leading-none", mono && "font-mono tracking-tighter")}>{value}</p>
-    </div>
-  )
-}
-
-/* Role Specific Logic - Stripped of Placeholders */
-
-function SnapshotItem({ label, value, color }: any) {
-  return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-[8px] font-black uppercase text-slate-400 tracking-widest">{label}</span>
-      <span className={cn("text-[11px] font-black uppercase tracking-tighter", color)}>{value}</span>
-    </div>
-  )
-}
-
-function SellerContent({ user, t }: any) {
-  return (
-    <div className="space-y-8">
-      <SectionHeading 
-        icon={Store} 
-        title={t('users.profile.account_intelligence')} 
-        sub={t('users.profile.business_perf')}
-      />
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <DataCard label={t('users.profile.entity_name')} value={user.storeName || 'Personal Entity'} />
-        <DataCard label={t('users.profile.commercial_index')} value={user.commercialRegister || 'N/A'} mono />
-        <DataCard label={t('users.profile.priority_score')} value={user.priorityScore ? `${user.priorityScore.toFixed(1)}` : '0.0'} mono />
-        <DataCard label={t('users.profile.active_quotes')} value={user.quotes?.length || '0'} mono />
-        <DataCard label={t('users.profile.success_rate')} value="94.2%" mono />
-        <DataCard label={t('users.profile.response_time')} value="< 2h" mono />
-        <DataCard label={t('users.profile.account_tier')} value="GOLD_03" mono />
-        <DataCard label={t('users.profile.registry_node')} value={user.city || 'N/A'} />
-      </div>
-      
-      <div className="space-y-4 pt-2">
-         <div className="flex items-center gap-3 mb-4">
-            <div className="size-6 rounded-full bg-primary/10 flex items-center justify-center">
-               <Award size={12} className="text-primary" />
+        {/* Body */}
+        <div className="px-6 py-4 max-h-[45vh] overflow-y-auto scrollbar-thin space-y-4">
+          {isLoading ? (
+            <div className="space-y-3">
+              <Skeleton className="h-12 w-full rounded-xl" />
+              <Skeleton className="h-12 w-full rounded-xl" />
+              <Skeleton className="h-12 w-full rounded-xl" />
+              <div className="grid grid-cols-4 gap-2">
+                <Skeleton className="h-14 rounded-xl" />
+                <Skeleton className="h-14 rounded-xl" />
+                <Skeleton className="h-14 rounded-xl" />
+                <Skeleton className="h-14 rounded-xl" />
+              </div>
             </div>
-            <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-900 dark:text-white italic">{t('users.profile.jurisdictions')}</h4>
-         </div>
-         <div className="flex flex-wrap gap-2 px-1">
-            {(user.sellerCategories || []).map((cat: any, i: number) => (
-              <Badge key={i} variant="outline" className="rounded-2xl px-6 py-2 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest shadow-sm hover:border-primary transition-colors">
-                {cat.category?.name || 'General'}
-              </Badge>
-            ))}
-            {(user.sellerCategories || []).length === 0 && (
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic opacity-60">{t('users.profile.no_entries')}</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Contact</Label>
+                  <Field label="Email" value={u.email} copyable onCopy={() => copy(u.email, 'email')} copied={copied === 'email'} />
+                  <Field label="Phone" value={u.phoneNumber || '—'} copyable={!!u.phoneNumber} onCopy={() => copy(u.phoneNumber, 'phone')} copied={copied === 'phone'} />
+                  <Field label="Location" value={[u.wilaya, u.city].filter(Boolean).join(', ') || '—'} />
+                  <Field label="Joined" value={new Date(u.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Account</Label>
+                  <Field label="Role" value={role} badge />
+                  <Field label="Verified" value={u.emailVerified ? 'Yes' : 'No'} />
+                  <Field label="Age" value={`${accountAgeDays} days`} />
+                  {u.storeName && <Field label="Store" value={u.storeName} />}
+                  {u.commercialRegister && <Field label="Reg #" value={u.commercialRegister} mono />}
+                  {isBanned && u.banReason && <Field label="Ban Reason" value={u.banReason} />}
+                  {isBanned && u.banExpires && <Field label="Expires" value={new Date(u.banExpires).toLocaleDateString()} />}
+                </div>
+              </div>
+
+              {/* Role-specific stats */}
+              {role === 'buyer' && (
+                <div className="grid grid-cols-3 gap-2">
+                  <Pill value={isLoading ? '...' : requestCount} label="Requests" />
+                  <Pill value={accountAgeDays} label="Days" />
+                  <Pill value={u.emailVerified ? 'Verified' : 'Pending'} label="Email" />
+                </div>
+              )}
+
+              {role === 'seller' && (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-4 gap-2">
+                    <Pill value={isLoading ? '...' : quoteCount} label="Quotes" />
+                    <Pill value={brandCount} label="Brands" />
+                    <Pill value={categoryCount} label="Categories" />
+                    <Pill value={priorityScore ?? '—'} label="Priority" />
+                  </div>
+                  {categoryCount > 0 && (
+                    <div>
+                      <Label>Categories</Label>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {u.sellerCategories?.map((sc: any, i: number) => (
+                          <Badge key={i} variant="secondary" className="text-[10px] rounded-full px-2.5">{sc.category?.name || 'General'}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {brandCount > 0 && (
+                    <div>
+                      <Label>Brands</Label>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {u.sellerBrands?.map((sb: any, i: number) => (
+                          <Badge key={i} variant="outline" className="text-[10px] rounded-full px-2.5">{sb.brand?.brand || 'Unknown'}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {role === 'admin' && (
+                <div className="grid grid-cols-2 gap-2">
+                  <Pill value={accountAgeDays} label="Days Active" />
+                  <Pill value={u.emailVerified ? 'Verified' : 'Pending'} label="Email" />
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="px-6 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/20 flex items-center justify-between gap-2">
+          <span className="text-[10px] font-mono text-slate-400">{u.id?.substring(0, 12)}</span>
+          <div className="flex gap-2">
+            {isWaitlisted && (
+              <Button onClick={() => { activateSeller({ userId: u.id }); toast.success(t('users.profile.success.activated')) }}
+                className="h-9 bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase text-[10px] tracking-wider rounded-xl px-4">
+                <UserCheck size={14} className="me-1.5" /> Activate
+              </Button>
             )}
-         </div>
+            <Button variant={isBanned ? 'default' : 'destructive'}
+              onClick={() => { toggleBan({ userId: u.id, isBanned: !isBanned }); toast.success(isBanned ? t('users.profile.success.restored') : t('users.profile.success.suspended')) }}
+              className="h-9 font-bold uppercase text-[10px] tracking-wider rounded-xl px-4">
+              {isBanned ? <><ShieldCheck size={14} className="me-1.5" /> Restore</>
+                : <><UserX size={14} className="me-1.5" /> Suspend</>}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function Label({ children }: { children: string }) {
+  return <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">{children}</p>
+}
+
+function Field({ label, value, badge, mono, copyable, onCopy, copied }: any) {
+  return (
+    <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/50">
+      <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider truncate">{label}</span>
+      <div className="flex items-center gap-1 shrink-0 ml-2">
+        {badge ? (
+          <Badge variant="secondary" className="text-[10px] font-bold uppercase rounded-full px-2.5">{value}</Badge>
+        ) : (
+          <span className={cn('text-xs font-bold text-slate-700 dark:text-slate-200 max-w-[120px] truncate text-right', mono && 'font-mono text-[10px]')}>{value}</span>
+        )}
+        {copyable && (
+          <button onClick={onCopy} className="p-0.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">
+            {copied ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} className="text-slate-400" />}
+          </button>
+        )}
       </div>
     </div>
   )
 }
 
-function BuyerContent({ user, t }: any) {
+function Pill({ value, label }: { value: string | number; label: string }) {
   return (
-    <div className="space-y-6">
-       <SectionHeading 
-          icon={History} 
-          title={t('users.profile.account_meta')} 
-          sub={t('users.profile.markers')}
-       />
-       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <DataCard label={t('users.profile.market_position')} value="Consumer Entity" />
-          <DataCard label={t('users.profile.registry_age')} value={t('users.profile.days', { count: Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24)) })} />
-          <DataCard label={t('users.profile.auth_method')} value="Identity Core" />
-          <DataCard label={t('users.profile.last_origin')} value={user.city || 'Digital Space'} />
-       </div>
-    </div>
-  )
-}
-
-function AdminContent({ t }: any) {
-  return (
-    <div className="space-y-6">
-       <SectionHeading 
-          icon={Lock} 
-          title={t('users.profile.elevated_access')} 
-          sub={t('users.profile.system_integrity')}
-       />
-       <div className="p-6 rounded-lg bg-muted/50 border relative overflow-hidden group">
-          <div className="absolute top-0 end-0 p-4 opacity-10">
-             <Lock size={48} className="text-muted-foreground" />
-          </div>
-          <h4 className="text-[10px] font-semibold uppercase tracking-wider text-primary mb-4">{t('users.profile.authority_matrix')}</h4>
-          <div className="grid grid-cols-1 gap-3">
-             <div className="flex items-center gap-2 text-xs font-medium"><div className="size-1.5 rounded-full bg-emerald-500" /> FULL_SYSTEM_READ</div>
-             <div className="flex items-center gap-2 text-xs font-medium"><div className="size-1.5 rounded-full bg-emerald-500" /> USER_MODERATION_WRITE</div>
-          </div>
-       </div>
+    <div className="flex flex-col items-center justify-center gap-0.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/50">
+      <span className="text-sm font-black tabular-nums leading-none text-slate-700 dark:text-slate-200">{value}</span>
+      <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{label}</span>
     </div>
   )
 }

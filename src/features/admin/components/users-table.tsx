@@ -1,271 +1,180 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import {
-  ColumnDef,
-} from '@tanstack/react-table'
-import {
-  UserX,
-} from 'lucide-react'
+import { ColumnDef, useReactTable, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, getFacetedRowModel, getFacetedUniqueValues, ColumnFiltersState, SortingState, flexRender } from '@tanstack/react-table'
+import { UserX } from 'lucide-react'
 import { UserProfileDialog } from './user-profile-dialog'
-import { Badge } from '@/components/ui/badge'
-import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
+import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Checkbox } from '@/components/ui/checkbox'
-import { cn } from '@/lib/utils'
-import { DataTable } from '@/components/ui/data-table/data-table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
-import { 
-  useActivateSeller,
-} from '@/features/admin/hooks/use-users'
+import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination'
+import { cn } from '@/lib/utils'
+import { useActivateSeller } from '@/features/admin/hooks/use-users'
 import { getAccountStatuses, getIntegrityStatuses, getRoles } from '../data/user-filters'
 import { useTranslation } from 'react-i18next'
 
-interface AdminUsersTableProps {
-  users: Array<any>
-  onBan?: (userId: string) => void
-  onUnban?: (userId: string) => void
-}
+interface AdminUsersTableProps { users: Array<any>; onBan?: (userId: string) => void }
 
-export function AdminUsersTable({
-  users = [],
-  onBan,
-  onUnban,
-}: AdminUsersTableProps) {
+export function AdminUsersTable({ users = [], onBan }: AdminUsersTableProps) {
   const { t } = useTranslation('dashboard/admin')
   const [selectedUser, setSelectedUser] = useState<any | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-
   const { mutate: activateSeller } = useActivateSeller()
 
-  const columns: Array<ColumnDef<any>> = useMemo(
-    () => [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
-      {
-        accessorKey: 'name',
-        id: 'name',
-        header: t('users.columns.name'),
-        cell: ({ row }) => {
-          const user = row.original
-          return (
-            <div className="flex items-center gap-3">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={user.image} />
-                <AvatarFallback>
-                  {user.name?.substring(0, 2).toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="font-medium">
-                  {user.name}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {user.email}
-                </span>
-              </div>
-            </div>
-          )
-        },
-      },
-      {
-        accessorKey: 'role',
-        header: t('users.columns.role'),
-        cell: ({ row }) => {
-          const role = row.original.role;
-          return (
-            <GlowingBadge variant="neutral" dot={false} className="capitalize">
-              {t(`users.roles.${role}`)}
-            </GlowingBadge>
-          );
-        },
-      },
-      {
-        accessorKey: 'account_status',
-        header: t('users.columns.status'),
-        cell: ({ row }) => {
-          const status = row.original.account_status || 'new';
-          return (
-            <GlowingBadge 
-              variant={
-                status === 'active' ? 'success' : 
-                status === 'waitlisted' ? 'warning' : 
-                'neutral'
-              }
-              pulse={status === 'waitlisted'}
-              className="capitalize"
-            >
-              {t(`users.account_status.${status}`)}
-            </GlowingBadge>
-          )
-        },
-      },
-      {
-        accessorKey: 'priorityScore',
-        header: t('users.columns.score'),
-        cell: ({ row }) => {
-          const score = row.original.priorityScore;
-          if (row.original.role !== 'seller' || score === null) return (
-            <span className="text-muted-foreground">-</span>
-          );
-          
-          return (
-            <div className="flex items-center gap-2">
-              <span className={cn(
-                "text-xs font-mono font-bold",
-                score > 10 ? "text-green-600" : score > 5 ? "text-blue-600" : "text-amber-600"
-              )}>
-                {score.toFixed(1)}
-              </span>
-            </div>
-          );
-        }
-      },
-      {
-        accessorKey: 'banned',
-        header: t('users.columns.integrity'),
-        cell: ({ row }) => {
-          const isBanned = row.original.banned;
-          return (
-            <GlowingBadge 
-              variant={isBanned ? "error" : "success"}
-              pulse={isBanned}
-              className="text-[10px]"
-            >
-              {isBanned ? t('users.integrity.compromised') : t('users.integrity.secure')}
-            </GlowingBadge>
-          )
-        },
-      },
-      {
-        id: 'quick-actions',
-        header: '',
-        cell: ({ row }) => {
-          const user = row.original;
-          return (
-            <div className="flex justify-end gap-2">
-              {user.account_status === 'waitlisted' && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    activateSeller({ userId: user.id });
-                    toast.success(t('users.actions.activated_success'));
-                  }}
-                  className="h-8"
-                >
-                  {t('users.actions.activate')}
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleViewDetails(user)}
-                className="h-8"
-              >
-                {t('users.actions.view')}
-              </Button>
-            </div>
-          )
-        },
-      },
-    ],
-    [onBan, onUnban, activateSeller, t],
-  )
+  const [rowSelection, setRowSelection] = useState({})
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
 
-  const handleViewDetails = (user: any) => {
-    setSelectedUser(user)
-    setIsDialogOpen(true)
-  }
+  const handleViewDetails = useCallback((user: any) => { setSelectedUser(user); setIsDialogOpen(true) }, [])
+
+  const columns: Array<ColumnDef<any>> = useMemo(() => [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)} aria-label="Select all" />
+      ),
+      cell: ({ row }) => (
+        <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
+      ),
+      enableSorting: false, enableHiding: false,
+    },
+    {
+      accessorKey: 'name', header: t('users.columns.name'),
+      cell: ({ row }) => {
+        const u = row.original
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8 rounded-lg shrink-0"><AvatarImage src={u.image} /><AvatarFallback className="text-[10px] font-bold">{u.name?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback></Avatar>
+            <div className="flex flex-col min-w-0">
+              <span className="font-bold text-sm text-foreground truncate max-w-[160px]">{u.name}</span>
+              <span className="text-[10px] text-muted-foreground truncate max-w-[160px]">{u.email}</span>
+            </div>
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: 'role', header: t('users.columns.role'),
+      cell: ({ row }) => <GlowingBadge variant="neutral" className="capitalize text-[10px]">{t(`users.roles.${row.original.role}`)}</GlowingBadge>,
+    },
+    {
+      accessorKey: 'account_status', header: t('users.columns.status'),
+      cell: ({ row }) => {
+        const s = row.original.account_status || 'new'
+        return <GlowingBadge variant={s === 'active' ? 'success' : s === 'waitlisted' ? 'warning' : 'neutral'} pulse={s === 'waitlisted'} className="capitalize text-[10px]">{t(`users.account_status.${s}`)}</GlowingBadge>
+      },
+    },
+    {
+      accessorKey: 'priorityScore', header: t('users.columns.score'),
+      cell: ({ row }) => {
+        const score = row.original.priorityScore
+        if (row.original.role !== 'seller' || score === null) return <span className="text-muted-foreground text-xs">-</span>
+        return <span className={cn('text-xs font-mono font-bold', score > 10 ? 'text-emerald-600 dark:text-emerald-400' : score > 5 ? 'text-blue-600 dark:text-blue-400' : 'text-amber-600 dark:text-amber-400')}>{score.toFixed(1)}</span>
+      },
+    },
+    {
+      accessorKey: 'banned', header: t('users.columns.integrity'),
+      cell: ({ row }) => <GlowingBadge variant={row.original.banned ? 'error' : 'success'} pulse={row.original.banned} className="text-[10px]">{row.original.banned ? t('users.integrity.compromised') : t('users.integrity.secure')}</GlowingBadge>,
+    },
+    {
+      id: 'actions', header: '',
+      cell: ({ row }) => {
+        const u = row.original
+        return (
+          <div className="flex justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+            {u.account_status === 'waitlisted' && (
+              <Button variant="outline" size="sm" onClick={() => { activateSeller({ userId: u.id }); toast.success(t('users.actions.activated_success')) }} className="h-7 text-[10px]">{t('users.actions.activate')}</Button>
+            )}
+            <Button variant="ghost" size="sm" onClick={() => handleViewDetails(u)} className="h-7 text-[10px]">{t('users.actions.view')}</Button>
+          </div>
+        )
+      },
+    },
+  ], [t, activateSeller, handleViewDetails])
+
+  const table = useReactTable({
+    data: users,
+    columns,
+    state: { sorting, rowSelection, columnFilters },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    autoResetPageIndex: false,
+    initialState: { pagination: { pageSize: 20 } },
+  })
+
+  const selectedCount = table.getSelectedRowModel().rows.length
 
   return (
-    <div className="flex flex-col gap-4">
-      <DataTable
-        data={users}
-        columns={columns}
-        toolbar={(table: any) => {
-          const selectedRows = table.getSelectedRowModel().rows;
-          const selectedCount = selectedRows.length;
+    <div className="space-y-3">
+      {/* Toolbar */}
+      <DataTableToolbar table={table} searchColumn="name" searchPlaceholder={t('users.search')} hideViewOptions
+        facetedFilters={[
+          { column: 'role', title: t('users.filters.role'), options: getRoles(t) },
+          { column: 'banned', title: t('users.filters.status'), options: getIntegrityStatuses(t) },
+          { column: 'account_status', title: t('users.filters.account'), options: getAccountStatuses(t) },
+        ]}>
+        {selectedCount > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider whitespace-nowrap">
+              {t('users.actions.selected', { count: selectedCount })}
+            </span>
+            <Button variant="destructive" size="sm"
+              onClick={() => { const ids = table.getSelectedRowModel().rows.map((r: any) => r.original.id); ids.forEach((id: string) => onBan?.(id)); table.resetRowSelection(); toast.error(t('users.actions.banned_success', { count: ids.length })) }}
+              className="h-7 text-[10px]"><UserX className="me-1.5 size-3.5" /> {t('users.actions.ban')}</Button>
+          </div>
+        )}
+      </DataTableToolbar>
 
-          return (
-            <DataTableToolbar
-              table={table}
-              searchColumn="name"
-              searchPlaceholder={t('users.search')}
-              facetedFilters={[
-                {
-                  column: 'role',
-                  title: t('users.filters.role'),
-                  options: getRoles(t),
-                },
-                {
-                  column: 'banned',
-                  title: t('users.filters.status'),
-                  options: getIntegrityStatuses(t),
-                },
-                {
-                  column: 'account_status',
-                  title: t('users.filters.account'),
-                  options: getAccountStatuses(t),
-                }
-              ]}
-            >
-               {selectedCount > 0 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    {t('users.actions.selected', { count: selectedCount })}
-                  </span>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                        const ids = selectedRows.map((r: any) => r.original.id);
-                        ids.forEach((id: string) => onBan?.(id));
-                        table.resetRowSelection();
-                        toast.error(t('users.actions.banned_success', { count: ids.length }));
-                    }}
-                    className="h-8"
-                  >
-                    <UserX className="me-2 h-4 w-4" />
-                    {t('users.actions.ban')}
-                  </Button>
-                </div>
+      {/* Table */}
+      <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-muted/50">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className="cursor-pointer"
+                    onClick={() => handleViewDetails(row.original)}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow><TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground text-sm">No results</TableCell></TableRow>
               )}
-            </DataTableToolbar>
-          )
-        }}
-        onRowClick={handleViewDetails}
-      />
+            </TableBody>
+          </Table>
+        </div>
+      </div>
 
+      {/* Pagination */}
+      <DataTablePagination table={table} />
 
-      <UserProfileDialog
-        user={selectedUser}
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-      />
+      <UserProfileDialog user={selectedUser} open={isDialogOpen} onOpenChange={setIsDialogOpen} />
     </div>
   )
 }
