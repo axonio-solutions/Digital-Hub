@@ -56,7 +56,20 @@
       "pipeline": "Pipeline Value",
       "pipeline_sub": "DZD (Pending)",
       "accepted": "Accepted",
-      "accepted_sub": "Closed-Won deals"
+      "accepted_sub": "Closed-Won deals",
+      "today_active": "Today",
+      "avg_price": "Avg Price",
+      "total_revenue": "Total Revenue",
+      "avg_deal": "Avg Deal",
+      "missed_value": "Missed Value",
+      "loss_rate": "Loss Rate",
+      "avg_missed": "Avg Missed"
+    },
+    "time": {
+      "all": "All Time",
+      "today": "Today",
+      "week": "7 Days",
+      "month": "30 Days"
     },
     "tabs": {
       "active": "Active",

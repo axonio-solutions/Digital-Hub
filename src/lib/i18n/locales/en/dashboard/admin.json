@@ -135,6 +135,7 @@
       "terminate": "Terminate Session",
       "health_score": "Health Score",
       "security": "Security",
+      "copied": "Copied to clipboard",
       "registry_email": "Registry Email",
       "contact_line": "Contact Line",
       "origin_node": "Origin Node",
@@ -167,6 +168,17 @@
       "optimal": "Optimal",
       "stable": "Stable",
       "low": "Low"
+    },
+    "overview": {
+      "thriving": "Market is thriving",
+      "needs_attention": "Market needs attention",
+      "avg_offers": "Avg Offers/Req",
+      "healthy_market": "Healthy Market",
+      "low_supply_market": "Low Supply Market",
+      "db_size": "DB Size",
+      "recent_registrations": "New Signups",
+      "view_analytics": "View Analytics",
+      "recent_activity": "Recent Activity"
     }
   }
 }

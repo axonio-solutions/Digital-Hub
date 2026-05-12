@@ -57,7 +57,20 @@
       "pipeline": "قيمة المسار",
       "pipeline_sub": "د.ج (قيد الانتظار)",
       "accepted": "مقبول",
-      "accepted_sub": "صفقات ناجحة"
+      "accepted_sub": "صفقات ناجحة",
+      "today_active": "اليوم",
+      "avg_price": "متوسط السعر",
+      "total_revenue": "إجمالي الإيرادات",
+      "avg_deal": "متوسط الصفقة",
+      "missed_value": "القيمة الضائعة",
+      "loss_rate": "معدل الخسارة",
+      "avg_missed": "متوسط الضائع"
+    },
+    "time": {
+      "all": "الكل",
+      "today": "اليوم",
+      "week": "٧ أيام",
+      "month": "٣٠ يوماً"
     },
     "tabs": {
       "active": "نشط",

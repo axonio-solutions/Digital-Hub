@@ -33,5 +33,15 @@
       "fulfilled": "Exécuté",
       "cancelled": "Annulé"
     }
+  },
+  "toasts": {
+    "closed": "Demande fermée",
+    "reopened": "Demande réouverte",
+    "deleted": "Demande supprimée",
+    "error": "Une erreur s'est produite"
+  },
+  "empty": {
+    "title": "Aucune demande",
+    "desc": "Publiez votre première demande de pièce pour recevoir des offres de vendeurs de confiance."
   }
 }

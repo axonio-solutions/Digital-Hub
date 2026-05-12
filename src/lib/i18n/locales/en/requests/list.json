@@ -10,7 +10,9 @@
   "empty": {
     "general": "N/A",
     "inquiry": "General Inquiry",
-    "market_avg": "Market Avg"
+    "market_avg": "Market Avg",
+    "title": "No Demands Yet",
+    "desc": "Start posting your part requests to get offers from sellers"
   },
   "actions": {
     "open_menu": "Open actions",

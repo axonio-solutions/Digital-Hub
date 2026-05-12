@@ -33,5 +33,15 @@
       "fulfilled": "Fulfilled",
       "cancelled": "Cancelled"
     }
+  },
+  "toasts": {
+    "closed": "Request closed",
+    "reopened": "Request reopened",
+    "deleted": "Request deleted",
+    "error": "Something went wrong"
+  },
+  "empty": {
+    "title": "No Demands Yet",
+    "desc": "Post your first part request to start receiving offers from trusted sellers."
   }
 }

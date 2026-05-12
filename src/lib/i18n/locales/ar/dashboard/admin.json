@@ -144,6 +144,7 @@
       "terminate": "إنهاء الجلسة",
       "health_score": "درجة الصحة",
       "security": "الأمن",
+      "copied": "تم النسخ إلى الحافظة",
       "registry_email": "البريد المسجل",
       "contact_line": "خط التواصل",
       "origin_node": "نقطة الأصل",
@@ -176,6 +177,17 @@
       "optimal": "مثالي",
       "stable": "مستقر",
       "low": "منخفض"
+    },
+    "overview": {
+      "thriving": "السوق مزدهر",
+      "needs_attention": "السوق بحاجة إلى اهتمام",
+      "avg_offers": "متوسط العروض/طلب",
+      "healthy_market": "سوق صحي",
+      "low_supply_market": "سوق منخفض العرض",
+      "db_size": "حجم القاعدة",
+      "recent_registrations": "تسجيلات جديدة",
+      "view_analytics": "عرض التحليلات",
+      "recent_activity": "نشاط حديث"
     }
   }
 }

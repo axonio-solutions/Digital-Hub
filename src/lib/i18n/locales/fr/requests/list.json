@@ -10,7 +10,9 @@
   "empty": {
     "general": "N/D",
     "inquiry": "Demande Générale",
-    "market_avg": "Moy. Marché"
+    "market_avg": "Moy. Marché",
+    "title": "Aucune demande",
+    "desc": "Commencez à publier vos demandes de pièces pour recevoir des offres"
   },
   "actions": {
     "open_menu": "Ouvrir les actions",

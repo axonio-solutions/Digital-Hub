@@ -56,7 +56,20 @@
       "pipeline": "Valeur du Pipeline",
       "pipeline_sub": "DZD (En attente)",
       "accepted": "Acceptées",
-      "accepted_sub": "Ventes conclues"
+      "accepted_sub": "Ventes conclues",
+      "today_active": "Aujourd'hui",
+      "avg_price": "Prix Moyen",
+      "total_revenue": "Revenu Total",
+      "avg_deal": "Transaction Moy.",
+      "missed_value": "Valeur Perdue",
+      "loss_rate": "Taux de Perte",
+      "avg_missed": "Perte Moy."
+    },
+    "time": {
+      "all": "Tout",
+      "today": "Aujourd'hui",
+      "week": "7 Jours",
+      "month": "30 Jours"
     },
     "tabs": {
       "active": "Actif",

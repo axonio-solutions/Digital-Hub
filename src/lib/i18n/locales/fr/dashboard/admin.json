@@ -135,6 +135,7 @@
       "terminate": "Terminer la Session",
       "health_score": "Score de Santé",
       "security": "Sécurité",
+      "copied": "Copié dans le presse-papiers",
       "registry_email": "E-mail d'Enregistrement",
       "contact_line": "Ligne de Contact",
       "origin_node": "Nœud d'Origine",
@@ -167,6 +168,17 @@
       "optimal": "Optimal",
       "stable": "Stable",
       "low": "Faible"
+    },
+    "overview": {
+      "thriving": "Le march\u00e9 prosp\u00e8re",
+      "needs_attention": "Le march\u00e9 a besoin d'attention",
+      "avg_offers": "Offres/Req Moy",
+      "healthy_market": "March\u00e9 Sain",
+      "low_supply_market": "March\u00e9 \u00e0 Faible Offre",
+      "db_size": "Taille DB",
+      "recent_registrations": "Nouvelles Inscriptions",
+      "view_analytics": "Voir Analyses",
+      "recent_activity": "Activit\u00e9 R\u00e9cente"
     }
   }
 }
