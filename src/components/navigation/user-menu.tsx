@@ -2,36 +2,31 @@ import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import {
+  CircleUserRound,
+  ClipboardList,
   Loader2,
   LogOut,
-  CircleUserRound,
-  Store,
-  ReceiptText,
-  ClipboardList,
   Tag,
-  LayoutDashboard,
 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 
 const SELLER_LINKS = [
-  { to: '/dashboard', label: 'Marketplace Board', icon: LayoutDashboard },
   { to: '/dashboard/quotes', label: 'My Quotes', icon: Tag },
 ]
 
 const BUYER_LINKS = [
   { to: '/dashboard/requests', label: 'My Requests', icon: ClipboardList },
-  { to: '/dashboard/requests/new', label: 'Post a Request', icon: ReceiptText },
 ]
 
 interface UserMenuProps {
@@ -127,7 +122,7 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
 
         <DropdownMenuSeparator className="bg-border" />
 
-        {/* Account + Seller Hub */}
+        {/* Account */}
         <DropdownMenuGroup>
           <DropdownMenuItem
             onClick={() => navigate({ to: '/dashboard/profile' as any })}
@@ -136,16 +131,6 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
             <CircleUserRound className="w-4 h-4 text-muted-foreground group-hover/item:text-primary transition-colors" />
             <span className="flex-1 text-foreground">Account Settings</span>
           </DropdownMenuItem>
-
-          {role === 'seller' && (
-            <DropdownMenuItem
-              onClick={() => navigate({ to: '/dashboard' as any })}
-              className={cn(itemClass, "mx-2")}
-            >
-              <Store className="w-4 h-4 text-muted-foreground group-hover/item:text-primary transition-colors" />
-              <span className="flex-1 text-foreground">Seller Hub</span>
-            </DropdownMenuItem>
-          )}
         </DropdownMenuGroup>
 
         <DropdownMenuSeparator className="bg-border" />

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowUpRight, Calendar, Clock, Flame, MessageSquare, Pencil, RefreshCcw, Trash2, XCircle } from 'lucide-react'
+import { ArrowUpRight, Calendar, Clock, Flame, MessageSquare, Pencil, RefreshCcw, Sparkles, Trash2, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 
@@ -7,6 +7,7 @@ interface PartCardProps {
   id: string
   title: string
   brand: string
+  brandImageUrl?: string | null
   modelYear: string
   category?: string
   region?: string
@@ -40,6 +41,7 @@ function timeAgo(dateStr: string): string {
 export const PartCard = React.memo(function PartCard({
   title,
   brand,
+  brandImageUrl,
   modelYear,
   category,
   region: _region,
@@ -48,7 +50,7 @@ export const PartCard = React.memo(function PartCard({
   status,
   createdAt,
   notes,
-  actionLabel: _actionLabel,
+  actionLabel,
   actionHref: _actionHref,
   onClick,
   partNumber,
@@ -137,7 +139,12 @@ export const PartCard = React.memo(function PartCard({
 
         {/* Meta badges */}
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="inline-flex items-center h-5.5 px-2 rounded-md bg-foreground/10 text-foreground text-[10px] font-bold">
+          <span className="inline-flex items-center gap-1.5 h-5.5 px-2 rounded-md bg-foreground/10 text-foreground text-[10px] font-bold">
+            {brandImageUrl ? (
+              <img src={brandImageUrl} alt="" className="size-3.5 rounded object-contain" />
+            ) : (
+              <span className="text-[9px] font-black uppercase opacity-40">{brand.substring(0, 2)}</span>
+            )}
             {brand}
           </span>
           {modelYear && (
@@ -204,9 +211,19 @@ export const PartCard = React.memo(function PartCard({
                 <Trash2 className="size-3" /> Delete
               </button>
             )}
-            {!onEdit && !onClose && !onReopen && !onDelete && onClick && (
-              <span data-no-navigate onClick={(e) => { e.stopPropagation(); onClick() }} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 cursor-pointer">
-                Details <ArrowUpRight className="w-2.5 h-2.5" />
+            {!onEdit && !onClose && !onReopen && !onDelete && actionLabel && onClick && (
+              <span
+                data-no-navigate
+                onClick={(e) => { e.stopPropagation(); onClick() }}
+                className={cn(
+                  'inline-flex items-center gap-1 h-7 px-3 rounded-full text-[10px] font-bold uppercase tracking-wider border cursor-pointer transition-all hover:brightness-110 active:scale-95',
+                  actionLabel === 'Quote Now'
+                    ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/20'
+                    : 'bg-primary/10 text-primary border-primary/20',
+                )}
+              >
+                {actionLabel === 'Quote Now' ? <Sparkles className="w-3 h-3" /> : <ArrowUpRight className="w-2.5 h-2.5" />}
+                {actionLabel}
               </span>
             )}
           </div>

@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link, useRouterState } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { NotificationBell } from '@/features/notifications'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { cn } from '@/lib/utils'
 
-import { NavSearch } from '@/components/navigation/nav-search'
 import { NavControls } from '@/components/navigation/nav-controls'
 import { UserMenu } from '@/components/navigation/user-menu'
 
@@ -26,19 +25,16 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const isExplorePage = pathname.startsWith('/explore')
-
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full h-14",
-        "flex items-center px-4 lg:px-8 gap-4",
-        "bg-background/90 backdrop-blur-md",
-        "border-b transition-all duration-300",
+        'sticky top-0 z-50 w-full h-14',
+        'flex items-center px-4 lg:px-8 gap-4',
+        'bg-background/90 backdrop-blur-md',
+        'border-b transition-all duration-300',
         scrolled
-          ? "border-border shadow-[0_1px_3px_rgba(0,0,0,0.03)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.25)]"
-          : "border-transparent"
+          ? 'border-border shadow-[0_1px_3px_rgba(0,0,0,0.03)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.25)]'
+          : 'border-transparent',
       )}
     >
       {/* Brand */}
@@ -55,8 +51,7 @@ export default function Navbar() {
         </span>
       </Link>
 
-      {/* Search — only on /explore */}
-      {isExplorePage ? <NavSearch /> : <div className="flex-1" />}
+      <div className="flex-1" />
 
       {/* Right controls */}
       <div className="flex items-center gap-1.5 flex-shrink-0">

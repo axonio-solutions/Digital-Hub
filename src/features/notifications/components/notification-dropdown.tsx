@@ -1,5 +1,16 @@
 "use client"
 
+import {
+  Bell,
+  Check,
+  CheckCircle2,
+  Headset,
+  Info,
+  ScanText,
+  ShoppingBag,
+  Star,
+  Video,
+} from 'lucide-react'
 import type { ReactElement } from 'react'
 import {
   DropdownMenu,
@@ -11,17 +22,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import {
-  Headset,
-  ScanText,
-  Star,
-  Video,
-  Bell,
-  ShoppingBag,
-  Info,
-  CheckCircle2,
-  Check,
-} from 'lucide-react'
 import { formatRelativeTime } from '@/lib/utils/date-format'
 import {
   Tooltip,
@@ -32,7 +32,7 @@ import {
 
 type Props = {
   trigger: ReactElement
-  notifications?: any[]
+  notifications?: Array<any>
   unreadCount?: number
   onMarkRead?: (id: string) => void
   onMarkAllRead?: () => void
@@ -72,7 +72,7 @@ export const NotificationDropdown = ({
         <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
         <DropdownMenuContent
           align={align}
-          className="p-0 w-[420px] rounded-xl border-border bg-card shadow-xl overflow-hidden"
+          className="p-0 w-[calc(100vw-2rem)] sm:w-[380px] rounded-xl border-border bg-card shadow-xl overflow-hidden"
         >
           <DropdownMenuGroup>
             {/* Header */}
@@ -132,7 +132,7 @@ export const NotificationDropdown = ({
                           )}>
                             {notification.title}
                           </p>
-                          <p className="max-w-[260px] truncate text-[11px] text-muted-foreground mt-0.5">
+                          <p className="max-w-[180px] sm:max-w-[260px] truncate text-[11px] text-muted-foreground mt-0.5">
                             {notification.message}
                           </p>
                         </div>
