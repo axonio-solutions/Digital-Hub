@@ -97,6 +97,7 @@ export function MarketplaceFeed({
             id={req.id}
             title={req.partName || ''}
             brand={req.vehicleBrand || ''}
+            brandImageUrl={(req as any).brand?.imageUrl}
             modelYear={req.modelYear || ''}
             partNumber={req.partNumber || ''}
             category={req.category?.name || req.category || ''}

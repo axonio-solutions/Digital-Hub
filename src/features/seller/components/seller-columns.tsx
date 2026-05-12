@@ -1,21 +1,14 @@
 'use client'
 
 import { useMemo } from 'react'
-import {
-  MoreHorizontal,
-  Eye,
-  Settings2,
-  Trash2,
-  Calendar,
-} from 'lucide-react'
+import { Calendar, Eye, MoreHorizontal, Settings2, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatRelativeTime } from '@/lib/utils/date-format'
-import { useTranslation } from 'react-i18next'
 import { tCategory } from '@/utils/category-utils'
-import { cn } from '@/lib/utils'
 
 import { Badge } from '@/components/ui/badge'
-import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
+import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -27,10 +20,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 export const useSellerColumns = (
-  onAction: (action: { type: string; item: any }) => void
-): ColumnDef<any>[] => {
+  onAction: (action: { type: string; item: any }) => void,
+): Array<ColumnDef<any>> => {
   const { t, i18n } = useTranslation('quotes')
-
 
   return useMemo(
     () => [
@@ -41,9 +33,7 @@ export const useSellerColumns = (
           const quote = row.original
           return (
             <div className="flex flex-col">
-              <span className="font-medium text-sm">
-                {quote.request?.partName}
-              </span>
+              <span className="font-medium text-sm">{quote.request?.partName}</span>
               <span className="text-[10px] text-muted-foreground font-mono">
                 #{quote.id.substring(0, 8)}
               </span>
@@ -78,7 +68,7 @@ export const useSellerColumns = (
               {tCategory(category, t)}
             </Badge>
           )
-        }
+        },
       },
       {
         accessorKey: 'price',
@@ -89,12 +79,8 @@ export const useSellerColumns = (
           return (
             <div className="flex flex-col">
               <div className="flex items-center gap-1 font-semibold">
-                <span className="text-sm">
-                  {price.toLocaleString(i18n.language === 'ar' ? 'ar-DZ' : i18n.language)}
-                </span>
-                <span className="text-[10px] text-muted-foreground uppercase">
-                  {t('columns.currency')}
-                </span>
+                <span className="text-sm">{price.toLocaleString(i18n.language)}</span>
+                <span className="text-[10px] text-muted-foreground uppercase">DZD</span>
               </div>
               <span className="text-[10px] text-muted-foreground">
                 {t(`columns.conditions.${condition}`, { defaultValue: condition })}
@@ -111,12 +97,13 @@ export const useSellerColumns = (
           return (
             <GlowingBadge
               variant={
-                status === 'accepted' ? 'success' :
-                status === 'rejected' ? 'neutral' :
-                'info'
+                status === 'accepted'
+                  ? 'success'
+                  : status === 'rejected'
+                    ? 'neutral'
+                    : 'info'
               }
               pulse={status === 'pending'}
-              className={cn(i18n.language === 'ar' ? '' : 'capitalize')}
             >
               {t(`columns.statuses.${status}`)}
             </GlowingBadge>
@@ -129,9 +116,7 @@ export const useSellerColumns = (
         cell: ({ row }) => (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-3 w-3" />
-            <span className="text-xs">
-              {formatRelativeTime(row.original.createdAt)}
-            </span>
+            <span className="text-xs">{formatRelativeTime(row.original.createdAt)}</span>
           </div>
         ),
       },
@@ -143,7 +128,7 @@ export const useSellerColumns = (
             <div className="flex justify-end">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-8 w-8 p-0">
+                  <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
                     <span className="sr-only">{t('table.actions_menu')}</span>
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
@@ -176,6 +161,6 @@ export const useSellerColumns = (
         },
       },
     ],
-    [onAction, t]
+    [onAction, t, i18n.language],
   )
 }

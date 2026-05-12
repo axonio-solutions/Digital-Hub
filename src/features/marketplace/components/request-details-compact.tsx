@@ -25,6 +25,13 @@ export function RequestDetailsCompact({ request }: RequestDetailsCompactProps) {
               <Layers className="w-2.5 h-2.5" /> Vehicle
             </span>
             <div className="flex items-center gap-2 font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
+              <div className="size-5 rounded bg-muted flex items-center justify-center shrink-0 border border-border/50">
+                {request.brand?.imageUrl ? (
+                  <img src={request.brand.imageUrl} alt="" className="size-3.5 object-contain" />
+                ) : (
+                  <span className="text-[8px] font-bold text-muted-foreground">{(request.vehicleBrand || '?').substring(0, 2).toUpperCase()}</span>
+                )}
+              </div>
               {request.vehicleBrand}
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary/20 dark:bg-primary/40" />
               {request.modelYear}

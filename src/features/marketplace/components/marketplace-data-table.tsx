@@ -188,13 +188,22 @@ export function MarketplaceDataTable({
         header: t('table.headers.vehicle'),
         cell: ({ row }) => {
           return (
-            <div className="flex flex-col">
-              <span className="font-bold text-slate-900 dark:text-white">
-                {row.original.vehicleBrand}
-              </span>
-              <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">
-                {row.original.modelYear}
-              </span>
+            <div className="flex items-center gap-2">
+              <div className="size-7 rounded-md bg-muted flex items-center justify-center shrink-0 border border-border">
+                {(row.original as any).brand?.imageUrl ? (
+                  <img src={(row.original as any).brand.imageUrl} alt="" className="size-4 object-contain" />
+                ) : (
+                  <span className="text-[9px] font-bold text-muted-foreground">{(row.original.vehicleBrand || '?').substring(0, 2).toUpperCase()}</span>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-slate-900 dark:text-white">
+                  {row.original.vehicleBrand}
+                </span>
+                <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">
+                  {row.original.modelYear}
+                </span>
+              </div>
             </div>
           )
         }

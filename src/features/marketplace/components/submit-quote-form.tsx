@@ -98,7 +98,7 @@ export function SubmitQuoteForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn('space-y-4', !isCompact && 'space-y-5')}>
         {showContext && vehicleInfo && (
           <div className="flex flex-wrap items-center gap-4 justify-between pb-4 border-b border-border">
             <div className="flex items-center gap-3">
@@ -121,8 +121,7 @@ export function SubmitQuoteForm({
         )}
 
         <div className={cn(
-          "space-y-5",
-          isCompact ? "" : "bg-muted/30 rounded-xl p-5 border border-border"
+          !isCompact && "bg-muted/30 rounded-xl p-5 border border-border"
         )}>
           {/* Price */}
           <FormField
@@ -143,7 +142,10 @@ export function SubmitQuoteForm({
                       placeholder="0.00"
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                      className="h-14 pl-4 text-2xl font-mono font-bold rounded-xl border-2 border-border bg-card focus:border-primary transition-all"
+                      className={cn(
+                        'pl-4 font-mono font-bold rounded-xl border-2 border-border bg-card focus:border-primary transition-all',
+                        isCompact ? 'h-12 text-xl' : 'h-14 text-2xl',
+                      )}
                     />
                   </div>
                 </FormControl>
@@ -166,7 +168,10 @@ export function SubmitQuoteForm({
                   <Input
                     placeholder={t('form.warranty_placeholder')}
                     {...field}
-                    className="h-12 rounded-xl border-2 border-border bg-card focus:border-primary transition-all font-medium"
+                    className={cn(
+                      'rounded-xl border-2 border-border bg-card focus:border-primary transition-all font-medium',
+                      isCompact ? 'h-10' : 'h-12',
+                    )}
                   />
                 </FormControl>
                 <FormMessage />
@@ -192,16 +197,18 @@ export function SubmitQuoteForm({
                     <label
                       htmlFor="cond-new"
                       className={cn(
-                        "cursor-pointer h-16 rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all",
+                        'cursor-pointer rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all',
+                        isCompact ? 'h-12' : 'h-16',
                         field.value === 'new'
                           ? 'border-primary bg-primary/5'
-                          : 'border-border bg-card hover:border-primary/30'
+                          : 'border-border bg-card hover:border-primary/30',
                       )}
                     >
                       <RadioGroupItem value="new" id="cond-new" className="sr-only" />
                       <span className={cn(
-                        "text-sm font-bold uppercase tracking-wide",
-                        field.value === 'new' ? 'text-primary' : 'text-muted-foreground'
+                        'font-bold uppercase tracking-wide',
+                        isCompact ? 'text-xs' : 'text-sm',
+                        field.value === 'new' ? 'text-primary' : 'text-muted-foreground',
                       )}>
                         {t('form.condition_new')}
                       </span>
@@ -210,16 +217,18 @@ export function SubmitQuoteForm({
                     <label
                       htmlFor="cond-used"
                       className={cn(
-                        "cursor-pointer h-16 rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all",
+                        'cursor-pointer rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all',
+                        isCompact ? 'h-12' : 'h-16',
                         field.value === 'used'
                           ? 'border-primary bg-primary/5'
-                          : 'border-border bg-card hover:border-primary/30'
+                          : 'border-border bg-card hover:border-primary/30',
                       )}
                     >
                       <RadioGroupItem value="used" id="cond-used" className="sr-only" />
                       <span className={cn(
-                        "text-sm font-bold uppercase tracking-wide",
-                        field.value === 'used' ? 'text-primary' : 'text-muted-foreground'
+                        'font-bold uppercase tracking-wide',
+                        isCompact ? 'text-xs' : 'text-sm',
+                        field.value === 'used' ? 'text-primary' : 'text-muted-foreground',
                       )}>
                         {t('form.condition_used')}
                       </span>
@@ -236,7 +245,10 @@ export function SubmitQuoteForm({
         <Button
           type="submit"
           disabled={isPending}
-          className="w-full h-13 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-primary/20"
+          className={cn(
+            'w-full rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-primary/20',
+            isCompact ? 'h-11' : 'h-13',
+          )}
         >
           {isPending ? (
             <Loader2 className="w-5 h-5 me-2 animate-spin" />

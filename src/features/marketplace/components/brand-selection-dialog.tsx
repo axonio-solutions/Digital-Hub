@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils'
 interface Brand {
   id: string
   brand: string
+  imageUrl?: string | null
 }
 
 interface BrandSelectionDialogProps {
@@ -65,8 +66,8 @@ export function BrandSelectionDialog({
     [selectedBrands, onSelect]
   )
 
-  const getBrandLogo = (brandName: string) => {
-    return `https://logo.clearbit.com/${brandName.toLowerCase().replace(/\s+/g, '')}.com?size=120`
+  const getBrandLogo = (brand: Brand) => {
+    return brand.imageUrl || `https://ui-avatars.com/api/?name=${brand.brand}&background=random&size=64`
   }
 
   return (
@@ -142,7 +143,7 @@ export function BrandSelectionDialog({
                       >
                         <div className="size-12 rounded-lg bg-muted mb-3 p-2 flex items-center justify-center">
                           <img
-                            src={getBrandLogo(brand.brand)}
+                            src={getBrandLogo(brand)}
                             alt={brand.brand}
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${brand.brand}&background=random`
@@ -190,11 +191,8 @@ export function BrandSelectionDialog({
                       >
                         <div className="size-9 rounded-lg bg-muted flex-shrink-0 flex items-center justify-center p-1.5">
                           <img
-                            src={getBrandLogo(brand.brand)}
+                            src={getBrandLogo(brand)}
                             alt={brand.brand}
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${brand.brand}&background=random`
-                            }}
                             className="w-full h-full object-contain"
                           />
                         </div>
