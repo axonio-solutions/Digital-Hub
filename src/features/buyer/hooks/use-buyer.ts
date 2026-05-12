@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { fetchBuyerRequestsServerFn } from '@/fn/requests'
 
 export const buyerKeys = {
@@ -18,5 +18,6 @@ export function useBuyerRequests(buyerId: string) {
     enabled: !!buyerId,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
+    placeholderData: keepPreviousData,
   })
 }

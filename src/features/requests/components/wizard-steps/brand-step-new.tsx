@@ -92,9 +92,9 @@ export function BrandStep() {
                       : 'bg-muted border border-border'
                   )}
                 >
-                  {brand.logo_url ? (
+                  {brand.imageUrl ? (
                     <img
-                      src={brand.logo_url}
+                      src={brand.imageUrl}
                       alt={brand.brand}
                       className={cn(
                         'size-6 object-contain transition-all',

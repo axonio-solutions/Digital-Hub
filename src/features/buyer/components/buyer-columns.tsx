@@ -163,8 +163,13 @@ const ActionCell = ({ row, onAction, mutations }: { row: any, onAction?: (action
   );
 };
 
-export const useBuyerColumns = (onAction?: (action: { type: string, item: any }) => void, mutations?: any): Array<ColumnDef<any>> => {
-  const { t } = useTranslation('requests/list');
+export const useBuyerColumns = (
+  onAction?: (action: { type: string, item: any }) => void,
+  mutations?: any,
+  tOverride?: (key: string) => string
+): Array<ColumnDef<any>> => {
+  const { t: tHook } = useTranslation('requests/list');
+  const t = tOverride || tHook;
 
   return useMemo(() => [
     {
@@ -199,9 +204,18 @@ export const useBuyerColumns = (onAction?: (action: { type: string, item: any })
       accessorKey: "vehicleBrand",
       header: t('columns.vehicle'),
       cell: ({ row }: { row: any }) => (
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">{row.original.vehicleBrand}</span>
-          <span className="text-xs text-muted-foreground">{row.original.modelYear} • {row.original.brand?.clusterRegion || t('empty.general')}</span>
+        <div className="flex items-center gap-2">
+          <div className="size-7 rounded-md bg-muted flex items-center justify-center shrink-0 border border-border">
+            {row.original.brand?.imageUrl ? (
+              <img src={row.original.brand.imageUrl} alt="" className="size-4 object-contain" />
+            ) : (
+              <span className="text-[9px] font-bold text-muted-foreground">{(row.original.vehicleBrand || '?').substring(0, 2).toUpperCase()}</span>
+            )}
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-sm font-medium">{row.original.vehicleBrand}</span>
+            <span className="text-xs text-muted-foreground">{row.original.modelYear} • {row.original.brand?.clusterRegion || t('empty.general')}</span>
+          </div>
         </div>
       ),
     },

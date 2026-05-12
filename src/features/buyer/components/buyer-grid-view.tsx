@@ -20,7 +20,21 @@ interface RequestsGridViewProps {
   onAction?: (action: { type: string, item: any }) => void
 }
 
-const GridCard = memo(function GridCard({ req, t, onAction }: { req: any; t: any; onAction?: (action: { type: string, item: any }) => void }) {
+function useBrandOptions(data: Array<any>) {
+  return useMemo(() => {
+    const brands = new Set<string>()
+    data.forEach((r: any) => {
+      const brandName = r.vehicleBrand || r.brand?.brand
+      if (brandName) brands.add(brandName)
+    })
+    return Array.from(brands).sort().map((brand) => ({ label: brand, value: brand }))
+  }, [data])
+}
+
+const GridCard = memo(function GridCard({ req, onAction }: {
+  req: any
+  onAction?: (action: { type: string, item: any }) => void
+}) {
   const handleView = useCallback(() => onAction?.({ type: 'view_request', item: req }), [onAction, req.id])
   const handleEdit = useCallback(() => onAction?.({ type: 'edit_request', item: req }), [onAction, req.id])
   const handleClose = useCallback(() => onAction?.({ type: 'close_request', item: req }), [onAction, req.id])
@@ -32,9 +46,10 @@ const GridCard = memo(function GridCard({ req, t, onAction }: { req: any; t: any
       id={req.id}
       title={req.partName}
       brand={req.vehicleBrand || req.brand?.brand}
+      brandImageUrl={req.brand?.imageUrl}
       modelYear={req.modelYear}
-      category={req.category?.name || t('empty.inquiry')}
-      region={req.brand?.clusterRegion || t('empty.general')}
+      category={req.category?.name}
+      region={req.brand?.clusterRegion}
       imageUrls={req.imageUrls}
       quotesCount={req.quotes?.length}
       status={req.status}
@@ -52,19 +67,8 @@ const GridCard = memo(function GridCard({ req, t, onAction }: { req: any; t: any
 
 export function BuyerGridView({ data, onAction }: RequestsGridViewProps) {
   const { t } = useTranslation('requests/list')
-  const columns = useBuyerColumns(onAction)
-
-  const brandOptions = useMemo(() => {
-    const brands = new Set<string>()
-    data.forEach((r: any) => {
-      const brandName = r.vehicleBrand || r.brand?.brand
-      if (brandName) brands.add(brandName)
-    })
-    return Array.from(brands)
-      .sort()
-      .map((brand) => ({ label: brand, value: brand }))
-  }, [data])
-
+  const columns = useMemo(() => useBuyerColumns(onAction, undefined, t), [onAction, t])
+  const brandOptions = useBrandOptions(data)
   const [columnFilters, setColumnFilters] = useState<Array<any>>([])
 
   const table = useReactTable({
@@ -82,9 +86,16 @@ export function BuyerGridView({ data, onAction }: RequestsGridViewProps) {
 
   if (data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-xl bg-muted/5 border-muted-foreground/10">
-        <Car className="size-12 text-muted-foreground/20 mb-4" />
-        <p className="text-muted-foreground">{t('empty.no_demands')}</p>
+      <div className="flex-1 flex flex-col items-center justify-center gap-6 py-16 px-4">
+        <div className="size-20 rounded-[2rem] bg-primary/10 flex items-center justify-center shadow-inner">
+          <Car className="size-10 text-primary/50" strokeWidth={1.5} />
+        </div>
+        <div className="text-center space-y-2">
+          <h3 className="text-lg font-black tracking-tight">{t('empty.title', 'No Demands Yet')}</h3>
+          <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
+            {t('empty.desc', 'Start posting your part requests to get offers from sellers')}
+          </p>
+        </div>
       </div>
     )
   }
@@ -116,7 +127,7 @@ export function BuyerGridView({ data, onAction }: RequestsGridViewProps) {
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {rows.map((req: any) => (
-          <GridCard key={req.id} req={req} t={t} onAction={onAction} />
+          <GridCard key={req.id} req={req} onAction={onAction} />
         ))}
       </div>
 

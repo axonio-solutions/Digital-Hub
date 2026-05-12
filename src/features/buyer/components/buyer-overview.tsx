@@ -87,22 +87,10 @@ export function BuyerOverview() {
           </div>
         </div>
 
-        <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
-          <DialogTrigger asChild>
-            <Button className="font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full sm:w-auto">
-              <Plus className="size-4 me-2" />
-              {t('new_demand', 'New Demand')}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[900px] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
-            <div className="h-[600px] max-h-[85dvh]">
-              <RequestWizard
-                onSuccess={() => setIsNewRequestOpen(false)}
-                onCancel={() => setIsNewRequestOpen(false)}
-              />
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => setIsNewRequestOpen(true)} className="font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full sm:w-auto">
+          <Plus className="size-4 me-2" />
+          {t('new_demand', 'New Demand')}
+        </Button>
       </div>
 
       {requests.length > 0 ? (
@@ -141,12 +129,13 @@ export function BuyerOverview() {
 
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
               {recentDemands.map((req: any) => (
-                <PartCard
-                  key={req.id}
-                  id={req.id}
-                  title={req.partName}
-                  brand={req.vehicleBrand || req.brand?.brand}
-                  modelYear={req.modelYear}
+              <PartCard
+                key={req.id}
+                id={req.id}
+                title={req.partName}
+                brand={req.vehicleBrand || req.brand?.brand}
+                brandImageUrl={req.brand?.imageUrl}
+                modelYear={req.modelYear}
                   category={req.category?.name}
                   region={req.brand?.clusterRegion}
                   imageUrls={req.imageUrls}
@@ -176,24 +165,27 @@ export function BuyerOverview() {
               {t('empty.desc')}
             </p>
           </div>
-          <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
-            <DialogTrigger asChild>
-              <Button size="lg" className="font-black uppercase text-xs tracking-widest h-12 px-8 rounded-2xl shadow-lg shadow-primary/20">
-                <Plus className="size-4 me-2" />
-                {t('empty.cta', 'Post Your First Request')}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[900px] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
-              <div className="h-[600px] max-h-[85dvh]">
-                <RequestWizard
-                  onSuccess={() => setIsNewRequestOpen(false)}
-                  onCancel={() => setIsNewRequestOpen(false)}
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            onClick={() => setIsNewRequestOpen(true)} 
+            size="lg" 
+            className="font-black uppercase text-xs tracking-widest h-12 px-8 rounded-2xl shadow-lg shadow-primary/20"
+          >
+            <Plus className="size-4 me-2" />
+            {t('empty.cta', 'Post Your First Request')}
+          </Button>
         </div>
       )}
+
+      <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
+        <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
+          <div className="h-[600px] max-h-[85dvh]">
+            <RequestWizard
+              onSuccess={() => setIsNewRequestOpen(false)}
+              onCancel={() => setIsNewRequestOpen(false)}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!editRequestData} onOpenChange={(open) => !open && setEditRequestData(null)}>
         <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">

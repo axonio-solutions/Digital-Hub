@@ -312,10 +312,13 @@ export function NewPartRequestForm({
                            <SelectValue placeholder={isLoadingTaxonomy ? t('placeholders.brand_loading') : t('placeholders.brand_select')} />
                          </SelectTrigger>
                          <SelectContent>
-                           {taxonomy?.brands.map((b: any) => (
-                             <SelectItem key={b.id} value={b.id} className="font-bold">
-                               {b.brand}
-                             </SelectItem>
+                            {taxonomy?.brands.map((b: any) => (
+                              <SelectItem key={b.id} value={b.id} className="font-bold">
+                                <span className="flex items-center gap-2">
+                                  {b.imageUrl && <img src={b.imageUrl} alt="" className="size-4 rounded object-cover" />}
+                                  {b.brand}
+                                </span>
+                              </SelectItem>
                            ))}
                          </SelectContent>
                        </Select>

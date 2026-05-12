@@ -66,6 +66,9 @@ export function useAllRequests() {
       return res.data
     },
     staleTime: 2 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
   })
 }
 

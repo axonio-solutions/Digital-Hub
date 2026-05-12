@@ -1,6 +1,7 @@
-import { createFileRoute, defer, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { BuyerHub } from '@/features/buyer/components/buyer-hub'
 import { BuyerSkeleton } from '@/features/buyer/components/buyer-skeleton'
+import { buyerKeys } from '@/features/buyer/hooks/use-buyer'
 
 export const Route = createFileRoute('/_authed/dashboard/requests/')({
   beforeLoad: ({ context }) => {
@@ -8,15 +9,21 @@ export const Route = createFileRoute('/_authed/dashboard/requests/')({
       throw redirect({ to: '/dashboard' })
     }
   },
-  loader: async () => {
-    const { fetchBuyerRequestsServerFn } = await import('@/fn/requests')
-    const requestsPromise = fetchBuyerRequestsServerFn()
-    return { buyerRequests: defer(requestsPromise) }
+  loader: async ({ context }) => {
+    const buyerId = context.user?.id
+    if (buyerId) {
+      const { fetchBuyerRequestsServerFn } = await import('@/fn/requests')
+      await context.queryClient.ensureQueryData({
+        queryKey: buyerKeys.requests(buyerId),
+        queryFn: async () => {
+          const res = await fetchBuyerRequestsServerFn()
+          if (!res.success) throw new Error(res.error)
+          return res.data
+        },
+        staleTime: 5 * 60 * 1000,
+      }).catch(() => {})
+    }
   },
-  component: RequestsHubRoute,
+  component: BuyerHub,
   pendingComponent: BuyerSkeleton,
 })
-
-function RequestsHubRoute() {
-  return <BuyerHub />
-}

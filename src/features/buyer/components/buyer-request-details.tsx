@@ -4,6 +4,8 @@ import {
   ArrowLeft,
   Calendar,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Edit,
   MapPin,
@@ -52,6 +54,74 @@ function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value
   )
 }
 
+function ImageSlider({ images, alt }: { images: string[]; alt: string }) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  if (!images || images.length === 0) {
+    return (
+      <div className="aspect-[4/3] w-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+        <Calendar className="size-10 text-muted-foreground/30" />
+      </div>
+    )
+  }
+
+  if (images.length === 1) {
+    return (
+      <div className="aspect-[4/3] w-full">
+        <img src={images[0]} alt={alt} className="w-full h-full object-cover" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative group aspect-[4/3] w-full overflow-hidden">
+      <div 
+        className="flex transition-transform duration-300 ease-in-out h-full"
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+      >
+        {images.map((img, idx) => (
+          <div key={idx} className="w-full h-full shrink-0">
+            <img src={img} alt={`${alt} - ${idx + 1}`} className="w-full h-full object-cover" />
+          </div>
+        ))}
+      </div>
+      
+      {/* Controls */}
+      <Button 
+        variant="secondary" 
+        size="icon" 
+        className="absolute left-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+        disabled={currentIndex === 0}
+      >
+        <ChevronLeft className="size-4" />
+      </Button>
+      
+      <Button 
+        variant="secondary" 
+        size="icon" 
+        className="absolute right-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={() => setCurrentIndex(prev => Math.min(images.length - 1, prev + 1))}
+        disabled={currentIndex === images.length - 1}
+      >
+        <ChevronRight className="size-4" />
+      </Button>
+
+      {/* Dots */}
+      <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+        {images.map((_, idx) => (
+          <button
+            key={idx}
+            className={`size-2 rounded-full transition-all ${idx === currentIndex ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/80'}`}
+            onClick={() => setCurrentIndex(idx)}
+            aria-label={`Go to slide ${idx + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function BuyerRequestDetails() {
   const { t } = useTranslation(['requests/details', 'requests/list'])
   const { requestId } = useParams({ from: '/_authed/dashboard/requests/$requestId' })
@@ -94,8 +164,6 @@ export function BuyerRequestDetails() {
   if (isLoading) return <DetailsSkeleton />
   if (error || !request) return <ErrorView t={t} />
 
-  const hasImage = request.imageUrls && request.imageUrls.length > 0
-  const imageUrl = hasImage && request.imageUrls ? request.imageUrls[0] : null
   const quotesCount = request.quotes.length || 0
   const brandName = request.brand?.brand || request.vehicleBrand || ''
   const region = request.brand?.clusterRegion || ''
@@ -107,19 +175,18 @@ export function BuyerRequestDetails() {
     <>
       {/* Image card */}
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-muted/30 shadow-sm">
-        {hasImage && imageUrl ? (
-          <div className="aspect-[4/3] w-full">
-            <img src={imageUrl} alt={request.partName} className="w-full h-full object-cover" />
-          </div>
-        ) : (
-          <div className="aspect-[4/3] w-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-            <Calendar className="size-10 text-muted-foreground/30" />
-          </div>
-        )}
+        <ImageSlider images={request.imageUrls || []} alt={request.partName} />
       </div>
 
       {/* Brand + Year */}
       <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+        <div className="size-5 rounded bg-muted flex items-center justify-center shrink-0 border border-border/50">
+          {request.brand?.imageUrl ? (
+            <img src={request.brand.imageUrl} alt="" className="size-3.5 object-contain" />
+          ) : (
+            <span className="text-[8px] font-bold text-muted-foreground">{brandName.substring(0, 2).toUpperCase()}</span>
+          )}
+        </div>
         <span>{brandName}</span>
         {request.modelYear && <><span className="text-border">·</span><span>{request.modelYear}</span></>}
       </div>
