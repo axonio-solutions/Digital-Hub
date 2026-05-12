@@ -1,6 +1,9 @@
 import { createMiddleware } from '@tanstack/react-start'
 import { getRequest, setResponseStatus } from '@tanstack/react-start/server'
+import { eq } from 'drizzle-orm'
 import { auth } from '@/lib/auth'
+import { db } from '@/db'
+import { users } from '@/db/schema/auth'
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
   const req = getRequest()
@@ -14,9 +17,16 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
     throw new Error('Unauthorized')
   }
 
+  // Fetch fresh user data from DB to bypass better-auth's cookieCache
+  // This ensures role/status checks use current values (critical after onboarding)
+  const [freshUser] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, session.user.id))
+
   return next({
     context: {
-      user: session.user,
+      user: freshUser ?? session.user,
       session: session.session,
     },
   })

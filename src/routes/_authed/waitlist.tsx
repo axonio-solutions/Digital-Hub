@@ -7,7 +7,8 @@ import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageToggle } from '@/components/language-toggle'
-import { logoutFn } from '@/fn/auth'
+import { authClient } from '@/lib/auth-client'
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 
@@ -20,12 +21,19 @@ function WaitlistPage() {
   const queryClient = useQueryClient()
   const router = useRouter()
 
-  const { mutate: logout, isPending: isLoggingOut } = useMutation({
-    mutationFn: () => logoutFn(),
-    onSuccess: () => {
-      window.location.href = '/'
-    },
-  })
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await authClient.signOut()
+      queryClient.clear()
+      window.location.href = '/login'
+    } catch (error) {
+      console.error('Logout failed', error)
+      setIsLoggingOut(false)
+    }
+  }
 
   const handleRefresh = async () => {
     await queryClient.refetchQueries({
@@ -42,11 +50,11 @@ function WaitlistPage() {
         <Button 
           variant="outline" 
           size="sm" 
-          onClick={() => logout()}
+          onClick={handleLogout}
           disabled={isLoggingOut}
           className="gap-2 backdrop-blur-sm bg-card/10 hover:bg-destructive/10 hover:text-destructive border-border"
         >
-          <LogOut className="h-4 w-4" />
+          {isLoggingOut ? <Clock className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
           <span className="hidden sm:inline">{t('nav.logout')}</span>
         </Button>
       </div>

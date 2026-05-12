@@ -47,7 +47,7 @@ export const Route = createFileRoute('/_authed/onboarding')({
   beforeLoad: async ({ context }) => {
     const { user } = context
     const isPending = user?.account_status !== 'active'
-    
+
     // If user is already fully onboarded, do not let them access the onboarding page again.
     if (!isPending) {
       throw redirect({
@@ -62,6 +62,8 @@ export const Route = createFileRoute('/_authed/onboarding')({
 function OnboardingFlow() {
   const { t } = useTranslation('dashboard/onboarding')
   const [currentStep, setCurrentStep] = useState(1)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [redirectTarget, setRedirectTarget] = useState('/dashboard')
   const router = useRouter()
   const queryClient = useQueryClient()
   const { user } = Route.useRouteContext()
@@ -91,30 +93,31 @@ function OnboardingFlow() {
     categoryIds: [] as string[],
   })
 
-  const { mutate: completeOnboarding, isPending } = useMutation({
+  const { mutateAsync: completeOnboarding, isPending } = useMutation({
     mutationFn: async () => {
-      return await completeOnboardingFn({
-        data: {
-          ...formData,
-          role: formData.role,
-        },
-      })
-    },
-    onSuccess: async () => {
-      toast.success(t('toast.success'))
-      await queryClient.refetchQueries({
-        queryKey: authQueries.user().queryKey,
-      })
-      await router.invalidate()
-      
-      if (formData.role === 'buyer') {
-        window.location.href = '/dashboard'
-      } else {
-        window.location.href = '/waitlist'
+      const payload = {
+        ...formData,
+        role: formData.role as 'buyer' | 'seller',
+      }
+      toast.info(`[DEBUG] Sending onboarding for role: ${formData.role}`)
+
+      try {
+        const result = await completeOnboardingFn({ data: payload })
+        toast.info(`[DEBUG] Server response: ${JSON.stringify(result)}`)
+        return result
+      } catch (fetchErr: any) {
+        toast.error(`[DEBUG] Server call failed: ${fetchErr?.message || String(fetchErr)}`)
+        throw fetchErr
       }
     },
+    onSuccess: (response) => {
+      const target = response?.account_status === 'waitlisted' ? '/waitlist' : '/dashboard'
+      setRedirectTarget(target)
+      setIsSuccess(true)
+    },
     onError: (err: any) => {
-      toast.error(t('toast.error'), { description: err.message })
+      console.error('Onboarding error:', err)
+      toast.error(`[DEBUG] onError: ${err?.message || String(err)}`)
     },
   })
 
@@ -145,7 +148,7 @@ function OnboardingFlow() {
     }
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const valid = isStepValid()
     if (!valid) {
       toast.error(t('toast.fill_fields'))
@@ -154,12 +157,12 @@ function OnboardingFlow() {
 
     if (currentStep === 4) {
       if (formData.role === 'buyer') {
-        completeOnboarding()
+        await completeOnboarding()
       } else {
         setCurrentStep(5)
       }
     } else if (currentStep === 5) {
-      completeOnboarding()
+      await completeOnboarding()
     } else if (currentStep < 5) {
       setCurrentStep(currentStep + 1)
     }
@@ -178,6 +181,30 @@ function OnboardingFlow() {
   }
 
   const renderStepContent = () => {
+    if (isSuccess) {
+      return (
+        <div className="flex flex-col items-center justify-center space-y-6 py-12 text-center">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
+            <Check className="h-12 w-12 text-primary" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold">Onboarding Complete!</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Your profile has been successfully set up. You are now ready to start using Digital-Hub.
+            </p>
+          </div>
+          <Button
+            size="lg"
+            className="mt-4 px-8"
+            onClick={() => window.location.href = redirectTarget}
+          >
+            {redirectTarget === '/waitlist' ? 'Go to Waitlist' : 'Go to Dashboard'}
+            <ChevronRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      )
+    }
+
     switch (currentStep) {
       case 1:
         return (
@@ -406,33 +433,33 @@ function OnboardingFlow() {
             {steps
               .filter(s => s.id !== 5 || formData.role === 'seller')
               .map((step, idx, arr) => (
-              <div key={step.id} className="relative flex flex-1 flex-col items-center">
-                <div
-                  className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 z-10',
-                    currentStep > step.id
-                      ? 'bg-primary text-primary-foreground shadow-md'
-                      : currentStep === step.id
-                        ? 'bg-primary text-primary-foreground shadow-lg ring-8 ring-primary/20'
-                        : 'bg-muted text-muted-foreground',
-                  )}
-                >
-                  {currentStep > step.id ? <Check className="h-6 w-6" /> : step.id}
-                </div>
-                <div className={cn(
-                  'mt-4 text-center text-[10px] md:text-xs font-bold uppercase tracking-widest',
-                  currentStep >= step.id ? 'text-primary' : 'text-muted-foreground'
-                )}>
-                  {step.id === 4 && formData.role === 'buyer' ? 'Personal' : step.title}
-                </div>
-                {idx < arr.length - 1 && (
+                <div key={step.id} className="relative flex flex-1 flex-col items-center">
+                  <div
+                    className={cn(
+                      'flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 z-10',
+                      currentStep > step.id
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : currentStep === step.id
+                          ? 'bg-primary text-primary-foreground shadow-lg ring-8 ring-primary/20'
+                          : 'bg-muted text-muted-foreground',
+                    )}
+                  >
+                    {currentStep > step.id ? <Check className="h-6 w-6" /> : step.id}
+                  </div>
                   <div className={cn(
-                    'absolute top-6 left-[calc(50%+24px)] h-1 w-[calc(100%-48px)] -translate-y-1/2 bg-muted transition-colors duration-500',
-                    currentStep > step.id && 'bg-primary/50'
-                  )} />
-                )}
-              </div>
-            ))}
+                    'mt-4 text-center text-[10px] md:text-xs font-bold uppercase tracking-widest',
+                    currentStep >= step.id ? 'text-primary' : 'text-muted-foreground'
+                  )}>
+                    {step.id === 4 && formData.role === 'buyer' ? 'Personal' : step.title}
+                  </div>
+                  {idx < arr.length - 1 && (
+                    <div className={cn(
+                      'absolute top-6 left-[calc(50%+24px)] h-1 w-[calc(100%-48px)] -translate-y-1/2 bg-muted transition-colors duration-500',
+                      currentStep > step.id && 'bg-primary/50'
+                    )} />
+                  )}
+                </div>
+              ))}
           </div>
         </CardHeader>
 
@@ -441,7 +468,8 @@ function OnboardingFlow() {
             {renderStepContent()}
           </div>
 
-          <div className="mt-4 flex items-center justify-between pt-4 border-t border-border shrink-0">
+          {isSuccess ? null : (
+            <div className="mt-4 flex items-center justify-between pt-4 border-t border-border shrink-0">
               <Button
                 variant="outline"
                 onClick={handlePrevious}
@@ -462,8 +490,8 @@ function OnboardingFlow() {
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
-                    {currentStep === 1 && !formData.role 
-                      ? t('nav.select_role') 
+                    {currentStep === 1 && !formData.role
+                      ? t('nav.select_role')
                       : currentStep === 4 && formData.role === 'buyer'
                         ? t('nav.complete')
                         : currentStep === 5
@@ -475,6 +503,7 @@ function OnboardingFlow() {
                 )}
               </Button>
             </div>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -547,14 +576,23 @@ function SpecialtiesStep({ formData, setFormData }: any) {
                   key={brand.id}
                   variant={active ? 'default' : 'outline'}
                   className={cn(
-                    'cursor-pointer h-8 px-4 border-2 transition-all',
+                    'cursor-pointer h-10 px-4 border-2 transition-all flex items-center gap-2',
                     active
                       ? 'bg-primary border-primary text-primary-foreground shadow-md'
-                      : 'hover:border-primary/20 hover:bg-primary/5 text-muted-foreground',
+                      : 'hover:border-primary/20 hover:bg-primary/5 text-muted-foreground bg-background',
                   )}
                   onClick={() => toggleBrand(brand.id)}
                 >
-                  {brand.brand}
+                  {brand.imageUrl && (
+                    <div className="h-6 w-6 rounded-sm bg-white flex items-center justify-center p-0.5 shrink-0 overflow-hidden">
+                      <img
+                        src={brand.imageUrl}
+                        alt={brand.brand}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  )}
+                  <span>{brand.brand}</span>
                 </Badge>
               )
             })}
