@@ -31,6 +31,8 @@ import { Route as AuthedDashboardRequestsRequestIdRouteImport } from './routes/_
 import { Route as AuthedDashboardAdminSellersRouteImport } from './routes/_authed/dashboard/admin/sellers'
 import { Route as AuthedDashboardAdminCategoriesRouteImport } from './routes/_authed/dashboard/admin/categories'
 import { Route as AuthedDashboardAdminBuyersRouteImport } from './routes/_authed/dashboard/admin/buyers'
+import { Route as AuthedDashboardAdminUsersIndexRouteImport } from './routes/_authed/dashboard/admin/users/index'
+import { Route as AuthedDashboardAdminAuditIndexRouteImport } from './routes/_authed/dashboard/admin/audit/index'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -152,6 +154,18 @@ const AuthedDashboardAdminBuyersRoute =
     path: '/buyers',
     getParentRoute: () => AuthedDashboardAdminRouteRoute,
   } as any)
+const AuthedDashboardAdminUsersIndexRoute =
+  AuthedDashboardAdminUsersIndexRouteImport.update({
+    id: '/users/',
+    path: '/users/',
+    getParentRoute: () => AuthedDashboardAdminRouteRoute,
+  } as any)
+const AuthedDashboardAdminAuditIndexRoute =
+  AuthedDashboardAdminAuditIndexRouteImport.update({
+    id: '/audit/',
+    path: '/audit/',
+    getParentRoute: () => AuthedDashboardAdminRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
@@ -174,6 +188,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
   '/dashboard/requests/': typeof AuthedDashboardRequestsIndexRoute
   '/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
+  '/dashboard/admin/audit/': typeof AuthedDashboardAdminAuditIndexRoute
+  '/dashboard/admin/users/': typeof AuthedDashboardAdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
@@ -195,6 +211,8 @@ export interface FileRoutesByTo {
   '/dashboard/quotes': typeof AuthedDashboardQuotesIndexRoute
   '/dashboard/requests': typeof AuthedDashboardRequestsIndexRoute
   '/dashboard/users': typeof AuthedDashboardUsersIndexRoute
+  '/dashboard/admin/audit': typeof AuthedDashboardAdminAuditIndexRoute
+  '/dashboard/admin/users': typeof AuthedDashboardAdminUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -220,6 +238,8 @@ export interface FileRoutesById {
   '/_authed/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
   '/_authed/dashboard/requests/': typeof AuthedDashboardRequestsIndexRoute
   '/_authed/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
+  '/_authed/dashboard/admin/audit/': typeof AuthedDashboardAdminAuditIndexRoute
+  '/_authed/dashboard/admin/users/': typeof AuthedDashboardAdminUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -244,6 +264,8 @@ export interface FileRouteTypes {
     | '/dashboard/quotes/'
     | '/dashboard/requests/'
     | '/dashboard/users/'
+    | '/dashboard/admin/audit/'
+    | '/dashboard/admin/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -265,6 +287,8 @@ export interface FileRouteTypes {
     | '/dashboard/quotes'
     | '/dashboard/requests'
     | '/dashboard/users'
+    | '/dashboard/admin/audit'
+    | '/dashboard/admin/users'
   id:
     | '__root__'
     | '/_authed'
@@ -289,6 +313,8 @@ export interface FileRouteTypes {
     | '/_authed/dashboard/quotes/'
     | '/_authed/dashboard/requests/'
     | '/_authed/dashboard/users/'
+    | '/_authed/dashboard/admin/audit/'
+    | '/_authed/dashboard/admin/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -454,6 +480,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardAdminBuyersRouteImport
       parentRoute: typeof AuthedDashboardAdminRouteRoute
     }
+    '/_authed/dashboard/admin/users/': {
+      id: '/_authed/dashboard/admin/users/'
+      path: '/users'
+      fullPath: '/dashboard/admin/users/'
+      preLoaderRoute: typeof AuthedDashboardAdminUsersIndexRouteImport
+      parentRoute: typeof AuthedDashboardAdminRouteRoute
+    }
+    '/_authed/dashboard/admin/audit/': {
+      id: '/_authed/dashboard/admin/audit/'
+      path: '/audit'
+      fullPath: '/dashboard/admin/audit/'
+      preLoaderRoute: typeof AuthedDashboardAdminAuditIndexRouteImport
+      parentRoute: typeof AuthedDashboardAdminRouteRoute
+    }
   }
 }
 
@@ -461,6 +501,8 @@ interface AuthedDashboardAdminRouteRouteChildren {
   AuthedDashboardAdminBuyersRoute: typeof AuthedDashboardAdminBuyersRoute
   AuthedDashboardAdminCategoriesRoute: typeof AuthedDashboardAdminCategoriesRoute
   AuthedDashboardAdminSellersRoute: typeof AuthedDashboardAdminSellersRoute
+  AuthedDashboardAdminAuditIndexRoute: typeof AuthedDashboardAdminAuditIndexRoute
+  AuthedDashboardAdminUsersIndexRoute: typeof AuthedDashboardAdminUsersIndexRoute
 }
 
 const AuthedDashboardAdminRouteRouteChildren: AuthedDashboardAdminRouteRouteChildren =
@@ -468,6 +510,8 @@ const AuthedDashboardAdminRouteRouteChildren: AuthedDashboardAdminRouteRouteChil
     AuthedDashboardAdminBuyersRoute: AuthedDashboardAdminBuyersRoute,
     AuthedDashboardAdminCategoriesRoute: AuthedDashboardAdminCategoriesRoute,
     AuthedDashboardAdminSellersRoute: AuthedDashboardAdminSellersRoute,
+    AuthedDashboardAdminAuditIndexRoute: AuthedDashboardAdminAuditIndexRoute,
+    AuthedDashboardAdminUsersIndexRoute: AuthedDashboardAdminUsersIndexRoute,
   }
 
 const AuthedDashboardAdminRouteRouteWithChildren =
