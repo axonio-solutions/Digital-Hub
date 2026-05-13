@@ -88,7 +88,7 @@ export function QuoteCard({
             <span className="flex items-center gap-1 truncate">
               <MapPin className="size-3 shrink-0" />
               <span className="truncate max-w-[120px]">
-                {quote.seller?.wilaya || quote.seller?.city || quote.seller?.address || 'Algeria'}
+                {quote.seller?.wilaya || quote.seller?.city || quote.seller?.address || t('card.default_location')}
               </span>
             </span>
           </div>
@@ -101,10 +101,10 @@ export function QuoteCard({
             isAccepted ? 'text-primary' : 'text-foreground'
           )}>
             {quote.price.toLocaleString()}
-            <span className="text-[10px] font-bold text-muted-foreground ml-0.5">DZD</span>
+            <span className="text-[10px] font-bold text-muted-foreground ml-0.5">{t('columns.currency')}</span>
           </p>
           <span className="inline-block mt-0.5 text-[10px] font-bold text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
-            {quote.condition || 'Used'}
+            {quote.condition ? t(`columns.conditions.${quote.condition}`, { defaultValue: quote.condition }) : t('columns.conditions.used')}
           </span>
         </div>
       </div>

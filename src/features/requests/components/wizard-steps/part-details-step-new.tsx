@@ -30,10 +30,10 @@ export function PartDetailsStep() {
       <div>
         <h3 className="text-lg font-semibold mb-1 flex items-center gap-2">
           <FileText className="size-5 text-primary" />
-          What part do you need?
+          {t('steps.part_details.title')}
         </h3>
         <p className="text-sm text-muted-foreground">
-          Provide clear details about the part you're looking for.
+          {t('steps.part_details.description')}
         </p>
       </div>
 

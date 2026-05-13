@@ -51,10 +51,10 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
       <div>
         <h3 className="text-lg font-semibold mb-1 flex items-center gap-2">
           <CheckCircle2 className="size-5 text-primary" />
-          Review & Publish
+          {t('steps.review.title')}
         </h3>
         <p className="text-sm text-muted-foreground">
-          Review your request before publishing. Click edit to make changes.
+          {t('steps.review.description')}
         </p>
       </div>
 
@@ -64,7 +64,7 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
           <div className="flex items-center justify-between px-4 py-2.5 border-b bg-muted/40">
             <div className="flex items-center gap-2">
               <LayoutList className="size-4 text-muted-foreground" />
-              <span className="text-xs font-semibold uppercase tracking-wide">Part Details</span>
+              <span className="text-xs font-semibold uppercase tracking-wide">{t('steps.review.cards.part')}</span>
             </div>
             <Button
               variant="ghost"
@@ -77,8 +77,8 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
             </Button>
           </div>
           <div className="p-4 space-y-2">
-            <p className="text-base font-bold leading-tight">
-              {values.partName || '—'}
+            <p className="text-base font-bold leading-tight break-words line-clamp-2" title={values.partName}>
+              {values.partName || t('steps.review.not_provided')}
             </p>
             {values.vehicleBrand && (
               <Badge variant="secondary" className="text-xs">
@@ -86,7 +86,7 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
               </Badge>
             )}
             <p className="text-sm text-muted-foreground line-clamp-2">
-              {values.description || 'No additional details.'}
+              {values.description || t('steps.review.no_details')}
             </p>
           </div>
         </motion.div>
@@ -96,7 +96,7 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
           <div className="flex items-center justify-between px-4 py-2.5 border-b bg-muted/40">
             <div className="flex items-center gap-2">
               <CarFront className="size-4 text-muted-foreground" />
-              <span className="text-xs font-semibold uppercase tracking-wide">Vehicle Info</span>
+              <span className="text-xs font-semibold uppercase tracking-wide">{t('steps.review.cards.vehicle')}</span>
             </div>
             <Button
               variant="ghost"
@@ -113,25 +113,25 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
               <div>
                 <div className="flex items-center gap-1.5 mb-1">
                   <Calendar className="size-3 text-muted-foreground" />
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground/60">Year</span>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground/60">{t('steps.review.year')}</span>
                 </div>
-                <p className="text-sm font-semibold">{values.modelYear || '—'}</p>
+                <p className="text-sm font-semibold">{values.modelYear || t('steps.review.not_provided')}</p>
               </div>
               <div>
                 <div className="flex items-center gap-1.5 mb-1">
                   <CarFront className="size-3 text-muted-foreground" />
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground/60">Model</span>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground/60">{t('steps.review.model')}</span>
                 </div>
-                <p className="text-sm font-semibold truncate">{values.vehicleModel || '—'}</p>
+                <p className="text-sm font-semibold truncate">{values.vehicleModel || t('steps.review.not_provided')}</p>
               </div>
             </div>
             <div className="pt-2 border-t border-dashed">
               <div className="flex items-center gap-1.5 mb-1">
                 <Hash className="size-3 text-muted-foreground" />
-                <span className="text-[10px] uppercase font-bold text-muted-foreground/60">VIN</span>
+                <span className="text-[10px] uppercase font-bold text-muted-foreground/60">{t('steps.review.vin')}</span>
               </div>
               <p className="text-xs font-mono font-medium uppercase tracking-wider">
-                {values.vinNumber || 'Not provided'}
+                {values.vinNumber || t('steps.review.not_provided')}
               </p>
             </div>
           </div>
@@ -142,7 +142,7 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
           <div className="flex items-center justify-between px-4 py-2.5 border-b bg-muted/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="size-4 text-muted-foreground" />
-              <span className="text-xs font-semibold uppercase tracking-wide">Photos ({imageUrls.length})</span>
+              <span className="text-xs font-semibold uppercase tracking-wide">{t('steps.review.cards.media')}</span>
             </div>
             <Button
               variant="ghost"
@@ -151,7 +151,7 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
               className="h-6 text-xs"
               type="button"
             >
-              Edit
+              {t('steps.review.edit')}
             </Button>
           </div>
           <div className="p-4">
@@ -166,7 +166,7 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
             ) : (
               <div className="flex flex-col items-center justify-center py-6 bg-muted/20 border-2 border-dashed rounded-md">
                 <ImageIcon className="size-6 text-muted-foreground/40 mb-1.5" />
-                <p className="text-xs font-medium text-muted-foreground/60">No media attached</p>
+                <p className="text-xs font-medium text-muted-foreground/60">{t('steps.review.no_media')}</p>
               </div>
             )}
           </div>
@@ -180,7 +180,7 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
       >
         <div className="size-1.5 rounded-full bg-primary animate-pulse" />
         <p className="text-sm font-semibold text-primary">
-          Ready to publish
+          {t('steps.review.ready_status')}
         </p>
       </motion.div>
     </motion.div>

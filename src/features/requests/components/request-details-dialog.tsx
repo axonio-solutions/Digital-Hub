@@ -16,6 +16,7 @@ import { ImageSlider } from '@/components/ui/image-slider'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { tCategory } from '@/utils/category-utils'
+import { CategoryDisplay } from '@/components/ui/category-display'
 
 interface RequestDetailsDialogProps {
   request: any | null
@@ -109,7 +110,8 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
           {request?.partName}
         </h2>
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[11px] font-bold text-primary uppercase">
+          <span className="text-[11px] font-bold text-primary uppercase inline-flex items-center gap-1">
+            <CategoryDisplay category={request?.category} showName={false} iconClassName="size-3.5" />
             {tCategory(request?.category?.name || request?.category, t)}
           </span>
           <span className="text-[9px] text-muted-foreground font-mono font-medium">

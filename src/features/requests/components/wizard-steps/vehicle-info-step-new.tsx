@@ -35,10 +35,10 @@ export function VehicleInfoStep() {
       <div>
         <h3 className="text-lg font-semibold mb-1 flex items-center gap-2">
           <CarFront className="size-5 text-primary" />
-          Vehicle Information
+          {t('steps.vehicle_info.title')}
         </h3>
         <p className="text-sm text-muted-foreground">
-          Provide accurate vehicle details to ensure part compatibility.
+          {t('steps.vehicle_info.description')}
         </p>
       </div>
 
@@ -128,10 +128,10 @@ export function VehicleInfoStep() {
           </div>
           <div className="flex-1">
             <h5 className="text-xs font-bold uppercase text-primary tracking-wide mb-1">
-              Why model & year matter?
+              {t('steps.vehicle_info.why_title')}
             </h5>
             <p className="text-xs leading-relaxed text-muted-foreground/90 font-medium">
-              Accurate vehicle specs ensure compatible parts are recommended, saving time and avoiding mismatches.
+              {t('steps.vehicle_info.why_description')}
             </p>
           </div>
         </div>

@@ -39,6 +39,7 @@ import {
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
 import { tCategory } from '@/utils/category-utils'
+import { CategoryDisplay } from '@/components/ui/category-display'
 import { cn } from '@/lib/utils'
 
 interface NewPartRequestFormProps {
@@ -251,9 +252,10 @@ export function NewPartRequestForm({
                            </SelectTrigger>
                            <SelectContent>
                              {taxonomy?.categories.map((c: any) => (
-                               <SelectItem key={c.id} value={c.id} className="font-medium">
-                                 {tCategory(c.name, t)}
-                               </SelectItem>
+                                <SelectItem key={c.id} value={c.id} className="font-medium">
+                                  <CategoryDisplay category={c} showName={false} iconClassName="size-3.5" />
+                                  {tCategory(c.name, t)}
+                                </SelectItem>
                              ))}
                            </SelectContent>
                          </Select>

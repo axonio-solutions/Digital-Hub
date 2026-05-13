@@ -37,17 +37,18 @@ interface RequestWizardProps {
   initialData?: any
 }
 
-const STEPS = [
-  { id: 1, title: 'Part Details', description: 'What part do you need?' },
-  { id: 2, title: 'Category', description: 'Select a category' },
-  { id: 3, title: 'Brand', description: 'Pick your vehicle brand' },
-  { id: 4, title: 'Vehicle Info', description: 'Add model and year' },
-  { id: 5, title: 'Photos', description: 'Upload images (optional)' },
-  { id: 6, title: 'Review', description: 'Confirm and publish' },
-]
-
 export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizardProps) {
-  const { t } = useTranslation('requests/form')
+  const { t, i18n } = useTranslation('requests/form')
+  const isRtl = i18n.dir() === 'rtl'
+
+  const STEPS = [
+    { id: 1, title: t('steps.part_details.title'), description: t('steps.part_details.description') },
+    { id: 2, title: t('steps.category.title'), description: t('steps.category.description') },
+    { id: 3, title: t('steps.brand.title'), description: t('steps.brand.description') },
+    { id: 4, title: t('steps.vehicle_info.title'), description: t('steps.vehicle_info.description') },
+    { id: 5, title: t('steps.photos.title'), description: t('steps.photos.description') },
+    { id: 6, title: t('steps.review.title'), description: t('steps.review.description') },
+  ]
   const { data: user } = useAuth()
   const createRequest = useCreateRequest()
   const updateRequest = useUpdateRequest()
@@ -170,12 +171,12 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
             <Check className="size-10 text-primary" />
           </div>
           <h2 className="mb-2 text-2xl font-bold">
-            {isEditing ? 'Request Updated!' : 'Request Submitted!'}
+            {isEditing ? t('wizard.success.updated_title') : t('wizard.success.submitted_title')}
           </h2>
           <p className="mb-6 text-muted-foreground">
             {isEditing
-              ? 'Your request has been updated successfully.'
-              : 'Your part request has been published successfully. Sellers will now be able to view and respond to your request.'
+              ? t('wizard.success.updated_desc')
+              : t('wizard.success.submitted_desc')
             }
           </p>
           <Button
@@ -186,7 +187,7 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
             className="gap-2"
           >
             <Sparkles className="size-4" />
-            Back to Dashboard
+            {t('wizard.back_to_dashboard')}
           </Button>
         </div>
       </div>
@@ -200,9 +201,9 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
         <div className="hidden sm:flex w-64 flex-col border-r bg-muted/30">
           <div className="p-5 border-b">
             <DialogHeader>
-              <DialogTitle className="text-base font-bold">New Request</DialogTitle>
+              <DialogTitle className="text-base font-bold">{isEditing ? t('wizard.header.edit_title') : t('wizard.header.title')}</DialogTitle>
               <DialogDescription className="text-xs">
-                Create a part request
+                {isEditing ? t('wizard.header.edit_desc') : t('wizard.header.desc')}
               </DialogDescription>
             </DialogHeader>
           </div>
@@ -255,7 +256,7 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
             <div className="space-y-1.5">
               <Progress value={progress} className="h-1.5" variant="primary" />
               <p className="text-xs text-muted-foreground text-center">
-                Step {currentStep} of {STEPS.length}
+                {t('wizard.step_progress', { current: currentStep, total: STEPS.length })}
               </p>
             </div>
             <Button
@@ -264,7 +265,7 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
               onClick={onCancel}
               className="w-full text-xs"
             >
-              Cancel
+              {t('wizard.cancel')}
             </Button>
           </div>
         </div>
@@ -278,7 +279,7 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
                 {STEPS[currentStep - 1].title}
               </DialogTitle>
               <DialogDescription className="text-xs">
-                Step {currentStep} of {STEPS.length}
+                {t('wizard.step_progress', { current: currentStep, total: STEPS.length })}
               </DialogDescription>
             </DialogHeader>
             <Progress value={progress} className="mt-2 h-1" variant="primary" />
@@ -288,7 +289,8 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
           <div
             ref={contentRef}
             onFocus={handleInputFocus}
-            className="flex-1 overflow-y-auto p-5 pb-[30vh]"
+            style={{ scrollPaddingBottom: '120px' }}
+            className="flex-1 overflow-y-auto p-5"
           >
             {currentStep === 1 && <PartDetailsStep />}
             {currentStep === 2 && <CategoryStep />}
@@ -308,8 +310,8 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
                 size="sm"
                 className="gap-1"
               >
-                <ChevronLeft className="size-4" />
-                Back
+                {isRtl ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
+                {t('wizard.back')}
               </Button>
 
               {isLastStep ? (
@@ -322,12 +324,12 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
                   {isSubmitting ? (
                     <>
                       <Loader2 className="size-4 animate-spin" />
-                      Publishing...
+                      {t('wizard.publishing')}
                     </>
                   ) : (
                     <>
                       <Sparkles className="size-4" />
-                      Publish Request
+                      {t('wizard.publish_btn')}
                     </>
                   )}
                 </Button>
@@ -338,8 +340,8 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
                   size="sm"
                   className="gap-1"
                 >
-                  Next
-                  <ChevronRight className="size-4" />
+                  {t('wizard.next')}
+                  {isRtl ? <ChevronLeft className="size-4" /> : <ChevronRight className="size-4" />}
                 </Button>
               )}
             </div>

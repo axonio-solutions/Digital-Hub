@@ -47,38 +47,23 @@ export function PhotosStep() {
     }
   }
 
-  const handleFileSelect = async (files: FileList | null) => {
+  const handleFileSelect = (files: FileList | null) => {
     if (!files || files.length === 0) return
     const newFiles = Array.from(files)
     setSelectedImages((prev) => [...prev, ...newFiles])
+    uploadFiles(newFiles)
   }
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(true)
-  }, [])
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(false)
-  }, [])
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(false)
-    handleFileSelect(e.dataTransfer.files)
-  }, [handleFileSelect])
-
-  const handleUpload = async () => {
-    if (selectedImages.length === 0 || !user?.id) return
+  const uploadFiles = useCallback(async (filesToUpload: Array<File>) => {
+    if (filesToUpload.length === 0 || !user?.id) return
 
     setIsUploading(true)
     setUploadProgress(0)
     const finalImageUrls = [...imageUrls]
 
     try {
-      for (let i = 0; i < selectedImages.length; i++) {
-        const file = selectedImages[i]
+      for (let i = 0; i < filesToUpload.length; i++) {
+        const file = filesToUpload[i]
         const fileExt = file.name.split('.').pop()
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
         const filePath = `${user.id}/${fileName}`
@@ -94,7 +79,7 @@ export function PhotosStep() {
         } = supabase.storage.from('requests-photos').getPublicUrl(filePath)
 
         finalImageUrls.push(publicUrl)
-        setUploadProgress(Math.round(((i + 1) / selectedImages.length) * 100))
+        setUploadProgress(Math.round(((i + 1) / filesToUpload.length) * 100))
       }
 
       setValue('imageUrls', finalImageUrls)
@@ -105,7 +90,7 @@ export function PhotosStep() {
       setIsUploading(false)
       setUploadProgress(0)
     }
-  }
+  }, [imageUrls, user?.id])
 
   return (
     <motion.div
@@ -118,10 +103,10 @@ export function PhotosStep() {
       <div>
         <h3 className="text-lg font-semibold mb-1 flex items-center gap-2">
           <Camera className="size-5 text-primary" />
-          Photos & Media
+          {t('steps.photos.title')}
         </h3>
         <p className="text-sm text-muted-foreground">
-          Add photos to help sellers understand exactly what you need.
+          {t('steps.photos.description')}
         </p>
       </div>
 
@@ -182,7 +167,7 @@ export function PhotosStep() {
                   </div>
                   {item.type === 'file' && (
                     <div className="absolute inset-x-0 bottom-0 bg-primary/90 py-0.5 flex items-center justify-center">
-                      <span className="text-[8px] font-bold text-white uppercase">Ready</span>
+                      <span className="text-[8px] font-bold text-white uppercase">{t('steps.photos.ready')}</span>
                     </div>
                   )}
                 </motion.div>
@@ -208,41 +193,15 @@ export function PhotosStep() {
             className="w-full gap-2 h-12 border-2 border-dashed hover:border-primary hover:bg-primary/5"
           >
             <UploadCloud className="size-5" />
-            {allImages.length > 0 ? 'Add More Photos' : 'Add Photos'}
+            {allImages.length > 0 ? t('steps.photos.add_more', 'Add More Photos') : t('steps.photos.add_photos', 'Add Photos')}
           </Button>
 
-          {/* Action Buttons */}
-          <AnimatePresence>
-            {selectedImages.length > 0 && !isUploading && (
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 8 }}
-                className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border"
-              >
-                <p className="text-xs font-medium text-muted-foreground">
-                  {selectedImages.length} Photo{selectedImages.length > 1 ? 's' : ''} ready to upload
-                </p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedImages([])}
-                  >
-                    Clear
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleUpload}
-                  >
-                    Upload Now
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Upload indicator */}
+          {selectedImages.length > 0 && (
+            <p className="text-xs text-muted-foreground text-center">
+              {t('steps.photos.uploading', { count: selectedImages.length })}
+            </p>
+          )}
         </div>
       </div>
     </motion.div>
