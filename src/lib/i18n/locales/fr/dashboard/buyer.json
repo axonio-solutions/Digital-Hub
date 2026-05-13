@@ -1,21 +1,48 @@
 {
   "welcome": "Bon retour, {{name}}",
-  "subtitle": "Voici ce qui se passe avec vos demandes de pièces aujourd'hui.",
+  "subtitle": "Voici un aperçu de vos demandes de pièces et des offres reçues.",
   "stats": {
-    "active": { "label": "Demandes Actives", "sub": "Intérêt en Direct", "desc": "Recherche actuelle d'offres sur le marché" },
-    "offers": { "label": "Offres Reçues", "sub": "Volume de Devis", "desc": "Réponses de l'offre pour toutes les demandes" },
-    "fulfilled": { "label": "Satisfaites", "sub": "Taux de Réussite", "desc": "Demandes jumelées avec succès" },
-    "total": { "label": "Volume Total", "sub": "Historique", "desc": "Interactions sur le marché à vie" }
+    "active": { "label": "Demandes Actives", "sub": "Intérêt en Direct", "desc": "Actuellement ouvertes aux offres" },
+    "offers": { "label": "Offres Reçues", "sub": "Volume de Devis", "desc": "Total des propositions reçues" },
+    "fulfilled": { "label": "Satisfaites", "sub": "Taux de Réussite", "desc": "Demandes traitées avec succès" },
+    "total": { "label": "Volume Total", "sub": "Historique", "desc": "Activité sur la plateforme" }
   },
   "recent": {
     "title": "Demandes Récentes",
-    "subtitle": "Surveillez votre activité récente sur le marché",
-    "view_all": "Voir tout"
+    "subtitle": "Suivez votre activité récente",
+    "view_all": "Voir Tout"
   },
   "new_demand": "Nouvelle Demande",
   "empty": {
-    "title": "Aucune Demande pour le Moment",
-    "desc": "Publiez votre première demande de pièce pour commencer à recevoir des offres.",
-    "cta": "Publiez Votre Première Demande"
+    "title": "Aucune Demande",
+    "desc": "Publiez votre première demande pour commencer à recevoir des offres.",
+    "cta": "Publier ma Première Demande"
+  },
+  "support": {
+    "title": "Aide & Support",
+    "description": "Une question ou un problème ? Nous sommes là pour vous aider.",
+    "form": {
+      "subject": "Sujet",
+      "subject_placeholder": "Un titre court décrivant votre problème",
+      "category": "Catégorie",
+      "category_placeholder": "Choisir une catégorie",
+      "message": "Message",
+      "message_placeholder": "Décrivez votre problème en détail...",
+      "submit": "Envoyer",
+      "sending": "Envoi...",
+      "success": "Message envoyé avec succès ! Nous vous répondrons bientôt.",
+      "error": "Échec de l'envoi. Veuillez réessayer."
+    },
+    "categories": {
+      "problem": "Signaler un problème",
+      "request": "Demande de fonctionnalité",
+      "support": "Obtenir de l'aide",
+      "other": "Autre"
+    },
+    "info": {
+      "email": "Envoyez-nous un email",
+      "response_time": "Nous répondons généralement sous 24 heures.",
+      "phone": "Appeler le support"
+    }
   }
 }

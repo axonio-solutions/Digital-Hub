@@ -12,7 +12,10 @@
     "reset": "إعادة ضبط",
     "selected": "محدد",
     "no_results_found": "لم يتم العثور على نتائج.",
-    "clear_filters": "مسح الفلاتر"
+    "clear_filters": "مسح الفلاتر",
+    "filters": "فلاتر",
+    "toggle_columns": "الأعمدة",
+    "search": "بحث..."
   },
   "pagination": {
     "rows_per_page": "عدد الصفوف في الصفحة",
@@ -23,5 +26,33 @@
     "previous": "الصفحة السابقة",
     "next": "الصفحة التالية",
     "last": "ذهاب للصفحة الأخيرة"
+  },
+  "view": {
+    "list": "قائمة",
+    "grid": "شبكة"
+  },
+  "part_card": {
+    "open": "مفتوح",
+    "fulfilled": "منفذ",
+    "cancelled": "ملغي",
+    "edit": "تعديل",
+    "close": "إغلاق",
+    "reopen": "إعادة فتح",
+    "quote_now": "طلب عرض سعر",
+    "no_description": "لا يوجد وصف",
+    "updated": "آخر تحديث",
+    "minutes_ago": "منذ {{count}} دقيقة",
+    "hours_ago": "منذ {{count}} ساعة",
+    "days_ago": "منذ {{count}} يوم"
+  },
+  "dialog": {
+    "close": "إغلاق"
+  },
+  "progress": {
+    "sync_stats": "مزامنة"
+  },
+  "image_slider": {
+    "no_images": "لا توجد صور",
+    "slide": "صورة {{index}}"
   }
 }

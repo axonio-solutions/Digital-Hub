@@ -12,7 +12,10 @@
     "reset": "Reset",
     "selected": "selected",
     "no_results_found": "No results found.",
-    "clear_filters": "Clear filters"
+    "clear_filters": "Clear filters",
+    "filters": "Filters",
+    "toggle_columns": "Columns",
+    "search": "Search..."
   },
   "pagination": {
     "rows_per_page": "Rows per page",
@@ -23,5 +26,33 @@
     "previous": "Go to previous page",
     "next": "Go to next page",
     "last": "Go to last page"
+  },
+  "view": {
+    "list": "List",
+    "grid": "Grid"
+  },
+  "part_card": {
+    "open": "OPEN",
+    "fulfilled": "FULFILLED",
+    "cancelled": "CANCELLED",
+    "edit": "Edit",
+    "close": "Close",
+    "reopen": "Reopen",
+    "quote_now": "Quote Now",
+    "no_description": "No description provided",
+    "updated": "Updated",
+    "minutes_ago": "{{count}}m ago",
+    "hours_ago": "{{count}}h ago",
+    "days_ago": "{{count}}d ago"
+  },
+  "dialog": {
+    "close": "Close"
+  },
+  "progress": {
+    "sync_stats": "Sync Stats"
+  },
+  "image_slider": {
+    "no_images": "No Images Available",
+    "slide": "Slide {{index}}"
   }
 }

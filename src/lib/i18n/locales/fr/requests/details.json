@@ -1,71 +1,29 @@
 {
-  "title": "Détails de la demande",
+  "title": "Détails de la Demande",
   "description": "Spécifications techniques et notes de l'acheteur.",
-  "sections": {
-    "vehicle": "Informations sur le véhicule",
-    "part_specifics": "Spécificités de la pièce",
-    "metadata": "Référence des métadonnées"
-  },
+  "sections": { "vehicle": "Informations Véhicule", "part_specifics": "Détails de la Pièce", "metadata": "Références" },
   "labels": {
-    "brand": "Marque",
-    "part_category": "Catégorie de pièce",
-    "general": "Général",
-    "model_year": "Année du modèle",
-    "oem_number": "Référence OEM",
-    "not_specified": "Non spécifié",
-    "buyer_notes": "Notes de l'acheteur",
-    "no_notes": "Aucune note spécifique fournie.",
-    "network_id": "ID Réseau",
-    "broadcasted": "Diffusé le",
-    "na": "N/A",
-    "regional_origin": "Origine régionale",
-    "market_traction": "Traction du marché",
-    "responses": "Réponses"
+    "brand": "Marque", "part_category": "Catégorie", "general": "Général", "model_year": "Année",
+    "oem_number": "Réf. OEM", "not_specified": "Non spécifié", "buyer_notes": "Notes de l'Acheteur",
+    "no_notes": "Aucune note fournie.", "network_id": "ID Demande", "broadcasted": "Publié",
+    "na": "N/A", "regional_origin": "Région", "market_traction": "Intérêt", "responses": "Offres"
   },
   "actions": {
-    "back_to_list": "Retour à mes demandes",
-    "edit_details": "Modifier les détails de la demande",
-    "copy_link": "Copier le lien de partage",
-    "delete_request": "Supprimer la demande",
-    "close_request": "Fermer la demande",
-    "reopen_request": "Rouvrir la demande",
-    "delete_permanently": "Supprimer définitivement",
-    "close": "Fermer",
-    "cancel": "Annuler"
+    "back_to_list": "Retour à mes demandes", "edit_details": "Modifier", "copy_link": "Copier le lien",
+    "delete_request": "Supprimer", "close_request": "Fermer", "reopen_request": "Réouvrir",
+    "delete_permanently": "Supprimer", "close": "Fermer", "cancel": "Annuler"
   },
-  "errors": {
-    "not_found": "Demande non trouvée",
-    "not_found_desc": "Nous n'avons pas pu trouver la demande que vous recherchez."
-  },
-  "hints": {
-    "fulfill_desc": "Marquez cette demande comme satisfaite ou n'étant plus nécessaire.",
-    "closed_desc": "Cette demande est actuellement fermée. Rouvrez-la pour recevoir plus d'offres."
-  },
+  "errors": { "not_found": "Demande introuvable", "not_found_desc": "Nous n'avons pas trouvé la demande recherchée." },
+  "hints": { "fulfill_desc": "Marquez cette demande comme satisfaite.", "closed_desc": "Cette demande est fermée. Réouvrez-la pour recevoir plus d'offres." },
   "quotes": {
-    "title": "Offres reçues",
-    "sort_by": "Trier par :",
-    "sort_recent": "Plus récent",
-    "sort_price": "Prix le plus bas",
-    "empty_title": "Aucune offre pour le moment",
-    "empty_desc": "Nous vous informerons dès que les vendeurs commenceront à répondre."
+    "title": "Offres Reçues", "sort_by": "Trier :", "sort_recent": "Plus Récent", "sort_price": "Prix le Plus Bas",
+    "empty_title": "Aucune Offre", "empty_desc": "Nous vous informerons dès que les vendeurs répondront."
   },
-  "dialogs": {
-    "delete": {
-      "title": "Supprimer la demande ?",
-      "confirm": "Supprimer définitivement"
-    },
-    "cancel": "Annuler"
-  },
+  "dialogs": { "delete": { "title": "Supprimer cette Demande ?", "confirm": "Supprimer" }, "cancel": "Annuler" },
   "contact": {
-    "title": "Contacter le vendeur",
-    "connect_desc": "Connectez-vous avec {{name}} pour finaliser votre achat.",
-    "phone_label": "Téléphone",
-    "not_listed": "Non répertorié",
-    "store_address": "Adresse du magasin",
-    "main_store": "Magasin principal",
-    "default_location": "Algérie",
-    "whatsapp": "Message WhatsApp",
-    "call": "Appel direct",
-    "hint": "Mentionnez Digital Hub pour un service plus rapide"
+    "title": "Contacter le Vendeur", "connect_desc": "Contactez {{name}} pour finaliser votre achat.",
+    "phone_label": "Téléphone", "not_listed": "Non listé", "store_address": "Adresse",
+    "main_store": "Magasin Principal", "default_location": "Algérie", "whatsapp": "WhatsApp",
+    "call": "Appeler", "hint": "Mentionnez Digital Hub pour un service plus rapide"
   }
 }

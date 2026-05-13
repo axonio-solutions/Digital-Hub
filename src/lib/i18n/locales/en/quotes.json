@@ -1,18 +1,18 @@
 {
   "card": {
-    "authorized_seller": "Authorized Seller",
+    "authorized_seller": "Verified Seller",
     "rejected": "Rejected",
     "default_location": "Algeria",
-    "default_note": "Hi! We have this exact part in stock. Quality checked and ready for dispatch.",
+    "default_note": "Hello! We have this exact part in stock. Inspected and ready to ship.",
     "ago": "ago",
     "actions": {
       "revoke": "Revoke Acceptance",
       "revoking": "Revoking...",
       "contact": "Contact Seller",
-      "unreject": "Un-reject Offer",
+      "unreject": "Restore Offer",
       "unrejecting": "Restoring...",
-      "reject": "Reject",
-      "rejecting": "Rejecting...",
+      "reject": "Decline",
+      "rejecting": "Declining...",
       "accept": "Accept Offer",
       "accepting": "Accepting...",
       "closed": "Request Closed"
@@ -28,7 +28,7 @@
     "statuses": {
       "accepted": "Accepted",
       "pending": "Pending",
-      "rejected": "Rejected"
+      "rejected": "Declined"
     },
     "currency": "DZD",
     "conditions": {
@@ -46,7 +46,7 @@
   },
   "hub": {
     "title": "Sales Pipeline",
-    "desc": "Manage your quotes and track your part sales.",
+    "desc": "Manage your quotes and track your parts sales.",
     "loading": "Loading sales pipeline...",
     "stats": {
       "total": "Total Proposals",
@@ -58,12 +58,12 @@
       "accepted": "Accepted",
       "accepted_sub": "Closed-Won deals",
       "today_active": "Today",
-      "avg_price": "Avg Price",
+      "avg_price": "Avg. Price",
       "total_revenue": "Total Revenue",
-      "avg_deal": "Avg Deal",
+      "avg_deal": "Avg. Deal",
       "missed_value": "Missed Value",
       "loss_rate": "Loss Rate",
-      "avg_missed": "Avg Missed"
+      "avg_missed": "Avg. Missed"
     },
     "time": {
       "all": "All Time",
@@ -74,7 +74,7 @@
     "tabs": {
       "active": "Active",
       "won": "Won",
-      "lost": "Closed / Lost"
+      "lost": "Closed"
     },
     "dialog": {
       "update_title": "Update Quote",
@@ -83,7 +83,7 @@
       "close": "Close"
     },
     "confirm": {
-      "withdraw": "Permanently withdraw this proposal? This action cannot be undone."
+      "withdraw": "Withdraw this proposal permanently? This cannot be undone."
     },
     "toasts": {
       "withdrawn": "Proposal withdrawn successfully"

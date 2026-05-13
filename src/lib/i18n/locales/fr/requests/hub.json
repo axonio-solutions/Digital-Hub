@@ -1,47 +1,30 @@
 {
-  "title": "Hub des demandes",
-  "description": "Gérez toutes vos demandes de pièces et consultez les offres reçues.",
-  "buttons": {
-    "new_demand": "Nouvelle demande",
-    "refresh": "Rafraîchir"
-  },
+  "title": "Mes Demandes",
+  "description": "Gérez vos demandes de pièces et consultez les offres reçues.",
+  "buttons": { "new_demand": "Nouvelle Demande", "new_demand_short": "Nouveau", "refresh": "Rafraîchir" },
   "dialog": {
-    "title": "Soumettre une demande de pièce",
-    "description": "Fournissez des détails sur la pièce détachée automobile que vous recherchez."
+    "title": "Soumettre une Demande",
+    "description": "Fournissez des détails sur la pièce détachée que vous recherchez."
   },
   "requests": {
-    "title": "Demandes du Marché",
-    "desc": "Gérez et suivez vos demandes de pièces automobiles.",
-    "new_btn": "Nouvelle demande",
-    "create_title": "Créer une Nouvelle Demande",
-    "create_desc": "Remplissez les détails de la pièce que vous recherchez.",
-    "loading": "Chargement des demandes du marché...",
-    "error": "Échec du chargement des demandes. Veuillez réessayer.",
+    "title": "Toutes les Demandes",
+    "desc": "Gérez et suivez vos demandes de pièces.",
+    "new_btn": "Nouvelle Demande",
+    "create_title": "Créer une Demande",
+    "create_desc": "Remplissez les détails de la pièce recherchée.",
+    "loading": "Chargement des demandes...",
+    "error": "Échec du chargement. Veuillez réessayer.",
     "search_placeholder": "Filtrer les demandes...",
     "stats": {
-      "active": "Demandes Actives",
-      "active_sub": "Actuellement ouvertes",
-      "offers": "Offres Reçues",
-      "offers_sub": "Total pour toutes les demandes",
-      "fulfilled": "Satisfaites",
-      "fulfilled_sub": "Acquisitions complétées"
+      "active": "Actives", "active_sub": "Ouvertes actuellement",
+      "offers": "Offres", "offers_sub": "Total reçu",
+      "fulfilled": "Traitées", "fulfilled_sub": "Terminées"
     },
     "filters": {
-      "status": "Statut",
-      "brand": "Marque",
-      "open": "Ouvert",
-      "fulfilled": "Exécuté",
-      "cancelled": "Annulé"
+      "status": "Statut", "brand": "Marque",
+      "open": "Ouvert", "fulfilled": "Traité", "cancelled": "Annulé"
     }
   },
-  "toasts": {
-    "closed": "Demande fermée",
-    "reopened": "Demande réouverte",
-    "deleted": "Demande supprimée",
-    "error": "Une erreur s'est produite"
-  },
-  "empty": {
-    "title": "Aucune demande",
-    "desc": "Publiez votre première demande de pièce pour recevoir des offres de vendeurs de confiance."
-  }
+  "toasts": { "closed": "Demande fermée", "reopened": "Demande réouverte", "deleted": "Demande supprimée", "error": "Une erreur s'est produite" },
+  "empty": { "title": "Aucune Demande", "desc": "Publiez votre première demande pour recevoir des offres de vendeurs de confiance." }
 }

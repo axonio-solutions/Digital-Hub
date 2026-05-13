@@ -1,47 +1,30 @@
 {
-  "title": "Demands Hub",
-  "description": "Manage all your part requests and view incoming offers.",
-  "buttons": {
-    "new_demand": "New Demand",
-    "refresh": "Refresh"
-  },
+  "title": "My Requests",
+  "description": "Manage your part requests and review incoming offers from sellers.",
+  "buttons": { "new_demand": "New Demand", "new_demand_short": "New", "refresh": "Refresh" },
   "dialog": {
-    "title": "Submit Part Demand",
-    "description": "Provide details about the automotive spare part you are looking for."
+    "title": "Submit Part Request",
+    "description": "Provide details about the spare part you're looking for."
   },
   "requests": {
-    "title": "Market Requests",
-    "desc": "Manage and track your automotive part requests.",
+    "title": "All Requests",
+    "desc": "Manage and track your part requests.",
     "new_btn": "New Request",
     "create_title": "Create New Request",
-    "create_desc": "Fill in the details for the part you are looking for.",
-    "loading": "Loading marketplace requests...",
-    "error": "Failed to load marketplace demands. Please try again.",
-    "search_placeholder": "Filter demands...",
+    "create_desc": "Fill in the details for the part you need.",
+    "loading": "Loading requests...",
+    "error": "Failed to load requests. Please try again.",
+    "search_placeholder": "Filter requests...",
     "stats": {
-      "active": "Active Requests",
-      "active_sub": "Currently open",
-      "offers": "Offers Received",
-      "offers_sub": "Total across requests",
-      "fulfilled": "Fulfilled",
-      "fulfilled_sub": "Completed acquisitions"
+      "active": "Active", "active_sub": "Currently open",
+      "offers": "Offers", "offers_sub": "Total received",
+      "fulfilled": "Fulfilled", "fulfilled_sub": "Completed"
     },
     "filters": {
-      "status": "Status",
-      "brand": "Brand",
-      "open": "Open",
-      "fulfilled": "Fulfilled",
-      "cancelled": "Cancelled"
+      "status": "Status", "brand": "Brand",
+      "open": "Open", "fulfilled": "Fulfilled", "cancelled": "Cancelled"
     }
   },
-  "toasts": {
-    "closed": "Request closed",
-    "reopened": "Request reopened",
-    "deleted": "Request deleted",
-    "error": "Something went wrong"
-  },
-  "empty": {
-    "title": "No Demands Yet",
-    "desc": "Post your first part request to start receiving offers from trusted sellers."
-  }
+  "toasts": { "closed": "Request closed", "reopened": "Request reopened", "deleted": "Request deleted", "error": "Something went wrong" },
+  "empty": { "title": "No Requests Yet", "desc": "Post your first part request to receive offers from trusted sellers." }
 }

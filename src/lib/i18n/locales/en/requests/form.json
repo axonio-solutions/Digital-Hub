@@ -1,45 +1,55 @@
 {
-  "title": "Part Information",
-  "description": "Specify what part you need and add details.",
+  "title": "New Part Request",
+  "description": "Tell us what part you need and where it goes.",
   "steps": {
     "brand": {
       "title": "Select Vehicle Brand",
-      "description": "Choose your vehicle's manufacturer to ensure part compatibility."
+      "description": "Choose your vehicle's manufacturer for accurate part matching.",
+      "popular": "Popular",
+      "all_brands": "All Brands"
     },
     "category": {
       "title": "Select Category",
-      "description": "Choose the category that best matches the part you need."
+      "description": "Pick the category that best fits the part you need."
     },
     "part_details": {
-      "title": "What part do you need?",
-      "description": "Provide clear details about the part you're looking for."
+      "title": "Part Details",
+      "description": "Describe the part you're looking for in detail."
     },
     "vehicle_info": {
-      "title": "Vehicle Information",
-      "description": "Provide accurate vehicle details to ensure part compatibility.",
-      "why_title": "Why model & year matter?",
-      "why_description": "Accurate vehicle specs ensure compatible parts are recommended, saving time and avoiding mismatches."
+      "title": "Vehicle Info",
+      "description": "Enter your vehicle's model and year for compatibility.",
+      "why_title": "Why model and year matter?",
+      "why_description": "Accurate vehicle details help sellers find the right part faster and avoid mismatches."
     },
     "photos": {
       "title": "Photos & Media",
-      "description": "Add photos to help sellers understand exactly what you need.",
+      "description": "Upload photos to help sellers identify the correct part.",
       "dropzone_hint": "Drag images here or click to browse",
       "pending_count_one": "{{count}} Photo Pending",
       "pending_count_other": "{{count}} Photos Pending",
-      "ready": "Ready"
+      "ready": "Ready",
+      "add_photos": "Add Photos",
+      "add_more": "Add More Photos",
+      "uploading_one": "Uploading {{count}} photo...",
+      "uploading_other": "Uploading {{count}} photos..."
     },
     "review": {
-      "title": "Confirm your details",
-      "description": "Review your request before publishing. Click edit to make changes.",
-      "ready_status": "Ready for publication",
-      "no_media": "No media attached",
+      "title": "Review & Publish",
+      "description": "Double-check your details before publishing.",
+      "ready_status": "Ready to publish",
+      "no_media": "No photos added",
       "no_details": "No additional details provided.",
       "not_provided": "Not provided",
       "cards": {
         "part": "Part Details",
         "vehicle": "Vehicle Info",
-        "media": "Media Gallery"
-      }
+        "media": "Photos"
+      },
+      "year": "Year",
+      "model": "Model",
+      "vin": "VIN",
+      "edit": "Edit"
     }
   },
   "wizard": {
@@ -49,84 +59,100 @@
     "publishing": "Publishing...",
     "config": {
       "part_details_title": "Part Details",
-      "part_details_desc": "Tell us what part you are looking for.",
-      "category_title": "Select Category",
-      "category_desc": "Pick a category to help sellers find your request.",
-      "brand_title": "Pick a Brand",
-      "brand_desc": "Select your vehicle's manufacturer.",
+      "part_details_desc": "Describe what you need.",
+      "category_title": "Category",
+      "category_desc": "Classify your request.",
+      "brand_title": "Brand",
+      "brand_desc": "Select your vehicle's make.",
       "vehicle_specs_title": "Vehicle Specs",
-      "vehicle_specs_desc": "Provide model and year for compatibility.",
-      "add_media_title": "Add Media",
-      "add_media_desc": "Upload photos of the part or your car.",
-      "final_review_title": "Final Review",
-      "final_review_desc": "Review your request before publishing."
-    }
+      "vehicle_specs_desc": "Model and year details.",
+      "add_media_title": "Photos",
+      "add_media_desc": "Attach images of the part.",
+      "final_review_title": "Review",
+      "final_review_desc": "Confirm before publishing."
+    },
+    "success": {
+      "updated_title": "Request Updated!",
+      "created_title": "Request Submitted!",
+      "updated_desc": "Your request has been updated successfully.",
+      "created_desc": "Your part request has been published successfully. Sellers will now be able to view and respond to your request.",
+      "back_btn": "Back to Dashboard"
+    },
+    "header": {
+      "title": "New Request",
+      "desc": "Create a part request",
+      "edit_title": "Edit Request",
+      "edit_desc": "Update the details of your part request."
+    },
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next"
   },
   "labels": {
     "part_name": "Part Name",
     "category": "Category",
-    "description": "Detailed Description",
-    "vehicle": "Vehicle Specification",
+    "description": "Description",
+    "vehicle": "Vehicle",
     "brand": "Brand",
     "manufacturer": "Manufacturer",
     "model": "Model",
     "model_version": "Model / Version",
     "model_year": "Model Year",
     "year": "Year",
-    "vin": "VIN Number",
+    "vin": "VIN",
     "vin_number": "VIN Number",
     "optional": "(Optional)",
     "required_star": "*",
     "photos": "Part Photos",
-    "status": "Request Status",
-    "guidelines": "Submission Guidelines",
-    "oem_number": "OEM/Part Number",
-    "garage_picker": "Pick a vehicle from your Garage",
-    "media_attachments": "Media Attachments",
-    "selected_hub": "Selected Hub",
+    "status": "Status",
+    "guidelines": "Tips for a Faster Match",
+    "oem_number": "OEM / Part Number",
+    "garage_picker": "Choose from your Garage",
+    "media_attachments": "Attachments",
+    "selected_hub": "Hub",
     "files": "Files",
-    "notes_optional": "Additional Notes (Optional)"
+    "notes_optional": "Extra Notes (Optional)"
   },
   "placeholders": {
     "part_name": "e.g. Brake Pads, Front Bumper",
     "category_loading": "Loading categories...",
-    "category_select": "Select Category",
-    "description": "Provide any specific details, OEM numbers, or special requirements.",
+    "category_select": "Select a category",
+    "description": "Include any specific requirements, OEM numbers, or condition preferences.",
     "brand_loading": "Loading brands...",
-    "brand_select": "Select Brand",
-    "model": "Camry, Golf, etc.",
-    "model_version": "e.g. Golf 7 GTI, Series 3 320d",
+    "brand_select": "Select a brand",
+    "model": "e.g. Camry, Golf",
+    "model_version": "e.g. Golf 7 GTI, 320d",
     "model_year": "e.g. 2018",
     "year": "2018",
-    "vin": "Chassis No.",
+    "vin": "Chassis Number",
     "vin_number": "Enter 17-digit VIN",
-    "status_select": "Select Status",
-    "photos_empty": "Select part media",
+    "status_select": "Select status",
+    "photos_empty": "Select part photos",
     "garage_select": "Select a saved vehicle...",
-    "select_photos": "Select Part Photos",
-    "notes": "Need it urgent, etc..."
+    "select_photos": "Choose Photos",
+    "notes": "e.g. Need it urgently..."
   },
   "hints": {
-    "category": "Choose the closest category for accurate seller matching.",
-    "category_tip": "Correct categorization speeds up expert matching by up to 40%.",
-    "vehicle_tip": "Accurate vehicle details help sellers verify part compatibility instantly.",
-    "photos": "Add live photos of your broken parts for best results.",
-    "photos_empty": "Files will be encrypted on submission",
-    "no_photos": "No photos attached yet",
-    "status": "\"Broadcasting\" sends your request to verified sellers instantly. Sellers can then bid with price and availability.",
-    "guidelines1": "Clear VIN plate photos help sellers identify OEM parts accurately.",
-    "guidelines2": "Specify the condition (New/Used/Genuine) in the detailed description.",
-    "media_speed": "High-quality photos speed up your quotes",
-    "browse_drop": "Tap to browse or drop here",
-    "vin_help": "The Vehicle Identification Number (VIN) is a unique 17-character code. You can find it on your registration document or the windshield base.",
-    "description_help": "Mention any specific variants, engine types, or if you need original (OEM) or aftermarket parts."
+    "category": "Choose the closest match so the right sellers see your request.",
+    "category_tip": "Correct categorization helps you get matched up to 40% faster.",
+    "vehicle_tip": "Accurate vehicle specs let sellers verify compatibility instantly.",
+    "photos": "Photos of the damaged or needed part help sellers give you precise quotes.",
+    "photos_empty": "Files are encrypted for your privacy.",
+    "no_photos": "No photos uploaded yet.",
+    "status": "\"Publish\" sends your request to verified sellers who can then respond with quotes.",
+    "guidelines1": "Clear photos make it easier for sellers to identify the correct part.",
+    "guidelines2": "Mention if you need OEM, aftermarket, new, or used parts.",
+    "media_speed": "Good photos mean faster, more accurate quotes.",
+    "browse_drop": "Tap to browse or drag photos here",
+    "vin_help": "The VIN is a unique 17-character code. Find it on your registration card or at the base of the windshield.",
+    "description_help": "Specify the variant, engine type, or whether you need original (OEM) or aftermarket parts."
   },
   "buttons": {
     "add_photos": "Add Photos",
     "add_more": "Add More",
-    "add_more_photos": "Add More photos",
+    "add_more_photos": "Add More Photos",
     "remove": "Remove",
-    "clear_local": "Clear Local",
+    "clear_local": "Clear",
     "clear": "Clear",
     "upload": "Upload",
     "edit": "Edit",
@@ -134,33 +160,33 @@
     "next": "Next",
     "back": "Back",
     "update": "Update Request",
-    "broadcast": "Broadcast Request",
+    "broadcast": "Publish Request",
     "publish": "Publish",
-    "submit": "Submit Request",
-    "uploading": "Uploading",
+    "submit": "Submit",
+    "uploading": "Uploading...",
     "syncing": "Syncing...",
     "submitting": "Submitting...",
     "save_changes": "Save Changes",
     "saving_changes": "Saving Changes..."
   },
   "status": {
-    "published": "Immediate Broadcast",
+    "published": "Publish Now",
     "draft": "Save as Draft",
-    "encrypting": "Encrypting Assets",
-    "wait_sync": "Wait while we sync to storage",
-    "awaiting_submission": "Awaiting Submission"
+    "encrypting": "Encrypting...",
+    "wait_sync": "Syncing to storage...",
+    "awaiting_submission": "Ready to submit"
   },
   "options": {
     "manual_entry": "Enter details manually"
   },
   "dialogs": {
     "edit_title": "Edit Request",
-    "edit_description": "Modify the details of your request to help sellers provide more accurate quotes."
+    "edit_description": "Update the details to help sellers provide better quotes."
   },
   "toasts": {
-    "login_required": "You must be logged in to create or edit a request",
-    "update_success": "Part request updated successfully!",
-    "create_success": "Part request submitted successfully!",
-    "process_error": "Failed to process request"
+    "login_required": "Please sign in to create or edit a request",
+    "update_success": "Request updated successfully!",
+    "create_success": "Request submitted successfully!",
+    "process_error": "Something went wrong. Please try again."
   }
 }

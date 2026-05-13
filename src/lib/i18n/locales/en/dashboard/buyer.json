@@ -1,21 +1,48 @@
 {
   "welcome": "Welcome back, {{name}}",
-  "subtitle": "Here's what's happening with your parts requests today.",
+  "subtitle": "Here's a snapshot of your parts requests and incoming offers.",
   "stats": {
-    "active": { "label": "Active Requests", "sub": "Live Interest", "desc": "Currently seeking market offers" },
-    "offers": { "label": "Offers Received", "sub": "Quote Volume", "desc": "Supply responses across all requests" },
-    "fulfilled": { "label": "Fulfilled", "sub": "Success Rate", "desc": "Successfully matched inquiries" },
-    "total": { "label": "Total Volume", "sub": "History", "desc": "Lifetime marketplace interactions" }
+    "active": { "label": "Active Requests", "sub": "Live Interest", "desc": "Currently open and accepting offers" },
+    "offers": { "label": "Offers Received", "sub": "Quote Volume", "desc": "Total proposals across all requests" },
+    "fulfilled": { "label": "Fulfilled", "sub": "Success Rate", "desc": "Requests matched successfully" },
+    "total": { "label": "Total Volume", "sub": "History", "desc": "Lifetime marketplace activity" }
   },
   "recent": {
     "title": "Recent Requests",
     "subtitle": "Monitor your latest marketplace activity",
-    "view_all": "View all"
+    "view_all": "View All"
   },
   "new_demand": "New Demand",
   "empty": {
     "title": "No Requests Yet",
-    "desc": "Post your first part request to start receiving offers.",
+    "desc": "Post your first part request to start receiving offers from sellers.",
     "cta": "Post Your First Request"
+  },
+  "support": {
+    "title": "Help & Support",
+    "description": "Have a question or issue? We're here to help.",
+    "form": {
+      "subject": "Subject",
+      "subject_placeholder": "Brief title describing your issue",
+      "category": "Category",
+      "category_placeholder": "Select a category",
+      "message": "Message",
+      "message_placeholder": "Describe your issue in detail...",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent successfully! We'll get back to you soon.",
+      "error": "Failed to send message. Please try again."
+    },
+    "categories": {
+      "problem": "Report a Problem",
+      "request": "Feature Request",
+      "support": "Get Support",
+      "other": "Other"
+    },
+    "info": {
+      "email": "Email us directly",
+      "response_time": "We typically respond within 24 hours.",
+      "phone": "Call support"
+    }
   }
 }

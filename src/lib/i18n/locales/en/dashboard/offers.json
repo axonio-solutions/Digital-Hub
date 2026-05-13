@@ -1,10 +1,10 @@
 {
   "offers": {
     "title": "Offers Received",
-    "subtitle": "Review live quotes from sellers for your active requests.",
-    "loading": "Loading Offers...",
-    "actionable_title": "Actionable Quotes ({{count}})",
-    "actionable_desc": "These requests require your attention. Accept a quote to finalize the deal.",
+    "subtitle": "Review and respond to quotes from sellers on your active requests.",
+    "loading": "Loading offers...",
+    "actionable_title": "Needs Your Response ({{count}})",
+    "actionable_desc": "These quotes require your decision. Accept the best offer to move forward.",
     "table": {
       "id": "ID",
       "part_name": "Part Name",
@@ -12,21 +12,21 @@
       "quotes": "Quotes",
       "action": "Action"
     },
-    "empty": "You have no active offers to review.",
-    "go_back": "Go back to dashboard",
+    "empty": "No offers to review at the moment.",
+    "go_back": "Back to Dashboard",
     "review_btn": "Review Quotes",
     "dialog": {
       "title": "Quotes for {{part}}",
-      "desc": "Review offers from verified sellers. Accept the best one to get their direct contact info.",
-      "condition_new": "New Part",
-      "condition_used": "Used/Casse",
+      "desc": "Compare offers from verified sellers. Accept the best one to unlock their contact details.",
+      "condition_new": "New",
+      "condition_used": "Used",
       "warranty": "Warranty:",
       "no_warranty": "None",
       "accepting": "Accepting...",
-      "accept": "Accept Deal",
-      "accepted_title": "Quote Accepted!",
-      "accepted_desc": "You selected the quote from {{seller}} for {{price}} DZD.",
-      "contact_desc": "Contact the seller directly to arrange payment and logistics.",
+      "accept": "Accept Offer",
+      "accepted_title": "Offer Accepted",
+      "accepted_desc": "You accepted {{seller}}'s quote for {{price}} DZD.",
+      "contact_desc": "Contact the seller directly to arrange payment and delivery.",
       "close": "Close"
     }
   }

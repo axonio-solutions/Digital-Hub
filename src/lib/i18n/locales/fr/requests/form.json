@@ -1,45 +1,55 @@
 {
-  "title": "Informations sur la pièce",
-  "description": "Précisez la pièce dont vous avez besoin et ajoutez des détails.",
+  "title": "Nouvelle demande de pièce",
+  "description": "Décrivez la pièce dont vous avez besoin et le véhicule concerné.",
   "steps": {
     "brand": {
       "title": "Sélectionner la Marque",
-      "description": "Choisissez le fabricant de votre véhicule pour garantir la compatibilité des pièces."
+      "description": "Choisissez le fabricant de votre véhicule pour une correspondance précise.",
+      "popular": "Populaires",
+      "all_brands": "Toutes les Marques"
     },
     "category": {
       "title": "Sélectionner la Catégorie",
-      "description": "Choisissez la catégorie qui correspond le mieux à la pièce dont vous avez besoin."
+      "description": "Choisissez la catégorie qui correspond le mieux à votre pièce."
     },
     "part_details": {
-      "title": "De quelle pièce avez-vous besoin ?",
-      "description": "Fournissez des détails clairs sur la pièce que vous recherchez."
+      "title": "Détails de la pièce",
+      "description": "Décrivez la pièce que vous recherchez en détail."
     },
     "vehicle_info": {
-      "title": "Informations sur le Véhicule",
-      "description": "Fournissez des détails précis sur le véhicule pour garantir la compatibilité.",
+      "title": "Infos Véhicule",
+      "description": "Indiquez le modèle et l'année de votre véhicule pour la compatibilité.",
       "why_title": "Pourquoi le modèle et l'année comptent ?",
-      "why_description": "Des spécifications précises garantissent que les pièces recommandées sont compatibles, ce qui permet de gagner du temps et d'éviter les erreurs."
+      "why_description": "Des informations précises aident les vendeurs à trouver la bonne pièce plus rapidement et à éviter les erreurs."
     },
     "photos": {
       "title": "Photos & Médias",
-      "description": "Ajoutez des photos pour aider les vendeurs à comprendre exactement ce dont vous avez besoin.",
-      "dropzone_hint": "Faites glisser des images ici ou cliquez pour parcourir",
+      "description": "Ajoutez des photos pour aider les vendeurs à identifier la bonne pièce.",
+      "dropzone_hint": "Glissez-déposez des images ici ou cliquez pour parcourir",
       "pending_count_one": "{{count}} photo en attente",
       "pending_count_other": "{{count}} photos en attente",
-      "ready": "Prêt"
+      "ready": "Prêt",
+      "add_photos": "Ajouter des photos",
+      "add_more": "Ajouter plus de photos",
+      "uploading_one": "Téléchargement de {{count}} photo...",
+      "uploading_other": "Téléchargement de {{count}} photos..."
     },
     "review": {
-      "title": "Confirmez vos détails",
-      "description": "Vérifiez votre demande avant de la publier. Cliquez sur modifier pour effectuer des changements.",
-      "ready_status": "Prêt pour la publication",
-      "no_media": "Aucun média joint",
+      "title": "Vérification & Publication",
+      "description": "Vérifiez vos informations avant de publier.",
+      "ready_status": "Prêt à publier",
+      "no_media": "Aucune photo ajoutée",
       "no_details": "Aucun détail supplémentaire fourni.",
       "not_provided": "Non fourni",
       "cards": {
         "part": "Détails de la pièce",
-        "vehicle": "Infos véhicule",
-        "media": "Galerie média"
-      }
+        "vehicle": "Infos Véhicule",
+        "media": "Photos"
+      },
+      "year": "Année",
+      "model": "Modèle",
+      "vin": "VIN",
+      "edit": "Modifier"
     }
   },
   "wizard": {
@@ -47,113 +57,136 @@
     "complete_percent": "{{percent}}% terminé",
     "publish_btn": "Publier la demande",
     "publishing": "Publication...",
+    "header": {
+      "title": "Nouvelle Demande",
+      "desc": "Créer une demande de pièce",
+      "edit_title": "Modifier la Demande",
+      "edit_desc": "Mettez à jour les détails de votre demande."
+    },
+    "cancel": "Annuler",
+    "back": "Retour",
+    "next": "Suivant",
+    "success": {
+      "updated_title": "Demande mise à jour !",
+      "created_title": "Demande soumise !",
+      "updated_desc": "Votre demande a été mise à jour avec succès.",
+      "created_desc": "Votre demande a été publiée avec succès. Les vendeurs pourront bientôt la voir et y répondre.",
+      "back_btn": "Retour au tableau de bord"
+    },
     "config": {
       "part_details_title": "Détails de la pièce",
-      "part_details_desc": "Dites-nous quelle pièce vous recherchez.",
-      "category_title": "Sélectionner la Catégorie",
-      "category_desc": "Choisissez une catégorie pour aider les vendeurs à trouver votre demande.",
-      "brand_title": "Choisir une Marque",
-      "brand_desc": "Sélectionnez le fabricant de votre véhicule.",
-      "vehicle_specs_title": "Spécifications du Véhicule",
-      "vehicle_specs_desc": "Indiquez le modèle et l'année pour la compatibilité.",
-      "add_media_title": "Ajouter des Médias",
-      "add_media_desc": "Téléchargez des photos de la pièce ou de votre voiture.",
-      "final_review_title": "Révision Finale",
-      "final_review_desc": "Vérifiez votre demande avant de la publier."
+      "part_details_desc": "Décrivez ce dont vous avez besoin.",
+      "category_title": "Catégorie",
+      "category_desc": "Classez votre demande.",
+      "brand_title": "Marque",
+      "brand_desc": "Sélectionnez la marque de votre véhicule.",
+      "vehicle_specs_title": "Spécifications",
+      "vehicle_specs_desc": "Modèle et année.",
+      "add_media_title": "Photos",
+      "add_media_desc": "Ajoutez des images de la pièce.",
+      "final_review_title": "Vérification",
+      "final_review_desc": "Confirmez avant de publier."
     }
   },
   "labels": {
     "part_name": "Nom de la pièce",
     "category": "Catégorie",
-    "description": "Description détaillée",
-    "vehicle": "Spécifications du véhicule",
+    "description": "Description",
+    "vehicle": "Véhicule",
     "brand": "Marque",
+    "manufacturer": "Fabricant",
     "model": "Modèle",
     "model_version": "Modèle / Version",
-    "model_year": "Année du modèle",
+    "model_year": "Année",
     "year": "Année",
-    "vin": "Numéro VIN",
-    "vin_number": "Numéro de châssis (VIN)",
+    "vin": "VIN",
+    "vin_number": "Numéro VIN",
     "optional": "(Optionnel)",
     "required_star": "*",
     "photos": "Photos de la pièce",
-    "status": "Statut de la demande",
-    "guidelines": "Instructions de soumission",
+    "status": "Statut",
+    "guidelines": "Conseils pour un matching rapide",
     "oem_number": "Référence OEM",
-    "garage_picker": "Choisissez un véhicule dans votre garage",
+    "garage_picker": "Choisir depuis mon Garage",
     "media_attachments": "Pièces jointes",
-    "selected_hub": "Hub sélectionné",
+    "selected_hub": "Hub",
     "files": "Fichiers",
-    "notes_optional": "Notes supplémentaires (En option)"
+    "notes_optional": "Notes supplémentaires (Optionnelles)"
   },
   "placeholders": {
-    "part_name": "ex: Plaquettes de frein, Pare-chocs avant",
+    "part_name": "ex. Plaquettes de frein, Pare-chocs avant",
     "category_loading": "Chargement des catégories...",
     "category_select": "Choisir une catégorie",
-    "description": "Indiquez tout détail spécifique, numéro OEM ou exigence particulière.",
+    "description": "Incluez vos exigences spécifiques, numéros OEM ou préférences d'état.",
     "brand_loading": "Chargement des marques...",
     "brand_select": "Choisir une marque",
-    "model": "Camry, Golf, etc.",
-    "model_version": "ex: Golf 7 GTI, Série 3 320d",
-    "model_year": "ex: 2018",
+    "model": "ex. Camry, Golf",
+    "model_version": "ex. Golf 7 GTI, 320d",
+    "model_year": "ex. 2018",
     "year": "2018",
-    "vin": "N° de châssis",
+    "vin": "Numéro de châssis",
     "vin_number": "Entrez les 17 caractères du VIN",
     "status_select": "Choisir un statut",
-    "photos_empty": "Sélectionner les médias de la pièce",
-    "garage_select": "Sélectionnez un véhicule enregistré...",
-    "select_photos": "Sélectionner les photos de la pièce",
-    "notes": "Urgent, etc..."
+    "photos_empty": "Sélectionner les photos",
+    "garage_select": "Sélectionnez un véhicule...",
+    "select_photos": "Choisir des photos",
+    "notes": "ex. Besoin urgent..."
   },
   "hints": {
-    "category": "Choisissez la catégorie la plus proche pour une mise en relation précise avec les vendeurs.",
-    "category_tip": "Une catégorisation correcte accélère la mise en relation avec les experts jusqu'à 40%.",
-    "vehicle_tip": "Des détails précis sur le véhicule aident les vendeurs à vérifier instantanément la compatibilité.",
-    "photos": "Ajoutez des photos de vos pièces défectueuses pour de meilleurs résultats.",
-    "photos_empty": "Les fichiers seront cryptés lors de la soumission",
-    "no_photos": "Aucune photo jointe pour le moment",
-    "status": "La \"Diffusion\" envoie instantanément votre demande aux vendeurs vérifiés. Ils pourront ensuite répondre avec prix et disponibilité.",
-    "guidelines1": "Des photos claires de la plaque VIN aident les vendeurs à identifier précisément les pièces OEM.",
-    "guidelines2": "Précisez l'état (Neuf/Occasion/D'origine) dans la description détaillée.",
-    "media_speed": "Des photos de haute qualité accélèrent vos devis",
-    "browse_drop": "Appuyez pour parcourir ou déposez ici",
-    "vin_help": "Le numéro d'identification du véhicule (VIN) est un code unique de 17 caractères. Vous pouvez le trouver sur votre carte grise ou à la base du pare-brise.",
-    "description_help": "Mentionnez toute variante spécifique, type de moteur, ou si vous avez besoin de pièces d'origine (OEM) ou adaptables."
+    "category": "Choisissez la catégorie la plus proche pour que les bons vendeurs voient votre demande.",
+    "category_tip": "Un bon classement vous permet d'être mis en relation jusqu'à 40% plus rapidement.",
+    "vehicle_tip": "Des informations précises permettent aux vendeurs de vérifier la compatibilité instantanément.",
+    "photos": "Des photos de la pièce aident les vendeurs à vous fournir des devis précis.",
+    "photos_empty": "Les fichiers sont chiffrés pour votre confidentialité.",
+    "no_photos": "Aucune photo téléchargée pour l'instant.",
+    "status": "La publication envoie votre demande aux vendeurs vérifiés qui peuvent ensuite répondre avec leurs offres.",
+    "guidelines1": "Des photos claires aident les vendeurs à identifier la bonne pièce.",
+    "guidelines2": "Précisez si vous avez besoin de pièces OEM, adaptables, neuves ou d'occasion.",
+    "media_speed": "De bonnes photos = des devis plus rapides et plus précis.",
+    "browse_drop": "Appuyez pour parcourir ou glissez des photos ici",
+    "vin_help": "Le VIN est un code unique de 17 caractères. Trouvez-le sur votre carte grise ou à la base du pare-brise.",
+    "description_help": "Indiquez la variante, le type de moteur, ou si vous avez besoin de pièces d'origine (OEM) ou adaptables."
   },
   "buttons": {
     "add_photos": "Ajouter des photos",
-    "add_more": "Ajouter plus",
+    "add_more": "Ajouter",
     "add_more_photos": "Ajouter plus de photos",
     "remove": "Supprimer",
-    "clear_local": "Effacer local",
+    "clear_local": "Effacer",
+    "clear": "Effacer",
+    "upload": "Télécharger",
+    "edit": "Modifier",
     "cancel": "Annuler",
-    "update": "Mettre à jour la demande",
-    "broadcast": "Diffuser la demande",
-    "submit": "Soumettre la demande",
-    "uploading": "Téléchargement",
+    "next": "Suivant",
+    "back": "Retour",
+    "update": "Mettre à jour",
+    "broadcast": "Publier la demande",
+    "publish": "Publier",
+    "submit": "Soumettre",
+    "uploading": "Téléchargement...",
     "syncing": "Synchronisation...",
     "submitting": "Soumission...",
-    "save_changes": "Enregistrer les modifications",
+    "save_changes": "Enregistrer",
     "saving_changes": "Enregistrement..."
   },
   "status": {
-    "published": "Diffusion immédiate",
-    "draft": "Enregistrer en brouillon",
-    "encrypting": "Chiffrement des actifs",
-    "wait_sync": "Veuillez patienter pendant la synchronisation avec le stockage",
-    "awaiting_submission": "En attente de soumission"
+    "published": "Publier maintenant",
+    "draft": "Enregistrer comme brouillon",
+    "encrypting": "Chiffrement...",
+    "wait_sync": "Synchronisation en cours...",
+    "awaiting_submission": "Prêt à soumettre"
   },
   "options": {
-    "manual_entry": "Saisir les détails manuellement"
+    "manual_entry": "Saisir manuellement"
   },
   "dialogs": {
     "edit_title": "Modifier la demande",
-    "edit_description": "Modifiez les détails de votre demande pour aider les vendeurs à fournir des devis plus précis."
+    "edit_description": "Mettez à jour les détails pour aider les vendeurs à proposer de meilleurs devis."
   },
   "toasts": {
-    "login_required": "Vous devez être connecté pour créer ou modifier une demande",
-    "update_success": "Demande de pièce mise à jour avec succès !",
-    "create_success": "Demande de pièce soumise avec succès !",
-    "process_error": "Échec du traitement de la demande"
+    "login_required": "Connectez-vous pour créer ou modifier une demande",
+    "update_success": "Demande mise à jour avec succès !",
+    "create_success": "Demande soumise avec succès !",
+    "process_error": "Une erreur est survenue. Veuillez réessayer."
   }
 }

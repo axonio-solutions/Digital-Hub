@@ -1,58 +1,11 @@
 {
-  "columns": {
-    "part": "Part Name",
-    "vehicle": "Vehicle",
-    "category": "Category",
-    "posted": "Posted Date",
-    "offers": "Offers",
-    "status": "Status"
-  },
-  "empty": {
-    "general": "N/A",
-    "inquiry": "General Inquiry",
-    "market_avg": "Market Avg",
-    "title": "No Demands Yet",
-    "desc": "Start posting your part requests to get offers from sellers"
-  },
-  "actions": {
-    "open_menu": "Open actions",
-    "title": "Actions",
-    "view_details": "View Detail",
-    "edit_request": "Edit Request",
-    "cancel_request": "Cancel Request",
-    "reopen_request": "Reopen Request",
-    "delete_permanently": "Delete Permanently",
-    "close": "Close",
-    "cancel": "Cancel"
-  },
+  "columns": { "part": "Part Name", "vehicle": "Vehicle", "category": "Category", "posted": "Posted", "offers": "Offers", "status": "Status" },
+  "empty": { "general": "N/A", "inquiry": "General Inquiry", "market_avg": "Market Avg.", "title": "No Requests Yet", "desc": "Post your first request to start receiving offers from sellers." },
+  "actions": { "open_menu": "Open menu", "title": "Actions", "view_details": "View Details", "edit_request": "Edit Request", "cancel_request": "Close Request", "reopen_request": "Reopen Request", "delete_permanently": "Delete", "close": "Close", "cancel": "Cancel" },
   "dialogs": {
-    "cancel": {
-      "title": "Cancel Request?",
-      "description": "This request will no longer receive any new offers once closed.",
-      "cancelling": "Cancelling...",
-      "confirm": "Confirm Cancellation"
-    },
-    "delete": {
-      "title": "Permanently Delete?",
-      "description": "This action cannot be undone and will remove the request from your history.",
-      "deleting": "Deleting...",
-      "confirm": "Delete Permanently"
-    },
-    "reopen": {
-      "title": "Reopen Request?",
-      "description": "Sellers will start seeing this request and submitting offers again.",
-      "reopening": "Reopening...",
-      "confirm": "Reopen Request"
-    }
+    "cancel": { "title": "Close this Request?", "description": "Closed requests will stop receiving new offers. You can reopen it anytime.", "cancelling": "Closing...", "confirm": "Close Request" },
+    "delete": { "title": "Delete this Request?", "description": "This action is permanent and will remove the request from your history.", "deleting": "Deleting...", "confirm": "Delete" },
+    "reopen": { "title": "Reopen this Request?", "description": "Sellers will be able to see and submit offers for this request again.", "reopening": "Reopening...", "confirm": "Reopen Request" }
   },
-  "filters": {
-    "search_placeholder": "Search parts...",
-    "status": "Status",
-    "brand": "Brand",
-    "statuses": {
-      "open": "Open",
-      "fulfilled": "Fulfilled",
-      "cancelled": "Cancelled"
-    }
-  }
+  "filters": { "search_placeholder": "Search parts...", "status": "Status", "brand": "Brand", "statuses": { "open": "Open", "fulfilled": "Fulfilled", "cancelled": "Cancelled" } }
 }

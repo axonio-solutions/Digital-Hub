@@ -1,32 +1,32 @@
 {
   "offers": {
     "title": "Offres Reçues",
-    "subtitle": "Consultez les devis en direct des vendeurs pour vos demandes actives.",
+    "subtitle": "Consultez et répondez aux devis des vendeurs pour vos demandes actives.",
     "loading": "Chargement des offres...",
-    "actionable_title": "Devis à traiter ({{count}})",
-    "actionable_desc": "Ces demandes nécessitent votre attention. Acceptez un devis pour finaliser la transaction.",
+    "actionable_title": "Nécessite votre réponse ({{count}})",
+    "actionable_desc": "Ces devis nécessitent votre décision. Acceptez la meilleure offre pour avancer.",
     "table": {
       "id": "ID",
-      "part_name": "Nom de la pièce",
+      "part_name": "Pièce",
       "brand": "Marque",
-      "quotes": "Devis",
+      "quotes": "Offres",
       "action": "Action"
     },
-    "empty": "Vous n'avez aucune offre active à examiner.",
+    "empty": "Aucune offre à examiner pour le moment.",
     "go_back": "Retour au tableau de bord",
-    "review_btn": "Examiner les devis",
+    "review_btn": "Voir les offres",
     "dialog": {
-      "title": "Devis pour {{part}}",
-      "desc": "Examinez les offres des vendeurs vérifiés. Acceptez la meilleure pour obtenir leurs coordonnées directes.",
-      "condition_new": "Pièce neuve",
-      "condition_used": "Occasion/Casse",
+      "title": "Offres pour {{part}}",
+      "desc": "Comparez les offres de vendeurs vérifiés. Acceptez la meilleure pour accéder à leurs coordonnées.",
+      "condition_new": "Neuf",
+      "condition_used": "Occasion",
       "warranty": "Garantie :",
       "no_warranty": "Aucune",
       "accepting": "Acceptation...",
       "accept": "Accepter l'offre",
-      "accepted_title": "Devis accepté !",
-      "accepted_desc": "Vous avez sélectionné le devis de {{seller}} pour {{price}} DZD.",
-      "contact_desc": "Contactez directement le vendeur pour organiser le paiement et la logistique.",
+      "accepted_title": "Offre acceptée",
+      "accepted_desc": "Vous avez accepté l'offre de {{seller}} pour {{price}} DA.",
+      "contact_desc": "Contactez le vendeur directement pour organiser le paiement et la livraison.",
       "close": "Fermer"
     }
   }

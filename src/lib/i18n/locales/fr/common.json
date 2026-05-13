@@ -12,7 +12,10 @@
     "reset": "Réinitialiser",
     "selected": "sélectionné",
     "no_results_found": "Aucun résultat trouvé.",
-    "clear_filters": "Effacer les filtres"
+    "clear_filters": "Effacer les filtres",
+    "filters": "Filtres",
+    "toggle_columns": "Colonnes",
+    "search": "Rechercher..."
   },
   "pagination": {
     "rows_per_page": "Lignes par page",
@@ -23,5 +26,33 @@
     "previous": "Aller à la page précédente",
     "next": "Aller à la page suivante",
     "last": "Aller à la dernière page"
+  },
+  "view": {
+    "list": "Liste",
+    "grid": "Grille"
+  },
+  "part_card": {
+    "open": "OUVERT",
+    "fulfilled": "TRAITÉ",
+    "cancelled": "ANNULÉ",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "reopen": "Réouvrir",
+    "quote_now": "Devis",
+    "no_description": "Aucune description fournie",
+    "updated": "Mis à jour",
+    "minutes_ago": "il y a {{count}}min",
+    "hours_ago": "il y a {{count}}h",
+    "days_ago": "il y a {{count}}j"
+  },
+  "dialog": {
+    "close": "Fermer"
+  },
+  "progress": {
+    "sync_stats": "Synchronisation"
+  },
+  "image_slider": {
+    "no_images": "Aucune Image",
+    "slide": "Image {{index}}"
   }
 }

@@ -1,58 +1,11 @@
 {
-  "columns": {
-    "part": "القطعة",
-    "vehicle": "المركبة",
-    "category": "الفئة",
-    "posted": "تاريخ النشر",
-    "offers": "العروض",
-    "status": "الحالة"
-  },
-  "empty": {
-    "general": "غير محدد",
-    "inquiry": "استفسار عام",
-    "market_avg": "متوسط السوق",
-    "title": "لا توجد طلبات",
-    "desc": "ابدأ في نشر طلباتك للحصول على عروض من البائعين"
-  },
-  "actions": {
-    "open_menu": "فتح القائمة",
-    "title": "إجراءات",
-    "view_details": "عرض التفاصيل",
-    "edit_request": "تعديل الطلب",
-    "cancel_request": "إلغاء الطلب",
-    "reopen_request": "إعادة فتح الطلب",
-    "delete_permanently": "حذف نهائي",
-    "close": "إغلاق",
-    "cancel": "إلغاء"
-  },
+  "columns": { "part": "القطعة", "vehicle": "المركبة", "category": "الفئة", "posted": "تاريخ النشر", "offers": "العروض", "status": "الحالة" },
+  "empty": { "general": "غير محدد", "inquiry": "استفسار عام", "market_avg": "متوسط السوق", "title": "لا توجد طلبات", "desc": "انشر طلبك الأول لبدء تلقي العروض من البائعين." },
+  "actions": { "open_menu": "فتح القائمة", "title": "إجراءات", "view_details": "عرض التفاصيل", "edit_request": "تعديل", "cancel_request": "إغلاق", "reopen_request": "إعادة فتح", "delete_permanently": "حذف", "close": "إغلاق", "cancel": "إلغاء" },
   "dialogs": {
-    "cancel": {
-      "title": "إلغاء الطلب؟",
-      "description": "لن يتلقى هذا الطلب أي عروض جديدة بمجرد إغلاقه.",
-      "cancelling": "جاري الإلغاء...",
-      "confirm": "تأكيد الإلغاء"
-    },
-    "delete": {
-      "title": "حذف الطلب نهائياً؟",
-      "description": "سيتم إزالة هذا العمل ولا يمكن التراجع عنه.",
-      "deleting": "جاري الحذف...",
-      "confirm": "حذف نهائي"
-    },
-    "reopen": {
-      "title": "إعادة فتح الطلب؟",
-      "description": "سيبدأ الباعة في رؤية هذا الطلب وتقديم عروضهم مرة أخرى.",
-      "reopening": "جاري إعادة الفتح...",
-      "confirm": "إعادة فتح"
-    }
+    "cancel": { "title": "إغلاق هذا الطلب؟", "description": "الطلبات المغلقة تتوقف عن استقبال عروض جديدة. يمكنك إعادة فتحها في أي وقت.", "cancelling": "جاري الإغلاق...", "confirm": "إغلاق الطلب" },
+    "delete": { "title": "حذف هذا الطلب؟", "description": "هذا الإجراء نهائي. سيتم إزالة الطلب من سجلك.", "deleting": "جاري الحذف...", "confirm": "حذف" },
+    "reopen": { "title": "إعادة فتح هذا الطلب؟", "description": "سيتمكن البائعون من رؤية وتقديم عروض لهذا الطلب مرة أخرى.", "reopening": "جاري إعادة الفتح...", "confirm": "إعادة فتح الطلب" }
   },
-  "filters": {
-    "search_placeholder": "البحث عن قطعة...",
-    "status": "الحالة",
-    "brand": "العلامة التجارية",
-    "statuses": {
-      "open": "مفتوح",
-      "fulfilled": "منفذ",
-      "cancelled": "ملغى"
-    }
-  }
+  "filters": { "search_placeholder": "بحث عن قطعة...", "status": "الحالة", "brand": "العلامة", "statuses": { "open": "مفتوح", "fulfilled": "منفذ", "cancelled": "ملغي" } }
 }
