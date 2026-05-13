@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { LayoutGrid, List } from 'lucide-react'
 import { Button } from './button'
 import { cn } from '@/lib/utils'
@@ -13,20 +14,13 @@ export function ViewToggles({
   onViewChange,
   className,
 }: ViewTogglesProps) {
+  const { t } = useTranslation('common')
+
   return (
     <div className={cn(
       "flex items-center gap-1 bg-white/50 dark:bg-slate-900/50 p-1 rounded-xl border border-slate-200 dark:border-slate-800 backdrop-blur-sm shadow-sm",
       className
     )}>
-      <Button
-        variant={view === 'list' ? 'secondary' : 'ghost'}
-        size="sm"
-        className="h-8 px-3 text-xs gap-1.5 shadow-none font-bold rounded-lg"
-        onClick={() => onViewChange('list')}
-      >
-        <List className="size-3.5" />
-        List
-      </Button>
       <Button
         variant={view === 'grid' ? 'secondary' : 'ghost'}
         size="sm"
@@ -34,7 +28,16 @@ export function ViewToggles({
         onClick={() => onViewChange('grid')}
       >
         <LayoutGrid className="size-3.5" />
-        Grid
+        {t('view.grid')}
+      </Button>
+      <Button
+        variant={view === 'list' ? 'secondary' : 'ghost'}
+        size="sm"
+        className="h-8 px-3 text-xs gap-1.5 shadow-none font-bold rounded-lg"
+        onClick={() => onViewChange('list')}
+      >
+        <List className="size-3.5" />
+        {t('view.list')}
       </Button>
     </div>
   )

@@ -36,13 +36,14 @@ interface DataTableToolbarProps<TData> {
 export function DataTableToolbar<TData>({
   table,
   searchColumn,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder: _searchPlaceholder,
   facetedFilters = [],
   children,
   className,
   hideViewOptions,
 }: DataTableToolbarProps<TData>) {
   const { t } = useTranslation('common')
+  const searchPlaceholder = _searchPlaceholder ?? t('table.search')
   const isFiltered = table.getState().columnFilters.length > 0
   const activeCount = table.getState().columnFilters.reduce((sum, f) => {
     const v = f.value as Array<any>

@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
@@ -11,6 +12,7 @@ interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
   ({ className, value = 0, max = 100, showLabel = false, variant = 'default', ...props }, ref) => {
+    const { t } = useTranslation('common')
     const percentage = Math.min(Math.max(0, value), max)
     
     const variants = {
@@ -37,7 +39,7 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
         />
         {showLabel && (
           <div className="absolute inset-x-0 -top-6 flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500/80">
-            <span>Sync Stats</span>
+            <span>{t('progress.sync_stats')}</span>
             <span>{percentage}%</span>
           </div>
         )}

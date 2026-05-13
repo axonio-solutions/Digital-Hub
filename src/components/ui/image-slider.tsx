@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -22,6 +23,8 @@ export function ImageSlider({
   className,
   aspectRatio = '4/3'
 }: ImageSliderProps) {
+  const { t, i18n } = useTranslation('common')
+  const isRtl = i18n.dir() === 'rtl'
   const [currentIndex, setCurrentIndex] = useState(0)
   const [direction, setDirection] = useState(0)
 
@@ -42,7 +45,7 @@ export function ImageSlider({
         className
       )}>
         <span className="material-symbols-outlined text-4xl opacity-20">image</span>
-        <p className="text-[10px] font-black uppercase tracking-widest mt-2 opacity-40">No Images Available</p>
+        <p className="text-[10px] font-black uppercase tracking-widest mt-2 opacity-40">{t('image_slider.no_images')}</p>
       </div>
     )
   }
@@ -138,7 +141,7 @@ export function ImageSlider({
           {currentUrl && (
             <img
               src={currentUrl}
-              alt={`Slide ${currentIndex + 1}`}
+              alt={t('image_slider.slide', { index: currentIndex + 1 })}
               className="w-full h-full object-contain select-none bg-slate-950"
             />
           )}
@@ -150,17 +153,17 @@ export function ImageSlider({
         <>
           <button
             type="button"
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 size-10 flex items-center justify-center rounded-xl bg-white/90 dark:bg-black/80 text-foreground shadow-xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 border border-border/50"
-            onClick={(e) => { e.stopPropagation(); paginate(-1); }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 size-10 flex items-center justify-center rounded-xl bg-white/90 dark:bg-black/80 text-foreground shadow-xl backdrop-blur-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 border border-border/50"
+            onClick={(e) => { e.stopPropagation(); paginate(isRtl ? 1 : -1); }}
           >
-            <ChevronLeft className="size-5" />
+            {isRtl ? <ChevronRight className="size-5" /> : <ChevronLeft className="size-5" />}
           </button>
           <button
             type="button"
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 size-10 flex items-center justify-center rounded-xl bg-white/90 dark:bg-black/80 text-foreground shadow-xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 border border-border/50"
-            onClick={(e) => { e.stopPropagation(); paginate(1); }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 size-10 flex items-center justify-center rounded-xl bg-white/90 dark:bg-black/80 text-foreground shadow-xl backdrop-blur-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 border border-border/50"
+            onClick={(e) => { e.stopPropagation(); paginate(isRtl ? -1 : 1); }}
           >
-            <ChevronRight className="size-5" />
+            {isRtl ? <ChevronLeft className="size-5" /> : <ChevronRight className="size-5" />}
           </button>
         </>
       )}
