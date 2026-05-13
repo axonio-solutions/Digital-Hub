@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "badge": "À Propos",
+    "title": "Révolutionner l'Approvisionnement en Pièces Auto en Algérie",
+    "subtitle": "MLILA est le premier reverse-marketplace en Algérie connectant acheteurs et vendeurs de pièces détachées certifiés."
+  },
+  "mission": {
+    "title": "Notre Mission",
+    "description": "Nous croyons que chaque conducteur et mécanicien en Algérie mérite d'accéder à des pièces auto de qualité sans perdre des heures à chercher. Notre mission est de numériser l'écosystème des pièces détachées.",
+    "points": [
+      "Connecter les acheteurs avec des vendeurs certifiés à travers l'Algérie",
+      "Éliminer l'ambiguïté des prix grâce à une tarification transparente",
+      "Réduire les temps d'immobilisation des véhicules"
+    ]
+  },
+  "story": {
+    "title": "Notre Histoire",
+    "paragraphs": [
+      "MLILA est née d'un constat simple : trouver des pièces auto en Algérie est un parcours du combattant.",
+      "Nous avons créé MLILA pour résoudre ce problème. Notre modèle de reverse-marketplace apporte transparence, compétition et efficacité.",
+      "Aujourd'hui, MLILA sert des milliers d'acheteurs et de vendeurs à travers l'Algérie."
+    ]
+  },
+  "values": [
+    { "title": "Confiance", "description": "Chaque vendeur est vérifié. Chaque transaction est suivie.", "icon": "Shield" },
+    { "title": "Rapidité", "description": "Obtenez plusieurs devis en quelques heures.", "icon": "Zap" },
+    { "title": "Transparence", "description": "Comparez les offres et choisissez ce qui correspond à votre budget.", "icon": "Eye" },
+    { "title": "Communauté", "description": "Nous construisons le plus grand réseau de pièces auto en Algérie.", "icon": "Users" }
+  ],
+  "stats": {
+    "buyers": "5 000+",
+    "sellers": "500+",
+    "parts": "10 000+",
+    "cities": "48"
+  },
+  "cta": {
+    "title": "Prêt à transformer votre approvisionnement ?",
+    "button": "Rejoindre MLILA"
+  }
+}

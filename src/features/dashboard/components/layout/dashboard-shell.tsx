@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useMatches } from '@tanstack/react-router'
+import { useLocation } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { NotificationBell } from '@/features/notifications'
 import { UserMenu } from '@/components/navigation/user-menu'
@@ -27,42 +27,35 @@ import { Separator } from '@/components/ui/separator'
 
 function DynamicBreadcrumb() {
   const { t } = useTranslation('dashboard/layout')
-  const matches = useMatches()
+  const location = useLocation()
+  const pathname = location.pathname
 
-  const breadcrumbs = matches
-    .filter(
-      (match) =>
-        match.id !== '/' && match.id !== '/_auth' && match.id !== '/dashboard',
-    )
-    .map((match) => {
-      let title = t('breadcrumbs.dashboard')
-      if (match.id === '/dashboard/') title = t('breadcrumbs.overview')
-      if (match.id === '/dashboard/requests/') title = t('breadcrumbs.demands_hub')
-      if (match.id === '/dashboard/offers/') title = t('breadcrumbs.offers')
-      if (match.id === '/dashboard/history/') title = t('breadcrumbs.history')
-      if (match.id === '/dashboard/profile/') title = t('breadcrumbs.profile')
-      if (match.id === '/dashboard/marketplace/') title = t('breadcrumbs.live_feed')
-      if (match.id === '/dashboard/quotes/') title = t('breadcrumbs.my_quotes')
-      if (match.id === '/dashboard/admin/audit/') title = t('breadcrumbs.audit_log')
-      if (match.id === '/dashboard/garage/') title = t('breadcrumbs.my_garage')
-      if (match.id === '/dashboard/admin/users/') title = t('breadcrumbs.user_moderation')
-      if (match.id === '/dashboard/admin/buyers') title = t('breadcrumbs.buyers_intelligence')
-      if (match.id === '/dashboard/admin/sellers') title = t('breadcrumbs.sellers_ecosystem')
-      if (match.id === '/dashboard/admin/categories') title = t('breadcrumbs.taxonomy_management')
-      if (match.id === '/dashboard/admin/settings') title = t('breadcrumbs.admin_settings')
-      if (match.id === '/dashboard/admin/logs') title = t('breadcrumbs.cloud_logs')
-      if (match.id === '/dashboard/support') title = t('breadcrumbs.support')
-      if (match.id === '/dashboard/requests/$requestId') title = t('breadcrumbs.request_detail')
+  const CRUMB_MAP: Record<string, string> = {
+    '/dashboard': t('breadcrumbs.overview'),
+    '/dashboard/': t('breadcrumbs.overview'),
+    '/dashboard/requests': t('breadcrumbs.demands_hub'),
+    '/dashboard/quotes': t('breadcrumbs.my_quotes'),
+    '/dashboard/profile': t('breadcrumbs.profile'),
+    '/dashboard/garage': t('breadcrumbs.my_garage'),
+    '/dashboard/admin/buyers': t('breadcrumbs.buyers_intelligence'),
+    '/dashboard/admin/sellers': t('breadcrumbs.sellers_ecosystem'),
+    '/dashboard/admin/categories': t('breadcrumbs.taxonomy_management'),
+    '/dashboard/admin/users': t('breadcrumbs.user_moderation'),
+    '/dashboard/admin/audit': t('breadcrumbs.audit_log'),
+  }
 
-      return { id: match.id, pathname: match.pathname, title }
-    })
+  let breadcrumbs: Array<{ pathname: string; title: string }> = []
 
-  if (breadcrumbs.length === 0) {
-    breadcrumbs.push({
-      id: '/dashboard/',
-      pathname: '/dashboard',
-      title: t('breadcrumbs.overview'),
-    })
+  const requestMatch = pathname.match(/^\/dashboard\/requests\/(.+)$/)
+  if (requestMatch) {
+    breadcrumbs = [
+      { pathname: '/dashboard/requests', title: t('breadcrumbs.demands_hub') },
+      { pathname, title: t('breadcrumbs.request_detail') },
+    ]
+  } else if (CRUMB_MAP[pathname]) {
+    breadcrumbs = [{ pathname, title: CRUMB_MAP[pathname] }]
+  } else {
+    breadcrumbs = [{ pathname: '/dashboard', title: t('breadcrumbs.overview') }]
   }
 
   return (
@@ -75,10 +68,9 @@ function DynamicBreadcrumb() {
 
         {breadcrumbs.map((crumb, index) => {
           const isLast = index === breadcrumbs.length - 1
-          if (crumb.title === 'Dashboard') return null
 
           return (
-            <React.Fragment key={crumb.id}>
+            <React.Fragment key={crumb.pathname}>
               <BreadcrumbItem>
                 {isLast ? (
                   <BreadcrumbPage>{crumb.title}</BreadcrumbPage>

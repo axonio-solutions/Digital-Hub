@@ -7,12 +7,13 @@ import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
 interface SellerQuotesTableProps {
   data: Array<any>
   onAction: (action: { type: string; item: any }) => void
+  brandLogos?: Record<string, string>
   toolbarExtras?: React.ReactNode
 }
 
-export function SellerQuotesTable({ data, onAction, toolbarExtras }: SellerQuotesTableProps) {
+export function SellerQuotesTable({ data, onAction, brandLogos, toolbarExtras }: SellerQuotesTableProps) {
   const { t } = useTranslation('quotes')
-  const columns = useSellerColumns(onAction)
+  const columns = useSellerColumns(onAction, brandLogos)
 
   return (
     <DataTable

@@ -1,0 +1,42 @@
+{
+  "hero": {
+    "badge": "Contact Us",
+    "title": "Get in Touch",
+    "subtitle": "Have a question, feedback, or partnership idea? We'd love to hear from you."
+  },
+  "info": {
+    "title": "Contact Information",
+    "email": "support@mlila.dz",
+    "phone": "+213 (0) 560 12 34 56",
+    "address": "Algiers, Algeria",
+    "response": "We typically respond within 24 hours."
+  },
+  "form": {
+    "title": "Send Us a Message",
+    "name": "Full Name",
+    "name_placeholder": "Your full name",
+    "email": "Email Address",
+    "email_placeholder": "you@example.com",
+    "subject": "Subject",
+    "subject_placeholder": "How can we help?",
+    "message": "Message",
+    "message_placeholder": "Tell us more about your inquiry...",
+    "submit": "Send Message",
+    "sending": "Sending...",
+    "success": "Message sent successfully! We'll get back to you shortly.",
+    "error": "Something went wrong. Please try again."
+  },
+  "subjects": [
+    { "value": "general", "label": "General Inquiry" },
+    { "value": "support", "label": "Technical Support" },
+    { "value": "partnership", "label": "Partnership Opportunity" },
+    { "value": "seller", "label": "Seller Registration" },
+    { "value": "complaint", "label": "Report an Issue" },
+    { "value": "other", "label": "Other" }
+  ],
+  "cta": {
+    "title": "Prefer to browse first?",
+    "subtitle": "Explore our marketplace and see how MLILA works.",
+    "button": "Explore Marketplace"
+  }
+}

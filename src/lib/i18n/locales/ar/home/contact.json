@@ -1,0 +1,28 @@
+{
+  "hero": { "badge": "اتصل بنا", "title": "تواصل معنا", "subtitle": "لديك سؤال أو ملاحظة أو فكرة شراكة؟ يسعدنا التواصل معك." },
+  "info": { "title": "معلومات الاتصال", "email": "support@mlila.dz", "phone": "+213 (0) 560 12 34 56", "address": "الجزائر العاصمة، الجزائر", "response": "نرد عادةً خلال 24 ساعة." },
+  "form": {
+    "title": "أرسل لنا رسالة",
+    "name": "الاسم الكامل",
+    "name_placeholder": "اسمك الكامل",
+    "email": "البريد الإلكتروني",
+    "email_placeholder": "you@example.com",
+    "subject": "الموضوع",
+    "subject_placeholder": "كيف يمكننا المساعدة؟",
+    "message": "الرسالة",
+    "message_placeholder": "أخبرنا المزيد عن استفسارك...",
+    "submit": "إرسال الرسالة",
+    "sending": "جارٍ الإرسال...",
+    "success": "تم إرسال الرسالة بنجاح! سنرد عليك قريباً.",
+    "error": "حدث خطأ ما. الرجاء المحاولة مرة أخرى."
+  },
+  "subjects": [
+    { "value": "general", "label": "استفسار عام" },
+    { "value": "support", "label": "دعم فني" },
+    { "value": "partnership", "label": "فرصة شراكة" },
+    { "value": "seller", "label": "تسجيل بائع" },
+    { "value": "complaint", "label": "الإبلاغ عن مشكلة" },
+    { "value": "other", "label": "أخرى" }
+  ],
+  "cta": { "title": "تفضل بالتصفح أولاً؟", "subtitle": "استكشف سوقنا.", "button": "استكشف السوق" }
+}

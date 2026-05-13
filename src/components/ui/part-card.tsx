@@ -1,7 +1,19 @@
 import React from 'react'
-import { ArrowUpRight, Calendar, Clock, Flame, MessageSquare, Pencil, RefreshCcw, Sparkles, Trash2, XCircle } from 'lucide-react'
+import { ArrowUpRight, Calendar, Clock, Flame, MessageSquare, Pencil, RefreshCcw, Sparkles, Tag, Trash2, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
+
+const BRAND_PALETTE: Record<string, string> = {
+  BMW: '#1a6eb5', Mercedes: '#1a1a1a', 'Mercedes-Benz': '#1a1a1a', Audi: '#bb161b',
+  Volkswagen: '#1d5ba4', Toyota: '#e10a1a', Honda: '#0065b3', Ford: '#003478',
+  Hyundai: '#002d6e', Kia: '#bb162b', Renault: '#ffcc00', Peugeot: '#003a8c',
+  Citroen: '#da291c', Fiat: '#960018', Nissan: '#c3002f', Dacia: '#647687',
+  'Land Rover': '#003d2e', Jaguar: '#222222', Porsche: '#b12b2b',
+}
+
+function getBrandColor(brand: string): string {
+  return BRAND_PALETTE[brand] || `hsl(${brand.length * 47 + brand.charCodeAt(0) * 13 % 360}, 55%, 45%)`
+}
 
 interface PartCardProps {
   id: string
@@ -124,10 +136,40 @@ export const PartCard = React.memo(function PartCard({
       </div>
 
       {/* Content */}
-      <div className="flex flex-col flex-1 p-4 gap-3">
+      <div className="flex flex-col flex-1 p-4 gap-2.5">
+        {/* Brand Pill */}
+        <div className="flex items-center gap-2">
+          <div
+            className="size-[22px] rounded-md flex items-center justify-center shrink-0 overflow-hidden"
+            style={{ backgroundColor: brand ? getBrandColor(brand) + '20' : undefined }}
+          >
+            {brandImageUrl ? (
+              <img src={brandImageUrl} alt={brand} className="size-4 object-contain" />
+            ) : (
+              <span
+                className="text-[9px] font-black uppercase"
+                style={{ color: brand ? getBrandColor(brand) : undefined }}
+              >
+                {brand ? brand.substring(0, 2) : '?'}
+              </span>
+            )}
+          </div>
+          <span
+            className="text-xs font-bold uppercase tracking-tight"
+            style={{ color: brand ? getBrandColor(brand) : undefined }}
+          >
+            {brand}
+          </span>
+          {modelYear && (
+            <span className="ml-auto text-[10px] font-semibold text-muted-foreground tabular-nums">
+              {modelYear}
+            </span>
+          )}
+        </div>
+
         {/* Title */}
         <div className="min-w-0">
-          <h3 className="text-sm font-bold text-foreground line-clamp-1" title={title}>
+          <h3 className="text-sm font-bold text-foreground line-clamp-1 leading-snug" title={title}>
             {title}
           </h3>
           {partNumber && (
@@ -137,35 +179,27 @@ export const PartCard = React.memo(function PartCard({
           )}
         </div>
 
-        {/* Meta badges */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="inline-flex items-center gap-1.5 h-5.5 px-2 rounded-md bg-foreground/10 text-foreground text-[10px] font-bold">
-            {brandImageUrl ? (
-              <img src={brandImageUrl} alt="" className="size-3.5 rounded object-contain" />
-            ) : (
-              <span className="text-[9px] font-black uppercase opacity-40">{brand.substring(0, 2)}</span>
-            )}
-            {brand}
-          </span>
-          {modelYear && (
-            <span className="inline-flex items-center h-5.5 px-2 rounded-md bg-muted border border-border text-muted-foreground text-[10px] font-semibold">
-              {modelYear}
-            </span>
-          )}
+        {/* Category + Status row */}
+        <div className="flex items-center gap-2 flex-wrap min-h-[22px]">
           {category && (
-            <span className="inline-flex items-center h-5.5 px-2 rounded-md bg-muted border border-border text-muted-foreground text-[10px] font-medium capitalize">
+            <span className="inline-flex items-center gap-1 h-5.5 px-2 rounded-md bg-primary/5 border border-primary/10 text-primary text-[10px] font-bold">
+              <Tag className="size-2.5" />
               {category}
             </span>
           )}
           {status && (
             <span className={cn(
-              "inline-flex items-center h-5.5 px-2 rounded-md text-[10px] font-bold capitalize",
+              "inline-flex items-center gap-1 h-5 px-2 rounded-md text-[9px] font-bold uppercase tracking-wider",
               status === 'open'
                 ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800"
                 : status === 'fulfilled'
                   ? "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800"
                   : "bg-muted border border-border text-muted-foreground"
             )}>
+              <span className={cn(
+                "size-1 rounded-full",
+                status === 'open' ? "bg-emerald-500" : status === 'fulfilled' ? "bg-blue-500" : "bg-muted-foreground"
+              )} />
               {status}
             </span>
           )}
@@ -173,13 +207,13 @@ export const PartCard = React.memo(function PartCard({
 
         {/* Notes preview */}
         {notes && (
-          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+          <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
             {notes}
           </p>
         )}
 
         {/* Footer */}
-        <div className="mt-auto pt-3 border-t border-border flex items-center justify-between gap-2">
+        <div className="mt-auto pt-2.5 border-t border-border flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] font-medium min-w-0">
             <Clock className="w-3 h-3 flex-shrink-0" />
             <span className="truncate">{timeAgo(createdAt)}</span>

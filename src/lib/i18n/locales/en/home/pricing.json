@@ -1,0 +1,68 @@
+{
+  "hero": {
+    "badge": "Pricing",
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "No hidden fees. No surprises. Choose the plan that fits your needs and start sourcing smarter."
+  },
+  "plans": [
+    {
+      "name": "Free Buyer",
+      "price": "0",
+      "currency": "DZD",
+      "period": "forever",
+      "description": "For buyers who want to source parts efficiently.",
+      "features": [
+        "Post unlimited part requests",
+        "Receive quotes from verified sellers",
+        "Compare offers side by side",
+        "Free account — no commitment"
+      ],
+      "cta": "Get Started",
+      "popular": false
+    },
+    {
+      "name": "Seller Pro",
+      "price": "Free",
+      "currency": "",
+      "period": "to join",
+      "description": "For professional sellers and auto parts shops.",
+      "features": [
+        "Unlimited quote submissions",
+        "Detailed seller dashboard & analytics",
+        "Priority visibility on buyer requests",
+        "Dedicated seller support",
+        "Pay only when you win a deal"
+      ],
+      "cta": "Register as Seller",
+      "popular": true
+    },
+    {
+      "name": "Enterprise",
+      "price": "Custom",
+      "currency": "",
+      "period": "",
+      "description": "For large businesses and multi-branch shops.",
+      "features": [
+        "Everything in Seller Pro",
+        "Multi-user account management",
+        "API integration for inventory sync",
+        "Custom reporting & analytics",
+        "Priority support & account manager"
+      ],
+      "cta": "Contact Sales",
+      "popular": false
+    }
+  ],
+  "faq": {
+    "title": "Pricing FAQs",
+    "questions": [
+      { "q": "Is there a fee to post a request?", "a": "No. Posting a part request is completely free for all buyers." },
+      { "q": "How is the seller commission calculated?", "a": "Sellers pay a small percentage of the deal value upon successful sale. The exact rate is displayed during registration." },
+      { "q": "Are there any monthly subscription fees?", "a": "No. There are no monthly fees for buyers or sellers. You only pay when value is delivered." }
+    ]
+  },
+  "cta": {
+    "title": "Start sourcing smarter today",
+    "button": "Create Your Free Account"
+  }
+}

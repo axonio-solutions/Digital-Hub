@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "badge": "About Us",
+    "title": "Revolutionizing Auto Parts Sourcing in Algeria",
+    "subtitle": "MLILA is Algeria's first reverse-marketplace connecting buyers with verified auto parts sellers. We make finding the right part fast, transparent, and hassle-free."
+  },
+  "mission": {
+    "title": "Our Mission",
+    "description": "We believe every driver and mechanic in Algeria deserves access to quality auto parts without wasting hours searching. Our mission is to digitize the spare parts ecosystem, eliminate information asymmetry, and empower both buyers and sellers with tools that save time and money.",
+    "points": [
+      "Connect buyers with trusted, verified sellers across Algeria",
+      "Eliminate price ambiguity with transparent quote-based pricing",
+      "Reduce vehicle downtime by speeding up parts sourcing"
+    ]
+  },
+  "story": {
+    "title": "Our Story",
+    "paragraphs": [
+      "MLILA was born from a simple observation: finding auto parts in Algeria is broken. Buyers spent days calling shops, comparing prices with no visibility, and often settled for overpriced or incompatible parts. Sellers struggled to reach the right audience and manage inquiries efficiently.",
+      "We built MLILA to fix that. Our reverse-marketplace model — where buyers post what they need and sellers compete to offer the best price — brings transparency, competition, and efficiency to the Algerian auto parts market.",
+      "Today, MLILA serves thousands of buyers and sellers across Algeria, spanning automotive, heavy machinery, and agricultural equipment parts."
+    ]
+  },
+  "values": [
+    { "title": "Trust", "description": "Every seller is verified. Every transaction is tracked. We build a marketplace you can rely on.", "icon": "Shield" },
+    { "title": "Speed", "description": "Get multiple quotes in hours, not days. Our platform accelerates the entire sourcing process.", "icon": "Zap" },
+    { "title": "Transparency", "description": "No hidden prices, no guesswork. Compare offers side by side and choose what fits your budget.", "icon": "Eye" },
+    { "title": "Community", "description": "We are building Algeria's largest auto parts network — connecting people who keep the country moving.", "icon": "Users" }
+  ],
+  "stats": {
+    "buyers": "5,000+",
+    "sellers": "500+",
+    "parts": "10,000+",
+    "cities": "48"
+  },
+  "cta": {
+    "title": "Ready to transform your parts sourcing?",
+    "button": "Join MLILA Today"
+  }
+}

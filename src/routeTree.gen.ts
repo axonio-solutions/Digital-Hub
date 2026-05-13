@@ -17,7 +17,11 @@ import { Route as AuthedOnboardingRouteImport } from './routes/_authed/onboardin
 import { Route as AuthedCompleteRegistrationRouteImport } from './routes/_authed/complete-registration'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthedDashboardRouteRouteImport } from './routes/_authed/dashboard/route'
+import { Route as PublicPricingIndexRouteImport } from './routes/_public/pricing/index'
+import { Route as PublicFaqIndexRouteImport } from './routes/_public/faq/index'
 import { Route as PublicExploreIndexRouteImport } from './routes/_public/explore/index'
+import { Route as PublicContactIndexRouteImport } from './routes/_public/contact/index'
+import { Route as PublicAboutIndexRouteImport } from './routes/_public/about/index'
 import { Route as AuthedDashboardIndexRouteImport } from './routes/_authed/dashboard/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AuthedDashboardAdminRouteRouteImport } from './routes/_authed/dashboard/admin/route'
@@ -73,9 +77,29 @@ const AuthedDashboardRouteRoute = AuthedDashboardRouteRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthedRoute,
 } as any)
+const PublicPricingIndexRoute = PublicPricingIndexRouteImport.update({
+  id: '/pricing/',
+  path: '/pricing/',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicFaqIndexRoute = PublicFaqIndexRouteImport.update({
+  id: '/faq/',
+  path: '/faq/',
+  getParentRoute: () => PublicRoute,
+} as any)
 const PublicExploreIndexRoute = PublicExploreIndexRouteImport.update({
   id: '/explore/',
   path: '/explore/',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicContactIndexRoute = PublicContactIndexRouteImport.update({
+  id: '/contact/',
+  path: '/contact/',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicAboutIndexRoute = PublicAboutIndexRouteImport.update({
+  id: '/about/',
+  path: '/about/',
   getParentRoute: () => PublicRoute,
 } as any)
 const AuthedDashboardIndexRoute = AuthedDashboardIndexRouteImport.update({
@@ -177,7 +201,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/dashboard/': typeof AuthedDashboardIndexRoute
+  '/about/': typeof PublicAboutIndexRoute
+  '/contact/': typeof PublicContactIndexRoute
   '/explore/': typeof PublicExploreIndexRoute
+  '/faq/': typeof PublicFaqIndexRoute
+  '/pricing/': typeof PublicPricingIndexRoute
   '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
   '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
@@ -200,7 +228,11 @@ export interface FileRoutesByTo {
   '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/dashboard': typeof AuthedDashboardIndexRoute
+  '/about': typeof PublicAboutIndexRoute
+  '/contact': typeof PublicContactIndexRoute
   '/explore': typeof PublicExploreIndexRoute
+  '/faq': typeof PublicFaqIndexRoute
+  '/pricing': typeof PublicPricingIndexRoute
   '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
   '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
@@ -227,7 +259,11 @@ export interface FileRoutesById {
   '/_authed/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authed/dashboard/': typeof AuthedDashboardIndexRoute
+  '/_public/about/': typeof PublicAboutIndexRoute
+  '/_public/contact/': typeof PublicContactIndexRoute
   '/_public/explore/': typeof PublicExploreIndexRoute
+  '/_public/faq/': typeof PublicFaqIndexRoute
+  '/_public/pricing/': typeof PublicPricingIndexRoute
   '/_authed/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/_authed/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
   '/_authed/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
@@ -253,7 +289,11 @@ export interface FileRouteTypes {
     | '/dashboard/admin'
     | '/api/auth/$'
     | '/dashboard/'
+    | '/about/'
+    | '/contact/'
     | '/explore/'
+    | '/faq/'
+    | '/pricing/'
     | '/dashboard/admin/buyers'
     | '/dashboard/admin/categories'
     | '/dashboard/admin/sellers'
@@ -276,7 +316,11 @@ export interface FileRouteTypes {
     | '/dashboard/admin'
     | '/api/auth/$'
     | '/dashboard'
+    | '/about'
+    | '/contact'
     | '/explore'
+    | '/faq'
+    | '/pricing'
     | '/dashboard/admin/buyers'
     | '/dashboard/admin/categories'
     | '/dashboard/admin/sellers'
@@ -302,7 +346,11 @@ export interface FileRouteTypes {
     | '/_authed/dashboard/admin'
     | '/api/auth/$'
     | '/_authed/dashboard/'
+    | '/_public/about/'
+    | '/_public/contact/'
     | '/_public/explore/'
+    | '/_public/faq/'
+    | '/_public/pricing/'
     | '/_authed/dashboard/admin/buyers'
     | '/_authed/dashboard/admin/categories'
     | '/_authed/dashboard/admin/sellers'
@@ -382,11 +430,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardRouteRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_public/pricing/': {
+      id: '/_public/pricing/'
+      path: '/pricing'
+      fullPath: '/pricing/'
+      preLoaderRoute: typeof PublicPricingIndexRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/faq/': {
+      id: '/_public/faq/'
+      path: '/faq'
+      fullPath: '/faq/'
+      preLoaderRoute: typeof PublicFaqIndexRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_public/explore/': {
       id: '/_public/explore/'
       path: '/explore'
       fullPath: '/explore/'
       preLoaderRoute: typeof PublicExploreIndexRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/contact/': {
+      id: '/_public/contact/'
+      path: '/contact'
+      fullPath: '/contact/'
+      preLoaderRoute: typeof PublicContactIndexRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/about/': {
+      id: '/_public/about/'
+      path: '/about'
+      fullPath: '/about/'
+      preLoaderRoute: typeof PublicAboutIndexRouteImport
       parentRoute: typeof PublicRoute
     }
     '/_authed/dashboard/': {
@@ -565,12 +641,20 @@ const AuthedRouteWithChildren =
 
 interface PublicRouteChildren {
   PublicIndexRoute: typeof PublicIndexRoute
+  PublicAboutIndexRoute: typeof PublicAboutIndexRoute
+  PublicContactIndexRoute: typeof PublicContactIndexRoute
   PublicExploreIndexRoute: typeof PublicExploreIndexRoute
+  PublicFaqIndexRoute: typeof PublicFaqIndexRoute
+  PublicPricingIndexRoute: typeof PublicPricingIndexRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
   PublicIndexRoute: PublicIndexRoute,
+  PublicAboutIndexRoute: PublicAboutIndexRoute,
+  PublicContactIndexRoute: PublicContactIndexRoute,
   PublicExploreIndexRoute: PublicExploreIndexRoute,
+  PublicFaqIndexRoute: PublicFaqIndexRoute,
+  PublicPricingIndexRoute: PublicPricingIndexRoute,
 }
 
 const PublicRouteWithChildren =

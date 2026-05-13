@@ -1,0 +1,42 @@
+{
+  "hero": {
+    "badge": "Contactez-Nous",
+    "title": "Prenez Contact",
+    "subtitle": "Une question, un retour ou une idée de partenariat ? Nous aimerions avoir de vos nouvelles."
+  },
+  "info": {
+    "title": "Informations de Contact",
+    "email": "support@mlila.dz",
+    "phone": "+213 (0) 560 12 34 56",
+    "address": "Alger, Algérie",
+    "response": "Nous répondons généralement sous 24 heures."
+  },
+  "form": {
+    "title": "Envoyez-Nous un Message",
+    "name": "Nom Complet",
+    "name_placeholder": "Votre nom complet",
+    "email": "Adresse Email",
+    "email_placeholder": "vous@exemple.com",
+    "subject": "Sujet",
+    "subject_placeholder": "Comment pouvons-nous vous aider ?",
+    "message": "Message",
+    "message_placeholder": "Dites-nous en plus...",
+    "submit": "Envoyer le Message",
+    "sending": "Envoi en cours...",
+    "success": "Message envoyé avec succès ! Nous vous répondrons sous peu.",
+    "error": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "subjects": [
+    { "value": "general", "label": "Demande Générale" },
+    { "value": "support", "label": "Support Technique" },
+    { "value": "partnership", "label": "Opportunité de Partenariat" },
+    { "value": "seller", "label": "Inscription Vendeur" },
+    { "value": "complaint", "label": "Signaler un Problème" },
+    { "value": "other", "label": "Autre" }
+  ],
+  "cta": {
+    "title": "Vous préférez d'abord explorer ?",
+    "subtitle": "Découvrez notre marketplace.",
+    "button": "Explorer le Marketplace"
+  }
+}

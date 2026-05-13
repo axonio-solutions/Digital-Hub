@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
 
 type TimeWindow = 'all' | 'today' | 'week' | 'month'
 
@@ -41,7 +42,18 @@ export function SellerQuotesHub() {
   const sellerId = user?.id || ''
 
   const { data: myQuotes = [], isLoading } = useSellerQuotes(sellerId)
+  const { data: taxonomy } = useTaxonomy()
   const deleteQuote = useDeleteQuote()
+
+  const brandLogos = useMemo(() => {
+    if (!taxonomy?.brands) return undefined
+    return taxonomy.brands.reduce((acc: Record<string, string>, brand: any) => {
+      if (brand.brand && brand.imageUrl) {
+        acc[brand.brand] = brand.imageUrl
+      }
+      return acc
+    }, {})
+  }, [taxonomy])
 
   const handleAction = (action: { type: string; item: any }) => {
     setSelectedQuote(action.item)
@@ -206,7 +218,7 @@ export function SellerQuotesHub() {
         ))}
       </div>
 
-      <SellerQuotesTable data={activeData} onAction={handleAction} />
+      <SellerQuotesTable data={activeData} onAction={handleAction} brandLogos={brandLogos} />
 
       {/* Update Quote Dialog */}
       <Dialog open={isQuoteModalOpen} onOpenChange={setIsQuoteModalOpen}>

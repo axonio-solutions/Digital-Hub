@@ -1,0 +1,68 @@
+{
+  "hero": {
+    "badge": "Tarifs",
+    "title": "Une Tarification Simple et Transparente",
+    "subtitle": "Sans frais cachés. Choisissez le plan qui vous convient."
+  },
+  "plans": [
+    {
+      "name": "Acheteur Gratuit",
+      "price": "0",
+      "currency": "DZD",
+      "period": "gratuit",
+      "description": "Pour les acheteurs qui veulent trouver des pièces efficacement.",
+      "features": [
+        "Demandes de pièces illimitées",
+        "Recevez des devis de vendeurs certifiés",
+        "Comparez les offres côte à côte",
+        "Compte gratuit — sans engagement"
+      ],
+      "cta": "Commencer",
+      "popular": false
+    },
+    {
+      "name": "Vendeur Pro",
+      "price": "Gratuit",
+      "currency": "",
+      "period": "pour rejoindre",
+      "description": "Pour les vendeurs professionnels et les magasins de pièces auto.",
+      "features": [
+        "Soumissions de devis illimitées",
+        "Tableau de bord détaillé",
+        "Visibilité prioritaire",
+        "Support dédié",
+        "Payez uniquement quand vous gagnez"
+      ],
+      "cta": "S'inscrire comme Vendeur",
+      "popular": true
+    },
+    {
+      "name": "Enterprise",
+      "price": "Sur Mesure",
+      "currency": "",
+      "period": "",
+      "description": "Pour les grandes entreprises et les magasins multi-succursales.",
+      "features": [
+        "Tout dans Vendeur Pro",
+        "Gestion multi-utilisateurs",
+        "Intégration API",
+        "Rapports personnalisés",
+        "Support prioritaire"
+      ],
+      "cta": "Contacter les Ventes",
+      "popular": false
+    }
+  ],
+  "faq": {
+    "title": "FAQ sur les Tarifs",
+    "questions": [
+      { "q": "Y a-t-il des frais pour publier une demande ?", "a": "Non. Publier une demande est totalement gratuit." },
+      { "q": "Comment est calculée la commission vendeur ?", "a": "Les vendeurs paient un petit pourcentage de la valeur de la transaction." },
+      { "q": "Y a-t-il des frais d'abonnement mensuels ?", "a": "Non. Il n'y a pas de frais mensuels." }
+    ]
+  },
+  "cta": {
+    "title": "Commencez à acheter plus intelligemment",
+    "button": "Créer Votre Compte Gratuit"
+  }
+}

@@ -51,6 +51,25 @@ export default function Navbar() {
         </span>
       </Link>
 
+      {/* Public Nav Links */}
+      <nav className="hidden md:flex items-center gap-0.5 ml-6">
+        <Link to="/explore" search={{ q: '' }} className="px-3 py-1.5 text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted">
+          Explore
+        </Link>
+        <Link to="/pricing" className="px-3 py-1.5 text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted">
+          Pricing
+        </Link>
+        <Link to="/faq" className="px-3 py-1.5 text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted">
+          FAQ
+        </Link>
+        <Link to="/about" className="px-3 py-1.5 text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted">
+          About
+        </Link>
+        <Link to="/contact" className="px-3 py-1.5 text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted">
+          Contact
+        </Link>
+      </nav>
+
       <div className="flex-1" />
 
       {/* Right controls */}

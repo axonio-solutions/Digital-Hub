@@ -2,11 +2,16 @@ import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import {
+  Activity,
+  Archive,
   CircleUserRound,
   ClipboardList,
+  Layers,
   Loader2,
   LogOut,
+  Settings,
   Tag,
+  Users,
 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -20,6 +25,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
+
+const ADMIN_LINKS = [
+  { to: '/dashboard', label: 'Global Metrics', icon: Activity },
+  { to: '/dashboard/admin/users', label: 'User Moderation', icon: Users },
+  { to: '/dashboard/admin/categories', label: 'Categories', icon: Layers },
+  { to: '/dashboard/admin/audit', label: 'Request Audit', icon: Archive },
+  { to: '/dashboard/admin/settings', label: 'Admin Settings', icon: Settings },
+]
 
 const SELLER_LINKS = [
   { to: '/dashboard/quotes', label: 'My Quotes', icon: Tag },
@@ -44,7 +57,8 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
   const email = user?.email || ''
   const image = user?.image || ''
   const initials = name.substring(0, 2).toUpperCase()
-  const roleLinks = role === 'seller' ? SELLER_LINKS : BUYER_LINKS
+  const roleLinks = role === 'admin' ? ADMIN_LINKS : role === 'seller' ? SELLER_LINKS : BUYER_LINKS
+  const toolsLabel = role === 'admin' ? 'Admin Tools' : role === 'seller' ? 'Seller Tools' : 'Buyer Tools'
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
@@ -96,7 +110,9 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
               "inline-flex items-center mt-1.5 h-5 px-2 rounded-md text-[9px] font-black uppercase tracking-widest",
               role === 'seller'
                 ? "bg-primary/10 text-primary border border-primary/20"
-                : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                : role === 'admin'
+                  ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
+                  : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
             )}>
               {role}
             </span>
@@ -106,7 +122,7 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
         {/* Role-specific links */}
         <DropdownMenuGroup>
           <DropdownMenuLabel className="px-4 pt-3 pb-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
-            {role === 'seller' ? 'Seller Tools' : 'Buyer Tools'}
+            {toolsLabel}
           </DropdownMenuLabel>
           {roleLinks.map((link) => (
             <DropdownMenuItem

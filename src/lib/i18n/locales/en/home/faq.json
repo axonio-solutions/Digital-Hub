@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about using MLILA — from creating an account to closing a deal."
+  },
+  "categories": {
+    "general": {
+      "title": "General",
+      "questions": [
+        { "q": "What is MLILA?", "a": "MLILA is Algeria's first reverse-marketplace for auto parts. Buyers post requests for parts they need, and verified sellers respond with competitive quotes. You compare offers and choose the best one." },
+        { "q": "Is MLILA free to use?", "a": "Creating an account and browsing is completely free. Buyers can post requests at no cost. Sellers can register for free and only pay a small commission when they close a deal." },
+        { "q": "Which regions does MLILA serve?", "a": "MLILA operates across all 48 wilayas of Algeria. Buyers and sellers from anywhere in the country can use the platform." },
+        { "q": "What languages does MLILA support?", "a": "MLILA is available in English, French, and Arabic to serve Algeria's diverse population." }
+      ]
+    },
+    "buyers": {
+      "title": "For Buyers",
+      "questions": [
+        { "q": "How do I request a part?", "a": "Simply create an account, describe the part you need — including brand, model, and any relevant details — and post your request. Sellers will start sending you quotes shortly." },
+        { "q": "How do I choose the best offer?", "a": "Once you receive quotes from sellers, you can compare prices, conditions, warranties, and seller ratings side by side. Choose the offer that best fits your needs." },
+        { "q": "Can I negotiate the price?", "a": "The platform is designed for sellers to submit their best offers upfront. However, you can use the offer details to make an informed decision or contact the seller for further discussion." },
+        { "q": "What happens after I accept an offer?", "a": "You will receive the seller's contact information to arrange payment and delivery. MLILA facilitates the connection — transaction terms are agreed directly between buyer and seller." }
+      ]
+    },
+    "sellers": {
+      "title": "For Sellers",
+      "questions": [
+        { "q": "How do I become a seller?", "a": "Register as a seller, complete your profile with your store details, and get verified by our team. Once approved, you can start browsing buyer requests and submitting quotes." },
+        { "q": "How much does it cost to sell?", "a": "Registration is free. When you win a deal, a small service fee is applied. This allows us to maintain the platform and keep the marketplace trustworthy." },
+        { "q": "How do I get more visibility?", "a": "Complete your seller profile, upload clear images of your parts, respond quickly to requests, and maintain a high acceptance rate. Active and reliable sellers get better visibility." },
+        { "q": "Can I update my offers?", "a": "Yes, you can edit or withdraw your offers as long as they have not been accepted by the buyer. Use the seller dashboard to manage all your active quotes." }
+      ]
+    }
+  },
+  "cta": {
+    "title": "Still have questions?",
+    "subtitle": "Our team is here to help you.",
+    "button": "Contact Us"
+  }
+}
