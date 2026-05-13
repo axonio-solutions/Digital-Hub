@@ -21,12 +21,15 @@ export function BuyerOverview() {
   const buyerId = user?.id || ''
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
   const [editRequestData, setEditRequestData] = useState<any>(null)
+  const [pendingAction, setPendingAction] = useState<{ type: string; id: string } | null>(null)
   const navigate = useNavigate()
 
   const { data: requests = [], isLoading } = useBuyerRequests(buyerId)
   const { mutate: cancelRequest } = useCancelRequest()
   const { mutate: deleteRequest } = useDeleteRequest()
   const { mutate: reopenRequest } = useReopenRequest()
+
+  const clearPending = useCallback(() => setPendingAction(null), [])
 
   const handleAction = useCallback((action: { type: string; item: any }) => {
     switch (action.type) {
@@ -37,16 +40,19 @@ export function BuyerOverview() {
         setEditRequestData(action.item)
         break
       case 'close_request':
-        cancelRequest(action.item.id, { onSuccess: () => toast.success('Request closed'), onError: (err: any) => toast.error(err.message) })
+        setPendingAction({ type: 'close_request', id: action.item.id })
+        cancelRequest(action.item.id, { onSuccess: () => toast.success('Request closed'), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
         break
       case 'reopen_request':
-        reopenRequest(action.item.id, { onSuccess: () => toast.success('Request reopened'), onError: (err: any) => toast.error(err.message) })
+        setPendingAction({ type: 'reopen_request', id: action.item.id })
+        reopenRequest(action.item.id, { onSuccess: () => toast.success('Request reopened'), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
         break
       case 'delete_request':
-        deleteRequest(action.item.id, { onSuccess: () => toast.success('Request deleted'), onError: (err: any) => toast.error(err.message) })
+        setPendingAction({ type: 'delete_request', id: action.item.id })
+        deleteRequest(action.item.id, { onSuccess: () => toast.success('Request deleted'), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
         break
     }
-  }, [navigate, cancelRequest, deleteRequest, reopenRequest])
+  }, [navigate, cancelRequest, deleteRequest, reopenRequest, clearPending])
 
   const { activeRequests, fulfilledRequests, totalQuotes, recentDemands } = useMemo(() => {
     const active = requests.filter((r: any) => r.status === 'open')
@@ -147,7 +153,8 @@ export function BuyerOverview() {
                   onEdit={req.status === 'open' ? () => handleAction({ type: 'edit_request', item: req }) : undefined}
                   onClose={req.status === 'open' ? () => handleAction({ type: 'close_request', item: req }) : undefined}
                   onReopen={req.status !== 'open' ? () => handleAction({ type: 'reopen_request', item: req }) : undefined}
-                  onDelete={() => handleAction({ type: 'delete_request', item: req })}
+                  onDelete={req.status !== 'fulfilled' ? () => handleAction({ type: 'delete_request', item: req }) : undefined}
+                  isProcessing={pendingAction?.id === req.id}
                   className="w-full"
                 />
               ))}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowUpRight, Calendar, Clock, Flame, MessageSquare, Pencil, RefreshCcw, Sparkles, Tag, Trash2, XCircle } from 'lucide-react'
+import { ArrowUpRight, Calendar, Clock, Flame, Loader2, MessageSquare, Pencil, RefreshCcw, Sparkles, Tag, Trash2, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 
@@ -37,6 +37,7 @@ interface PartCardProps {
   onClose?: () => void
   onReopen?: () => void
   onDelete?: () => void
+  isProcessing?: boolean
 }
 
 function timeAgo(dateStr: string): string {
@@ -71,6 +72,7 @@ export const PartCard = React.memo(function PartCard({
   onClose,
   onReopen,
   onDelete,
+  isProcessing,
 }: PartCardProps) {
   const isAsap = status === 'premium'
   const isNew = new Date(createdAt).getTime() > Date.now() - 86400000
@@ -226,23 +228,23 @@ export const PartCard = React.memo(function PartCard({
 
           <div className="flex items-center gap-1.5">
             {onEdit && (
-              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onEdit() }} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
-                <Pencil className="size-3" /> Edit
+              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onEdit() }} disabled={isProcessing} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 disabled:opacity-50">
+                {isProcessing ? <Loader2 className="size-3 animate-spin" /> : <Pencil className="size-3" />} Edit
               </button>
             )}
             {onClose && (
-              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onClose() }} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800">
-                <XCircle className="size-3" /> Close
+              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onClose() }} disabled={isProcessing} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800 disabled:opacity-50">
+                {isProcessing ? <Loader2 className="size-3 animate-spin" /> : <XCircle className="size-3" />} Close
               </button>
             )}
             {onReopen && (
-              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onReopen() }} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800">
-                <RefreshCcw className="size-3" /> Reopen
+              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onReopen() }} disabled={isProcessing} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800 disabled:opacity-50">
+                {isProcessing ? <Loader2 className="size-3 animate-spin" /> : <RefreshCcw className="size-3" />} Reopen
               </button>
             )}
             {onDelete && (
-              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onDelete() }} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800">
-                <Trash2 className="size-3" /> Delete
+              <button data-no-navigate onClick={(e) => { e.stopPropagation(); onDelete() }} disabled={isProcessing} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800 disabled:opacity-50">
+                {isProcessing ? <Loader2 className="size-3 animate-spin" /> : <Trash2 className="size-3" />} Delete
               </button>
             )}
             {!onEdit && !onClose && !onReopen && !onDelete && actionLabel && onClick && (

@@ -23,14 +23,17 @@ export function BuyerHub() {
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editRequestData, setEditRequestData] = useState<any>(null)
+  const [pendingAction, setPendingAction] = useState<{ type: string; id: string } | null>(null)
   const navigate = useNavigate()
 
   const { data: user } = useAuth()
   const buyerId = user?.id || ''
-  const { data: requests = [], refetch, isLoading } = useBuyerRequests(buyerId)
+  const { data: requests = [], refetch, isLoading, isRefetching } = useBuyerRequests(buyerId)
   const { mutate: cancelRequest } = useCancelRequest()
   const { mutate: deleteRequest } = useDeleteRequest()
   const { mutate: reopenRequest } = useReopenRequest()
+
+  const clearPending = useCallback(() => setPendingAction(null), [])
 
   const handleAction = useCallback((action: { type: string; item: any }) => {
     switch (action.type) {
@@ -42,25 +45,31 @@ export function BuyerHub() {
         setIsEditDialogOpen(true)
         break
       case 'close_request':
+        setPendingAction({ type: 'close_request', id: action.item.id })
         cancelRequest(action.item.id, {
           onSuccess: () => toast.success(t('toasts.closed', 'Request closed')),
           onError: (err: any) => toast.error(err.message || t('toasts.error')),
+          onSettled: clearPending,
         })
         break
       case 'reopen_request':
+        setPendingAction({ type: 'reopen_request', id: action.item.id })
         reopenRequest(action.item.id, {
           onSuccess: () => toast.success(t('toasts.reopened', 'Request reopened')),
           onError: (err: any) => toast.error(err.message || t('toasts.error')),
+          onSettled: clearPending,
         })
         break
       case 'delete_request':
+        setPendingAction({ type: 'delete_request', id: action.item.id })
         deleteRequest(action.item.id, {
           onSuccess: () => toast.success(t('toasts.deleted', 'Request deleted')),
           onError: (err: any) => toast.error(err.message || t('toasts.error')),
+          onSettled: clearPending,
         })
         break
     }
-  }, [navigate, cancelRequest, deleteRequest, reopenRequest])
+  }, [navigate, cancelRequest, deleteRequest, reopenRequest, clearPending])
 
   const { activeCount, fulfilledCount, totalQuotes } = useMemo(() => {
     const active = requests.filter((r: any) => r.status === 'open').length
@@ -97,25 +106,27 @@ export function BuyerHub() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:gap-2 shrink-0">
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
-            className="size-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50"
+            className="size-11 rounded-xl border-border/60 hover:bg-accent shrink-0"
             onClick={() => refetch()}
+            disabled={isRefetching}
             title={t('buttons.refresh')}
           >
-            <RefreshCcw className="size-4 text-muted-foreground" />
+            <RefreshCcw className={cn("size-4", isRefetching && "animate-spin")} />
           </Button>
+          <div className="w-px h-8 bg-border/40 hidden sm:block shrink-0" />
           <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
             <DialogTrigger asChild>
-              <Button className="font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full sm:w-auto">
-                <Plus className="size-4 me-2" />
+              <Button className="font-black uppercase text-xs tracking-widest h-11 px-4 sm:px-6 shadow-lg shadow-primary/20 rounded-2xl whitespace-nowrap gap-2 flex-1 sm:flex-none">
+                <Plus className="size-4 shrink-0" />
                 {t('buttons.new_demand')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
-              <div className="h-[600px] max-h-[85dvh]">
+              <div className="h-dvh max-h-[85dvh]">
                 <RequestWizard
                   onSuccess={() => setIsNewRequestOpen(false)}
                   onCancel={() => setIsNewRequestOpen(false)}
@@ -181,7 +192,7 @@ export function BuyerHub() {
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
-              <div className="h-[600px] max-h-[85dvh]">
+              <div className="h-dvh max-h-[85dvh]">
                 <RequestWizard onSuccess={() => setIsNewRequestOpen(false)} onCancel={() => setIsNewRequestOpen(false)} />
               </div>
             </DialogContent>
@@ -190,13 +201,13 @@ export function BuyerHub() {
       ) : view === 'list' ? (
         <BuyerListView data={requests} onAction={handleAction} />
       ) : (
-        <BuyerGridView data={requests} onAction={handleAction} />
+        <BuyerGridView data={requests} onAction={handleAction} pendingActionId={pendingAction?.id} />
       )}
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
-          <div className="h-[600px] max-h-[85dvh]">
+          <div className="h-dvh max-h-[85dvh]">
             <RequestWizard
               initialData={editRequestData}
               onSuccess={() => setIsEditDialogOpen(false)}

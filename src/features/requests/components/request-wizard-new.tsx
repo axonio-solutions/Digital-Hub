@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslation } from 'react-i18next'
@@ -147,13 +147,24 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
     }
   }
 
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  const handleInputFocus = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+      setTimeout(() => {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 300)
+    }
+  }, [])
+
   const progress = Math.round((currentStep / STEPS.length) * 100)
   const canProceed = isStepComplete(currentStep)
   const isLastStep = currentStep === STEPS.length
 
   if (isSuccess) {
     return (
-      <div className="flex h-full w-full items-center justify-center p-8">
+      <div className="flex h-dvh max-h-[85dvh] w-full items-center justify-center p-8">
         <div className="flex flex-col items-center text-center max-w-md">
           <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-primary/10">
             <Check className="size-10 text-primary" />
@@ -184,7 +195,7 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
 
   return (
     <FormProvider {...methods}>
-      <div className="flex h-full w-full">
+      <div className="flex h-dvh max-h-[85dvh] w-full">
         {/* Sidebar */}
         <div className="hidden sm:flex w-64 flex-col border-r bg-muted/30">
           <div className="p-5 border-b">
@@ -274,7 +285,11 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
           </div>
 
           {/* Step Content */}
-          <div className="flex-1 overflow-y-auto p-5">
+          <div
+            ref={contentRef}
+            onFocus={handleInputFocus}
+            className="flex-1 overflow-y-auto p-5 pb-[30vh]"
+          >
             {currentStep === 1 && <PartDetailsStep />}
             {currentStep === 2 && <CategoryStep />}
             {currentStep === 3 && <BrandStep />}
@@ -284,7 +299,7 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
           </div>
 
           {/* Navigation */}
-          <div className="border-t bg-muted/10 p-3">
+          <div className="sticky bottom-0 border-t bg-background/95 backdrop-blur-sm p-3">
             <div className="flex items-center justify-between gap-4">
               <Button
                 variant="outline"

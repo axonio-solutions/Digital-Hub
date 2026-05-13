@@ -22,13 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { NewPartRequestForm } from "@/features/requests/components/new-request-form";
+import { ActionConfirmDialog } from "./action-confirm-dialog";
 
 const ActionCell = ({ row, onAction, mutations }: { row: any, onAction?: (action: { type: string, item: any }) => void, mutations?: any }) => {
   const { t } = useTranslation('requests/list');
@@ -42,7 +36,6 @@ const ActionCell = ({ row, onAction, mutations }: { row: any, onAction?: (action
 
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isReopenDialogOpen, setIsReopenDialogOpen] = useState(false);
 
   return (
@@ -61,7 +54,7 @@ const ActionCell = ({ row, onAction, mutations }: { row: any, onAction?: (action
             <Eye className="size-4" /> {t('actions.view_details')}
           </DropdownMenuItem>
           {request.status === "open" && (
-            <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)} className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl">
+            <DropdownMenuItem onClick={() => onAction?.({ type: 'edit_request', item: request })} className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl">
               <SquarePen className="size-4" /> {t('actions.edit_request')}
             </DropdownMenuItem>
           )}
@@ -86,79 +79,54 @@ const ActionCell = ({ row, onAction, mutations }: { row: any, onAction?: (action
             </DropdownMenuItem>
           )}
 
-          <DropdownMenuItem
-            onClick={() => setIsDeleteDialogOpen(true)}
-            className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-destructive focus:text-destructive"
-          >
-            <Trash2 className="size-4" /> {t('actions.delete_permanently')}
-          </DropdownMenuItem>
+          {request.status !== "fulfilled" && (
+            <DropdownMenuItem
+              onClick={() => setIsDeleteDialogOpen(true)}
+              className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-destructive focus:text-destructive"
+            >
+              <Trash2 className="size-4" /> {t('actions.delete_permanently')}
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Action Dialogs */}
-      <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('dialogs.cancel.title')}</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">{t('dialogs.cancel.description')}</p>
-          <div className="flex justify-end gap-3 mt-4">
-            <Button variant="ghost" onClick={() => setIsCancelDialogOpen(false)} disabled={isCancelling}>{t('actions.close')}</Button>
-            <Button variant="destructive" onClick={() => {
-              cancelRequest(request.id, { onSuccess: () => setIsCancelDialogOpen(false) })
-            }} disabled={isCancelling}>
-              {isCancelling ? t('dialogs.cancel.cancelling') : t('dialogs.cancel.confirm')}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ActionConfirmDialog
+        open={isCancelDialogOpen}
+        onOpenChange={setIsCancelDialogOpen}
+        title={t('dialogs.cancel.title')}
+        description={t('dialogs.cancel.description')}
+        confirmLabel={t('dialogs.cancel.confirm')}
+        confirmIcon={<XCircle className="size-4" />}
+        variant="destructive"
+        isLoading={isCancelling}
+        loadingLabel={t('dialogs.cancel.cancelling')}
+        onConfirm={() => cancelRequest(request.id, { onSuccess: () => setIsCancelDialogOpen(false) })}
+      />
 
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-destructive">{t('dialogs.delete.title')}</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">{t('dialogs.delete.description')}</p>
-          <div className="flex justify-end gap-3 mt-4">
-            <Button variant="ghost" onClick={() => setIsDeleteDialogOpen(false)} disabled={isDeleting}>{t('actions.cancel')}</Button>
-            <Button variant="destructive" onClick={() => {
-              deleteRequest(request.id, { onSuccess: () => setIsDeleteDialogOpen(false) })
-            }} disabled={isDeleting}>
-              {isDeleting ? t('dialogs.delete.deleting') : t('dialogs.delete.confirm')}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ActionConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title={t('dialogs.delete.title')}
+        description={t('dialogs.delete.description')}
+        confirmLabel={t('dialogs.delete.confirm')}
+        confirmIcon={<Trash2 className="size-4" />}
+        variant="destructive"
+        isLoading={isDeleting}
+        loadingLabel={t('dialogs.delete.deleting')}
+        onConfirm={() => deleteRequest(request.id, { onSuccess: () => setIsDeleteDialogOpen(false) })}
+      />
 
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[700px]">
-          <DialogHeader>
-            <DialogTitle>{t('actions.edit_request')}</DialogTitle>
-          </DialogHeader>
-          <NewPartRequestForm
-            initialData={request}
-            onSuccess={() => setIsEditDialogOpen(false)}
-            onCancel={() => setIsEditDialogOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isReopenDialogOpen} onOpenChange={setIsReopenDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('dialogs.reopen.title')}</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">{t('dialogs.reopen.description')}</p>
-          <div className="flex justify-end gap-3 mt-4">
-            <Button variant="ghost" onClick={() => setIsReopenDialogOpen(false)} disabled={isReopening}>{t('actions.cancel')}</Button>
-            <Button onClick={() => {
-              reopenRequest(request.id, { onSuccess: () => setIsReopenDialogOpen(false) })
-            }} disabled={isReopening}>
-              {isReopening ? t('dialogs.reopen.reopening') : t('dialogs.reopen.confirm')}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ActionConfirmDialog
+        open={isReopenDialogOpen}
+        onOpenChange={setIsReopenDialogOpen}
+        title={t('dialogs.reopen.title')}
+        description={t('dialogs.reopen.description')}
+        confirmLabel={t('dialogs.reopen.confirm')}
+        confirmIcon={<RefreshCcw className="size-4" />}
+        isLoading={isReopening}
+        loadingLabel={t('dialogs.reopen.reopening')}
+        onConfirm={() => reopenRequest(request.id, { onSuccess: () => setIsReopenDialogOpen(false) })}
+      />
     </>
   );
 };

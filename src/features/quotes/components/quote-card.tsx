@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import {
   CheckCircle2,
   Clock,
+  Loader2,
   MapPin,
   Phone,
   RotateCcw,
@@ -129,7 +130,7 @@ export function QuoteCard({
               size="sm"
               className="flex-1 sm:flex-none h-10 rounded-xl gap-2 text-xs font-bold border-red-200 text-red-600 hover:bg-red-50"
             >
-              <Undo2 className="size-3.5" />
+              {isRevoking ? <Loader2 className="size-3.5 animate-spin" /> : <Undo2 className="size-3.5" />}
               {isRevoking ? t('card.actions.revoking') : t('card.actions.revoke')}
             </Button>
             <Button
@@ -149,7 +150,7 @@ export function QuoteCard({
             size="sm"
             className="flex-1 sm:flex-none h-10 rounded-xl gap-2 text-xs font-bold"
           >
-            <RotateCcw className="size-3.5" />
+            {isUnrejecting ? <Loader2 className="size-3.5 animate-spin" /> : <RotateCcw className="size-3.5" />}
             {isUnrejecting ? t('card.actions.unrejecting') : t('card.actions.unreject')}
           </Button>
         ) : isPending && isRequestOpen ? (
@@ -161,7 +162,7 @@ export function QuoteCard({
               size="sm"
               className="flex-1 sm:flex-none h-10 rounded-xl gap-2 text-xs font-bold"
             >
-              <XCircle className="size-3.5" />
+              {isRejecting ? <Loader2 className="size-3.5 animate-spin" /> : <XCircle className="size-3.5" />}
               {isRejecting ? t('card.actions.rejecting') : t('card.actions.reject')}
             </Button>
             <Button
@@ -170,7 +171,7 @@ export function QuoteCard({
               size="sm"
               className="flex-1 sm:flex-none h-10 rounded-xl gap-2 text-xs font-bold shadow-sm"
             >
-              <CheckCircle2 className="size-3.5" />
+              {isAccepting ? <Loader2 className="size-3.5 animate-spin" /> : <CheckCircle2 className="size-3.5" />}
               {isAccepting ? t('card.actions.accepting') : t('card.actions.accept')}
             </Button>
           </>

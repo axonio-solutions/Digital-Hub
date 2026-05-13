@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Clock,
   Edit,
+  Loader2,
   MapPin,
   MessageCircle,
   MessageSquare,
@@ -41,6 +42,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { ActionConfirmDialog } from '@/features/buyer/components/action-confirm-dialog'
 import { EditRequestDialog } from '@/features/requests/components/edit-request-dialog'
 import { QuoteList } from '@/features/quotes/components/quote-list'
 
@@ -231,14 +233,16 @@ export function BuyerRequestDetails() {
         >
           <Share2 className="size-3.5" /> Share
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-destructive/10 hover:text-destructive"
-          onClick={() => setIsDeleteDialogOpen(true)}
-        >
-          <Trash2 className="size-3.5" /> Delete
-        </Button>
+        {request.status !== 'fulfilled' && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-destructive/10 hover:text-destructive"
+            onClick={() => setIsDeleteDialogOpen(true)}
+          >
+            <Trash2 className="size-3.5" /> Delete
+          </Button>
+        )}
       </div>
 
       {/* Separator */}
@@ -256,12 +260,20 @@ export function BuyerRequestDetails() {
       <div className="hidden lg:block pt-3">
         {isOpen ? (
           <Button onClick={handleCancel} disabled={isCancelling} variant="outline" className="w-full h-11 rounded-xl gap-2 text-sm font-bold">
-            <CheckCircle2 className="size-4 text-green-600" />
+            {isCancelling ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <CheckCircle2 className="size-4 text-green-600" />
+            )}
             {isCancelling ? 'Closing...' : 'Close Request'}
           </Button>
         ) : (
           <Button onClick={handleReopen} disabled={isReopening} variant="outline" className="w-full h-11 rounded-xl gap-2 text-sm font-bold">
-            <Clock className="size-4 text-primary" />
+            {isReopening ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Clock className="size-4 text-primary" />
+            )}
             {isReopening ? 'Reopening...' : 'Reopen Request'}
           </Button>
         )}
@@ -311,12 +323,20 @@ export function BuyerRequestDetails() {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-t border-border px-3 py-3 lg:hidden" style={{ paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))' }}>
         {isOpen ? (
           <Button onClick={handleCancel} disabled={isCancelling} className="w-full h-12 rounded-xl gap-2 text-sm font-bold shadow-lg shadow-primary/20">
-            <CheckCircle2 className="size-4" />
+            {isCancelling ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <CheckCircle2 className="size-4" />
+            )}
             {isCancelling ? 'Closing...' : 'Close Request'}
           </Button>
         ) : (
           <Button onClick={handleReopen} disabled={isReopening} className="w-full h-12 rounded-xl gap-2 text-sm font-bold">
-            <Clock className="size-4" />
+            {isReopening ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Clock className="size-4" />
+            )}
             {isReopening ? 'Reopening...' : 'Reopen Request'}
           </Button>
         )}
@@ -324,22 +344,18 @@ export function BuyerRequestDetails() {
 
       {/* DIALOGS */}
       <EditRequestDialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen} request={request} />
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="rounded-2xl max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-black">{t('dialogs.delete.title')}</DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              {t('dialogs.delete.description', { ns: 'requests/list' })}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:justify-end">
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} className="h-10 rounded-xl text-sm">Cancel</Button>
-            <Button onClick={handleDelete} disabled={isDeleting} className="h-10 rounded-xl text-sm bg-destructive hover:bg-destructive/90">
-              {isDeleting ? 'Deleting...' : 'Delete'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ActionConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title={t('dialogs.delete.title')}
+        description={t('dialogs.delete.description', { ns: 'requests/list' })}
+        confirmLabel="Delete"
+        confirmIcon={<Trash2 className="size-4" />}
+        variant="destructive"
+        isLoading={isDeleting}
+        loadingLabel="Deleting..."
+        onConfirm={handleDelete}
+      />
       <Dialog open={!!contactingSeller} onOpenChange={(open) => !open && setContactingSeller(null)}>
         <DialogContent className="rounded-2xl max-w-sm">
           <DialogHeader>

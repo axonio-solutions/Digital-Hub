@@ -157,6 +157,10 @@ export async function updateRequestStatusQuery(requestId: string, status: 'open'
 }
 
 export async function deleteRequestQuery(requestId: string) {
+  await db
+    .delete(quotes)
+    .where(eq(quotes.requestId, requestId))
+
   return await db
     .delete(sparePartRequests)
     .where(eq(sparePartRequests.id, requestId))

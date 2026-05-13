@@ -18,6 +18,7 @@ import { DataTablePagination } from '@/components/ui/data-table/data-table-pagin
 interface RequestsGridViewProps {
   data: Array<any>
   onAction?: (action: { type: string, item: any }) => void
+  pendingActionId?: string | null
 }
 
 function useBrandOptions(data: Array<any>) {
@@ -31,9 +32,10 @@ function useBrandOptions(data: Array<any>) {
   }, [data])
 }
 
-const GridCard = memo(function GridCard({ req, onAction }: {
+const GridCard = memo(function GridCard({ req, onAction, isProcessing }: {
   req: any
   onAction?: (action: { type: string, item: any }) => void
+  isProcessing?: boolean
 }) {
   const handleView = useCallback(() => onAction?.({ type: 'view_request', item: req }), [onAction, req.id])
   const handleEdit = useCallback(() => onAction?.({ type: 'edit_request', item: req }), [onAction, req.id])
@@ -59,15 +61,16 @@ const GridCard = memo(function GridCard({ req, onAction }: {
       onEdit={req.status === 'open' ? handleEdit : undefined}
       onClose={req.status === 'open' ? handleClose : undefined}
       onReopen={req.status !== 'open' ? handleReopen : undefined}
-      onDelete={handleDelete}
+      onDelete={req.status !== 'fulfilled' ? handleDelete : undefined}
+      isProcessing={isProcessing}
       className="w-full"
     />
   )
 })
 
-export function BuyerGridView({ data, onAction }: RequestsGridViewProps) {
+export function BuyerGridView({ data, onAction, pendingActionId }: RequestsGridViewProps) {
   const { t } = useTranslation('requests/list')
-  const columns = useMemo(() => useBuyerColumns(onAction, undefined, t), [onAction, t])
+  const columns = useBuyerColumns(onAction, undefined, t)
   const brandOptions = useBrandOptions(data)
   const [columnFilters, setColumnFilters] = useState<Array<any>>([])
 
@@ -127,7 +130,7 @@ export function BuyerGridView({ data, onAction }: RequestsGridViewProps) {
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {rows.map((req: any) => (
-          <GridCard key={req.id} req={req} onAction={onAction} />
+          <GridCard key={req.id} req={req} onAction={onAction} isProcessing={pendingActionId === req.id} />
         ))}
       </div>
 
