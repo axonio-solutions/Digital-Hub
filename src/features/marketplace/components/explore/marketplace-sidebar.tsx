@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
-import { Filter, Zap, LayoutGrid, X } from "lucide-react"
+import { Filter, LayoutGrid, X, Zap } from "lucide-react"
+import { CategoryDisplay } from '@/components/ui/category-display'
 import { useTranslation } from "react-i18next"
 import { BrandSelectionDialog } from "../brand-selection-dialog"
 import { useState } from "react"
@@ -70,6 +71,7 @@ export function MarketplaceSidebar({
                   : "bg-white/50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/50 dark:border-slate-800/50 hover:shadow-md"
               )}
             >
+              <CategoryDisplay category={cat} showName={false} iconClassName="size-3.5" />
               <span className="truncate pr-2 tracking-wide">{cat.name}</span>
               {selectedCategory === cat.id && <div className="w-2 h-2 rounded-full bg-white dark:bg-slate-900 shadow-sm" />}
             </button>

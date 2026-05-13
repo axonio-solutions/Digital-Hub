@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Search, X, Zap } from 'lucide-react'
+import { CategoryDisplay } from '@/components/ui/category-display'
 import { BrandSelectionDialog } from '../brand-selection-dialog'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -61,7 +62,7 @@ export function CategoryBar({
 
   const allCategories = [
     { id: 'all', name: 'All Parts' },
-    ...categories.map((c: any) => ({ id: c.id, name: c.name })),
+    ...categories.map((c: any) => ({ ...c, id: c.id, name: c.name })),
   ]
 
   const selectedCategoryName = allCategories.find((c) => c.id === selectedCategory)?.name || ''
@@ -158,6 +159,7 @@ export function CategoryBar({
                           : 'hover:bg-muted text-foreground',
                       )}
                     >
+                      <CategoryDisplay category={cat} showName={false} iconClassName="size-3.5" />
                       <span className="truncate">{cat.name}</span>
                       {selectedCategory === cat.id && <CheckCircle2 className="w-3.5 h-3.5 ml-auto shrink-0" />}
                     </button>
@@ -253,7 +255,11 @@ export function CategoryBar({
                           : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground border border-transparent hover:border-border',
                       )}
                     >
-                      {cat.id === 'all' && <Zap className="w-3 h-3" />}
+                      {cat.id === 'all' ? (
+                        <Zap className="w-3 h-3" />
+                      ) : (
+                        <CategoryDisplay category={cat} showName={false} iconClassName="size-3" />
+                      )}
                       {cat.name}
                     </button>
                   )

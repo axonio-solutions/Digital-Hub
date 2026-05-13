@@ -10,6 +10,7 @@ import type { QuoteInput } from '@/types/quote-schemas'
 import { quoteSchema } from '@/types/quote-schemas'
 import { useSubmitQuote, useUpdateQuote } from '@/features/marketplace/hooks/use-marketplace'
 import { tCategory } from '@/utils/category-utils'
+import { CategoryDisplay } from '@/components/ui/category-display'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -113,7 +114,8 @@ export function SubmitQuoteForm({
               </div>
             </div>
             {category && (
-              <span className="px-3 py-1.5 rounded-lg bg-muted border border-border text-xs font-bold text-foreground">
+              <span className="px-3 py-1.5 rounded-lg bg-muted border border-border text-xs font-bold text-foreground inline-flex items-center gap-1.5">
+                <CategoryDisplay category={category} showName={false} iconClassName="size-3" />
                 {tCategory(category, t)}
               </span>
             )}

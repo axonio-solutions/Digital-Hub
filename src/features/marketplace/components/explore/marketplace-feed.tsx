@@ -101,10 +101,11 @@ export function MarketplaceFeed({
             modelYear={req.modelYear || ''}
             partNumber={req.partNumber || ''}
             category={req.category?.name || req.category || ''}
+            categoryImageUrl={(req as any).category?.imageUrl}
             region={req.location || ''}
             imageUrls={req.imageUrls || []}
             quotesCount={req.quotesCount || req.quotes?.length || 0}
-            status={req.urgency === 'asap' ? 'premium' : ''}
+            status={req.status || (req.urgency === 'asap' ? 'open' : '')}
             createdAt={req.createdAt || new Date().toISOString()}
             actionLabel={sellerActionLabel}
             onClick={sellerOnClick}

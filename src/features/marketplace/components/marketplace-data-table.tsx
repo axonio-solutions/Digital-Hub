@@ -31,6 +31,7 @@ import {
 import { DataTable } from '@/components/ui/data-table/data-table'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
 import { tCategory } from '@/utils/category-utils'
+import { CategoryDisplay } from '@/components/ui/category-display'
 import { cn } from '@/lib/utils'
 
 const dateLocaleMap: Record<string, any> = {
@@ -214,8 +215,8 @@ export function MarketplaceDataTable({
         cell: ({ row }) => {
           const category = row.original.category?.name || row.original.category 
           return (
-            <Badge variant="secondary">
-              {tCategory(category, t)}
+            <Badge variant="secondary" className="gap-1">
+              <CategoryDisplay category={category} iconClassName="size-3" />
             </Badge>
           )
         }

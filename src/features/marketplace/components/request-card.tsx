@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { formatRelativeTime } from "@/lib/utils/date-format"
 import { cn } from "@/lib/utils"
 import { tCategory } from "@/utils/category-utils"
+import { CategoryDisplay } from '@/components/ui/category-display'
 
 interface RequestCardProps {
   request: any
@@ -36,8 +37,8 @@ export function RequestCard({ request, onQuote, isOwner }: RequestCardProps) {
 
         {/* Overlay Badges */}
         <div className="absolute top-4 inset-x-4 flex items-start justify-between">
-          <Badge className="bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white backdrop-blur-md border-none px-3 py-1.5 rounded-full font-bold shadow-sm">
-            {tCategory(request.category?.name || request.category, t)}
+          <Badge className="bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-white backdrop-blur-md border-none px-3 py-1.5 rounded-full font-bold shadow-sm gap-1.5">
+            <CategoryDisplay category={request.category?.name || request.category} iconClassName="size-3.5" />
           </Badge>
           
           {request.urgency === 'asap' && (

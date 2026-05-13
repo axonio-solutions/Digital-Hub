@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { ShieldCheck, ShieldAlert, UserX, UserCheck, Copy, Check } from 'lucide-react'
+import { CategoryDisplay } from '@/components/ui/category-display'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
@@ -142,7 +143,10 @@ export function UserProfileDialog({ user, open, onOpenChange }: UserProfileDialo
                       <Label>Categories</Label>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {u.sellerCategories?.map((sc: any, i: number) => (
-                          <Badge key={i} variant="secondary" className="text-[10px] rounded-full px-2.5">{sc.category?.name || 'General'}</Badge>
+                          <Badge key={i} variant="secondary" className="text-[10px] rounded-full px-2.5 gap-1">
+                            <CategoryDisplay category={sc.category} showName={false} iconClassName="size-3" />
+                            {sc.category?.name || 'General'}
+                          </Badge>
                         ))}
                       </div>
                     </div>

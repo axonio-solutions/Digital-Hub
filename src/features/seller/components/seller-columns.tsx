@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatRelativeTime } from '@/lib/utils/date-format'
 import { tCategory } from '@/utils/category-utils'
+import { CategoryDisplay } from '@/components/ui/category-display'
 
 import { Badge } from '@/components/ui/badge'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
@@ -167,7 +168,8 @@ export const useSellerColumns = (
         cell: ({ row }) => {
           const category = row.original.request?.category?.name || row.original.request?.category
           return (
-            <Badge variant="secondary" className="text-[10px]">
+            <Badge variant="secondary" className="text-[10px] gap-1">
+              <CategoryDisplay category={category} showName={false} iconClassName="size-3" />
               {tCategory(category, t)}
             </Badge>
           )

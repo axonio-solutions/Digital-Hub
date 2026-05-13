@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { formatDistanceToNow } from 'date-fns'
 import { Hash, History, Layers, MessageSquare } from 'lucide-react'
 import { tCategory } from '@/utils/category-utils'
+import { CategoryDisplay } from '@/components/ui/category-display'
 
 interface RequestDetailsCompactProps {
   request: any
@@ -47,7 +48,8 @@ export function RequestDetailsCompact({ request }: RequestDetailsCompactProps) {
               {request.partName}
             </h3>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-wider">
+              <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1">
+                <CategoryDisplay category={request.category} showName={false} iconClassName="size-3" />
                 {tCategory(request.category?.name || request.category || request.categoryId, t)}
               </span>
               {request.oemNumber && (

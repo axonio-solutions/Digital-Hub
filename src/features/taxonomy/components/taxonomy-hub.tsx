@@ -18,6 +18,7 @@ import { BrandDialog } from './brand-dialog'
 import { useTaxonomy, useDeleteCategory, useDeleteBrand } from '../hooks/use-taxonomy'
 import { useTranslation } from 'react-i18next'
 import { tCategory } from '@/utils/category-utils'
+import { CategoryDisplay } from '@/components/ui/category-display'
 
 type TabId = 'categories' | 'brands'
 
@@ -63,7 +64,10 @@ export function TaxonomyHub() {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col min-w-0">
-            <span className="font-bold text-sm text-foreground truncate max-w-[200px]">{tCategory(row.original.name, t)}</span>
+            <span className="font-bold text-sm text-foreground truncate max-w-[200px] flex items-center gap-1.5">
+              <CategoryDisplay category={{ name: row.original.name, imageUrl: row.original.imageUrl }} showName={false} iconClassName="size-3.5" />
+              {tCategory(row.original.name, t)}
+            </span>
             <span className="text-[10px] text-muted-foreground truncate max-w-[200px]">{row.original.description || t('table.columns.no_description')}</span>
           </div>
         </div>

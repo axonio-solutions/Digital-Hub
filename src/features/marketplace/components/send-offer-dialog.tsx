@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { tCategory } from '@/utils/category-utils'
+import { CategoryDisplay } from '@/components/ui/category-display'
 
 interface SendOfferDialogProps {
   request: any
@@ -32,6 +33,8 @@ interface SendOfferDialogProps {
 
 function ImageSlider({ images, alt, className }: { images: string[]; alt: string; className?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const { i18n } = useTranslation('marketplace')
+  const isRtl = i18n.dir() === 'rtl'
 
   if (!images || images.length === 0) {
     return (
@@ -67,21 +70,21 @@ function ImageSlider({ images, alt, className }: { images: string[]; alt: string
       <Button 
         variant="secondary" 
         size="icon" 
-        className="absolute left-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-        disabled={currentIndex === 0}
+        className="absolute left-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+        onClick={() => setCurrentIndex(prev => isRtl ? Math.min(images.length - 1, prev + 1) : Math.max(0, prev - 1))}
+        disabled={isRtl ? currentIndex === images.length - 1 : currentIndex === 0}
       >
-        <ChevronLeft className="size-4" />
+        {isRtl ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
       </Button>
       
       <Button 
         variant="secondary" 
         size="icon" 
-        className="absolute right-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={() => setCurrentIndex(prev => Math.min(images.length - 1, prev + 1))}
-        disabled={currentIndex === images.length - 1}
+        className="absolute right-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+        onClick={() => setCurrentIndex(prev => isRtl ? Math.max(0, prev - 1) : Math.min(images.length - 1, prev + 1))}
+        disabled={isRtl ? currentIndex === 0 : currentIndex === images.length - 1}
       >
-        <ChevronRight className="size-4" />
+        {isRtl ? <ChevronLeft className="size-4" /> : <ChevronRight className="size-4" />}
       </Button>
 
       {/* Dots */}
@@ -168,6 +171,7 @@ export function SendOfferDialog({
                     <Info className="w-3 h-3" /> Category
                   </div>
           <div className="text-sm font-black text-primary uppercase leading-tight">
+            <CategoryDisplay category={request.category} showName={false} iconClassName="size-3.5" />
             {tCategory(request.category?.name || request.category || request.categoryId, t)}
           </div>
         </div>

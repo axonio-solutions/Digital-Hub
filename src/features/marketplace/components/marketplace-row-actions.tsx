@@ -20,6 +20,7 @@ import { RequestDetailsCompact } from './request-details-compact'
 import { SubmitQuoteForm } from './submit-quote-form'
 import { useDeleteQuote } from '@/features/marketplace/hooks/use-marketplace'
 import { tCategory } from '@/utils/category-utils'
+import { CategoryDisplay } from '@/components/ui/category-display'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -179,6 +180,7 @@ export function MarketplaceRowActions({ quote }: MarketplaceRowActionsProps) {
                       <Info className="w-3 h-3" /> Classification
                     </div>
                     <div className="text-sm font-black text-primary uppercase leading-none">
+                      <CategoryDisplay category={quote.request.category} showName={false} iconClassName="size-3.5" />
                       {quote.request && tCategory(quote.request.category?.name || quote.request.category || quote.request.categoryId, t)}
                     </div>
                     <div className="text-[10px] font-bold text-slate-400 uppercase mt-1">
