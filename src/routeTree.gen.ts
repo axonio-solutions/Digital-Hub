@@ -26,6 +26,7 @@ import { Route as AuthedDashboardIndexRouteImport } from './routes/_authed/dashb
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AuthedDashboardAdminRouteRouteImport } from './routes/_authed/dashboard/admin/route'
 import { Route as AuthedDashboardUsersIndexRouteImport } from './routes/_authed/dashboard/users/index'
+import { Route as AuthedDashboardSupportIndexRouteImport } from './routes/_authed/dashboard/support/index'
 import { Route as AuthedDashboardRequestsIndexRouteImport } from './routes/_authed/dashboard/requests/index'
 import { Route as AuthedDashboardQuotesIndexRouteImport } from './routes/_authed/dashboard/quotes/index'
 import { Route as AuthedDashboardProfileIndexRouteImport } from './routes/_authed/dashboard/profile/index'
@@ -124,6 +125,12 @@ const AuthedDashboardUsersIndexRoute =
     path: '/users/',
     getParentRoute: () => AuthedDashboardRouteRoute,
   } as any)
+const AuthedDashboardSupportIndexRoute =
+  AuthedDashboardSupportIndexRouteImport.update({
+    id: '/support/',
+    path: '/support/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
 const AuthedDashboardRequestsIndexRoute =
   AuthedDashboardRequestsIndexRouteImport.update({
     id: '/requests/',
@@ -215,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
   '/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
   '/dashboard/requests/': typeof AuthedDashboardRequestsIndexRoute
+  '/dashboard/support/': typeof AuthedDashboardSupportIndexRoute
   '/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
   '/dashboard/admin/audit/': typeof AuthedDashboardAdminAuditIndexRoute
   '/dashboard/admin/users/': typeof AuthedDashboardAdminUsersIndexRoute
@@ -242,6 +250,7 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof AuthedDashboardProfileIndexRoute
   '/dashboard/quotes': typeof AuthedDashboardQuotesIndexRoute
   '/dashboard/requests': typeof AuthedDashboardRequestsIndexRoute
+  '/dashboard/support': typeof AuthedDashboardSupportIndexRoute
   '/dashboard/users': typeof AuthedDashboardUsersIndexRoute
   '/dashboard/admin/audit': typeof AuthedDashboardAdminAuditIndexRoute
   '/dashboard/admin/users': typeof AuthedDashboardAdminUsersIndexRoute
@@ -273,6 +282,7 @@ export interface FileRoutesById {
   '/_authed/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
   '/_authed/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
   '/_authed/dashboard/requests/': typeof AuthedDashboardRequestsIndexRoute
+  '/_authed/dashboard/support/': typeof AuthedDashboardSupportIndexRoute
   '/_authed/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
   '/_authed/dashboard/admin/audit/': typeof AuthedDashboardAdminAuditIndexRoute
   '/_authed/dashboard/admin/users/': typeof AuthedDashboardAdminUsersIndexRoute
@@ -303,6 +313,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile/'
     | '/dashboard/quotes/'
     | '/dashboard/requests/'
+    | '/dashboard/support/'
     | '/dashboard/users/'
     | '/dashboard/admin/audit/'
     | '/dashboard/admin/users/'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/quotes'
     | '/dashboard/requests'
+    | '/dashboard/support'
     | '/dashboard/users'
     | '/dashboard/admin/audit'
     | '/dashboard/admin/users'
@@ -360,6 +372,7 @@ export interface FileRouteTypes {
     | '/_authed/dashboard/profile/'
     | '/_authed/dashboard/quotes/'
     | '/_authed/dashboard/requests/'
+    | '/_authed/dashboard/support/'
     | '/_authed/dashboard/users/'
     | '/_authed/dashboard/admin/audit/'
     | '/_authed/dashboard/admin/users/'
@@ -493,6 +506,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardUsersIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
     }
+    '/_authed/dashboard/support/': {
+      id: '/_authed/dashboard/support/'
+      path: '/support'
+      fullPath: '/dashboard/support/'
+      preLoaderRoute: typeof AuthedDashboardSupportIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
     '/_authed/dashboard/requests/': {
       id: '/_authed/dashboard/requests/'
       path: '/requests'
@@ -604,6 +624,7 @@ interface AuthedDashboardRouteRouteChildren {
   AuthedDashboardProfileIndexRoute: typeof AuthedDashboardProfileIndexRoute
   AuthedDashboardQuotesIndexRoute: typeof AuthedDashboardQuotesIndexRoute
   AuthedDashboardRequestsIndexRoute: typeof AuthedDashboardRequestsIndexRoute
+  AuthedDashboardSupportIndexRoute: typeof AuthedDashboardSupportIndexRoute
   AuthedDashboardUsersIndexRoute: typeof AuthedDashboardUsersIndexRoute
 }
 
@@ -616,6 +637,7 @@ const AuthedDashboardRouteRouteChildren: AuthedDashboardRouteRouteChildren = {
   AuthedDashboardProfileIndexRoute: AuthedDashboardProfileIndexRoute,
   AuthedDashboardQuotesIndexRoute: AuthedDashboardQuotesIndexRoute,
   AuthedDashboardRequestsIndexRoute: AuthedDashboardRequestsIndexRoute,
+  AuthedDashboardSupportIndexRoute: AuthedDashboardSupportIndexRoute,
   AuthedDashboardUsersIndexRoute: AuthedDashboardUsersIndexRoute,
 }
 
