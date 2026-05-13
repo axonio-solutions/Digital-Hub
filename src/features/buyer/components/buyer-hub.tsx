@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils'
 
 export function BuyerHub() {
   const { t } = useTranslation(['requests/hub', 'requests/list', 'dashboard/buyer'])
-  const [view, setView] = useState<'list' | 'grid'>('list')
+  const [view, setView] = useState<'list' | 'grid'>('grid')
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editRequestData, setEditRequestData] = useState<any>(null)
@@ -115,7 +115,7 @@ export function BuyerHub() {
             disabled={isRefetching}
             title={t('buttons.refresh')}
           >
-            <RefreshCcw className={cn("size-4", isRefetching && "animate-spin")} />
+            <RefreshCcw className={cn("size-4", isRefetching && "animate-spin [animation-direction:reverse]")} />
           </Button>
           <div className="w-px h-8 bg-border/40 hidden sm:block shrink-0" />
           <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>

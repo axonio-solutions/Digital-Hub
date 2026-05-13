@@ -12,6 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
+import { CategoryDisplay } from "@/components/ui/category-display";
 import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,15 +48,15 @@ const ActionCell = ({ row, onAction, mutations }: { row: any, onAction?: (action
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48 rounded-2xl p-1">
-          <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-2">{t('actions.title')}</DropdownMenuLabel>
+        <DropdownMenuContent align="end" side="bottom" className="w-48 rounded-2xl p-1">
+          <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-2 rtl:text-end">{t('actions.title')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => onAction?.({ type: 'view_request', item: request })} className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl">
-            <Eye className="size-4" /> {t('actions.view_details')}
+          <DropdownMenuItem onClick={() => onAction?.({ type: 'view_request', item: request })} className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl rtl:flex-row-reverse">
+            <Eye className="size-4 shrink-0" /> {t('actions.view_details')}
           </DropdownMenuItem>
           {request.status === "open" && (
-            <DropdownMenuItem onClick={() => onAction?.({ type: 'edit_request', item: request })} className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl">
-              <SquarePen className="size-4" /> {t('actions.edit_request')}
+            <DropdownMenuItem onClick={() => onAction?.({ type: 'edit_request', item: request })} className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl rtl:flex-row-reverse">
+              <SquarePen className="size-4 shrink-0" /> {t('actions.edit_request')}
             </DropdownMenuItem>
           )}
 
@@ -64,27 +65,27 @@ const ActionCell = ({ row, onAction, mutations }: { row: any, onAction?: (action
           {request.status === "open" && (
             <DropdownMenuItem
               onClick={() => setIsCancelDialogOpen(true)}
-              className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-amber-600 focus:text-amber-700"
+              className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-amber-600 focus:text-amber-700 rtl:flex-row-reverse"
             >
-              <XCircle className="size-4" /> {t('actions.cancel_request')}
+              <XCircle className="size-4 shrink-0" /> {t('actions.cancel_request')}
             </DropdownMenuItem>
           )}
 
           {request.status !== "open" && (
             <DropdownMenuItem
               onClick={() => setIsReopenDialogOpen(true)}
-              className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-blue-600 focus:text-blue-700"
+              className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-blue-600 focus:text-blue-700 rtl:flex-row-reverse"
             >
-              <RefreshCcw className="size-4" /> {t('actions.reopen_request')}
+              <RefreshCcw className="size-4 shrink-0" /> {t('actions.reopen_request')}
             </DropdownMenuItem>
           )}
 
           {request.status !== "fulfilled" && (
             <DropdownMenuItem
               onClick={() => setIsDeleteDialogOpen(true)}
-              className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-destructive focus:text-destructive"
+              className="gap-2.5 text-xs font-bold p-3 cursor-pointer rounded-xl text-destructive focus:text-destructive rtl:flex-row-reverse"
             >
-              <Trash2 className="size-4" /> {t('actions.delete_permanently')}
+              <Trash2 className="size-4 shrink-0" /> {t('actions.delete_permanently')}
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>
@@ -151,7 +152,7 @@ export const useBuyerColumns = (
               <img src={images[0]} alt="" className="size-full object-cover" />
             ) : (
               <div className="size-full flex items-center justify-center text-[10px] text-muted-foreground font-bold">
-                {row.original.partName?.substring(0, 2).toUpperCase() || "P"}
+                {row.original.partName?.charAt(0)?.toUpperCase() || '?'}
               </div>
             )}
           </div>
@@ -163,8 +164,8 @@ export const useBuyerColumns = (
       header: t('columns.part'),
       cell: ({ row }: { row: any }) => (
         <div className="flex flex-col">
-          <span className="font-medium text-sm">{row.original.partName}</span>
-          <span className="text-[10px] text-muted-foreground uppercase">ID: {row.original.id.substring(0, 8)}</span>
+          <span className="font-medium text-sm truncate max-w-[180px] block" title={row.original.partName}>{row.original.partName}</span>
+          <span className="text-[10px] text-muted-foreground uppercase">{row.original.id.substring(0, 8)}</span>
         </div>
       ),
     },
@@ -190,11 +191,22 @@ export const useBuyerColumns = (
     {
       accessorKey: "category",
       header: t('columns.category'),
-      cell: ({ row }: { row: any }) => (
-        <Badge variant="secondary" className="capitalize">
-          {row.original.category?.name || t('empty.inquiry')}
-        </Badge>
-      ),
+      cell: ({ row }: { row: any }) => {
+        const cat = row.original.category
+        const catName = cat?.name || t('empty.inquiry')
+        return (
+          <div className="flex items-center gap-2">
+            <div className="size-7 rounded-md bg-muted flex items-center justify-center shrink-0 border border-border">
+              {cat?.imageUrl ? (
+                <img src={cat.imageUrl} alt="" className="size-4 object-contain" />
+              ) : (
+                <span className="text-[9px] font-bold text-muted-foreground">{catName.substring(0, 2).toUpperCase()}</span>
+              )}
+            </div>
+            <span className="text-sm font-medium">{catName}</span>
+          </div>
+        )
+      },
     },
     {
       accessorKey: "createdAt",
@@ -244,7 +256,7 @@ export const useBuyerColumns = (
     {
       id: "actions",
       cell: ({ row }: { row: any }) => (
-        <div className="sticky right-0 bg-background pl-2 -mr-2" onClick={(e) => e.stopPropagation()}>
+        <div className="sticky right-0 pl-2 -mr-2" onClick={(e) => e.stopPropagation()}>
           <ActionCell row={row} onAction={onAction} mutations={mutations} />
         </div>
       ),

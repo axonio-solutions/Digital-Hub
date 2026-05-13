@@ -42,6 +42,7 @@ function DynamicBreadcrumb() {
     '/dashboard/admin/categories': t('breadcrumbs.taxonomy_management'),
     '/dashboard/admin/users': t('breadcrumbs.user_moderation'),
     '/dashboard/admin/audit': t('breadcrumbs.audit_log'),
+    '/dashboard/support': t('breadcrumbs.support'),
   }
 
   let breadcrumbs: Array<{ pathname: string; title: string }> = []

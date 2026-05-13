@@ -1,5 +1,6 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
 import {
   ArrowLeft,
   Calendar,
@@ -18,7 +19,6 @@ import {
   Trash2,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { useState } from 'react'
 import {
   useCancelRequest,
   useDeleteRequest,
@@ -45,6 +45,7 @@ import {
 import { ActionConfirmDialog } from '@/features/buyer/components/action-confirm-dialog'
 import { EditRequestDialog } from '@/features/requests/components/edit-request-dialog'
 import { QuoteList } from '@/features/quotes/components/quote-list'
+import { CategoryDisplay } from '@/components/ui/category-display'
 
 function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
@@ -57,6 +58,8 @@ function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value
 }
 
 function ImageSlider({ images, alt }: { images: string[]; alt: string }) {
+  const { t, i18n } = useTranslation(['requests/details', 'requests/list'])
+  const isRtl = i18n.dir() === 'rtl'
   const [currentIndex, setCurrentIndex] = useState(0)
 
   if (!images || images.length === 0) {
@@ -92,21 +95,21 @@ function ImageSlider({ images, alt }: { images: string[]; alt: string }) {
       <Button 
         variant="secondary" 
         size="icon" 
-        className="absolute left-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-        disabled={currentIndex === 0}
+        className="absolute left-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+        onClick={() => setCurrentIndex(prev => isRtl ? Math.min(images.length - 1, prev + 1) : Math.max(0, prev - 1))}
+        disabled={isRtl ? currentIndex === images.length - 1 : currentIndex === 0}
       >
-        <ChevronLeft className="size-4" />
+        {isRtl ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
       </Button>
       
       <Button 
         variant="secondary" 
         size="icon" 
-        className="absolute right-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={() => setCurrentIndex(prev => Math.min(images.length - 1, prev + 1))}
-        disabled={currentIndex === images.length - 1}
+        className="absolute right-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+        onClick={() => setCurrentIndex(prev => isRtl ? Math.max(0, prev - 1) : Math.min(images.length - 1, prev + 1))}
+        disabled={isRtl ? currentIndex === 0 : currentIndex === images.length - 1}
       >
-        <ChevronRight className="size-4" />
+        {isRtl ? <ChevronLeft className="size-4" /> : <ChevronRight className="size-4" />}
       </Button>
 
       {/* Dots */}
@@ -116,7 +119,7 @@ function ImageSlider({ images, alt }: { images: string[]; alt: string }) {
             key={idx}
             className={`size-2 rounded-full transition-all ${idx === currentIndex ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/80'}`}
             onClick={() => setCurrentIndex(idx)}
-            aria-label={`Go to slide ${idx + 1}`}
+            aria-label={t('contact.go_to_slide', { index: idx + 1 })}
           />
         ))}
       </div>
@@ -125,7 +128,8 @@ function ImageSlider({ images, alt }: { images: string[]; alt: string }) {
 }
 
 export function BuyerRequestDetails() {
-  const { t } = useTranslation(['requests/details', 'requests/list'])
+  const { t, i18n } = useTranslation(['requests/details', 'requests/list'])
+  const isRtl = i18n.dir() === 'rtl'
   const { requestId } = useParams({ from: '/_authed/dashboard/requests/$requestId' })
   const navigate = useNavigate()
   const { data: request, isLoading, error } = useRequestDetails(requestId)
@@ -143,10 +147,10 @@ export function BuyerRequestDetails() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [contactingSeller, setContactingSeller] = useState<any>(null)
 
-  const handleCancel = () => cancelRequest(requestId, { onSuccess: () => toast.success('Request closed'), onError: (err: any) => toast.error(err.message) })
-  const handleReopen = () => reopenRequest(requestId, { onSuccess: () => toast.success('Request reopened'), onError: (err: any) => toast.error(err.message) })
-  const handleDelete = () => deleteRequest(requestId, { onSuccess: () => { toast.success('Request deleted'); navigate({ to: '/dashboard/requests' }) }, onError: (err: any) => toast.error(err.message) })
-  const handleShare = () => { navigator.clipboard.writeText(window.location.href); toast.success('Link copied') }
+  const handleCancel = () => cancelRequest(requestId, { onSuccess: () => toast.success(t('toasts.request_closed')), onError: (err: any) => toast.error(err.message) })
+  const handleReopen = () => reopenRequest(requestId, { onSuccess: () => toast.success(t('toasts.request_reopened')), onError: (err: any) => toast.error(err.message) })
+  const handleDelete = () => deleteRequest(requestId, { onSuccess: () => { toast.success(t('toasts.request_deleted')); navigate({ to: '/dashboard/requests' }) }, onError: (err: any) => toast.error(err.message) })
+  const handleShare = () => { navigator.clipboard.writeText(window.location.href); toast.success(t('toasts.link_copied')) }
 
   const handleAccept = (quoteId: string) => { setProcessingQuoteId(quoteId); acceptQuote({ quoteId, requestId }, { onSuccess: () => setProcessingQuoteId(null), onError: (err: any) => { toast.error(err.message); setProcessingQuoteId(null) } }) }
   const handleReject = (quoteId: string) => { setProcessingQuoteId(quoteId); rejectQuote(quoteId, { onSuccess: () => setProcessingQuoteId(null), onError: (err: any) => { toast.error(err.message); setProcessingQuoteId(null) } }) }
@@ -155,11 +159,11 @@ export function BuyerRequestDetails() {
 
   const handleContactWhatsApp = (seller: any) => {
     const number = seller?.whatsappNumber || seller?.phoneNumber
-    if (!number) { toast.error('No WhatsApp number'); return }
-    window.open(`https://wa.me/${number.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${seller.storeName || seller.name}, I'm interested in your offer for "${request?.partName || 'part'}".`)}`, '_blank')
+    if (!number) { toast.error(t('toasts.no_whatsapp')); return }
+    window.open(`https://wa.me/${number.replace(/\D/g, '')}?text=${encodeURIComponent(t('contact.whatsapp_message', { name: seller.storeName || seller.name, part: request?.partName || 'part' }))}`, '_blank')
   }
   const handleContactCall = (phoneNumber?: string) => {
-    if (!phoneNumber) { toast.error('Phone number not available'); return }
+    if (!phoneNumber) { toast.error(t('toasts.phone_unavailable')); return }
     window.location.href = `tel:${phoneNumber}`
   }
 
@@ -169,7 +173,7 @@ export function BuyerRequestDetails() {
   const quotesCount = request.quotes.length || 0
   const brandName = request.brand?.brand || request.vehicleBrand || ''
   const region = request.brand?.clusterRegion || ''
-  const category = request.category?.name || ''
+  const categoryName = request.category?.name || (request.category as any) || ''
   const postedDate = new Date(request.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
   const isOpen = request.status === 'open'
 
@@ -194,7 +198,7 @@ export function BuyerRequestDetails() {
       </div>
 
       {/* Part Name */}
-      <h1 className="text-2xl lg:text-3xl font-black text-foreground tracking-tight leading-tight uppercase">
+      <h1 className="text-2xl lg:text-3xl font-black text-foreground tracking-tight leading-tight uppercase break-words" title={request.partName}>
         {request.partName}
       </h1>
 
@@ -205,12 +209,12 @@ export function BuyerRequestDetails() {
           pulse={isOpen}
           className="px-2.5 py-1"
         >
-          {isOpen ? 'Open' : request.status}
+          {isOpen ? t('labels.status_open') : t(`labels.status_${request.status}`, { defaultValue: request.status })}
         </GlowingBadge>
         {isOpen && quotesCount > 0 && (
           <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
             <MessageSquare className="size-3 text-primary" />
-            {quotesCount} {quotesCount === 1 ? 'offer' : 'offers'}
+            {t('quotes.count', { count: quotesCount })}
           </span>
         )}
       </div>
@@ -223,7 +227,7 @@ export function BuyerRequestDetails() {
           className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-primary/10 hover:text-primary"
           onClick={() => setIsEditDialogOpen(true)}
         >
-          <Edit className="size-3.5" /> Edit
+          <Edit className="size-3.5" /> {t('actions.edit')}
         </Button>
         <Button
           variant="ghost"
@@ -231,7 +235,7 @@ export function BuyerRequestDetails() {
           className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-accent"
           onClick={handleShare}
         >
-          <Share2 className="size-3.5" /> Share
+          <Share2 className="size-3.5" /> {t('actions.share')}
         </Button>
         {request.status !== 'fulfilled' && (
           <Button
@@ -240,7 +244,7 @@ export function BuyerRequestDetails() {
             className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-destructive/10 hover:text-destructive"
             onClick={() => setIsDeleteDialogOpen(true)}
           >
-            <Trash2 className="size-3.5" /> Delete
+            <Trash2 className="size-3.5" /> {t('actions.delete')}
           </Button>
         )}
       </div>
@@ -251,9 +255,17 @@ export function BuyerRequestDetails() {
       {/* Info rows */}
       <div className="space-y-0">
         <InfoRow icon={Calendar} label={t('columns.posted', { ns: 'requests/list' })} value={postedDate} />
-        {region && <InfoRow icon={MapPin} label="Location" value={region} />}
-        {category && <InfoRow icon={Tag} label="Category" value={category} />}
-        {request.notes && <InfoRow icon={MessageSquare} label="Description" value={request.notes} />}
+        {region && <InfoRow icon={MapPin} label={t('labels.location')} value={region} />}
+        {categoryName && (
+          <div className="flex items-center gap-3 py-1.5">
+            <Tag className="size-4 text-muted-foreground shrink-0" />
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground w-20 shrink-0">{t('labels.part_category')}</span>
+            <span className="text-sm font-bold text-foreground">
+              <CategoryDisplay category={request.category} iconClassName="size-3.5" />
+            </span>
+          </div>
+        )}
+        {request.notes && <InfoRow icon={MessageSquare} label={t('labels.description')} value={request.notes} />}
       </div>
 
       {/* Desktop Close/Reopen */}
@@ -265,7 +277,7 @@ export function BuyerRequestDetails() {
             ) : (
               <CheckCircle2 className="size-4 text-green-600" />
             )}
-            {isCancelling ? 'Closing...' : 'Close Request'}
+            {isCancelling ? t('actions.closing') : t('actions.close_request_btn')}
           </Button>
         ) : (
           <Button onClick={handleReopen} disabled={isReopening} variant="outline" className="w-full h-11 rounded-xl gap-2 text-sm font-bold">
@@ -274,7 +286,7 @@ export function BuyerRequestDetails() {
             ) : (
               <Clock className="size-4 text-primary" />
             )}
-            {isReopening ? 'Reopening...' : 'Reopen Request'}
+            {isReopening ? t('actions.reopening') : t('actions.reopen_request_btn')}
           </Button>
         )}
       </div>
@@ -287,7 +299,7 @@ export function BuyerRequestDetails() {
       {/* TOP NAV */}
       <div className="flex items-center px-3 py-2">
         <Button variant="ghost" size="sm" className="h-9 gap-1.5 rounded-xl text-sm font-bold" onClick={() => window.history.back()}>
-          <ArrowLeft className="size-4" />
+          <ArrowLeft className="size-4 rtl:rotate-180" />
           {t('actions.back_to_list')}
         </Button>
       </div>
@@ -328,7 +340,7 @@ export function BuyerRequestDetails() {
             ) : (
               <CheckCircle2 className="size-4" />
             )}
-            {isCancelling ? 'Closing...' : 'Close Request'}
+            {isCancelling ? t('actions.closing') : t('actions.close_request_btn')}
           </Button>
         ) : (
           <Button onClick={handleReopen} disabled={isReopening} className="w-full h-12 rounded-xl gap-2 text-sm font-bold">
@@ -337,7 +349,7 @@ export function BuyerRequestDetails() {
             ) : (
               <Clock className="size-4" />
             )}
-            {isReopening ? 'Reopening...' : 'Reopen Request'}
+            {isReopening ? t('actions.reopening') : t('actions.reopen_request_btn')}
           </Button>
         )}
       </div>
@@ -349,11 +361,11 @@ export function BuyerRequestDetails() {
         onOpenChange={setIsDeleteDialogOpen}
         title={t('dialogs.delete.title')}
         description={t('dialogs.delete.description', { ns: 'requests/list' })}
-        confirmLabel="Delete"
+        confirmLabel={t('actions.delete')}
         confirmIcon={<Trash2 className="size-4" />}
         variant="destructive"
         isLoading={isDeleting}
-        loadingLabel="Deleting..."
+        loadingLabel={t('actions.deleting')}
         onConfirm={handleDelete}
       />
       <Dialog open={!!contactingSeller} onOpenChange={(open) => !open && setContactingSeller(null)}>
@@ -372,15 +384,15 @@ export function BuyerRequestDetails() {
               <div>
                 <p className="font-black text-sm">{contactingSeller?.storeName || contactingSeller?.name}</p>
                 <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-                  <MapPin className="size-3" />{contactingSeller?.wilaya || 'Algeria'}
+                  <MapPin className="size-3" />{contactingSeller?.wilaya || t('contact.default_location')}
                 </p>
               </div>
             </div>
             <Button onClick={() => handleContactWhatsApp(contactingSeller)} className="h-12 rounded-xl gap-2 w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold">
-              <MessageCircle className="size-5 fill-current" /> WhatsApp
+              <MessageCircle className="size-5 fill-current" /> {t('contact.whatsapp')}
             </Button>
             <Button onClick={() => handleContactCall(contactingSeller?.phoneNumber)} variant="outline" className="h-12 rounded-xl gap-2 w-full font-bold">
-              <Phone className="size-4" /> Call
+              <Phone className="size-4" /> {t('contact.call')}
             </Button>
           </div>
         </DialogContent>

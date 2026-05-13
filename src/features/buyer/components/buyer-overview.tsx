@@ -16,7 +16,7 @@ import { useCancelRequest, useDeleteRequest, useReopenRequest } from '@/features
 import { cn } from '@/lib/utils'
 
 export function BuyerOverview() {
-  const { t } = useTranslation('dashboard/buyer')
+  const { t } = useTranslation(['dashboard/buyer', 'requests/details'])
   const { data: user } = useAuth()
   const buyerId = user?.id || ''
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
@@ -41,15 +41,15 @@ export function BuyerOverview() {
         break
       case 'close_request':
         setPendingAction({ type: 'close_request', id: action.item.id })
-        cancelRequest(action.item.id, { onSuccess: () => toast.success('Request closed'), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
+        cancelRequest(action.item.id, { onSuccess: () => toast.success(t('toasts.request_closed', { ns: 'requests/details' })), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
         break
       case 'reopen_request':
         setPendingAction({ type: 'reopen_request', id: action.item.id })
-        reopenRequest(action.item.id, { onSuccess: () => toast.success('Request reopened'), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
+        reopenRequest(action.item.id, { onSuccess: () => toast.success(t('toasts.request_reopened', { ns: 'requests/details' })), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
         break
       case 'delete_request':
         setPendingAction({ type: 'delete_request', id: action.item.id })
-        deleteRequest(action.item.id, { onSuccess: () => toast.success('Request deleted'), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
+        deleteRequest(action.item.id, { onSuccess: () => toast.success(t('toasts.request_deleted', { ns: 'requests/details' })), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
         break
     }
   }, [navigate, cancelRequest, deleteRequest, reopenRequest, clearPending])
@@ -143,6 +143,7 @@ export function BuyerOverview() {
                 brandImageUrl={req.brand?.imageUrl}
                 modelYear={req.modelYear}
                   category={req.category?.name}
+                  categoryImageUrl={req.category?.imageUrl}
                   region={req.brand?.clusterRegion}
                   imageUrls={req.imageUrls}
                   quotesCount={req.quotes?.length}
@@ -185,7 +186,7 @@ export function BuyerOverview() {
 
       <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
         <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
-          <div className="h-[600px] max-h-[85dvh]">
+          <div className="h-dvh max-h-[85dvh]">
             <RequestWizard
               onSuccess={() => setIsNewRequestOpen(false)}
               onCancel={() => setIsNewRequestOpen(false)}
@@ -196,7 +197,7 @@ export function BuyerOverview() {
 
       <Dialog open={!!editRequestData} onOpenChange={(open) => !open && setEditRequestData(null)}>
         <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
-          <div className="h-[600px] max-h-[85dvh]">
+          <div className="h-dvh max-h-[85dvh]">
             <RequestWizard
               initialData={editRequestData}
               onSuccess={() => setEditRequestData(null)}

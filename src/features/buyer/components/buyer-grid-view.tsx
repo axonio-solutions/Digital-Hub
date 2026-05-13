@@ -51,6 +51,7 @@ const GridCard = memo(function GridCard({ req, onAction, isProcessing }: {
       brandImageUrl={req.brand?.imageUrl}
       modelYear={req.modelYear}
       category={req.category?.name}
+      categoryImageUrl={req.category?.imageUrl}
       region={req.brand?.clusterRegion}
       imageUrls={req.imageUrls}
       quotesCount={req.quotes?.length}
