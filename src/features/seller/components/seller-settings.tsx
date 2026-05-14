@@ -91,7 +91,7 @@ export function SellerSettings() {
           </div>
           <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400">
              <ShieldCheck className="size-4" />
-             <span className="text-[10px] font-black uppercase tracking-wider">Verified Business</span>
+             <span className="text-[10px] font-black uppercase tracking-wider">{t('settings.verified_badge')}</span>
           </div>
         </div>
       </CardHeader>

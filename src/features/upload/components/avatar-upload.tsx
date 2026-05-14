@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 
 interface AvatarUploadProps {
   userId: string
@@ -26,6 +27,7 @@ export function AvatarUpload({
   size = 'md',
   onUploadComplete,
 }: AvatarUploadProps) {
+  const { t } = useTranslation('dashboard/settings')
   const queryClient = useQueryClient()
   const [isUploading, setIsUploading] = useState(false)
   const [displayImage, setDisplayImage] = useState<string | null>(currentImage || null)
@@ -43,7 +45,7 @@ export function AvatarUpload({
     if (!file) return
 
     if (!file.type.startsWith('image/')) {
-      toast.error('Please upload an image file')
+      toast.error(t('avatar.upload_error'))
       return
     }
 
@@ -78,10 +80,10 @@ export function AvatarUpload({
       // Force sync navigation bar and other auth-dependent UIs
       await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
       
-      toast.success('Profile picture updated!')
+      toast.success(t('avatar.upload_success'))
     } catch (error: any) {
       console.error(error)
-      toast.error(error.message || 'Failed to upload avatar')
+      toast.error(error.message || t('avatar.upload_failed'))
     } finally {
       setIsUploading(false)
     }
@@ -101,9 +103,9 @@ export function AvatarUpload({
       // Force sync navigation bar
       await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
       
-      toast.success('Profile picture removed')
+      toast.success(t('avatar.remove_success'))
     } catch (error: any) {
-      toast.error('Failed to remove image')
+      toast.error(t('avatar.remove_failed'))
     } finally {
       setIsUploading(false)
     }
@@ -144,7 +146,7 @@ export function AvatarUpload({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             className="absolute bottom-1 right-1 p-2 bg-primary text-primary-foreground rounded-full shadow-lg border-2 border-background hover:scale-110 active:scale-95 transition-all z-20"
-            title="Change profile picture"
+            title={t('avatar.change_title')}
           >
             <Camera className="size-4" />
           </button>
@@ -168,7 +170,7 @@ export function AvatarUpload({
             className="h-7 px-3 text-[10px] text-muted-foreground hover:text-destructive hover:bg-destructive/5 font-bold uppercase tracking-tighter"
           >
             <Trash2 className="size-3 me-1.5" />
-            Remove Picture
+            {t('avatar.remove_button')}
           </Button>
         </div>
       )}

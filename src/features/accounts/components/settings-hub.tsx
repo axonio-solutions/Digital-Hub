@@ -118,10 +118,10 @@ function ProfileSection({ user }: { user: any }) {
       <div className="px-1">
         <div className="flex items-center gap-3 mb-2">
           <User className="size-6 text-primary" />
-          <h2 className="text-2xl font-bold tracking-tight">Profile & Identity</h2>
+          <h2 className="text-2xl font-bold tracking-tight">{t('profile.section_title')}</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
-          Manage your public avatar, professional bio, and account-level identification.
+          {t('profile.section_desc')}
         </p>
       </div>
 

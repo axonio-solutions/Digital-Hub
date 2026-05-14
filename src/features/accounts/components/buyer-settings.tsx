@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
 import { Loader2, MapPin } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import {
   updateProfileSchema
 } from '@/types/account-schemas'
@@ -89,6 +90,7 @@ const WILAYAS = [
 ]
 
 export function BuyerSettings() {
+  const { t } = useTranslation('dashboard/settings')
   const queryClient = useQueryClient()
   const { data: user } = useAuth()
 
@@ -121,12 +123,12 @@ export function BuyerSettings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth'] })
-      toast.success('Delivery Saved', {
-        description: 'Your delivery preferences have been updated.',
+      toast.success(t('delivery.save'), {
+        description: t('delivery.desc'),
       })
     },
     onError: () => {
-      toast.error('Update Failed')
+      toast.error(t('messages.update_failed'))
     },
   })
 
@@ -139,10 +141,10 @@ export function BuyerSettings() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MapPin className="h-5 w-5 text-primary" />
-          Delivery & Communication
+          {t('delivery.title')}
         </CardTitle>
         <CardDescription>
-          Your location helps sellers provide accurate shipping estimates.
+          {t('delivery.desc')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -157,14 +159,14 @@ export function BuyerSettings() {
                 name="wilaya"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Wilaya</FormLabel>
+                    <FormLabel>{t('delivery.wilaya')}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select Wilaya" />
+                          <SelectValue placeholder={t('delivery.wilaya_placeholder')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -184,9 +186,9 @@ export function BuyerSettings() {
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City</FormLabel>
+                    <FormLabel>{t('delivery.city')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. Kouba" {...field} />
+                      <Input placeholder={t('delivery.city_placeholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -199,9 +201,9 @@ export function BuyerSettings() {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Address</FormLabel>
+                  <FormLabel>{t('delivery.address')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Street, Building, etc." {...field} />
+                    <Input placeholder={t('delivery.address_placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -213,9 +215,9 @@ export function BuyerSettings() {
               name="whatsappNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>WhatsApp Number (Optional)</FormLabel>
+                  <FormLabel>{t('delivery.whatsapp')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="+213..." {...field} />
+                    <Input placeholder={t('delivery.whatsapp_placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -224,7 +226,7 @@ export function BuyerSettings() {
 
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
-              Update Delivery Settings
+              {isPending ? t('delivery.saving') : t('delivery.save')}
             </Button>
           </form>
         </Form>
