@@ -10,8 +10,8 @@ import {
   Info,
   MapPin,
 } from 'lucide-react'
-import { format } from 'date-fns'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { formatRelativeTime } from '@/lib/utils/date-format'
 import { ImageSlider } from '@/components/ui/image-slider'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -48,7 +48,7 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
         </p>
         <p className="text-3xl sm:text-4xl font-black tabular-nums text-foreground">
           {(quote?.price || 0).toLocaleString()}{' '}
-          <span className="text-base font-bold text-muted-foreground">DZD</span>
+          <span className="text-base font-bold text-muted-foreground">{t('columns.currency', { ns: 'quotes' })}</span>
         </p>
       </div>
 
@@ -69,27 +69,27 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
       <div className="grid grid-cols-2 gap-2.5">
         <div className="p-3 rounded-xl bg-card border border-border">
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-            <BadgeCheck className="w-3 h-3" /> Condition
+            <BadgeCheck className="w-3 h-3" /> {t('offer_details.condition')}
           </div>
-          <p className="text-sm font-bold capitalize">{quote?.condition || '—'}</p>
+          <p className="text-sm font-bold capitalize">{quote?.condition ? t(`columns.conditions.${quote.condition}`, { ns: 'quotes', defaultValue: quote.condition }) : '—'}</p>
         </div>
         <div className="p-3 rounded-xl bg-card border border-border">
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-            <FileText className="w-3 h-3" /> Warranty
+            <FileText className="w-3 h-3" /> {t('offer_details.warranty')}
           </div>
-          <p className="text-sm font-bold">{quote?.warranty || t('offer_details.no_warranty', { ns: 'marketplace', defaultValue: '—' })}</p>
+          <p className="text-sm font-bold">{quote?.warranty || t('offer_details.no_warranty')}</p>
         </div>
         <div className="p-3 rounded-xl bg-card border border-border">
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-            <Calendar className="w-3 h-3" /> Submitted
+            <Calendar className="w-3 h-3" /> {t('offer_details.submitted')}
           </div>
           <p className="text-sm font-bold">
-            {quote?.createdAt ? format(new Date(quote.createdAt), 'MMM d, yyyy') : '—'}
+            {quote?.createdAt ? formatRelativeTime(quote.createdAt) : '—'}
           </p>
         </div>
         <div className="p-3 rounded-xl bg-card border border-border">
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-            <Info className="w-3 h-3" /> Part
+            <Info className="w-3 h-3" /> {t('offer_details.part')}
           </div>
           <p className="text-sm font-bold truncate">{request?.partName || '—'}</p>
         </div>
@@ -123,7 +123,7 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
       <div className="grid grid-cols-2 gap-2.5">
         <div className="p-3 rounded-xl bg-card border border-border">
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-            <Car className="w-3 h-3" /> Vehicle
+            <Car className="w-3 h-3" /> {t('offer_details.vehicle')}
           </div>
           <p className="text-sm font-bold text-foreground leading-tight">
             {request?.vehicleBrand} {request?.vehicleModel}
@@ -132,7 +132,7 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
         </div>
         <div className="p-3 rounded-xl bg-card border border-border">
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-            <Hash className="w-3 h-3" /> OEM
+            <Hash className="w-3 h-3" /> {t('offer_details.oem')}
           </div>
           <p className="text-sm font-bold text-foreground font-mono truncate">
             {request?.oemNumber || '—'}
@@ -140,10 +140,10 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
         </div>
         <div className="p-3 rounded-xl bg-card border border-border col-span-2">
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-            <MapPin className="w-3 h-3" /> Location
+            <MapPin className="w-3 h-3" /> {t('offer_details.location')}
           </div>
           <p className="text-sm font-bold text-foreground">
-            {request?.wilaya || 'Algeria'}
+            {request?.wilaya || t('offer_details.algeria')}
           </p>
         </div>
       </div>
@@ -151,7 +151,7 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
       {request?.notes && (
         <div className="p-3 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-900/50">
           <div className="text-[9px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-1">
-            Buyer Notes
+            {t('offer_details.buyer_notes')}
           </div>
           <p className="text-xs italic leading-relaxed text-amber-800 dark:text-amber-200/80">
             &ldquo;{request.notes}&rdquo;
@@ -162,7 +162,7 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
       <div className="flex items-center justify-between text-[10px] text-muted-foreground font-medium pt-2 border-t border-border">
         <span className="flex items-center gap-1">
           <Calendar className="size-3" />
-          {request?.createdAt ? format(new Date(request.createdAt), 'MMM d') : '—'}
+          {request?.createdAt ? formatRelativeTime(request.createdAt) : '—'}
         </span>
       </div>
     </div>
@@ -181,14 +181,14 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
                   className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md text-[11px] font-black uppercase tracking-wider rounded-xl transition-all duration-200"
                 >
                   <BadgeCheck className="w-3.5 h-3.5 shrink-0" />
-                  <span>Your Offer</span>
+                  <span>{t('offer_details.your_offer')}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="request"
                   className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md text-[11px] font-black uppercase tracking-wider rounded-xl transition-all duration-200"
                 >
                   <FileText className="w-3.5 h-3.5 shrink-0" />
-                  <span>Request</span>
+                  <span>{t('offer_details.request_tab')}</span>
                 </TabsTrigger>
               </TabsList>
             </div>
