@@ -1,11 +1,13 @@
 {
-  "welcome": "مرحباً بعودتك، {{name}}. إليك ما يحدث اليوم.",
+  "welcome": "مرحباً بعودتك، {{name}}",
   "go_to_market": "اذهب إلى السوق",
   "actions": {
     "browse_requests": "تصفح الطلبات",
     "view_quotes": "عروضي",
     "explore_cta": "استكشف السوق",
-    "explore_subtitle": "اعثر على مشترين جدد ونمّ مبيعاتك"
+    "explore_subtitle": "اعثر على مشترين جدد ونمّ مبيعاتك",
+    "view_quotes_desc": "{{count}} عرض تم تقديمه",
+    "browse_requests_desc": "اكتشف الطلبات المباشرة من المشترين"
   },
   "stats": {
     "won": { "label": "صفقات ناجحة", "sub": "نجاح الصفقة", "desc": "عمليات البيع المؤكدة في السوق" },
@@ -16,7 +18,8 @@
   "charts": {
     "revenue_velocity": { "title": "سرعة الإيرادات", "desc": "مسار الأرباح خلال آخر 7 أيام." },
     "offer_distribution": { "title": "توزيع العروض", "desc": "تحليل أداء عروضك." },
-    "performance_summary": { "title": "ملخص الأداء", "desc": "مقاييس سريعة وصحة التحويل." }
+    "performance_summary": { "title": "ملخص الأداء", "desc": "مقاييس سريعة وصحة التحويل." },
+    "no_data": "لا توجد بيانات إيرادات بعد"
   },
   "summary": {
     "quote_volume": "حجم العروض"
@@ -26,8 +29,10 @@
     "latest_requests": "آخر طلبات السوق.",
     "sales_history": "سجل المبيعات",
     "recent_deals": "آخر الصفقات المؤكدة.",
-    "no_sales": "لم يتم تسجيل مبيعات بعد.",
-    "review": "مراجعة"
+    "no_sales": "لا توجد مبيعات",
+    "no_sales_desc": "لم يتم تسجيل مبيعات بعد.",
+    "review": "مراجعة",
+    "unknown_part": "قطعة غير معروفة"
   },
   "pie": {
     "accepted": "مقبول",
@@ -35,8 +40,34 @@
     "missed": "فائت",
     "total": "عروض"
   },
-  "currency": "د.ج",
+  "overview": {
+    "today_sales": "المقبولات اليوم",
+    "accepted_today": "المقبول اليوم",
+    "revenue_today": "الإيرادات",
+    "rejected_today": "ملغي",
+    "weekly_title": "آخر 7 أيام",
+    "weekly_desc": "المبيعات والإلغاءات خلال الأسبوع الماضي.",
+    "accepted_count": "مقبول"
+  },
   "settings": {
-    "verified_badge": "نشاط تجاري موثوق"
+    "verified_badge": "نشاط تجاري موثوق",
+    "title": "ملف المتجر",
+    "desc": "إدارة معلومات متجرك وتفاصيل النشاط التجاري.",
+    "labels": {
+      "store_name": "اسم المتجر",
+      "rc_number": "السجل التجاري",
+      "address": "العنوان الفعلي",
+      "submit": "تحديث الملف",
+      "submitting": "جاري التحديث..."
+    },
+    "placeholders": {
+      "store_name": "مثال: مؤسسة قطع الغيار",
+      "rc_number": "00A1234567-00/00",
+      "address": "العنوان الكامل للمتجر"
+    },
+    "toasts": {
+      "success": "تم تحديث معلومات المتجر بنجاح",
+      "error": "فشل تحديث معلومات المتجر"
+    }
   }
 }

@@ -13,5 +13,9 @@
     "description": "Vous n'avez pas besoin d'un compte pour voir ce que les acheteurs recherchent. Explorez dès maintenant les demandes en direct de pièces détachées à travers l'Algérie.",
     "btn": "Entrer dans le Marché",
     "active_signals": "Signaux Actifs"
+  },
+  "footer": {
+    "copyright": "MLILA. Tous droits réservés.",
+    "tagline": "Le Premier Reverse-Marketplace en Algérie"
   }
 }

@@ -25,9 +25,12 @@
     "ready_desc": "لقد حددنا فرصاً تطابق مخزونك المتخصص. قم بتفعيل التصفية أدناه للتركيز على الطلبات ذات الصلة.",
     "ready_btn": "تفعيل فلتر التخصص"
   },
+  "search": {
+    "placeholder": "ابحث عن قطعة أو رقم OEM..."
+  },
   "tabs": {
     "open": "فرص مفتوحة",
-    "active": "عروضك النشطة"
+    "active": "عروضي النشطة"
   },
   "table": {
     "title": "الطلبات المتاحة",
@@ -155,5 +158,72 @@
   },
   "defaults": {
     "unknown": "غير معروف"
+  },
+  "category_bar": {
+    "all_parts": "جميع القطع",
+    "search_placeholder": "بحث عن فئات وعلامات تجارية...",
+    "no_results": "لا توجد نتائج",
+    "brands": "العلامات التجارية",
+    "no_brands": "لا توجد علامات تجارية",
+    "clear_all": "مسح جميع الفلاتر",
+    "clear": "مسح",
+    "scroll_left": "تمرير الفئات لليسار",
+    "scroll_right": "تمرير الفئات لليمين"
+  },
+  "feed": {
+    "no_matches": "لا توجد نتائج",
+    "no_matches_desc": "لم نعثر على أي قطع تطابق معاييرك.",
+    "clear_filters": "مسح جميع الفلاتر",
+    "quote_now": "طلب عرض سعر",
+    "my_request": "طلبي"
+  },
+  "sidebar": {
+    "categories": "الفئات",
+    "manufacturer": "الشركة المصنعة",
+    "all_brands": "جميع العلامات",
+    "selected_count": "{{count}} محدد",
+    "timeframe": "الإطار الزمني",
+    "standard": "عادي",
+    "asap": "عاجل",
+    "reset_filters": "إعادة ضبط"
+  },
+  "brand_dialog": {
+    "selected": "{{count}} محدد",
+    "popular": "العلامات الشائعة",
+    "all_brands": "جميع العلامات",
+    "no_results": "لا توجد نتائج",
+    "no_results_desc": "لا توجد علامات تطابق \"{{query}}\"",
+    "reset": "إعادة ضبط",
+    "apply": "تطبيق الفلاتر",
+    "select_brand": "اختر العلامة",
+    "search_brands": "بحث عن علامات..."
+  },
+  "offer_dialog": {
+    "no_image": "لا توجد صورة",
+    "request_details": "تفاصيل الطلب",
+    "priority": "عاجل",
+    "vehicle": "المركبة",
+    "year": "السنة:",
+    "oem": "رقم OEM",
+    "not_available": "غير متاح",
+    "location": "الموقع",
+    "algeria": "الجزائر",
+    "category": "الفئة",
+    "buyer_notes": "ملاحظات المشتري",
+    "submit_title": "تقديم عرض السعر",
+    "submit_desc": "قم بتكوين عرضك لهذا الطلب.",
+    "details_tab": "التفاصيل",
+    "offer_tab": "عرضك",
+    "previous_image": "الصورة السابقة",
+    "next_image": "الصورة التالية",
+    "go_to_slide": "الانتقال إلى الشريحة"
+  },
+  "pagination": {
+    "page": "صفحة {{number}}"
+  },
+  "footer": {
+    "brand": "سوق ميليلة",
+    "terms": "الشروط",
+    "privacy": "الخصوصية"
   }
 }

@@ -50,5 +50,13 @@
     "submit_quote": "Submit Quote",
     "show_details": "Show Details",
     "request_summary": "Requesting {{partName}} for {{brand}} {{year}}."
+  },
+  "pagination": {
+    "page": "Page {{number}}"
+  },
+  "footer": {
+    "brand": "MLILA Marketplace",
+    "terms": "Terms",
+    "privacy": "Privacy"
   }
 }

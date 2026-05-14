@@ -1,11 +1,13 @@
 {
-  "welcome": "Bon retour, {{name}}. Voici ce qui se passe aujourd'hui.",
+  "welcome": "Bon retour, {{name}}",
   "go_to_market": "Aller au Marché",
   "actions": {
     "browse_requests": "Parcourir les Demandes",
     "view_quotes": "Mes Devis",
     "explore_cta": "Explorer le Marché",
-    "explore_subtitle": "Trouvez de nouveaux acheteurs et développez vos ventes"
+    "explore_subtitle": "Trouvez de nouveaux acheteurs et développez vos ventes",
+    "view_quotes_desc": "{{count}} devis soumis",
+    "browse_requests_desc": "Découvrez les demandes en direct des acheteurs"
   },
   "stats": {
     "won": { "label": "Ventes Conclues", "sub": "Succès de la Transaction", "desc": "Acquisitions confirmées sur le marché" },
@@ -16,7 +18,8 @@
   "charts": {
     "revenue_velocity": { "title": "Vélocité des Revenus", "desc": "Trajectoire des gains au cours des 7 derniers jours." },
     "offer_distribution": { "title": "Distribution des Offres", "desc": "Analyse de la performance de vos devis." },
-    "performance_summary": { "title": "Résumé de Performance", "desc": "Métriques rapides et santé de la conversion." }
+    "performance_summary": { "title": "Résumé de Performance", "desc": "Métriques rapides et santé de la conversion." },
+    "no_data": "Aucune donnée de revenus"
   },
   "summary": {
     "quote_volume": "Volume de Devis"
@@ -26,8 +29,10 @@
     "latest_requests": "Dernières demandes du marché.",
     "sales_history": "Historique des Ventes",
     "recent_deals": "Transactions récentes confirmées.",
-    "no_sales": "Aucune vente enregistrée pour le moment.",
-    "review": "Réviser"
+    "no_sales": "Aucune vente",
+    "no_sales_desc": "Aucune vente enregistrée pour le moment.",
+    "review": "Réviser",
+    "unknown_part": "Pièce inconnue"
   },
   "pie": {
     "accepted": "Acceptées",
@@ -35,38 +40,16 @@
     "missed": "Manquées",
     "total": "Devis"
   },
-  "hub": {
-    "title": "Pipeline des Ventes",
-    "desc": "Propulsez votre activité avec une gestion fluide des devis.",
-    "stats": {
-      "total": "Volume Total",
-      "total_sub": "Offres soumises",
-      "success_rate": "Taux d'Atterrissage",
-      "success_rate_sub": "Conversion réelle",
-      "pipeline": "Valeur Latente",
-      "pipeline_sub": "DZD en attente",
-      "accepted_count": "Transactions",
-      "accepted_sub": "Ventes confirmées"
-    },
-    "tabs": {
-      "active": "Opportunités",
-      "won": "Gagnées",
-      "lost": "Archives"
-    },
-    "dialog": {
-      "update_title": "Optimiser l'Offre",
-      "update_desc": "Ajustez vos paramètres pour maximiser vos chances de vente.",
-      "update_btn": "Enregistrer les modifications",
-      "close": "Retour"
-    },
-    "confirm": {
-      "withdraw": "Voulez-vous vraiment retirer cette offre ? Cette action pourrait impacter votre visibilité."
-    },
-    "toasts": {
-      "withdrawn": "Offre retirée avec succès"
-    }
+  "overview": {
+    "today_sales": "Acceptation du Jour",
+    "accepted_today": "Accepté Aujourd'hui",
+    "revenue_today": "Revenu",
+    "rejected_today": "Annulé",
+    "weekly_title": "7 Derniers Jours",
+    "weekly_desc": "Ventes et annulations de la dernière semaine.",
+    "accepted_count": "accepté"
   },
-    "settings": {
+  "settings": {
     "verified_badge": "Entreprise Vérifiée",
     "title": "Identité Commerciale",
     "desc": "Configurez les informations officielles de votre boutique.",
@@ -86,6 +69,5 @@
       "success": "Informations de la boutique mises à jour",
       "error": "Erreur lors de la mise à jour"
     }
-  },
-  "currency": "DZD"
+  }
 }

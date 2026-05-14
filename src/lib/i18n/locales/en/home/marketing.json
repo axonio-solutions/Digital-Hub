@@ -13,5 +13,9 @@
     "description": "You don't need an account to see what buyers are looking for. Explore live requests for car parts across Algeria right now.",
     "btn": "Enter Marketplace",
     "active_signals": "Active Signals"
+  },
+  "footer": {
+    "copyright": "MLILA. All rights reserved.",
+    "tagline": "The First Reverse-Marketplace in Algeria"
   }
 }

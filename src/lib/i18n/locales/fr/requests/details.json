@@ -6,7 +6,10 @@
     "brand": "Marque", "part_category": "Catégorie", "general": "Général", "model_year": "Année",
     "oem_number": "Réf. OEM", "not_specified": "Non spécifié", "buyer_notes": "Notes de l'Acheteur",
     "no_notes": "Aucune note fournie.", "network_id": "ID Demande", "broadcasted": "Publié",
-    "na": "N/A", "regional_origin": "Région", "market_traction": "Intérêt", "responses": "Offres"
+    "na": "N/A", "regional_origin": "Région", "market_traction": "Intérêt", "responses": "Offres",
+    "location": "Région", "description": "Description", "status_open": "Ouvert",
+    "condition": "État", "warranty": "Garantie", "submitted": "Soumis le",
+    "part": "Pièce", "vehicle": "Véhicule", "oem": "OEM"
   },
   "actions": {
     "back_to_list": "Retour à mes demandes", "edit_details": "Modifier", "copy_link": "Copier le lien",
@@ -17,17 +20,42 @@
     "close_request_btn": "Fermer la demande", "reopen_request_btn": "Réouvrir la demande",
     "deleting": "Suppression..."
   },
+  "toasts": {
+    "request_closed": "Demande fermée",
+    "request_reopened": "Demande réouverte",
+    "request_deleted": "Demande supprimée",
+    "link_copied": "Lien copié",
+    "no_whatsapp": "Numéro WhatsApp non disponible",
+    "phone_unavailable": "Numéro de téléphone non disponible"
+  },
   "errors": { "not_found": "Demande introuvable", "not_found_desc": "Nous n'avons pas trouvé la demande recherchée." },
   "hints": { "fulfill_desc": "Marquez cette demande comme satisfaite.", "closed_desc": "Cette demande est fermée. Réouvrez-la pour recevoir plus d'offres." },
   "quotes": {
     "title": "Offres Reçues", "sort_by": "Trier :", "sort_recent": "Plus Récent", "sort_price": "Prix le Plus Bas",
-    "empty_title": "Aucune Offre", "empty_desc": "Nous vous informerons dès que les vendeurs répondront."
+    "empty_title": "Aucune Offre", "empty_desc": "Nous vous informerons dès que les vendeurs répondront.",
+    "count": "{{count}} offre", "count_plural": "{{count}} offres"
   },
   "dialogs": { "delete": { "title": "Supprimer cette Demande ?", "confirm": "Supprimer" }, "cancel": "Annuler" },
   "contact": {
     "title": "Contacter le Vendeur", "connect_desc": "Contactez {{name}} pour finaliser votre achat.",
     "phone_label": "Téléphone", "not_listed": "Non listé", "store_address": "Adresse",
     "main_store": "Magasin Principal", "default_location": "Algérie", "whatsapp": "WhatsApp",
-    "call": "Appeler", "hint": "Mentionnez Digital Hub pour un service plus rapide"
+    "call": "Appeler", "hint": "Mentionnez Digital Hub pour un service plus rapide",
+    "go_to_slide": "Aller au slide {{index}}",
+    "whatsapp_message": "Bonjour {{name}}, je suis intéressé par votre offre pour \"{{part}}\"."
+  },
+  "offer_details": {
+    "condition": "État",
+    "warranty": "Garantie",
+    "submitted": "Soumis le",
+    "part": "Pièce",
+    "vehicle": "Véhicule",
+    "oem": "OEM",
+    "location": "Région",
+    "buyer_notes": "Notes de l'Acheteur",
+    "your_offer": "Votre Offre",
+    "request_tab": "Demande",
+    "no_warranty": "Aucune",
+    "algeria": "Algérie"
   }
 }

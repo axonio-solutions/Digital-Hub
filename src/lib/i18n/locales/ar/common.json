@@ -1,4 +1,11 @@
 {
+  "nav": {
+    "explore": "استكشف",
+    "pricing": "الأسعار",
+    "faq": "الأسئلة الشائعة",
+    "about": "حول",
+    "contact": "اتصل بنا"
+  },
   "language_picker": {
     "title": "اختر اللغة"
   },

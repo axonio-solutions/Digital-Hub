@@ -25,6 +25,9 @@
     "ready_desc": "We've identified opportunities matching your specialized inventory. Toggle filtering below to focus on relevant requests.",
     "ready_btn": "Enable Specialty Filter"
   },
+  "search": {
+    "placeholder": "Search part or OEM..."
+  },
   "tabs": {
     "open": "Open Opportunities",
     "active": "Your Active Quotes"
@@ -155,5 +158,72 @@
   },
   "defaults": {
     "unknown": "Unknown"
+  },
+  "category_bar": {
+    "all_parts": "All Parts",
+    "search_placeholder": "Search categories & brands...",
+    "no_results": "No results",
+    "brands": "Brands",
+    "no_brands": "No brands match",
+    "clear_all": "Clear all filters",
+    "clear": "Clear",
+    "scroll_left": "Scroll categories left",
+    "scroll_right": "Scroll categories right"
+  },
+  "feed": {
+    "no_matches": "No matches found",
+    "no_matches_desc": "We couldn't find any parts matching your criteria. Try adjusting or clearing your filters.",
+    "clear_filters": "Clear All Filters",
+    "quote_now": "Quote Now",
+    "my_request": "My Request"
+  },
+  "sidebar": {
+    "categories": "Categories",
+    "manufacturer": "Manufacturer",
+    "all_brands": "All Brands",
+    "selected_count": "{{count}} Selected",
+    "timeframe": "Timeframe",
+    "standard": "Standard",
+    "asap": "Immediate (ASAP)",
+    "reset_filters": "Reset Filters"
+  },
+  "brand_dialog": {
+    "selected": "{{count}} Selected",
+    "popular": "Popular Brands",
+    "all_brands": "All Brands",
+    "no_results": "No results found",
+    "no_results_desc": "No brands matching \"{{query}}\"",
+    "reset": "Reset",
+    "apply": "Apply Filters",
+    "select_brand": "Select Brand",
+    "search_brands": "Search brands..."
+  },
+  "offer_dialog": {
+    "no_image": "No Image",
+    "request_details": "Request Details",
+    "priority": "Priority",
+    "vehicle": "Vehicle",
+    "year": "Year:",
+    "oem": "OEM",
+    "not_available": "N/A",
+    "location": "Location",
+    "algeria": "Algeria",
+    "category": "Category",
+    "buyer_notes": "Buyer Notes",
+    "submit_title": "Submit Your Quote",
+    "submit_desc": "Configure your offer for this procurement request.",
+    "details_tab": "Details",
+    "offer_tab": "Your Offer",
+    "previous_image": "Previous image",
+    "next_image": "Next image",
+    "go_to_slide": "Go to slide"
+  },
+  "pagination": {
+    "page": "Page {{number}}"
+  },
+  "footer": {
+    "brand": "MLILA Marketplace",
+    "terms": "Terms",
+    "privacy": "Privacy"
   }
 }

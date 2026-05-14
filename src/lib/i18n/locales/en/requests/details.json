@@ -7,7 +7,9 @@
     "oem_number": "OEM / Part Number", "not_specified": "Not specified", "buyer_notes": "Buyer Notes",
     "no_notes": "No notes provided.", "network_id": "Request ID", "broadcasted": "Posted",
     "na": "N/A", "regional_origin": "Region", "market_traction": "Interest", "responses": "Offers",
-    "location": "Location", "description": "Description", "status_open": "Open"
+    "location": "Location", "description": "Description", "status_open": "Open",
+    "condition": "Condition", "warranty": "Warranty", "submitted": "Submitted",
+    "part": "Part", "vehicle": "Vehicle", "oem": "OEM"
   },
   "actions": {
     "back_to_list": "Back to My Requests", "edit_details": "Edit Request", "copy_link": "Copy Link",
@@ -42,5 +44,19 @@
     "call": "Call", "hint": "Mention Digital Hub for faster service",
     "go_to_slide": "Go to slide {{index}}",
     "whatsapp_message": "Hi {{name}}, I'm interested in your offer for \"{{part}}\"."
+  },
+  "offer_details": {
+    "condition": "Condition",
+    "warranty": "Warranty",
+    "submitted": "Submitted",
+    "part": "Part",
+    "vehicle": "Vehicle",
+    "oem": "OEM",
+    "location": "Location",
+    "buyer_notes": "Buyer Notes",
+    "your_offer": "Your Offer",
+    "request_tab": "Request",
+    "no_warranty": "None",
+    "algeria": "Algeria"
   }
 }

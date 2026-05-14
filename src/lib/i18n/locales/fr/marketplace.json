@@ -25,9 +25,12 @@
     "ready_desc": "Nous avons identifié des opportunités correspondant à votre inventaire spécialisé. Activez le filtrage ci-dessous pour vous concentrer sur les demandes pertinentes.",
     "ready_btn": "Activer le Filtre par Spécialité"
   },
+  "search": {
+    "placeholder": "Rechercher une pièce ou une référence OEM..."
+  },
   "tabs": {
     "open": "Opportunités Ouvertes",
-    "active": "Vos Devis Actifs"
+    "active": "Mes Devis Actifs"
   },
   "table": {
     "title": "Demandes Disponibles",
@@ -125,5 +128,72 @@
     "new": "Neuf",
     "used": "Occasion",
     "unknown": "Inconnu"
+  },
+  "category_bar": {
+    "all_parts": "Toutes les Pièces",
+    "search_placeholder": "Rechercher catégories et marques...",
+    "no_results": "Aucun résultat",
+    "brands": "Marques",
+    "no_brands": "Aucune marque trouvée",
+    "clear_all": "Effacer tous les filtres",
+    "clear": "Effacer",
+    "scroll_left": "Défiler les catégories vers la gauche",
+    "scroll_right": "Défiler les catégories vers la droite"
+  },
+  "feed": {
+    "no_matches": "Aucun résultat",
+    "no_matches_desc": "Nous n'avons trouvé aucune pièce correspondant à vos critères.",
+    "clear_filters": "Effacer tous les filtres",
+    "quote_now": "Devis",
+    "my_request": "Ma Demande"
+  },
+  "sidebar": {
+    "categories": "Catégories",
+    "manufacturer": "Fabricant",
+    "all_brands": "Toutes les Marques",
+    "selected_count": "{{count}} Sélectionné",
+    "timeframe": "Période",
+    "standard": "Standard",
+    "asap": "Immédiat (ASAP)",
+    "reset_filters": "Réinitialiser"
+  },
+  "brand_dialog": {
+    "selected": "{{count}} Sélectionné",
+    "popular": "Marques Populaires",
+    "all_brands": "Toutes les Marques",
+    "no_results": "Aucun résultat",
+    "no_results_desc": "Aucune marque correspondant à \"{{query}}\"",
+    "reset": "Réinitialiser",
+    "apply": "Appliquer les Filtres",
+    "select_brand": "Choisir une Marque",
+    "search_brands": "Rechercher des marques..."
+  },
+  "offer_dialog": {
+    "no_image": "Aucune Image",
+    "request_details": "Détails de la Demande",
+    "priority": "Urgence",
+    "vehicle": "Véhicule",
+    "year": "Année :",
+    "oem": "OEM",
+    "not_available": "N/D",
+    "location": "Localisation",
+    "algeria": "Algérie",
+    "category": "Catégorie",
+    "buyer_notes": "Notes de l'Acheteur",
+    "submit_title": "Soumettre Votre Devis",
+    "submit_desc": "Configurez votre offre pour cette demande.",
+    "details_tab": "Détails",
+    "offer_tab": "Votre Offre",
+    "previous_image": "Image précédente",
+    "next_image": "Image suivante",
+    "go_to_slide": "Aller au slide"
+  },
+  "pagination": {
+    "page": "Page {{number}}"
+  },
+  "footer": {
+    "brand": "Marché MLILA",
+    "terms": "Conditions",
+    "privacy": "Confidentialité"
   }
 }

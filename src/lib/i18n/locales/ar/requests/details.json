@@ -6,7 +6,10 @@
     "brand": "العلامة", "part_category": "الفئة", "general": "عام", "model_year": "سنة الصنع",
     "oem_number": "رقم OEM", "not_specified": "غير محدد", "buyer_notes": "ملاحظات المشتري",
     "no_notes": "لا توجد ملاحظات.", "network_id": "معرف الطلب", "broadcasted": "تاريخ النشر",
-    "na": "غير متاح", "regional_origin": "المنطقة", "market_traction": "الاهتمام", "responses": "العروض"
+    "na": "غير متاح", "regional_origin": "المنطقة", "market_traction": "الاهتمام", "responses": "العروض",
+    "location": "المنطقة", "description": "الوصف", "status_open": "مفتوح",
+    "condition": "الحالة", "warranty": "الضمان", "submitted": "تاريخ التقديم",
+    "part": "القطعة", "vehicle": "المركبة", "oem": "رقم OEM"
   },
   "actions": {
     "back_to_list": "العودة لطلباتي", "edit_details": "تعديل", "copy_link": "نسخ الرابط",
@@ -17,17 +20,42 @@
     "close_request_btn": "إغلاق الطلب", "reopen_request_btn": "إعادة فتح الطلب",
     "deleting": "جاري الحذف..."
   },
+  "toasts": {
+    "request_closed": "تم إغلاق الطلب",
+    "request_reopened": "تم إعادة فتح الطلب",
+    "request_deleted": "تم حذف الطلب",
+    "link_copied": "تم نسخ الرابط",
+    "no_whatsapp": "رقم واتساب غير متوفر",
+    "phone_unavailable": "رقم الهاتف غير متوفر"
+  },
   "errors": { "not_found": "الطلب غير موجود", "not_found_desc": "لم نتمكن من العثور على الطلب الذي تبحث عنه." },
   "hints": { "fulfill_desc": "ضع علامة على هذا الطلب كمنفذ.", "closed_desc": "هذا الطلب مغلق. أعد فتحه لتلقي المزيد من العروض." },
   "quotes": {
     "title": "العروض المستلمة", "sort_by": "فرز:", "sort_recent": "الأحدث", "sort_price": "الأقل سعراً",
-    "empty_title": "لا توجد عروض بعد", "empty_desc": "سنخبرك بمجرد بدء استجابة البائعين."
+    "empty_title": "لا توجد عروض بعد", "empty_desc": "سنخبرك بمجرد بدء استجابة البائعين.",
+    "count": "{{count}} عرض", "count_plural": "{{count}} عروض"
   },
   "dialogs": { "delete": { "title": "حذف هذا الطلب؟", "confirm": "حذف" }, "cancel": "إلغاء" },
   "contact": {
     "title": "اتصل بالبائع", "connect_desc": "تواصل مع {{name}} لإتمام عملية الشراء.",
     "phone_label": "الهاتف", "not_listed": "غير مدرج", "store_address": "عنوان المتجر",
     "main_store": "المتجر الرئيسي", "default_location": "الجزائر", "whatsapp": "واتساب",
-    "call": "اتصال", "hint": "اذكر ديجيتال هب للحصول على خدمة أسرع"
+    "call": "اتصال", "hint": "اذكر ديجيتال هب للحصول على خدمة أسرع",
+    "go_to_slide": "الانتقال إلى الشريحة {{index}}",
+    "whatsapp_message": "مرحباً {{name}}، أنا مهتم بعرضك لـ \"{{part}}\"."
+  },
+  "offer_details": {
+    "condition": "الحالة",
+    "warranty": "الضمان",
+    "submitted": "تاريخ التقديم",
+    "part": "القطعة",
+    "vehicle": "المركبة",
+    "oem": "رقم OEM",
+    "location": "المنطقة",
+    "buyer_notes": "ملاحظات المشتري",
+    "your_offer": "عرضك",
+    "request_tab": "الطلب",
+    "no_warranty": "لا يوجد",
+    "algeria": "الجزائر"
   }
 }

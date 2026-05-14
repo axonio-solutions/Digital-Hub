@@ -1,11 +1,13 @@
 {
-  "welcome": "Welcome back, {{name}}. Here's what's happening today.",
+  "welcome": "Welcome back, {{name}}",
   "go_to_market": "Go to Market",
   "actions": {
     "browse_requests": "Browse Requests",
     "view_quotes": "My Quotes",
-    "explore_cta": "Explore the Marketplace",
-    "explore_subtitle": "Find new buyers and grow your sales"
+    "explore_cta": "Explore Marketplace",
+    "explore_subtitle": "Find new buyers and grow your sales",
+    "view_quotes_desc": "{{count}} quotes submitted",
+    "browse_requests_desc": "Discover live requests from buyers"
   },
   "stats": {
     "won": { "label": "Won Deals", "sub": "Deal Success", "desc": "Confirmed marketplace acquisitions" },
@@ -16,7 +18,8 @@
   "charts": {
     "revenue_velocity": { "title": "Revenue Velocity", "desc": "Earnings trajectory over the last 7 days." },
     "offer_distribution": { "title": "Offer Distribution", "desc": "Performance breakdown of your quotes." },
-    "performance_summary": { "title": "Performance Summary", "desc": "At-a-glance metrics and conversion health." }
+    "performance_summary": { "title": "Performance Summary", "desc": "At-a-glance metrics and conversion health." },
+    "no_data": "No revenue data yet"
   },
   "summary": {
     "quote_volume": "Quote Volume"
@@ -26,8 +29,10 @@
     "latest_requests": "Latest marketplace requests.",
     "sales_history": "Sales History",
     "recent_deals": "Recent confirmed deals.",
-    "no_sales": "No sales recorded yet.",
-    "review": "Review"
+    "no_sales": "No sales yet",
+    "no_sales_desc": "No sales recorded yet.",
+    "review": "Review",
+    "unknown_part": "Unknown part"
   },
   "pie": {
     "accepted": "Accepted",
@@ -35,7 +40,34 @@
     "missed": "Missed",
     "total": "Quotes"
   },
+  "overview": {
+    "today_sales": "Today's Acceptance",
+    "accepted_today": "Accepted Today",
+    "revenue_today": "Revenue",
+    "rejected_today": "Cancelled",
+    "weekly_title": "Last 7 Days",
+    "weekly_desc": "Sales and cancellations over the last week.",
+    "accepted_count": "accepted"
+  },
   "settings": {
-    "verified_badge": "Verified Business"
+    "verified_badge": "Verified Business",
+    "title": "Store Profile",
+    "desc": "Manage your store information and business details.",
+    "labels": {
+      "store_name": "Store Name",
+      "rc_number": "Commercial Register (RC)",
+      "address": "Physical Address",
+      "submit": "Update Profile",
+      "submitting": "Updating..."
+    },
+    "placeholders": {
+      "store_name": "e.g. DZ Parts Distribution",
+      "rc_number": "00A1234567-00/00",
+      "address": "Full store address"
+    },
+    "toasts": {
+      "success": "Store information updated successfully",
+      "error": "Failed to update store information"
+    }
   }
 }

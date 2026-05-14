@@ -1,4 +1,11 @@
 {
+  "nav": {
+    "explore": "Explore",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "about": "About",
+    "contact": "Contact"
+  },
   "language_picker": {
     "title": "Select Language"
   },

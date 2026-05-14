@@ -3,28 +3,38 @@
     "categories": "Catégories de pièces",
     "all_categories": "Toutes les catégories",
     "brands": "Marques de véhicules",
-    "condition": "État de la pièce",
-    "urgency": "Urgence",
-    "any_time": "Tout moment",
-    "asap": "Dès que possible (Véhicule en panne)",
-    "within_week": "Dans une semaine",
-    "conditions": {
-      "new": "Neuf (OEM/Adaptable)",
-      "used": "Occasion / Casse",
-      "refurbished": "Remis à neuf"
-    }
+    "clear_all": "Tout effacer",
+    "no_categories": "Aucune catégorie trouvée"
   },
   "header": {
-    "title": "Signaux de Demande",
-    "badge": "Demandes en temps réel",
-    "description": "Découvrez les demandes actives des acheteurs sur notre réseau. Fournissez la pièce exacte qu'ils recherchent."
+    "title": "Demandes",
+    "title_highlight": "du Marché",
+    "subtitle": "Parcourez les demandes de pièces en direct des acheteurs à travers l'Algérie",
+    "requests": "demande",
+    "requests_plural": "demandes"
+  },
+  "search": {
+    "placeholder": "Rechercher par nom de pièce, marque ou OEM..."
+  },
+  "banners": {
+    "unauthenticated": {
+      "title": "Vous êtes vendeur ?",
+      "desc": "Connectez-vous pour envoyer des devis et développer votre activité.",
+      "cta": "Se connecter pour chiffrer"
+    },
+    "buyer": {
+      "title": "Vous cherchez une pièce spécifique ?",
+      "desc": "Publiez votre demande et laissez les vendeurs proposer leurs offres.",
+      "cta": "Publier une demande"
+    }
   },
   "controls": {
     "filters_btn": "Filtres",
     "requests_count": "{{count}} demandes",
     "search_placeholder": "Rechercher par nom de pièce, marque ou OEM...",
     "grid_view": "Vue grille",
-    "list_view": "Vue liste"
+    "list_view": "Vue liste",
+    "page": "Page"
   },
   "empty": {
     "title": "Aucune demande trouvée avec ces filtres.",
@@ -38,6 +48,15 @@
     "default_category": "Pièce",
     "action_btn": "Connectez-vous pour chiffrer",
     "submit_quote": "Soumettre un devis",
+    "show_details": "Voir les détails",
     "request_summary": "Demande {{partName}} pour {{brand}} {{year}}."
+  },
+  "pagination": {
+    "page": "Page {{number}}"
+  },
+  "footer": {
+    "brand": "Marché MLILA",
+    "terms": "Conditions",
+    "privacy": "Confidentialité"
   }
 }
