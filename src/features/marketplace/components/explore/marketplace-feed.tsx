@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PartCard } from '@/components/ui/part-card'
+import { useTranslation } from 'react-i18next'
 
 interface MarketplaceFeedProps {
   requests: any[] | undefined
@@ -48,6 +49,7 @@ export function MarketplaceFeed({
   userId,
   userRole,
 }: MarketplaceFeedProps) {
+  const { t } = useTranslation('marketplace')
   const isSeller = userRole === 'seller'
 
   if (isLoading) {
@@ -68,17 +70,17 @@ export function MarketplaceFeed({
           </div>
         </div>
         <h3 className="text-2xl font-bold text-foreground mb-2">
-          No matches found
+          {t('feed.no_matches')}
         </h3>
         <p className="text-muted-foreground max-w-md text-sm leading-relaxed">
-          We couldn&apos;t find any parts matching your criteria. Try adjusting or clearing your filters.
+          {t('feed.no_matches_desc')}
         </p>
         <Button
           onClick={onClearFilters}
           variant="outline"
           className="mt-8 h-11 px-8 rounded-xl font-semibold border-2"
         >
-          Clear All Filters
+          {t('feed.clear_filters')}
         </Button>
       </div>
     )
@@ -88,7 +90,7 @@ export function MarketplaceFeed({
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {requests.map((req) => {
         const isOwner = req.buyerId === userId
-        const sellerActionLabel = isSeller && !isOwner ? 'Quote Now' : isOwner ? 'My Request' : undefined
+        const sellerActionLabel = isSeller && !isOwner ? t('feed.quote_now') : isOwner ? t('feed.my_request') : undefined
         const sellerOnClick = isSeller && !isOwner && onQuote ? () => onQuote(req) : undefined
 
         return (
@@ -102,6 +104,7 @@ export function MarketplaceFeed({
             partNumber={req.partNumber || ''}
             category={req.category?.name || req.category || ''}
             categoryImageUrl={(req as any).category?.imageUrl}
+            notes={req.notes || req.description || ''}
             region={req.location || ''}
             imageUrls={req.imageUrls || []}
             quotesCount={req.quotesCount || req.quotes?.length || 0}

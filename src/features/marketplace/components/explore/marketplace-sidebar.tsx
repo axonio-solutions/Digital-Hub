@@ -45,7 +45,7 @@ export function MarketplaceSidebar({
       <section className="space-y-4">
         <div className="flex items-center gap-2 px-1">
           <LayoutGrid className="w-4 h-4 text-primary" />
-          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Categories</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{t('sidebar.categories')}</h3>
         </div>
         <div className="flex flex-col gap-1">
           <button
@@ -86,7 +86,7 @@ export function MarketplaceSidebar({
       <section className="space-y-4">
         <div className="flex items-center gap-2 px-1">
           <Filter className="w-4 h-4 text-primary" />
-          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Manufacturer</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{t('sidebar.manufacturer')}</h3>
         </div>
         
         <Button
@@ -99,7 +99,7 @@ export function MarketplaceSidebar({
         >
           <div className="flex items-center gap-2 truncate">
             <span className="text-sm font-bold tracking-wide">
-              {selectedBrands.length === 0 ? 'All Brands' : `${selectedBrands.length} Selected`}
+              {selectedBrands.length === 0 ? t('sidebar.all_brands') : t('sidebar.selected_count', { count: selectedBrands.length })}
             </span>
           </div>
           {selectedBrands.length > 0 && (
@@ -124,7 +124,7 @@ export function MarketplaceSidebar({
       <section className="space-y-4">
         <div className="flex items-center gap-2 px-1">
           <Zap className="w-4 h-4 text-primary" />
-          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Timeframe</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{t('sidebar.timeframe')}</h3>
         </div>
         
         <div className="grid grid-cols-1 gap-3">
@@ -138,7 +138,7 @@ export function MarketplaceSidebar({
             )}
           >
             <div className={cn("w-2.5 h-2.5 rounded-full z-10 transition-colors", urgency === "any" ? "bg-primary" : "bg-slate-300 dark:bg-slate-600")} />
-            <span className="z-10 tracking-wide">Standard</span>
+            <span className="z-10 tracking-wide">{t('sidebar.standard')}</span>
             {urgency === "any" && (
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] animate-shimmer" />
             )}
@@ -154,7 +154,7 @@ export function MarketplaceSidebar({
             )}
           >
             <div className={cn("w-2.5 h-2.5 rounded-full z-10 transition-colors", urgency === "asap" ? "bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]" : "bg-slate-300 dark:bg-slate-600")} />
-            <span className="z-10 tracking-wide">Immediate (ASAP)</span>
+            <span className="z-10 tracking-wide">{t('sidebar.asap')}</span>
             {urgency === "asap" && (
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] animate-shimmer" />
             )}
@@ -170,7 +170,7 @@ export function MarketplaceSidebar({
           className="mt-4 w-full h-12 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 text-slate-400 hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/5 transition-all text-[10px] font-black uppercase tracking-[0.2em]"
         >
           <X className="w-3 h-3 me-2" />
-          Reset Filters
+          {t('sidebar.reset_filters')}
         </Button>
       )}
     </aside>

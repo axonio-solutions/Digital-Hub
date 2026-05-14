@@ -39,6 +39,11 @@ export function BrandSelectionDialog({
 }: BrandSelectionDialogProps) {
   const { t } = useTranslation(['marketplace', 'home/explore'])
   const [searchQuery, setSearchQuery] = React.useState('')
+  const [pendingBrands, setPendingBrands] = React.useState<string[]>(selectedBrands)
+
+  React.useEffect(() => {
+    if (isOpen) setPendingBrands(selectedBrands)
+  }, [isOpen, selectedBrands])
 
   const { popularBrands, filteredBrands } = React.useMemo(() => {
     const filtered = brands
@@ -58,12 +63,11 @@ export function BrandSelectionDialog({
 
   const toggleBrand = React.useCallback(
     (id: string) => {
-      const next = selectedBrands.includes(id)
-        ? selectedBrands.filter((b) => b !== id)
-        : [...selectedBrands, id]
-      onSelect(next)
+      setPendingBrands((prev) =>
+        prev.includes(id) ? prev.filter((b) => b !== id) : [...prev, id]
+      )
     },
-    [selectedBrands, onSelect]
+    []
   )
 
   const getBrandLogo = (brand: Brand) => {
@@ -78,13 +82,13 @@ export function BrandSelectionDialog({
           <div className="flex items-center justify-between">
             <DialogHeader className="p-0">
               <DialogTitle className="text-xl font-black tracking-tight flex items-center gap-2 text-foreground">
-                {t('filters.brands', 'Select Brand')}
+                {t('brand_dialog.select_brand')}
               </DialogTitle>
             </DialogHeader>
             <div className="flex items-center gap-2">
-              {selectedBrands.length > 0 && (
+              {pendingBrands.length > 0 && (
                 <Badge variant="secondary" className="bg-primary/10 text-primary border-none font-bold text-[10px] px-2.5 py-1 uppercase tracking-wider">
-                  {selectedBrands.length} Selected
+                  {t('brand_dialog.selected', { count: pendingBrands.length })}
                 </Badge>
               )}
               <Button
@@ -101,7 +105,7 @@ export function BrandSelectionDialog({
           <div className="relative">
             <Search className="absolute start-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
-              placeholder={t('controls.search_placeholder', 'Search brands...')}
+              placeholder={t('brand_dialog.search_brands')}
               className="w-full ps-10 rounded-xl bg-muted border-border focus-visible:ring-1 focus-visible:ring-primary/30 h-11 text-sm font-medium"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -125,11 +129,11 @@ export function BrandSelectionDialog({
             {popularBrands.length > 0 && searchQuery.length === 0 && (
               <section className="space-y-3">
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  <Star className="size-3 fill-amber-400 text-amber-400" /> Popular Brands
+                  <Star className="size-3 fill-amber-400 text-amber-400" /> {t('brand_dialog.popular')}
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {popularBrands.map((brand) => {
-                    const isSelected = selectedBrands.includes(brand.id)
+                    const isSelected = pendingBrands.includes(brand.id)
                     return (
                       <button
                         key={brand.id}
@@ -172,12 +176,12 @@ export function BrandSelectionDialog({
             {/* All Brands */}
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                All Brands
+                {t('brand_dialog.all_brands')}
               </div>
               {filteredBrands.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                   {filteredBrands.map((brand) => {
-                    const isSelected = selectedBrands.includes(brand.id)
+                    const isSelected = pendingBrands.includes(brand.id)
                     return (
                       <button
                         key={brand.id}
@@ -216,9 +220,9 @@ export function BrandSelectionDialog({
                   <div className="size-14 rounded-full bg-muted flex items-center justify-center mb-4 text-muted-foreground">
                     <Search className="size-6" />
                   </div>
-                  <h3 className="text-base font-bold text-foreground">No results found</h3>
+                  <h3 className="text-base font-bold text-foreground">{t('brand_dialog.no_results')}</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    No brands matching &ldquo;{searchQuery}&rdquo;
+                    {t('brand_dialog.no_results_desc', { query: searchQuery })}
                   </p>
                 </div>
               )}
@@ -231,15 +235,18 @@ export function BrandSelectionDialog({
           <Button
             variant="ghost"
             className="text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground"
-            onClick={() => onSelect([])}
+            onClick={() => setPendingBrands([])}
           >
-            Reset
+            {t('brand_dialog.reset')}
           </Button>
           <Button
             className="h-10 px-8 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:brightness-110 transition-all"
-            onClick={() => onOpenChange(false)}
+            onClick={() => {
+              onSelect(pendingBrands)
+              onOpenChange(false)
+            }}
           >
-            Apply Filters
+            {t('brand_dialog.apply')}
           </Button>
         </div>
       </DialogContent>

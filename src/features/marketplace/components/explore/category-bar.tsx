@@ -29,10 +29,12 @@ export function CategoryBar({
   setSelectedBrands,
   onReset,
 }: CategoryBarProps) {
-  const { t } = useTranslation('marketplace')
+  const { t, i18n } = useTranslation('marketplace')
+  const isRtl = i18n.dir() === 'rtl'
   const scrollRef = useRef<HTMLDivElement>(null)
-  const [showLeft, setShowLeft] = useState(false)
-  const [showRight, setShowRight] = useState(true)
+  
+  const [showLeft, setShowLeft] = useState(isRtl) 
+  const [showRight, setShowRight] = useState(!isRtl)
   const [isBrandDialogOpen, setIsBrandDialogOpen] = useState(false)
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
   const [mobileSearch, setMobileSearch] = useState('')
@@ -40,8 +42,20 @@ export function CategoryBar({
   const checkScroll = () => {
     if (!scrollRef.current) return
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
-    setShowLeft(scrollLeft > 2)
-    setShowRight(scrollLeft < scrollWidth - clientWidth - 2)
+    
+    const absScrollLeft = Math.abs(scrollLeft)
+    const maxScroll = scrollWidth - clientWidth
+
+    const isAtStart = absScrollLeft <= 2
+    const isAtEnd = absScrollLeft >= maxScroll - 2
+
+    if (isRtl) {
+      setShowRight(!isAtStart)
+      setShowLeft(!isAtEnd)
+    } else {
+      setShowLeft(!isAtStart)
+      setShowRight(!isAtEnd)
+    }
   }
 
   useEffect(() => {
@@ -53,7 +67,7 @@ export function CategoryBar({
       el?.removeEventListener('scroll', checkScroll)
       window.removeEventListener('resize', checkScroll)
     }
-  }, [categories])
+  }, [categories, isRtl])
 
   const nudge = (dir: 'left' | 'right') => {
     scrollRef.current?.scrollBy({ left: dir === 'left' ? -360 : 360, behavior: 'smooth' })
@@ -64,7 +78,7 @@ export function CategoryBar({
     (selectedBrands.length > 0 ? 1 : 0)
 
   const allCategories = [
-    { id: 'all', name: 'All Parts' },
+    { id: 'all', name: t('category_bar.all_parts') },
     ...categories.map((c: any) => ({ ...c, id: c.id, name: c.name })),
   ]
 
@@ -75,7 +89,7 @@ export function CategoryBar({
   const filterLabel = [
     selectedCategory !== 'all' ? displayCategoryName : '',
     ...selectedBrandNames.slice(0, 2),
-  ].filter(Boolean).join(' · ') || 'All Parts'
+  ].filter(Boolean).join(' · ') || t('category_bar.all_parts')
 
   const moreCount = selectedBrandNames.length > 2 ? selectedBrandNames.length - 2 : 0
 
@@ -140,7 +154,7 @@ export function CategoryBar({
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                     <Input
-                      placeholder="Search categories & brands..."
+                      placeholder={t('category_bar.search_placeholder')}
                       value={mobileSearch}
                       onChange={(e) => setMobileSearch(e.target.value)}
                       className="h-9 pl-9 pr-3 rounded-lg border-0 bg-muted/50 text-sm"
@@ -170,7 +184,7 @@ export function CategoryBar({
                     </button>
                   ))}
                   {filteredCategories.length === 0 && filteredBrands.length === 0 && (
-                    <p className="text-xs text-muted-foreground text-center py-4">No results</p>
+                    <p className="text-xs text-muted-foreground text-center py-4">{t('category_bar.no_results')}</p>
                   )}
                 </div>
 
@@ -178,7 +192,7 @@ export function CategoryBar({
                 {brands.length > 0 && (
                   <>
                     <div className="border-t border-border px-3 pt-2 pb-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Brands</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">{t('category_bar.brands')}</p>
                     </div>
                     <div className="max-h-[30vh] overflow-y-auto p-1.5">
                       {filteredBrands.map((brand: any) => {
@@ -198,7 +212,7 @@ export function CategoryBar({
                         )
                       })}
                       {filteredBrands.length === 0 && (
-                        <p className="text-xs text-muted-foreground text-center py-4">No brands match</p>
+                        <p className="text-xs text-muted-foreground text-center py-4">{t('category_bar.no_brands')}</p>
                       )}
                     </div>
                   </>
@@ -211,7 +225,7 @@ export function CategoryBar({
                       onClick={() => { onReset(); setMobileFilterOpen(false) }}
                       className="flex items-center gap-1 h-8 px-3 rounded-lg text-[10px] font-bold uppercase bg-destructive/10 text-destructive w-full justify-center"
                     >
-                      Clear all filters{activeFilterCount > 1 ? ` (${activeFilterCount})` : ''}
+                      {t('category_bar.clear_all')}{activeFilterCount > 1 ? ` (${activeFilterCount})` : ''}
                     </button>
                   )}
                 </div>
@@ -222,6 +236,8 @@ export function CategoryBar({
           {/* Desktop: horizontal scroll */}
           <div className="hidden md:flex items-center h-13 gap-0">
             <div className="relative flex-1 flex items-center min-w-0">
+              
+              {/* LEFT Edge Button */}
               <div
                 className={cn(
                   'absolute left-0 top-0 bottom-0 w-12 z-10 flex items-center pointer-events-none transition-opacity duration-200',
@@ -242,6 +258,7 @@ export function CategoryBar({
                 </button>
               </div>
 
+              {/* Scrollable Container */}
               <div
                 ref={scrollRef}
                 className="flex items-center gap-1.5 overflow-x-auto w-full py-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
@@ -271,6 +288,7 @@ export function CategoryBar({
                 })}
               </div>
 
+              {/* RIGHT Edge Button */}
               <div
                 className={cn(
                   'absolute right-0 top-0 bottom-0 w-12 z-10 flex items-center justify-end pointer-events-none transition-opacity duration-200',
@@ -305,7 +323,7 @@ export function CategoryBar({
                     : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground border border-transparent hover:border-border',
                 )}
               >
-                Brands
+                {t('category_bar.brands')}
                 {selectedBrands.length > 0 && (
                   <span className="inline-flex items-center justify-center w-4 h-4 rounded bg-primary text-primary-foreground text-[9px] font-bold leading-none">
                     {selectedBrands.length}
@@ -325,7 +343,7 @@ export function CategoryBar({
                 )}
               >
                 <X className="w-3 h-3 flex-shrink-0" />
-                Clear{activeFilterCount > 1 ? ` (${activeFilterCount})` : ''}
+                {t('category_bar.clear')}{activeFilterCount > 1 ? ` (${activeFilterCount})` : ''}
               </button>
             </div>
           </div>

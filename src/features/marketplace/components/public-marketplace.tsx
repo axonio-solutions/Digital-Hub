@@ -24,7 +24,8 @@ export function PublicMarketplace() {
   const [selectedRequest, setSelectedRequest] = useState<any>(null)
   const [searchInput, setSearchInput] = useState('')
 
-  const { t } = useTranslation(['home/explore', 'marketplace'])
+  const { t, i18n } = useTranslation(['home/explore', 'marketplace'])
+  const isRtl = i18n.dir() === 'rtl'
 
   const { q: urlSearchQuery = '' } = routeApi.useSearch()
   const searchQuery = urlSearchQuery || searchInput
@@ -197,10 +198,10 @@ export function PublicMarketplace() {
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
             >
-              <ChevronLeft className="w-4 h-4" />
+               {isRtl ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
             </Button>
             <span className="text-sm font-semibold text-muted-foreground tabular-nums min-w-[4rem] text-center">
-              Page {page + 1}
+              {t('pagination.page', { number: page + 1 })}
             </span>
             <Button
               variant="outline"
@@ -209,7 +210,7 @@ export function PublicMarketplace() {
               onClick={() => setPage((p) => p + 1)}
               disabled={!isMorePages}
             >
-              <ChevronRight className="w-4 h-4" />
+              {isRtl ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
             </Button>
           </div>
         )}
@@ -225,11 +226,11 @@ export function PublicMarketplace() {
       <footer className="border-t border-border py-8 mt-12">
         <div className="max-w-[1700px] mx-auto px-4 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="text-xs font-bold text-muted-foreground tracking-tight">
-            MLILA Marketplace
+            {t('footer.brand')}
           </span>
           <div className="flex items-center gap-6 text-[11px] font-semibold text-muted-foreground/60">
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
+            <a href="#" className="hover:text-foreground transition-colors">{t('footer.terms')}</a>
+            <a href="#" className="hover:text-foreground transition-colors">{t('footer.privacy')}</a>
             <span>&copy; {new Date().getFullYear()}</span>
           </div>
         </div>

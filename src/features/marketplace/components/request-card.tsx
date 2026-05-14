@@ -65,18 +65,26 @@ export function RequestCard({ request, onQuote, isOwner }: RequestCardProps) {
 
       {/* Content Section */}
       <CardContent className="p-6 flex flex-col flex-1">
-        <div className="flex flex-col gap-1 mb-5">
+        <div className="flex flex-col gap-1 mb-4">
           <div className="flex items-center justify-between">
              <h4 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight line-clamp-1 italic">
                {request.partName}
              </h4>
              <ArrowUpRight className="size-5 text-slate-300 group-hover:text-primary transition-colors" />
           </div>
-          <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            <Tag className="size-3" />
-            {request.oemNumber && `OEM: ${request.oemNumber}`}
-          </div>
+          {request.oemNumber && (
+            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              <Tag className="size-3" />
+              OEM: {request.oemNumber}
+            </div>
+          )}
         </div>
+
+        {request.notes && (
+          <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-5 leading-relaxed">
+            {request.notes}
+          </p>
+        )}
 
         <div className="space-y-4 mb-6">
           <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 group/item transition-colors hover:bg-slate-100 dark:hover:bg-slate-900">
