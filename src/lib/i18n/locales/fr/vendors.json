@@ -1,0 +1,10 @@
+{
+  "specialties": {
+    "title": "Specialites du Marche",
+    "desc": "Selectionnez les marques et categories de pieces dans lesquelles vous vous specialisez.",
+    "brands": "Marques Automobiles",
+    "categories": "Categories de Pieces",
+    "selected": "Selectionne",
+    "save": "Enregistrer la Configuration"
+  }
+}

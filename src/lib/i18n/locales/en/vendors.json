@@ -1,0 +1,10 @@
+{
+  "specialties": {
+    "title": "Marketplace Specialties",
+    "desc": "Select the car brands and parts categories you specialize in to filter your marketplace feed.",
+    "brands": "Vehicle Brands",
+    "categories": "Part Categories",
+    "selected": "Selected",
+    "save": "Save Configuration"
+  }
+}
