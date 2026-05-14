@@ -34,5 +34,8 @@
     "pending": "Pending",
     "missed": "Missed",
     "total": "Quotes"
+  },
+  "settings": {
+    "verified_badge": "Verified Business"
   }
 }

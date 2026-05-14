@@ -35,5 +35,8 @@
     "missed": "فائت",
     "total": "عروض"
   },
-  "currency": "د.ج"
+  "currency": "د.ج",
+  "settings": {
+    "verified_badge": "نشاط تجاري موثوق"
+  }
 }

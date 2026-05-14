@@ -7,6 +7,8 @@
     "notifications": "Notifications"
   },
   "profile": {
+    "section_title": "Profile & Identity",
+    "section_desc": "Manage your public avatar, professional bio, and account-level identification.",
     "identity_title": "Profile Identity",
     "identity_desc": "Your avatar is visible to other marketplace participants. Use a professional photo to build trust and increase proposal acceptance.",
     "personal_title": "Personal Details",
@@ -32,6 +34,37 @@
     "wilaya_placeholder": "Select wilaya",
     "save": "Save Changes",
     "saving": "Saving..."
+  },
+  "delivery": {
+    "title": "Delivery & Communication",
+    "desc": "Your location helps sellers provide accurate shipping estimates.",
+    "wilaya": "Wilaya",
+    "wilaya_placeholder": "Select Wilaya",
+    "city": "City",
+    "city_placeholder": "e.g. Kouba",
+    "address": "Full Address",
+    "address_placeholder": "Street, Building, etc.",
+    "whatsapp": "WhatsApp Number (Optional)",
+    "whatsapp_placeholder": "+213...",
+    "save": "Update Delivery Settings",
+    "saving": "Saving..."
+  },
+  "avatar": {
+    "upload_error": "Please upload an image file",
+    "upload_success": "Profile picture updated!",
+    "upload_failed": "Failed to upload avatar",
+    "remove_success": "Profile picture removed",
+    "remove_failed": "Failed to remove image",
+    "change_title": "Change profile picture",
+    "remove_button": "Remove Picture"
+  },
+  "tabs": {
+    "title": "Account Settings",
+    "desc": "Manage your profile, preferences, and account security.",
+    "general": "General",
+    "delivery": "Delivery",
+    "store": "Store",
+    "manage": "Manage"
   },
   "messages": {
     "profile_updated": "Profile Updated",
