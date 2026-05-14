@@ -235,10 +235,10 @@ export function CtaSection() {
 
           <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground">
-              &copy; 2026 MLILA. All rights reserved.
+              &copy; {new Date().getFullYear()} {tMarketing('footer.copyright')}
             </p>
             <p className="text-xs text-muted-foreground/60">
-              The First Reverse-Marketplace in Algeria
+              {tMarketing('footer.tagline')}
             </p>
           </div>
         </div>

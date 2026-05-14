@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useRouter } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { NotificationBell } from '@/features/notifications'
@@ -10,19 +11,20 @@ import { cn } from '@/lib/utils'
 import { NavControls } from '@/components/navigation/nav-controls'
 import { UserMenu } from '@/components/navigation/user-menu'
 
-const NAV_LINKS = [
-  { to: '/explore', search: { q: '' }, label: 'Explore' },
-  { to: '/pricing', label: 'Pricing' },
-  { to: '/faq', label: 'FAQ' },
-  { to: '/about', label: 'About' },
-  { to: '/contact', label: 'Contact' },
-]
-
 export default function Navbar() {
+  const { t } = useTranslation('common')
   const { data: user } = useAuth()
   const isAuthenticated = !!user
   const router = useRouter()
   const currentPath = router.state.location.pathname
+
+  const NAV_LINKS = useMemo(() => [
+    { to: '/explore', search: { q: '' }, label: t('nav.explore', 'Explore') },
+    { to: '/pricing', label: t('nav.pricing', 'Pricing') },
+    { to: '/faq', label: t('nav.faq', 'FAQ') },
+    { to: '/about', label: t('nav.about', 'About') },
+    { to: '/contact', label: t('nav.contact', 'Contact') },
+  ], [t])
 
   const role: string =
     (user as any)?.role ??
@@ -92,7 +94,7 @@ export default function Navbar() {
 
       {/* Right controls */}
       <div className="flex items-center gap-1.5 flex-shrink-0">
-        <NavControls showLanguage={false} />
+        <NavControls showLanguage={true} />
 
         {isAuthenticated ? (
           <>
@@ -123,7 +125,7 @@ export default function Navbar() {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden size-9 rounded-xl"
+              className={cn("md:hidden size-9 rounded-xl", currentPath.startsWith('/explore') && 'hidden')}
               aria-label="Open menu"
             >
               {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}

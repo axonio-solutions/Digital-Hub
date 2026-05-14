@@ -161,7 +161,7 @@ export const PartCard = React.memo(function PartCard({
         )}
 
         {category && (
-          <Badge className="absolute top-4 right-4 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border border-border shadow-sm gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-foreground rtl:flex-row-reverse group transition-all duration-300">
+          <Badge className="absolute top-4 right-4 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border border-border shadow-sm gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-foreground group transition-all duration-300">
             <CategoryDisplay
               category={categoryImageUrl ? { name: category, imageUrl: categoryImageUrl } : category}
               showName={false}

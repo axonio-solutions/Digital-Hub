@@ -42,6 +42,7 @@ import {
 
 export function GeneralInfoForm() {
   const { t } = useTranslation('dashboard/settings')
+  const { t: tw } = useTranslation('wilayas')
   const queryClient = useQueryClient()
   const { data: user } = useAuth()
 
@@ -229,7 +230,7 @@ export function GeneralInfoForm() {
                         <SelectContent className="max-h-[300px]">
                           {WILAYAS.map((w) => (
                             <SelectItem key={w.id} value={w.name}>
-                              {w.id} - {w.name}
+                              {w.id} - {tw(w.id)}
                             </SelectItem>
                           ))}
                         </SelectContent>

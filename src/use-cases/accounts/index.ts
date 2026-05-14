@@ -14,11 +14,7 @@ import {
  */
 
 export async function updateProfileUseCase(userId: string, updates: any) {
-  const data = { ...updates }
-  if (data.phoneNumber) {
-    data.phone = data.phoneNumber
-    delete data.phoneNumber
-  }
+  const { userId: _u, ...data } = updates
   return await updateProfileQuery(userId, data)
 }
 
