@@ -1,0 +1,48 @@
+{
+  "title": "Notifications",
+  "new_count": "{{count}} nouveau",
+  "new_count_plural": "{{count}} nouveaux",
+  "clear_all": "Tout effacer",
+  "empty": "Tout est a jour",
+  "empty_desc": "Aucune nouvelle notification",
+  "mark_read": "Marquer comme lu",
+  "toast": {
+    "alert": "Alerte",
+    "new_notification": "Nouvelle notification",
+    "view": "Voir"
+  },
+  "types": {
+    "new_offer": "Nouvelle offre recue",
+    "first_quote": "Premier devis recu !",
+    "milestone_3_quotes": "Palier des 3 devis !",
+    "new_quote": "Nouvelle offre recue",
+    "quote_accepted": "Devis accepte",
+    "quote_won": "Vous avez remporte l'affaire !",
+    "quote_rejected": "Offre declinee",
+    "quote_status_change": "Devis mis a jour",
+    "new_lead": "Nouveau prospect",
+    "request_update": "Demande mise a jour",
+    "support_message": "Message de support",
+    "spam_flag": "Alerte spam",
+    "abandoned_request": "Demande expiree",
+    "bottleneck_alert": "Alerte systeme",
+    "account_approved": "Boutique approuvee !"
+  },
+  "messages": {
+    "new_offer": "Un vendeur a soumis une nouvelle offre pour votre demande.",
+    "first_quote": "Bonne nouvelle ! Votre premier devis est arrive pour la piece demandee.",
+    "milestone_3_quotes": "Vous avez desormais 3 devis concurrentiels. Comparez-les !",
+    "new_quote": "Un vendeur a soumis une nouvelle offre pour votre demande.",
+    "quote_accepted": "Votre devis a ete accepte par l'acheteur.",
+    "quote_won": "Votre devis a ete accepte. Consultez vos commandes pour continuer.",
+    "quote_rejected": "Votre offre n'a pas ete retenue par l'acheteur.",
+    "quote_status_change": "Un vendeur a mis a jour son devis.",
+    "new_lead": "Un nouvel acheteur potentiel s'interesse a vos pieces.",
+    "request_update": "Le statut de votre demande a ete mis a jour.",
+    "support_message": "Vous avez un nouveau message du support.",
+    "spam_flag": "Une demande a ete signalee comme spam et necessite un examen.",
+    "abandoned_request": "Une demande a expire en raison d'inactivite.",
+    "bottleneck_alert": "Un goulot d'etranglement systeme a ete detecte.",
+    "account_approved": "Votre compte vendeur a ete approuve. Vous pouvez desormais vendre !"
+  }
+}

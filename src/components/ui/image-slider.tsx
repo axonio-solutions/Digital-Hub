@@ -52,7 +52,7 @@ export function ImageSlider({
 
   const slideVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
+      x: (isRtl ? -1 : 1) * (direction > 0 ? 300 : -300),
       opacity: 0,
       scale: 0.95
     }),
@@ -64,7 +64,7 @@ export function ImageSlider({
     },
     exit: (direction: number) => ({
       zIndex: 0,
-      x: direction < 0 ? 300 : -300,
+      x: (isRtl ? -1 : 1) * (direction < 0 ? 300 : -300),
       opacity: 0,
       scale: 1.05
     })
@@ -131,9 +131,9 @@ export function ImageSlider({
           onDragEnd={(_, { offset, velocity }) => {
             const swipe = swipePower(offset.x, velocity.x)
             if (swipe < -swipeConfidenceThreshold) {
-              paginate(1)
+              paginate(isRtl ? -1 : 1)
             } else if (swipe > swipeConfidenceThreshold) {
-              paginate(-1)
+              paginate(isRtl ? 1 : -1)
             }
           }}
           className="absolute inset-0 w-full h-full"
@@ -154,16 +154,16 @@ export function ImageSlider({
           <button
             type="button"
             className="absolute left-3 top-1/2 -translate-y-1/2 z-10 size-10 flex items-center justify-center rounded-xl bg-white/90 dark:bg-black/80 text-foreground shadow-xl backdrop-blur-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 border border-border/50"
-            onClick={(e) => { e.stopPropagation(); paginate(isRtl ? 1 : -1); }}
+            onClick={(e) => { e.stopPropagation(); paginate(-1); }}
           >
-            {isRtl ? <ChevronRight className="size-5" /> : <ChevronLeft className="size-5" />}
+            <ChevronLeft className="size-5" />
           </button>
           <button
             type="button"
             className="absolute right-3 top-1/2 -translate-y-1/2 z-10 size-10 flex items-center justify-center rounded-xl bg-white/90 dark:bg-black/80 text-foreground shadow-xl backdrop-blur-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 border border-border/50"
-            onClick={(e) => { e.stopPropagation(); paginate(isRtl ? -1 : 1); }}
+            onClick={(e) => { e.stopPropagation(); paginate(1); }}
           >
-            {isRtl ? <ChevronLeft className="size-5" /> : <ChevronRight className="size-5" />}
+            <ChevronRight className="size-5" />
           </button>
         </>
       )}

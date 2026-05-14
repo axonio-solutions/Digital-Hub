@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import {
   Activity,
   Archive,
@@ -26,22 +27,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 
-const ADMIN_LINKS = [
-  { to: '/dashboard', label: 'Global Metrics', icon: Activity },
-  { to: '/dashboard/admin/users', label: 'User Moderation', icon: Users },
-  { to: '/dashboard/admin/categories', label: 'Categories', icon: Layers },
-  { to: '/dashboard/admin/audit', label: 'Request Audit', icon: Archive },
-  { to: '/dashboard/admin/settings', label: 'Admin Settings', icon: Settings },
-]
-
-const SELLER_LINKS = [
-  { to: '/dashboard/quotes', label: 'My Quotes', icon: Tag },
-]
-
-const BUYER_LINKS = [
-  { to: '/dashboard/requests', label: 'My Requests', icon: ClipboardList },
-]
-
 interface UserMenuProps {
   user: any
   role?: string
@@ -49,16 +34,36 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps) {
+  const { t, i18n } = useTranslation('dashboard/layout')
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  const name = user?.name || user?.email || 'User'
+  const name = user?.name || user?.email || ''
   const email = user?.email || ''
   const image = user?.image || ''
   const initials = name.substring(0, 2).toUpperCase()
-  const roleLinks = role === 'admin' ? ADMIN_LINKS : role === 'seller' ? SELLER_LINKS : BUYER_LINKS
-  const toolsLabel = role === 'admin' ? 'Admin Tools' : role === 'seller' ? 'Seller Tools' : 'Buyer Tools'
+  const toolsLabel = role === 'admin' ? t('user_dropdown.tools_admin') : role === 'seller' ? t('user_dropdown.tools_seller') : t('user_dropdown.tools_buyer')
+
+  const roleLinks = useMemo(() => {
+    if (role === 'admin') {
+      return [
+        { to: '/dashboard', label: t('nav.global_metrics'), icon: Activity },
+        { to: '/dashboard/admin/users', label: t('nav.user_moderation'), icon: Users },
+        { to: '/dashboard/admin/categories', label: t('nav.categories'), icon: Layers },
+        { to: '/dashboard/admin/audit', label: t('nav.request_audit'), icon: Archive },
+        { to: '/dashboard/admin/settings', label: t('nav.admin_settings'), icon: Settings },
+      ]
+    }
+    if (role === 'seller') {
+      return [
+        { to: '/dashboard/quotes', label: t('nav.my_quotes'), icon: Tag },
+      ]
+    }
+    return [
+      { to: '/dashboard/requests', label: t('user_dropdown.my_requests'), icon: ClipboardList },
+    ]
+  }, [role, t])
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
@@ -71,14 +76,14 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
     }
   }
 
-  const itemClass = "flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors hover:bg-muted group/item"
+  const itemClass = "flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors hover:bg-muted group/item [dir=rtl]:justify-end"
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           className="relative outline-none rounded-full focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1 group/avatar"
-          aria-label="Open user menu"
+          aria-label={t('user_dropdown.open_menu')}
         >
           <Avatar className="size-8 rounded-full border-2 border-transparent group-hover/avatar:border-primary/30 transition-all duration-200">
             <AvatarImage src={image} alt={name} className="object-cover" />
@@ -93,6 +98,7 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
       <DropdownMenuContent
         align={align}
         sideOffset={8}
+        dir={i18n.dir()}
         className="w-72 p-0 rounded-xl border-border bg-card shadow-lg overflow-hidden"
       >
         {/* Profile header */}
@@ -114,7 +120,7 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
                   ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
                   : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
             )}>
-              {role}
+              {role === 'admin' ? t('roles.admin', { ns: 'common' }) : role === 'seller' ? t('roles.seller', { ns: 'common' }) : t('roles.buyer', { ns: 'common' })}
             </span>
           </div>
         </div>
@@ -145,7 +151,7 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
             className={cn(itemClass, "mx-2")}
           >
             <CircleUserRound className="w-4 h-4 text-muted-foreground group-hover/item:text-primary transition-colors" />
-            <span className="flex-1 text-foreground">Account Settings</span>
+            <span className="flex-1 text-foreground">{t('user_dropdown.account_settings')}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
@@ -163,7 +169,7 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
             ) : (
               <LogOut className="w-4 h-4" />
             )}
-            <span>Sign Out</span>
+            <span>{t('user_dropdown.sign_out')}</span>
           </DropdownMenuItem>
         </div>
       </DropdownMenuContent>

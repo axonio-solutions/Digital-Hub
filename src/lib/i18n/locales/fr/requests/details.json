@@ -11,7 +11,11 @@
   "actions": {
     "back_to_list": "Retour à mes demandes", "edit_details": "Modifier", "copy_link": "Copier le lien",
     "delete_request": "Supprimer", "close_request": "Fermer", "reopen_request": "Réouvrir",
-    "delete_permanently": "Supprimer", "close": "Fermer", "cancel": "Annuler"
+    "delete_permanently": "Supprimer", "close": "Fermer", "cancel": "Annuler",
+    "edit": "Modifier", "share": "Partager", "delete": "Supprimer",
+    "closing": "Fermeture...", "reopening": "Réouverture...",
+    "close_request_btn": "Fermer la demande", "reopen_request_btn": "Réouvrir la demande",
+    "deleting": "Suppression..."
   },
   "errors": { "not_found": "Demande introuvable", "not_found_desc": "Nous n'avons pas trouvé la demande recherchée." },
   "hints": { "fulfill_desc": "Marquez cette demande comme satisfaite.", "closed_desc": "Cette demande est fermée. Réouvrez-la pour recevoir plus d'offres." },

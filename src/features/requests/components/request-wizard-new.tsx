@@ -80,23 +80,26 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
     mode: 'onChange',
   })
 
-  const { watch } = methods
-  const formData = watch()
+  const watchPartName = methods.watch('partName')
+  const watchCategoryId = methods.watch('categoryId')
+  const watchBrandId = methods.watch('brandId')
+  const watchVehicleModel = methods.watch('vehicleModel')
+  const watchModelYear = methods.watch('modelYear')
 
-  const isStepComplete = (step: number) => {
+  const isStepComplete = useCallback((step: number) => {
     switch (step) {
       case 1:
-        return !!formData.partName.trim()
+        return !!(watchPartName || '').trim()
       case 2:
-        return !!formData.categoryId
+        return !!watchCategoryId
       case 3:
-        return !!formData.brandId
+        return !!watchBrandId
       case 4:
-        return !!formData.vehicleModel.trim() && !!formData.modelYear.trim()
+        return !!(watchVehicleModel || '').trim() && !!(watchModelYear || '').trim()
       default:
         return true
     }
-  }
+  }, [watchPartName, watchCategoryId, watchBrandId, watchVehicleModel, watchModelYear])
 
   const handleNext = () => {
     if (currentStep < STEPS.length && isStepComplete(currentStep)) {

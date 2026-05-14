@@ -1,0 +1,48 @@
+{
+  "title": "Notifications",
+  "new_count": "{{count}} new",
+  "new_count_plural": "{{count}} new",
+  "clear_all": "Clear all",
+  "empty": "All caught up",
+  "empty_desc": "No new notifications",
+  "mark_read": "Mark as read",
+  "toast": {
+    "alert": "Alert",
+    "new_notification": "New Notification",
+    "view": "View"
+  },
+  "types": {
+    "new_offer": "New Offer Received",
+    "first_quote": "First Quote Received!",
+    "milestone_3_quotes": "3 Quotes Milestone!",
+    "new_quote": "New Offer Received",
+    "quote_accepted": "Quote Accepted",
+    "quote_won": "You Won the Deal!",
+    "quote_rejected": "Offer Declined",
+    "quote_status_change": "Quote Updated",
+    "new_lead": "New Lead",
+    "request_update": "Request Updated",
+    "support_message": "Support Message",
+    "spam_flag": "Spam Alert",
+    "abandoned_request": "Request Expired",
+    "bottleneck_alert": "System Alert",
+    "account_approved": "Store Approved!"
+  },
+  "messages": {
+    "new_offer": "A seller has submitted a new offer for your request.",
+    "first_quote": "Good news! Your first offer is here for the part you requested.",
+    "milestone_3_quotes": "You now have 3 competitive quotes. Time to compare!",
+    "new_quote": "A seller has submitted a new offer for your request.",
+    "quote_accepted": "Your quote was accepted by the buyer.",
+    "quote_won": "Your quote was accepted. Check your orders to proceed.",
+    "quote_rejected": "Your offer was not selected by the buyer.",
+    "quote_status_change": "A seller has updated their quote.",
+    "new_lead": "A new potential buyer is interested in your parts.",
+    "request_update": "Your request status has been updated.",
+    "support_message": "You have a new message from support.",
+    "spam_flag": "A request has been flagged as spam and requires review.",
+    "abandoned_request": "A request has expired due to inactivity.",
+    "bottleneck_alert": "A system bottleneck has been detected.",
+    "account_approved": "Your seller account has been approved. You can now start selling!"
+  }
+}

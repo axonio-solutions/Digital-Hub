@@ -8,26 +8,26 @@
     "live_requests": "Demandes en Direct",
     "my_quotes": "Mes Devis",
     "global_metrics": "Statistiques Globales",
-    "user_moderation": "Modération Utilisateurs",
+    "user_moderation": "Moderation Utilisateurs",
     "buyers_hub": "Centre Acheteurs",
     "sellers_hub": "Centre Vendeurs",
-    "categories": "Catégories",
-    "request_audit": "Audit des Requêtes",
-    "settings": "Paramètres",
+    "categories": "Categories",
+    "request_audit": "Audit des Requetes",
+    "settings": "Parametres",
     "support": "Aide & Support",
     "cloud_logs": "Logs Cloud",
-    "admin_settings": "Paramètres Admin"
+    "admin_settings": "Parametres Admin"
   },
   "labels": {
     "buyer_hub": "Espace Acheteur",
     "seller_hub": "Espace Vendeur",
-    "admin_control": "Contrôle Admin"
+    "admin_control": "Controle Admin"
   },
   "breadcrumbs": {
     "dashboard": "Tableau de Bord",
     "overview": "Vue d'ensemble",
     "demands_hub": "Centre de Demandes",
-    "offers": "Offres Reçues",
+    "offers": "Offres Recues",
     "history": "Historique",
     "profile": "Mon Profil",
     "live_feed": "Flux en Direct",
@@ -35,19 +35,24 @@
     "audit_log": "Journal d'Audit",
     "my_garage": "Mon Garage",
     "buyers_intelligence": "Intelligence Acheteurs",
-    "sellers_ecosystem": "Écosystème Vendeurs",
+    "sellers_ecosystem": "Ecosysteme Vendeurs",
     "taxonomy_management": "Gestion de la Taxonomie",
-    "user_moderation": "Modération Utilisateurs",
-    "admin_settings": "Paramètres Admin",
+    "user_moderation": "Moderation Utilisateurs",
+    "admin_settings": "Parametres Admin",
     "cloud_logs": "Logs Cloud",
     "support": "Aide & Support",
-    "request_detail": "Détail de la Demande"
+    "request_detail": "Detail de la Demande"
   },
   "user_dropdown": {
-    "role": "Rôle",
-    "region": "Région",
-    "account_settings": "Paramètres du compte",
-    "seller_hub": "Espace Vendeur",
-    "sign_out": "Se déconnecter"
+    "role": "Role",
+    "region": "Region",
+    "account_settings": "Parametres du compte",
+    "seller_hub": "Hub Vendeur",
+    "sign_out": "Se deconnecter",
+    "open_menu": "Ouvrir le menu utilisateur",
+    "tools_admin": "Outils Admin",
+    "tools_seller": "Outils Vendeur",
+    "tools_buyer": "Outils Acheteur",
+    "my_requests": "Mes Demandes"
   }
 }

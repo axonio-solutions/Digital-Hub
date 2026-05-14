@@ -11,7 +11,11 @@
   "actions": {
     "back_to_list": "العودة لطلباتي", "edit_details": "تعديل", "copy_link": "نسخ الرابط",
     "delete_request": "حذف", "close_request": "إغلاق", "reopen_request": "إعادة فتح",
-    "delete_permanently": "حذف", "close": "إغلاق", "cancel": "إلغاء"
+    "delete_permanently": "حذف", "close": "إغلاق", "cancel": "إلغاء",
+    "edit": "تعديل", "share": "مشاركة", "delete": "حذف",
+    "closing": "جاري الإغلاق...", "reopening": "جاري إعادة الفتح...",
+    "close_request_btn": "إغلاق الطلب", "reopen_request_btn": "إعادة فتح الطلب",
+    "deleting": "جاري الحذف..."
   },
   "errors": { "not_found": "الطلب غير موجود", "not_found_desc": "لم نتمكن من العثور على الطلب الذي تبحث عنه." },
   "hints": { "fulfill_desc": "ضع علامة على هذا الطلب كمنفذ.", "closed_desc": "هذا الطلب مغلق. أعد فتحه لتلقي المزيد من العروض." },

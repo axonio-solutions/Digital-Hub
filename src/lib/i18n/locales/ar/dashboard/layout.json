@@ -48,6 +48,11 @@
     "region": "المنطقة",
     "account_settings": "إعدادات الحساب",
     "seller_hub": "مركز البائع",
-    "sign_out": "تسجيل الخروج"
+    "sign_out": "تسجيل الخروج",
+    "open_menu": "فتح قائمة المستخدم",
+    "tools_admin": "أدوات المسؤول",
+    "tools_seller": "أدوات البائع",
+    "tools_buyer": "أدوات المشتري",
+    "my_requests": "طلباتي"
   }
 }

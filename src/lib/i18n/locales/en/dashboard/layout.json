@@ -1,7 +1,7 @@
 {
   "nav": {
     "overview": "Overview",
-    "demands_hub": "Demands Hub",
+    "demands_hub": "My Requests",
     "my_garage": "My Garage",
     "offers": "Offers Received",
     "history": "Order History",
@@ -13,7 +13,7 @@
     "sellers_hub": "Sellers Hub",
     "categories": "Categories",
     "request_audit": "Request Audit",
-    "settings": "Settings",
+    "settings": "Account Settings",
     "support": "Help & Support",
     "cloud_logs": "Cloud Logs",
     "admin_settings": "Admin Settings"
@@ -26,7 +26,7 @@
   "breadcrumbs": {
     "dashboard": "Dashboard",
     "overview": "Overview",
-    "demands_hub": "Demands Hub",
+    "demands_hub": "My Requests",
     "offers": "Offers Received",
     "history": "Order History",
     "profile": "My Profile",
@@ -48,6 +48,11 @@
     "region": "Region",
     "account_settings": "Account Settings",
     "seller_hub": "Seller Hub",
-    "sign_out": "Sign out"
+    "sign_out": "Sign out",
+    "open_menu": "Open user menu",
+    "tools_admin": "Admin Tools",
+    "tools_seller": "Seller Tools",
+    "tools_buyer": "Buyer Tools",
+    "my_requests": "My Requests"
   }
 }

@@ -155,6 +155,17 @@ function RootDocument({
             __html: `
               (function() {
                 try {
+                  var lang = localStorage.getItem("i18nextLng");
+                  if (lang === "ar") {
+                    document.documentElement.setAttribute("dir", "rtl");
+                    document.documentElement.setAttribute("lang", "ar");
+                  } else if (lang === "fr") {
+                    document.documentElement.setAttribute("lang", "fr");
+                  }
+                } catch (e) {}
+              })();
+              (function() {
+                try {
                   const storageKey = "mlila-ui-theme";
                   const theme = localStorage.getItem(storageKey);
                   const supportDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches === true;

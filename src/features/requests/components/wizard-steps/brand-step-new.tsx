@@ -28,7 +28,7 @@ function BrandItem({ brand, isSelected }: { brand: any; isSelected: boolean }) {
       <Label
         htmlFor={`brand-${brand.id}`}
         className={cn(
-          'flex items-center gap-3 px-4 py-3 rounded-lg border-2 cursor-pointer transition-all hover:shadow-sm',
+          'flex items-center gap-3 px-4 py-3 rounded-lg border-2 cursor-pointer transition-all hover:shadow-sm rtl:flex-row-reverse',
           'hover:bg-muted/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:shadow-sm',
           isSelected && 'border-primary bg-primary/5 shadow-sm'
         )}
@@ -67,7 +67,7 @@ function BrandItem({ brand, isSelected }: { brand: any; isSelected: boolean }) {
         </span>
       </Label>
       {isSelected && (
-        <div className="absolute top-2 right-2 size-5 rounded-full bg-primary flex items-center justify-center">
+        <div className="absolute top-2 end-2 size-5 rounded-full bg-primary flex items-center justify-center">
           <Check className="size-3 text-primary-foreground" />
         </div>
       )}
@@ -122,9 +122,9 @@ export function BrandStep() {
       className="flex flex-col gap-5"
     >
       <div>
-        <h3 className="text-lg font-semibold mb-1 flex items-center gap-2">
-          <Building2 className="size-5 text-primary" />
-          {t('steps.brand.title')}
+        <h3 className="text-lg font-semibold mb-1 flex items-center gap-2 rtl:flex-row-reverse">
+          <Building2 className="size-5 text-primary shrink-0" />
+          <span>{t('steps.brand.title')}</span>
         </h3>
         <p className="text-sm text-muted-foreground">
           {t('steps.brand.description')}
@@ -145,10 +145,10 @@ export function BrandStep() {
       >
         {sortedBrands.popular.length > 0 && (
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 mb-2 px-0.5">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 mb-2 px-0.5 rtl:text-end">
               {t('steps.brand.popular', 'Popular')}
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 rtl:[direction:rtl]">
               {sortedBrands.popular.map((brand: any) => (
                 <BrandItem
                   key={brand.id}
@@ -162,10 +162,10 @@ export function BrandStep() {
 
         {sortedBrands.others.length > 0 && (
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 mb-2 px-0.5">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 mb-2 px-0.5 rtl:text-end">
               {t('steps.brand.all_brands', 'All Brands')}
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 rtl:[direction:rtl]">
               {sortedBrands.others.map((brand: any) => (
                 <BrandItem
                   key={brand.id}

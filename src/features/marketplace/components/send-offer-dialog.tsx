@@ -57,7 +57,7 @@ function ImageSlider({ images, alt, className }: { images: string[]; alt: string
     <div className={`relative group aspect-video w-full overflow-hidden rounded-xl border border-border bg-card ${className || ''}`}>
       <div 
         className="flex transition-transform duration-300 ease-in-out h-full"
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        style={{ transform: `translateX(${isRtl ? '' : '-'}${currentIndex * 100}%)` }}
       >
         {images.map((img, idx) => (
           <div key={idx} className="w-full h-full shrink-0">
@@ -71,20 +71,20 @@ function ImageSlider({ images, alt, className }: { images: string[]; alt: string
         variant="secondary" 
         size="icon" 
         className="absolute left-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-        onClick={() => setCurrentIndex(prev => isRtl ? Math.min(images.length - 1, prev + 1) : Math.max(0, prev - 1))}
-        disabled={isRtl ? currentIndex === images.length - 1 : currentIndex === 0}
+        onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+        disabled={currentIndex === 0}
       >
-        {isRtl ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
+        <ChevronLeft className="size-4" />
       </Button>
       
       <Button 
         variant="secondary" 
         size="icon" 
         className="absolute right-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-        onClick={() => setCurrentIndex(prev => isRtl ? Math.max(0, prev - 1) : Math.min(images.length - 1, prev + 1))}
-        disabled={isRtl ? currentIndex === 0 : currentIndex === images.length - 1}
+        onClick={() => setCurrentIndex(prev => Math.min(images.length - 1, prev + 1))}
+        disabled={currentIndex === images.length - 1}
       >
-        {isRtl ? <ChevronLeft className="size-4" /> : <ChevronRight className="size-4" />}
+        <ChevronRight className="size-4" />
       </Button>
 
       {/* Dots */}

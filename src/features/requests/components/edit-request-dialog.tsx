@@ -23,7 +23,7 @@ export function EditRequestDialog({
         <DialogHeader className="sr-only">
           <DialogTitle>{t('dialogs.edit_title')}</DialogTitle>
         </DialogHeader>
-        <div className="h-[600px] max-h-[85dvh]">
+        <div className="h-dvh max-h-[85dvh]">
           <RequestWizard
             initialData={request}
             onSuccess={() => onOpenChange(false)}

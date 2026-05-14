@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { Plus, Zap, MessageSquare, CheckCircle2, RefreshCcw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from '@tanstack/react-router'
@@ -15,6 +16,7 @@ import { ViewToggles } from '@/components/ui/view-toggles'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useCancelRequest, useDeleteRequest, useReopenRequest } from '@/features/requests/hooks/use-requests'
+import { taxonomyKeys } from '@/features/taxonomy/hooks/use-taxonomy'
 import { cn } from '@/lib/utils'
 
 export function BuyerHub() {
@@ -29,6 +31,14 @@ export function BuyerHub() {
   const { data: user } = useAuth()
   const buyerId = user?.id || ''
   const { data: requests = [], refetch, isLoading, isRefetching } = useBuyerRequests(buyerId)
+  const queryClient = useQueryClient()
+  const prefetchedTaxonomy = useRef(false)
+
+  const handlePrefetchTaxonomy = useCallback(() => {
+    if (prefetchedTaxonomy.current) return
+    prefetchedTaxonomy.current = true
+    queryClient.prefetchQuery({ queryKey: taxonomyKeys.all })
+  }, [queryClient])
   const { mutate: cancelRequest } = useCancelRequest()
   const { mutate: deleteRequest } = useDeleteRequest()
   const { mutate: reopenRequest } = useReopenRequest()
@@ -120,7 +130,10 @@ export function BuyerHub() {
           <div className="w-px h-8 bg-border/40 hidden sm:block shrink-0" />
           <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
             <DialogTrigger asChild>
-              <Button className="font-black uppercase text-xs tracking-widest h-11 px-4 sm:px-6 shadow-lg shadow-primary/20 rounded-2xl whitespace-nowrap gap-2 flex-1 sm:flex-none">
+              <Button
+                className="font-black uppercase text-xs tracking-widest h-11 px-4 sm:px-6 shadow-lg shadow-primary/20 rounded-2xl whitespace-nowrap gap-2 flex-1 sm:flex-none"
+                onMouseEnter={handlePrefetchTaxonomy}
+              >
                 <Plus className="size-4 shrink-0" />
                 {t('buttons.new_demand')}
               </Button>
@@ -186,7 +199,11 @@ export function BuyerHub() {
           </div>
           <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" className="font-black uppercase text-xs tracking-widest h-12 px-8 rounded-2xl shadow-lg shadow-primary/20">
+              <Button
+                size="lg"
+                className="font-black uppercase text-xs tracking-widest h-12 px-8 rounded-2xl shadow-lg shadow-primary/20"
+                onMouseEnter={handlePrefetchTaxonomy}
+              >
                 <Plus className="size-4 me-2" />
                 {t('buttons.new_demand')}
               </Button>
