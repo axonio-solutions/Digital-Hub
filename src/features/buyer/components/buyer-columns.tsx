@@ -11,9 +11,8 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
-import { CategoryDisplay } from "@/components/ui/category-display";
 import { GlowingBadge } from "@/components/unlumen-ui/glowing-badge";
+import { tCategory } from "@/utils/category-utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -203,7 +202,7 @@ export const useBuyerColumns = (
                 <span className="text-[9px] font-bold text-muted-foreground">{catName.substring(0, 2).toUpperCase()}</span>
               )}
             </div>
-            <span className="text-sm font-medium">{catName}</span>
+            <span className="text-sm font-medium">{tCategory(catName, t)}</span>
           </div>
         )
       },

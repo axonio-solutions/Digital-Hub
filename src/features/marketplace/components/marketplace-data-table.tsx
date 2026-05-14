@@ -216,7 +216,8 @@ export function MarketplaceDataTable({
           const category = row.original.category?.name || row.original.category 
           return (
             <Badge variant="secondary" className="gap-1">
-              <CategoryDisplay category={category} iconClassName="size-3" />
+              <CategoryDisplay category={category} showName={false} iconClassName="size-3" />
+              {tCategory(category, t)}
             </Badge>
           )
         }

@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { getCategoryImageUrl } from '@/utils/category-icons'
+import { tCategory } from '@/utils/category-utils'
 
 function getInitials(name: string): string {
   const parts = name.split(/\s+/)
@@ -130,7 +131,7 @@ export function CategoryStep() {
                           isSelected ? 'text-primary' : 'text-foreground',
                         )}
                       >
-                        {category.name}
+                        {tCategory(category.name, t)}
                       </span>
                       {category.description && (
                         <span className="text-xs text-muted-foreground/70 leading-tight line-clamp-1">

@@ -7,10 +7,10 @@ import {
   Cpu,
   FileText,
   Loader2,
+  MessageSquare,
   Pencil,
   RefreshCcw,
   Sparkles,
-  Tag,
   Trash2,
   XCircle,
 } from 'lucide-react'
@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { CategoryDisplay } from '@/components/ui/category-display'
+import { tCategory } from '@/utils/category-utils'
 
 interface PartCardProps {
   id: string
@@ -109,6 +110,7 @@ export const PartCard = React.memo(function PartCard({
   onDelete,
   isProcessing,
   categoryImageUrl,
+  quotesCount,
 }: PartCardProps) {
   const { t } = useTranslation('common')
   const hasImage = !!imageUrls?.[0]
@@ -159,13 +161,13 @@ export const PartCard = React.memo(function PartCard({
         )}
 
         {category && (
-          <Badge className="absolute top-4 right-4 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border border-border shadow-sm gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-foreground rtl:flex-row-reverse">
+          <Badge className="absolute top-4 right-4 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border border-border shadow-sm gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-foreground rtl:flex-row-reverse group transition-all duration-300">
             <CategoryDisplay
               category={categoryImageUrl ? { name: category, imageUrl: categoryImageUrl } : category}
               showName={false}
               iconClassName="size-5"
             />
-            <span className="truncate max-w-[100px]">{category}</span>
+            <span className="truncate max-w-[100px] group-hover:max-w-[250px] transition-[max-width] duration-300 ease-in-out">{tCategory(category, t)}</span>
           </Badge>
         )}
       </div>
@@ -175,16 +177,24 @@ export const PartCard = React.memo(function PartCard({
         {/* Status + Time */}
         <div className="flex items-center justify-between mb-5">
           {cfg ? (
-            <span
-              className={cn(
-                'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold border',
-                cfg.bg,
-                cfg.text,
-                cfg.border,
+            <span className="inline-flex items-center gap-2">
+              <span
+                className={cn(
+                  'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-bold border',
+                  cfg.bg,
+                  cfg.text,
+                  cfg.border,
+                )}
+              >
+                <span className={cn('size-1.5 rounded-full shrink-0', cfg.dot)} />
+                {cfg.label}
+              </span>
+              {quotesCount > 0 && (
+                <span className="text-xs font-medium text-muted-foreground inline-flex items-center gap-1" dir="ltr">
+                  <MessageSquare className="size-3" />
+                  {quotesCount}
+                </span>
               )}
-            >
-              <span className={cn('size-1.5 rounded-full shrink-0', cfg.dot)} />
-              {cfg.label}
             </span>
           ) : (
             <span />

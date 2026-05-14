@@ -15,6 +15,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageToggle } from '@/components/language-toggle'
 import { Badge } from '@/components/ui/badge'
 import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -616,7 +617,7 @@ function SpecialtiesStep({ formData, setFormData }: any) {
                   )}
                   onClick={() => toggleCategory(cat.id)}
                 >
-                  {cat.name}
+                  {tCategory(cat.name, t)}
                 </Badge>
               )
             })}

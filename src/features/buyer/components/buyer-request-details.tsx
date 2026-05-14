@@ -14,9 +14,10 @@ import {
   MessageCircle,
   MessageSquare,
   Phone,
-  Share2,
+  RefreshCcw,
   Tag,
   Trash2,
+  XCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -46,6 +47,7 @@ import { ActionConfirmDialog } from '@/features/buyer/components/action-confirm-
 import { EditRequestDialog } from '@/features/requests/components/edit-request-dialog'
 import { QuoteList } from '@/features/quotes/components/quote-list'
 import { CategoryDisplay } from '@/components/ui/category-display'
+import { tCategory } from '@/utils/category-utils'
 
 function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
@@ -82,7 +84,7 @@ function ImageSlider({ images, alt }: { images: string[]; alt: string }) {
     <div className="relative group aspect-[4/3] w-full overflow-hidden">
       <div 
         className="flex transition-transform duration-300 ease-in-out h-full"
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        style={{ transform: `translateX(${isRtl ? '' : '-'}${currentIndex * 100}%)` }}
       >
         {images.map((img, idx) => (
           <div key={idx} className="w-full h-full shrink-0">
@@ -96,20 +98,20 @@ function ImageSlider({ images, alt }: { images: string[]; alt: string }) {
         variant="secondary" 
         size="icon" 
         className="absolute left-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-        onClick={() => setCurrentIndex(prev => isRtl ? Math.min(images.length - 1, prev + 1) : Math.max(0, prev - 1))}
-        disabled={isRtl ? currentIndex === images.length - 1 : currentIndex === 0}
+        onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+        disabled={currentIndex === 0}
       >
-        {isRtl ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
+        <ChevronLeft className="size-4" />
       </Button>
       
       <Button 
         variant="secondary" 
         size="icon" 
         className="absolute right-2 top-1/2 -translate-y-1/2 size-8 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-        onClick={() => setCurrentIndex(prev => isRtl ? Math.max(0, prev - 1) : Math.min(images.length - 1, prev + 1))}
-        disabled={isRtl ? currentIndex === 0 : currentIndex === images.length - 1}
+        onClick={() => setCurrentIndex(prev => Math.min(images.length - 1, prev + 1))}
+        disabled={currentIndex === images.length - 1}
       >
-        {isRtl ? <ChevronLeft className="size-4" /> : <ChevronRight className="size-4" />}
+        <ChevronRight className="size-4" />
       </Button>
 
       {/* Dots */}
@@ -220,37 +222,72 @@ export function BuyerRequestDetails() {
       </div>
 
       {/* Actions row */}
-      <div className="flex items-center gap-1.5 flex-wrap">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-primary/10 hover:text-primary"
-          onClick={() => setIsEditDialogOpen(true)}
-        >
-          <Edit className="size-3.5" /> {t('actions.edit')}
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-accent"
-          onClick={handleShare}
-        >
-          <Share2 className="size-3.5" /> {t('actions.share')}
-        </Button>
+      <div className="flex items-center gap-3">
+        {isOpen ? (
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <Button
+              disabled={isEditDialogOpen}
+              onClick={() => setIsEditDialogOpen(true)}
+              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium"
+            >
+              <Edit className="size-4" />
+              {t('actions.edit')}
+            </Button>
+            <Button
+              variant="outline"
+              disabled={isCancelling}
+              onClick={handleCancel}
+              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-orange-200 text-orange-600 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-400 dark:hover:bg-orange-950"
+            >
+              {isCancelling ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <XCircle className="size-4" />
+              )}
+              {t('actions.close_request_btn')}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <Button
+              disabled={isEditDialogOpen}
+              onClick={() => setIsEditDialogOpen(true)}
+              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium"
+            >
+              <Edit className="size-4" />
+              {t('actions.edit')}
+            </Button>
+            <Button
+              variant="outline"
+              disabled={isReopening}
+              onClick={handleReopen}
+              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950"
+            >
+              {isReopening ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <RefreshCcw className="size-4" />
+              )}
+              {t('actions.reopen_request_btn')}
+            </Button>
+          </div>
+        )}
         {request.status !== 'fulfilled' && (
           <Button
-            variant="ghost"
-            size="sm"
-            className="h-9 gap-1.5 rounded-xl text-xs font-bold hover:bg-destructive/10 hover:text-destructive"
+            variant="outline"
+            size="icon"
+            disabled={isDeleting}
             onClick={() => setIsDeleteDialogOpen(true)}
+            className="size-10 shrink-0 rounded-lg border-red-100 bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 dark:border-red-900 dark:bg-red-950/50 dark:text-red-400 dark:hover:bg-red-950"
           >
-            <Trash2 className="size-3.5" /> {t('actions.delete')}
+            {isDeleting ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Trash2 className="size-4" />
+            )}
           </Button>
         )}
       </div>
-
-      {/* Separator */}
-      <div className="border-t border-border/50" />
 
       {/* Info rows */}
       <div className="space-y-0">
@@ -260,35 +297,13 @@ export function BuyerRequestDetails() {
           <div className="flex items-center gap-3 py-1.5">
             <Tag className="size-4 text-muted-foreground shrink-0" />
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground w-20 shrink-0">{t('labels.part_category')}</span>
-            <span className="text-sm font-bold text-foreground">
-              <CategoryDisplay category={request.category} iconClassName="size-3.5" />
+            <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
+              <CategoryDisplay category={request.category} showName={false} iconClassName="size-3.5" />
+              {tCategory(categoryName, t)}
             </span>
           </div>
         )}
         {request.notes && <InfoRow icon={MessageSquare} label={t('labels.description')} value={request.notes} />}
-      </div>
-
-      {/* Desktop Close/Reopen */}
-      <div className="hidden lg:block pt-3">
-        {isOpen ? (
-          <Button onClick={handleCancel} disabled={isCancelling} variant="outline" className="w-full h-11 rounded-xl gap-2 text-sm font-bold">
-            {isCancelling ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <CheckCircle2 className="size-4 text-green-600" />
-            )}
-            {isCancelling ? t('actions.closing') : t('actions.close_request_btn')}
-          </Button>
-        ) : (
-          <Button onClick={handleReopen} disabled={isReopening} variant="outline" className="w-full h-11 rounded-xl gap-2 text-sm font-bold">
-            {isReopening ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <Clock className="size-4 text-primary" />
-            )}
-            {isReopening ? t('actions.reopening') : t('actions.reopen_request_btn')}
-          </Button>
-        )}
       </div>
     </>
   )
@@ -340,7 +355,7 @@ export function BuyerRequestDetails() {
             ) : (
               <CheckCircle2 className="size-4" />
             )}
-            {isCancelling ? t('actions.closing') : t('actions.close_request_btn')}
+            {t('actions.close_request_btn')}
           </Button>
         ) : (
           <Button onClick={handleReopen} disabled={isReopening} className="w-full h-12 rounded-xl gap-2 text-sm font-bold">
@@ -349,7 +364,7 @@ export function BuyerRequestDetails() {
             ) : (
               <Clock className="size-4" />
             )}
-            {isReopening ? t('actions.reopening') : t('actions.reopen_request_btn')}
+            {t('actions.reopen_request_btn')}
           </Button>
         )}
       </div>

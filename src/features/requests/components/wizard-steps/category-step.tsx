@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
+import { tCategory } from '@/utils/category-utils'
 
 // Icon mapping based on category names or ID patterns
 const CATEGORY_ICONS: Record<string, any> = {
@@ -129,7 +130,7 @@ export function CategoryStep() {
                     "relative text-sm font-semibold tracking-tight text-center",
                     isSelected ? "text-primary" : "text-foreground/80 group-hover:text-foreground"
                   )}>
-                    {category.name}
+                    {tCategory(category.name, t)}
                   </span>
                 </ChoiceGroup.Item>
               </motion.div>

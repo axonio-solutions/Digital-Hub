@@ -1,5 +1,3 @@
-import { TFunction } from 'i18next'
-
 /**
  * Maps database category names to i18n translation keys.
  * This ensures professional MSA translations are used regardless of the underlying DB string.
@@ -30,7 +28,7 @@ const CATEGORY_MAP: Record<string, string> = {
  * Translates a category name using the provided i18next instance.
  * Falls back to the original name if no translation key is found.
  */
-export function tCategory(category: any, t: TFunction): string {
+export function tCategory(category: any, t: (key: string) => string): string {
   if (!category) return t('categories:general')
 
   // Extract name from object if necessary

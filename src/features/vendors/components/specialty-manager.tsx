@@ -7,8 +7,11 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2, Check, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
 
 export function SpecialtyManager() {
+  const { t } = useTranslation('vendors')
   const { data: currentSpecialties, isLoading: loadingCurrent } = useSellerSpecialties()
   const updateSpecialties = useUpdateSellerSpecialties()
   
@@ -131,7 +134,7 @@ export function SpecialtyManager() {
                       : "bg-card border text-muted-foreground hover:border-primary/30"
                   )}
                 >
-                  {cat.name}
+                  {tCategory(cat.name, t)}
                   {isSelected ? <Check className="size-3" /> : <Plus className="size-3 opacity-40" />}
                 </button>
               )

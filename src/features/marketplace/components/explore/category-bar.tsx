@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Search, X, Zap } from 'lucide-react'
 import { CategoryDisplay } from '@/components/ui/category-display'
 import { BrandSelectionDialog } from '../brand-selection-dialog'
+import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
@@ -27,6 +29,7 @@ export function CategoryBar({
   setSelectedBrands,
   onReset,
 }: CategoryBarProps) {
+  const { t } = useTranslation('marketplace')
   const scrollRef = useRef<HTMLDivElement>(null)
   const [showLeft, setShowLeft] = useState(false)
   const [showRight, setShowRight] = useState(true)
@@ -68,8 +71,9 @@ export function CategoryBar({
   const selectedCategoryName = allCategories.find((c) => c.id === selectedCategory)?.name || ''
   const selectedBrandNames = brands.filter((b: any) => selectedBrands.includes(b.id)).map((b: any) => b.brand || b.name)
 
+  const displayCategoryName = selectedCategory !== 'all' ? tCategory(selectedCategoryName, t) : ''
   const filterLabel = [
-    selectedCategory !== 'all' ? selectedCategoryName : '',
+    selectedCategory !== 'all' ? displayCategoryName : '',
     ...selectedBrandNames.slice(0, 2),
   ].filter(Boolean).join(' · ') || 'All Parts'
 
@@ -160,7 +164,8 @@ export function CategoryBar({
                       )}
                     >
                       <CategoryDisplay category={cat} showName={false} iconClassName="size-3.5" />
-                      <span className="truncate">{cat.name}</span>
+                      <span className="truncate">{cat.id === 'all' ? cat.name : tCategory(cat.name, t)}</span>
+
                       {selectedCategory === cat.id && <CheckCircle2 className="w-3.5 h-3.5 ml-auto shrink-0" />}
                     </button>
                   ))}
@@ -260,7 +265,7 @@ export function CategoryBar({
                       ) : (
                         <CategoryDisplay category={cat} showName={false} iconClassName="size-3" />
                       )}
-                      {cat.name}
+                      {cat.id === 'all' ? cat.name : tCategory(cat.name, t)}
                     </button>
                   )
                 })}

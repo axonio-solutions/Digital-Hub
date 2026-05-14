@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useActivateSeller, useToggleUserBan, useUserDetails } from '@/features/admin/hooks/use-users'
 import { useTranslation } from 'react-i18next'
+import { tCategory } from '@/utils/category-utils'
 
 interface UserProfileDialogProps { user: any | null; open: boolean; onOpenChange: (open: boolean) => void }
 
@@ -145,7 +146,7 @@ export function UserProfileDialog({ user, open, onOpenChange }: UserProfileDialo
                         {u.sellerCategories?.map((sc: any, i: number) => (
                           <Badge key={i} variant="secondary" className="text-[10px] rounded-full px-2.5 gap-1">
                             <CategoryDisplay category={sc.category} showName={false} iconClassName="size-3" />
-                            {sc.category?.name || 'General'}
+                            {tCategory(sc.category?.name || sc.category, t)}
                           </Badge>
                         ))}
                       </div>
