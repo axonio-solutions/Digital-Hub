@@ -5,6 +5,7 @@ import {
   IconDashboard,
   IconHelpCircle,
   IconMessages,
+  IconSearch,
   IconSettings,
 } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
@@ -27,11 +28,16 @@ export function SellerLayout({ children }: { children: React.ReactNode }) {
         url: '/dashboard/quotes',
         icon: IconMessages,
       },
+      {
+        title: t('nav.explore_marketplace'),
+        url: '/explore',
+        icon: IconSearch,
+      },
     ],
     secondary: [
       {
         title: t('nav.settings'),
-        url: '/dashboard/settings',
+        url: '/dashboard/profile',
         icon: IconSettings,
       },
       {

@@ -111,12 +111,26 @@ export const useSellerColumns = (
         header: t('columns.part'),
         cell: ({ row }) => {
           const quote = row.original
+          const partImages = quote.request?.imageUrls || []
           return (
-            <div className="flex flex-col">
-              <span className="font-medium text-sm">{quote.request?.partName}</span>
-              <span className="text-[10px] text-muted-foreground font-mono">
-                #{quote.id.substring(0, 8)}
-              </span>
+            <div className="flex items-center gap-3">
+              <div className="size-8 rounded bg-muted overflow-hidden border shrink-0 flex items-center justify-center">
+                {partImages.length > 0 ? (
+                  <img src={partImages[0]} alt="" className="size-full object-cover" />
+                ) : (
+                  <span className="text-[10px] text-muted-foreground font-bold">
+                    {quote.request?.partName?.substring(0, 2).toUpperCase() || 'P'}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="font-medium text-sm truncate max-w-[180px]" title={quote.request?.partName}>
+                  {quote.request?.partName}
+                </span>
+                <span className="text-[10px] text-muted-foreground font-mono">
+                  #{quote.id.substring(0, 8)}
+                </span>
+              </div>
             </div>
           )
         },
@@ -131,32 +145,19 @@ export const useSellerColumns = (
           const year = request?.modelYear
           const logoUrl = brandLogos?.[brand]
           return (
-            <div className="flex items-center gap-2.5">
-              {logoUrl ? (
-                <div className="size-7 rounded-full bg-white border border-border flex items-center justify-center p-1 shrink-0 overflow-hidden shadow-sm">
-                  <img
-                    src={logoUrl}
-                    alt={brand}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-              ) : (
-                <div
-                  className="size-7 rounded-full flex items-center justify-center text-[10px] font-black text-white shrink-0 shadow-sm"
-                  style={{ backgroundColor: getBrandColor(brand) }}
-                >
-                  {brand ? brand.charAt(0).toUpperCase() : '?'}
-                </div>
-              )}
-              <div className="flex flex-col min-w-0">
-                <span className="text-sm font-medium truncate">
-                  {brand} {model}
-                </span>
-                {year && (
-                  <Badge variant="outline" className="w-fit text-[10px] h-4 font-normal">
-                    {year}
-                  </Badge>
+            <div className="flex items-center gap-2">
+              <div className="size-7 rounded-md bg-muted flex items-center justify-center shrink-0 border border-border">
+                {logoUrl ? (
+                  <img src={logoUrl} alt={brand} className="size-4 object-contain" />
+                ) : (
+                  <span className="text-[9px] font-bold text-muted-foreground">
+                    {(brand || '?').substring(0, 2).toUpperCase()}
+                  </span>
                 )}
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-medium">{brand} {model}</span>
+                {year && <span className="text-xs text-muted-foreground">{year}</span>}
               </div>
             </div>
           )
@@ -166,12 +167,21 @@ export const useSellerColumns = (
         accessorKey: 'category',
         header: t('columns.category', { defaultValue: 'Category' }),
         cell: ({ row }) => {
-          const category = row.original.request?.category?.name || row.original.request?.category
+          const cat = row.original.request?.category
+          const catName = cat?.name || row.original.request?.category || ''
           return (
-            <Badge variant="secondary" className="text-[10px] gap-1">
-              <CategoryDisplay category={category} showName={false} iconClassName="size-3" />
-              {tCategory(category, t)}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <div className="size-7 rounded-md bg-muted flex items-center justify-center shrink-0 border border-border">
+                {cat?.imageUrl ? (
+                  <img src={cat.imageUrl} alt="" className="size-4 object-contain" />
+                ) : (
+                  <span className="text-[9px] font-bold text-muted-foreground">
+                    {(catName || '?').substring(0, 2).toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <span className="text-sm font-medium">{tCategory(catName, t)}</span>
+            </div>
           )
         },
       },
