@@ -42,13 +42,21 @@ interface Category {
   status: 'active' | 'draft' | 'archived'
 }
 
+interface CategoryDialogProps {
+  editingItem: Category | null
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
+}
+
 export function CategoryDialog({
   editingItem,
   isOpen,
   onOpenChange,
-  categories,
 }: CategoryDialogProps) {
   const { t } = useTranslation('dashboard/taxonomy')
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const form = useForm<CategoryInput>({
     resolver: zodResolver(categorySchema) as any,
     defaultValues: {
@@ -72,7 +80,7 @@ export function CategoryDialog({
       form.reset({ name: '', description: '', imageUrl: '', status: 'active' })
       setPreviewImage(null)
     }
-  }, [editingItem, form, open])
+  }, [editingItem, form, isOpen])
 
   const createMutation = useCreateCategory()
   const updateMutation = useUpdateCategory()
@@ -80,7 +88,7 @@ export function CategoryDialog({
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (!file.type.startsWith('image/')) { toast.error('Please upload an image file'); return }
+    if (!file.type.startsWith('image/')) { toast.error(t('dialog.toast_upload_error')); return }
 
     try {
       setIsUploading(true)
@@ -96,9 +104,9 @@ export function CategoryDialog({
       const { data: { publicUrl } } = supabase.storage.from('taxonomy').getPublicUrl(fileName)
       form.setValue('imageUrl', publicUrl)
       setPreviewImage(publicUrl)
-      toast.success('Image uploaded')
+      toast.success(t('dialog.toast_upload_success'))
     } catch (error: any) {
-      toast.error(error.message || 'Upload failed')
+      toast.error(error.message || t('dialog.toast_upload_failed'))
     } finally {
       setIsUploading(false)
     }
@@ -115,14 +123,14 @@ export function CategoryDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="font-space italic uppercase font-black text-2xl tracking-tighter">
-            {editingItem ? 'Edit Category' : 'Create Category'}
+            {editingItem ? t('dialog.edit_title') : t('dialog.create_title')}
           </DialogTitle>
           <DialogDescription className="text-[11px] font-medium leading-relaxed">
-            Configure parts taxonomy metadata. Precise labeling ensures high-fidelity demand matching.
+            {t('dialog.description')}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -145,12 +153,12 @@ export function CategoryDialog({
               <div className="flex-1 space-y-1.5">
                 <Button type="button" variant="outline" size="sm" className="w-full h-9 text-[10px] font-bold uppercase tracking-wider rounded-lg"
                   onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                  <Upload className="size-3.5 me-1.5" /> Upload Icon
+                  <Upload className="size-3.5 me-1.5" /> {t('dialog.upload_icon')}
                 </Button>
                 {previewImage && (
                   <Button type="button" variant="ghost" size="sm" className="w-full h-7 text-[10px] text-muted-foreground hover:text-destructive rounded-lg"
                     onClick={handleRemoveImage}>
-                    <Trash2 className="size-3 me-1" /> Remove
+                    <Trash2 className="size-3 me-1" /> {t('dialog.remove_image')}
                   </Button>
                 )}
               </div>
@@ -162,9 +170,9 @@ export function CategoryDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">Label Name</FormLabel>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('dialog.name_label')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Hydraulics" {...field} className="h-11 font-bold text-xs rounded-xl" />
+                    <Input placeholder={t('dialog.name_placeholder')} {...field} className="h-11 font-bold text-xs rounded-xl" />
                   </FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
@@ -175,9 +183,9 @@ export function CategoryDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('form.description_label', 'Description')}</FormLabel>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('dialog.description_label')}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('form.description_placeholder', 'Technical specs, sub-components...')} {...field} value={field.value || ''} className="h-11 font-bold text-xs rounded-xl" />
+                    <Input placeholder={t('dialog.description_placeholder')} {...field} value={field.value || ''} className="h-11 font-bold text-xs rounded-xl" />
                   </FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
@@ -188,13 +196,13 @@ export function CategoryDialog({
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">Taxonomy Status</FormLabel>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('dialog.status_label')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                    <FormControl><SelectTrigger className="h-11 font-bold text-xs rounded-xl"><SelectValue placeholder="Select status" /></SelectTrigger></FormControl>
+                    <FormControl><SelectTrigger className="h-11 font-bold text-xs rounded-xl"><SelectValue placeholder={t('dialog.status_placeholder')} /></SelectTrigger></FormControl>
                     <SelectContent>
-                      <SelectItem value="active" className="text-xs font-bold">Active</SelectItem>
-                      <SelectItem value="draft" className="text-xs font-bold">Draft</SelectItem>
-                      <SelectItem value="archived" className="text-xs font-bold">Archived</SelectItem>
+                      <SelectItem value="active" className="text-xs font-bold">{t('dialog.status_active')}</SelectItem>
+                      <SelectItem value="draft" className="text-xs font-bold">{t('dialog.status_draft')}</SelectItem>
+                      <SelectItem value="archived" className="text-xs font-bold">{t('dialog.status_archived')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className="text-[10px]" />
@@ -204,7 +212,7 @@ export function CategoryDialog({
             <DialogFooter className="pt-4">
               <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending || isUploading} className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
                 {(createMutation.isPending || updateMutation.isPending) ? <Loader2 className="animate-spin me-2" size={16} /> : null}
-                {editingItem ? 'Update Category' : 'Deploy Category'}
+                {editingItem ? t('dialog.submit_edit') : t('dialog.submit_create')}
               </Button>
             </DialogFooter>
           </form>

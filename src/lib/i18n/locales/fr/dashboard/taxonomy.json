@@ -5,6 +5,27 @@
     "export": "Exporter",
     "add_new": "Ajouter Nouveau"
   },
+  "dialog": {
+    "create_title": "Créer une Catégorie",
+    "edit_title": "Modifier la Catégorie",
+    "description": "Configurez la taxonomie interne des pièces et des clusters de véhicules pour maintenir des signaux de demande de haute précision.",
+    "name_label": "Nom de l'Étiquette",
+    "name_placeholder": "ex. Hydraulique",
+    "status_label": "Statut Taxonomique",
+    "status_placeholder": "Sélectionner le statut",
+    "status_active": "Actif",
+    "status_draft": "Brouillon",
+    "status_archived": "Archivé",
+    "upload_icon": "Télécharger l'icône",
+    "remove_image": "Supprimer",
+    "submit_create": "Déployer la Catégorie",
+    "submit_edit": "Mettre à Jour la Catégorie",
+    "description_label": "Description",
+    "description_placeholder": "Spécifications techniques, sous-composants...",
+    "toast_upload_error": "Veuillez télécharger un fichier image",
+    "toast_upload_success": "Image téléchargée",
+    "toast_upload_failed": "Échec du téléchargement"
+  },
   "tabs": {
     "categories": "Catégories",
     "brands": "Marques Automobiles"
@@ -23,10 +44,6 @@
       "manufacturer_cluster": "Cluster Fabricant"
     },
     "search_placeholder": "Rechercher {{tab}}...",
-    "form": {
-      "description_label": "Description",
-      "description_placeholder": "Spécifications techniques, sous-composants..."
-    },
     "actions": {
       "category_label": "Actions Catégorie",
       "brand_label": "Actions Marque",

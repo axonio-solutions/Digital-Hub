@@ -5,6 +5,27 @@
     "export": "Export",
     "add_new": "Add New"
   },
+  "dialog": {
+    "create_title": "Create Category",
+    "edit_title": "Edit Category",
+    "description": "Configure parts taxonomy metadata. Precise labeling ensures high-fidelity demand matching.",
+    "name_label": "Label Name",
+    "name_placeholder": "e.g., Hydraulics",
+    "status_label": "Taxonomy Status",
+    "status_placeholder": "Select status",
+    "status_active": "Active",
+    "status_draft": "Draft",
+    "status_archived": "Archived",
+    "upload_icon": "Upload Icon",
+    "remove_image": "Remove",
+    "submit_create": "Deploy Category",
+    "submit_edit": "Update Category",
+    "description_label": "Description",
+    "description_placeholder": "Technical specs, sub-components...",
+    "toast_upload_error": "Please upload an image file",
+    "toast_upload_success": "Image uploaded",
+    "toast_upload_failed": "Upload failed"
+  },
   "tabs": {
     "categories": "Categories",
     "brands": "Car Brands"
@@ -23,10 +44,6 @@
       "manufacturer_cluster": "Manufacturer Cluster"
     },
     "search_placeholder": "Search {{tab}}...",
-    "form": {
-      "description_label": "Description",
-      "description_placeholder": "Technical specs, sub-components..."
-    },
     "actions": {
       "category_label": "Category Actions",
       "brand_label": "Brand Actions",

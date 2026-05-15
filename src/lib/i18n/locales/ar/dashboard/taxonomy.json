@@ -5,6 +5,27 @@
     "export": "تصدير",
     "add_new": "إضافة جديد"
   },
+  "dialog": {
+    "create_title": "إنشاء فئة",
+    "edit_title": "تعديل الفئة",
+    "description": "ضبط التصنيف الداخلي للقطع ومجموعات المركبات لضمان دقة إشارات الطلب في السوق.",
+    "name_label": "اسم الفئة",
+    "name_placeholder": "مثال: الهيدروليك",
+    "status_label": "حالة التصنيف",
+    "status_placeholder": "اختر الحالة",
+    "status_active": "نشط",
+    "status_draft": "مسودة",
+    "status_archived": "مؤرشف",
+    "upload_icon": "رفع أيقونة",
+    "remove_image": "إزالة",
+    "submit_create": "نشر الفئة",
+    "submit_edit": "تحديث الفئة",
+    "description_label": "الوصف",
+    "description_placeholder": "المواصفات الفنية، المكونات الفرعية...",
+    "toast_upload_error": "يرجى رفع ملف صورة",
+    "toast_upload_success": "تم رفع الصورة",
+    "toast_upload_failed": "فشل الرفع"
+  },
   "tabs": {
     "categories": "الفئات",
     "brands": "علامات السيارات"
@@ -23,10 +44,6 @@
       "manufacturer_cluster": "مجموعة الشركة المصنعة"
     },
     "search_placeholder": "بحث في {{tab}}...",
-    "form": {
-      "description_label": "الوصف",
-      "description_placeholder": "المواصفات الفنية، المكونات الفرعية..."
-    },
     "actions": {
       "category_label": "إجراءات الفئة",
       "brand_label": "إجراءات العلامة",

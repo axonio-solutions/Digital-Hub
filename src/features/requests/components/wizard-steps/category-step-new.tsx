@@ -10,8 +10,9 @@ import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
+import { DirectionProvider } from '@/components/ui/direction'
 import { getCategoryImageUrl } from '@/utils/category-icons'
-import { tCategory } from '@/utils/category-utils'
+import { tCategory, tCategoryDescription } from '@/utils/category-utils'
 
 function getInitials(name: string): string {
   const parts = name.split(/\s+/)
@@ -20,7 +21,8 @@ function getInitials(name: string): string {
 }
 
 export function CategoryStep() {
-  const { t } = useTranslation('requests/form')
+  const { t, i18n } = useTranslation('requests/form')
+  const dir = i18n.dir()
   const { data: taxonomy, isLoading } = useTaxonomy()
   const { setValue, watch } = useFormContext<ProductFormData>()
 
@@ -73,91 +75,93 @@ export function CategoryStep() {
         </p>
       </div>
 
-      <RadioGroup
-        value={selectedCategoryId || ''}
-        onValueChange={(value) => setValue('categoryId', value)}
-      >
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="flex flex-col gap-2"
+      <DirectionProvider dir={dir}>
+        <RadioGroup
+          value={selectedCategoryId || ''}
+          onValueChange={(value) => setValue('categoryId', value)}
         >
-          {taxonomy?.categories.map((category) => {
-            const isSelected = selectedCategoryId === category.id
-            const imageUrl = getCategoryImageUrl(category)
-            const initials = getInitials(category.name)
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="flex flex-col gap-2"
+          >
+            {taxonomy?.categories.map((category) => {
+              const isSelected = selectedCategoryId === category.id
+              const imageUrl = getCategoryImageUrl(category)
+              const initials = getInitials(category.name)
 
-            return (
-              <motion.div key={category.id} variants={item}>
-                <div className="relative">
-                  <RadioGroupItem
-                    value={category.id}
-                    id={`category-${category.id}`}
-                    className="peer sr-only"
-                  />
-                  <Label
-                    htmlFor={`category-${category.id}`}
-                    className={cn(
-                      'relative flex items-center gap-3.5 p-3.5 rounded-xl border-2 cursor-pointer transition-all select-none',
-                      'hover:bg-muted/40',
-                      'peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40 peer-focus-visible:ring-offset-1',
-                      isSelected
-                        ? 'border-primary bg-primary/5 shadow-sm shadow-primary/5'
-                        : 'border-border hover:border-border/80',
-                    )}
-                  >
-                    {/* Icon / Image */}
-                    <div
+              return (
+                <motion.div key={category.id} variants={item}>
+                  <div className="relative">
+                    <RadioGroupItem
+                      value={category.id}
+                      id={`category-${category.id}`}
+                      className="peer sr-only"
+                    />
+                    <Label
+                      htmlFor={`category-${category.id}`}
                       className={cn(
-                        'size-11 rounded-xl flex items-center justify-center shrink-0 transition-all',
+                        'relative flex items-center gap-3.5 p-3.5 rounded-xl border-2 cursor-pointer transition-all select-none rtl:flex-row-reverse',
+                        'hover:bg-muted/40',
+                        'peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40 peer-focus-visible:ring-offset-1',
                         isSelected
-                          ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
-                          : 'bg-muted text-muted-foreground',
+                          ? 'border-primary bg-primary/5 shadow-sm shadow-primary/5'
+                          : 'border-border hover:border-border/80',
                       )}
                     >
-                      {imageUrl ? (
-                        <img src={imageUrl} alt={category.name} className="size-6 object-contain" />
-                      ) : (
-                        <span className="text-xs font-bold">{initials}</span>
-                      )}
-                    </div>
-
-                    {/* Text */}
-                    <div className="flex flex-col min-w-0 flex-1 gap-0.5">
-                      <span
+                      {/* Selected check */}
+                      <div
                         className={cn(
-                          'text-sm font-semibold leading-tight truncate',
-                          isSelected ? 'text-primary' : 'text-foreground',
+                          'size-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-200',
+                          isSelected
+                            ? 'bg-primary scale-100 opacity-100'
+                            : 'bg-muted-foreground/10 scale-75 opacity-0',
                         )}
                       >
-                        {tCategory(category.name, t)}
-                      </span>
-                      {category.description && (
-                        <span className="text-xs text-muted-foreground/70 leading-tight line-clamp-1 text-start">
-                          {category.description}
-                        </span>
-                      )}
-                    </div>
+                        <Check className="size-3.5 text-primary-foreground" />
+                      </div>
 
-                    {/* Selected check */}
-                    <div
-                      className={cn(
-                        'size-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-200',
-                        isSelected
-                          ? 'bg-primary scale-100 opacity-100'
-                          : 'bg-muted-foreground/10 scale-75 opacity-0',
-                      )}
-                    >
-                      <Check className="size-3.5 text-primary-foreground" />
-                    </div>
-                  </Label>
-                </div>
-              </motion.div>
-            )
-          })}
-        </motion.div>
-      </RadioGroup>
+                      {/* Text */}
+                      <div className="flex flex-col min-w-0 flex-1 gap-0.5">
+                        <span
+                          className={cn(
+                            'text-sm font-semibold leading-tight truncate',
+                            isSelected ? 'text-primary' : 'text-foreground',
+                          )}
+                        >
+                          {tCategory(category.name, t)}
+                        </span>
+                        {(tCategoryDescription(category, t) || category.description) && (
+                          <span className="text-xs text-muted-foreground/70 leading-tight line-clamp-1 text-start">
+                            {tCategoryDescription(category, t) || category.description}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Icon / Image */}
+                      <div
+                        className={cn(
+                          'size-11 rounded-xl flex items-center justify-center shrink-0 transition-all',
+                          isSelected
+                            ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
+                            : 'bg-muted text-muted-foreground',
+                        )}
+                      >
+                        {imageUrl ? (
+                          <img src={imageUrl} alt={category.name} className="size-6 object-contain" />
+                        ) : (
+                          <span className="text-xs font-bold">{initials}</span>
+                        )}
+                      </div>
+                    </Label>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </motion.div>
+        </RadioGroup>
+      </DirectionProvider>
     </motion.div>
   )
 }
