@@ -23,6 +23,10 @@
       "manufacturer_cluster": "Manufacturer Cluster"
     },
     "search_placeholder": "Search {{tab}}...",
+    "form": {
+      "description_label": "Description",
+      "description_placeholder": "Technical specs, sub-components..."
+    },
     "actions": {
       "category_label": "Category Actions",
       "brand_label": "Brand Actions",

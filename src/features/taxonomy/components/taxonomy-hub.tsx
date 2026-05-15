@@ -68,7 +68,7 @@ export function TaxonomyHub() {
               <CategoryDisplay category={{ name: row.original.name, imageUrl: row.original.imageUrl }} showName={false} iconClassName="size-3.5" />
               {tCategory(row.original.name, t)}
             </span>
-            <span className="text-[10px] text-muted-foreground truncate max-w-[200px]">{row.original.description || t('table.columns.no_description')}</span>
+            <span className="text-[10px] text-muted-foreground truncate max-w-[200px] text-start">{row.original.description || t('table.columns.no_description')}</span>
           </div>
         </div>
       ),

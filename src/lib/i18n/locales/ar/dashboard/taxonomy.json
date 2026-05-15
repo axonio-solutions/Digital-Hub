@@ -23,6 +23,10 @@
       "manufacturer_cluster": "مجموعة الشركة المصنعة"
     },
     "search_placeholder": "بحث في {{tab}}...",
+    "form": {
+      "description_label": "الوصف",
+      "description_placeholder": "المواصفات الفنية، المكونات الفرعية..."
+    },
     "actions": {
       "category_label": "إجراءات الفئة",
       "brand_label": "إجراءات العلامة",

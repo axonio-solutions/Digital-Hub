@@ -134,7 +134,7 @@ export function CategoryStep() {
                         {tCategory(category.name, t)}
                       </span>
                       {category.description && (
-                        <span className="text-xs text-muted-foreground/70 leading-tight line-clamp-1">
+                        <span className="text-xs text-muted-foreground/70 leading-tight line-clamp-1 text-start">
                           {category.description}
                         </span>
                       )}

@@ -23,6 +23,10 @@
       "manufacturer_cluster": "Cluster Fabricant"
     },
     "search_placeholder": "Rechercher {{tab}}...",
+    "form": {
+      "description_label": "Description",
+      "description_placeholder": "Spécifications techniques, sous-composants..."
+    },
     "actions": {
       "category_label": "Actions Catégorie",
       "brand_label": "Actions Marque",

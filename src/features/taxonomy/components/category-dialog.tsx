@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Upload, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -42,18 +43,12 @@ interface Category {
 }
 
 export function CategoryDialog({
-  open,
+  editingItem,
+  isOpen,
   onOpenChange,
-  editingItem
-}: {
-  open: boolean,
-  onOpenChange: (open: boolean) => void,
-  editingItem?: Category | null
-}) {
-  const [isUploading, setIsUploading] = useState(false)
-  const [previewImage, setPreviewImage] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
+  categories,
+}: CategoryDialogProps) {
+  const { t } = useTranslation('dashboard/taxonomy')
   const form = useForm<CategoryInput>({
     resolver: zodResolver(categorySchema) as any,
     defaultValues: {
@@ -180,9 +175,9 @@ export function CategoryDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">Description</FormLabel>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('form.description_label', 'Description')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Technical specs, sub-components..." {...field} value={field.value || ''} className="h-11 font-bold text-xs rounded-xl" />
+                    <Input placeholder={t('form.description_placeholder', 'Technical specs, sub-components...')} {...field} value={field.value || ''} className="h-11 font-bold text-xs rounded-xl" />
                   </FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
