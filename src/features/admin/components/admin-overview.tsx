@@ -12,6 +12,8 @@ import {
   TrendingUp,
   Database,
   UserPlus,
+  HelpCircle,
+  BarChart3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
@@ -22,12 +24,13 @@ import { useAuth } from '@/features/auth/hooks/use-auth'
 import {
   useAdminDashboardStats,
   useSystemMetrics,
+  useMarketGapAnalysis,
 } from '@/features/admin/hooks/use-analytics'
 import { useRecentActivity } from '@/features/admin/hooks/use-admin'
 import { MarketplaceActivityTable } from './marketplace-activity-table'
 import { type MarketplaceActivity } from './marketplace-columns'
 
-function DonutGauge({ value, max, label, isHealthy }: { value: number; max: number; label: string; isHealthy: boolean }) {
+function DonutGauge({ value, max, label, isHealthy, healthText }: { value: number; max: number; label: string; isHealthy: boolean; healthText: string }) {
   const pct = Math.min((value / max) * 100, 100)
   const radius = 42
   const circumference = 2 * Math.PI * radius
@@ -74,7 +77,7 @@ function DonutGauge({ value, max, label, isHealthy }: { value: number; max: numb
           'text-[10px] font-bold uppercase tracking-widest',
           isHealthy ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
         )}>
-          {isHealthy ? 'Healthy' : 'Low Supply'}
+          {healthText}
         </span>
       </div>
     </div>
@@ -87,6 +90,7 @@ export function AdminOverview() {
   const { data: stats, isLoading: isStatsLoading } = useAdminDashboardStats()
   const { data: systemMetrics, isLoading: isMetricsLoading } = useSystemMetrics()
   const { data: recentActivity } = useRecentActivity()
+  const { data: gapAnalysis } = useMarketGapAnalysis()
 
   const isLoading = isStatsLoading || isMetricsLoading
 
@@ -106,7 +110,7 @@ export function AdminOverview() {
       allRequests.map((req: any) => ({
         id: req.id,
         partName: req.partName,
-        buyer: req.buyer?.name || 'Guest',
+        buyer: req.buyer?.name || t('table.guest'),
         brand: req.vehicleBrand,
         year: req.modelYear,
         status: req.status,
@@ -146,14 +150,14 @@ export function AdminOverview() {
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <div className="size-10 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-violet-500/20 shrink-0">
-              {(user?.name || 'A').charAt(0)}
+              {(user?.name || t('users.overview.admin_fallback')).charAt(0)}
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
-                {t('welcome', { name: user?.name || 'Admin' })}
+                {t('welcome', { name: user?.name || t('users.overview.admin_fallback') })}
               </h2>
               <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-                {isHealthy ? t('overview.thriving') : t('overview.needs_attention')}
+                {isHealthy ? t('users.overview.thriving') : t('users.overview.needs_attention')}
               </p>
             </div>
           </div>
@@ -199,7 +203,7 @@ export function AdminOverview() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
-              {t('overview.avg_offers')}
+              {t('users.overview.avg_offers')}
             </p>
             <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">{avgOffers.toFixed(1)}</p>
           </div>
@@ -209,7 +213,7 @@ export function AdminOverview() {
             className="shrink-0 text-[9px]"
           >
             <span className="sm:max-w-[80px] truncate">
-              {isHealthy ? t('health.optimal') : t('health.low')}
+              {isHealthy ? t('users.health.optimal') : t('users.health.low')}
             </span>
           </GlowingBadge>
         </div>
@@ -219,7 +223,7 @@ export function AdminOverview() {
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
-              {t('overview.recent_registrations')}
+              {t('users.overview.recent_registrations')}
             </p>
             <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">{registrations.toLocaleString()}</p>
           </div>
@@ -230,7 +234,7 @@ export function AdminOverview() {
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
-              {t('overview.db_size')}
+              {t('users.overview.db_size')}
             </p>
             <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">{dbSize}</p>
           </div>
@@ -245,7 +249,7 @@ export function AdminOverview() {
           </p>
           <Button asChild variant="ghost" size="sm" className="h-auto py-1 px-2 text-xs font-bold gap-1">
             <Link to="/dashboard/admin/buyers">
-              {t('overview.view_analytics')} <ArrowRight className="size-3" />
+              {t('users.overview.view_analytics')} <ArrowRight className="size-3" />
             </Link>
           </Button>
         </div>
@@ -295,7 +299,79 @@ export function AdminOverview() {
 
           {/* Donut Gauge - Clean SVG, zero Recharts dependency */}
           <div className="lg:col-span-3 rounded-2xl bg-card border border-border shadow-sm p-5 flex flex-col items-center justify-center">
-            <DonutGauge value={avgOffers} max={5} label={t('overview.avg_offers')} isHealthy={isHealthy} />
+            <DonutGauge value={avgOffers} max={5} label={t('users.overview.avg_offers')} isHealthy={isHealthy} healthText={isHealthy ? t('users.health.healthy') : t('users.health.low_supply')} />
+          </div>
+        </div>
+      </div>
+
+      {/* Market Gaps Summary */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 dark:text-slate-400/60">
+            {t('intelligence_page.title')}
+          </p>
+          <Button asChild variant="ghost" size="sm" className="h-auto py-1 px-2 text-xs font-bold gap-1">
+            <Link to="/dashboard/admin/intelligence">
+              {t('users.overview.view_analytics')} <ArrowRight className="size-3" />
+            </Link>
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
+            <div className="p-2 rounded-xl bg-blue-500/10 shrink-0">
+              <ClipboardList className="size-4 text-blue-500" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
+                {t('intelligence_page.metrics.open_demand')}
+              </p>
+              <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">
+                {(gapAnalysis?.categoryGaps || []).reduce((s: number, c: any) => s + c.demand, 0).toLocaleString()}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
+            <div className="p-2 rounded-xl bg-emerald-500/10 shrink-0">
+              <TrendingUp className="size-4 text-emerald-500" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
+                {t('intelligence_page.metrics.fulfillment_rate')}
+              </p>
+              <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">
+                {gapAnalysis?.fulfillment?.rate || 0}%
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
+            <div className="p-2 rounded-xl bg-amber-500/10 shrink-0">
+              <HelpCircle className="size-4 text-amber-500" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
+                {t('intelligence_page.metrics.unserved')}
+              </p>
+              <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">
+                {gapAnalysis?.unservedCount || 0}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
+            <div className="p-2 rounded-xl bg-violet-500/10 shrink-0">
+              <BarChart3 className="size-4 text-violet-500" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
+                {t('intelligence_page.category_gaps')}
+              </p>
+              <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">
+                {(gapAnalysis?.categoryGaps || []).filter((c: any) => c.gap > 0).length}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -304,7 +380,7 @@ export function AdminOverview() {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 dark:text-slate-400/60">
-            {t('overview.recent_activity')}
+            {t('users.overview.recent_activity')}
           </p>
           <Button asChild variant="ghost" size="sm" className="h-auto py-1 px-2 text-xs font-bold gap-1">
             <Link to="/dashboard/admin/audit">

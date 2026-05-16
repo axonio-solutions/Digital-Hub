@@ -388,6 +388,124 @@ export async function fetchMarketHealth() {
   }
 }
 
+/**
+ * Fetch demand vs supply gap analysis by category.
+ * Returns categories with high demand but low seller coverage.
+ */
+export async function fetchCategoryGapAnalysis() {
+  const result = await db.execute(sql`
+    SELECT
+      pc.name AS category,
+      COUNT(DISTINCT spr.id)::int AS demand,
+      COUNT(DISTINCT q.seller_id)::int AS supply_sellers,
+      COUNT(DISTINCT spr.id) - COUNT(DISTINCT q.seller_id) AS gap
+    FROM part_categories pc
+    LEFT JOIN spare_part_requests spr ON spr.category_id = pc.id AND spr.status = 'open'
+    LEFT JOIN quotes q ON q.request_id = spr.id
+    GROUP BY pc.name
+    ORDER BY gap DESC
+    LIMIT 10
+  `)
+
+  return (result as any[]).map(r => ({
+    category: r.category,
+    demand: Number(r.demand),
+    supplySellers: Number(r.supply_sellers),
+    gap: Number(r.gap),
+  }))
+}
+
+/**
+ * Fetch demand vs supply gap analysis by vehicle brand.
+ */
+export async function fetchBrandGapAnalysis() {
+  const result = await db.execute(sql`
+    SELECT
+      vb.brand AS brand,
+      COUNT(DISTINCT spr.id)::int AS demand,
+      COUNT(DISTINCT q.seller_id)::int AS supply_sellers,
+      COUNT(DISTINCT spr.id) - COUNT(DISTINCT q.seller_id) AS gap
+    FROM vehicle_brands vb
+    LEFT JOIN spare_part_requests spr ON spr.brand_id = vb.id AND spr.status = 'open'
+    LEFT JOIN quotes q ON q.request_id = spr.id
+    GROUP BY vb.brand
+    ORDER BY gap DESC
+    LIMIT 10
+  `)
+
+  return (result as any[]).map(r => ({
+    brand: r.brand,
+    demand: Number(r.demand),
+    supplySellers: Number(r.supply_sellers),
+    gap: Number(r.gap),
+  }))
+}
+
+/**
+ * Fetch demand vs supply gap analysis by wilaya (region).
+ */
+export async function fetchRegionalGapAnalysis() {
+  const result = await db.execute(sql`
+    SELECT
+      COALESCE(u.wilaya, 'Unknown') AS wilaya,
+      COUNT(DISTINCT spr.id)::int AS demand,
+      COUNT(DISTINCT q.seller_id)::int AS supply_sellers,
+      COUNT(DISTINCT spr.id) - COUNT(DISTINCT q.seller_id) AS gap
+    FROM users u
+    LEFT JOIN spare_part_requests spr ON spr.buyer_id = u.id AND spr.status = 'open'
+    LEFT JOIN quotes q ON q.request_id = spr.id
+    WHERE u.role = 'buyer'
+    GROUP BY u.wilaya
+    ORDER BY gap DESC
+  `)
+
+  return (result as any[]).map(r => ({
+    wilaya: r.wilaya,
+    demand: Number(r.demand),
+    supplySellers: Number(r.supply_sellers),
+    gap: Number(r.gap),
+  }))
+}
+
+/**
+ * Fetch count of unserved open requests (requests with zero quotes).
+ */
+export async function fetchUnservedRequests() {
+  const result = await db.execute(sql`
+    SELECT COUNT(*)::int AS count
+    FROM spare_part_requests spr
+    WHERE spr.status = 'open'
+      AND NOT EXISTS (
+        SELECT 1 FROM quotes q WHERE q.request_id = spr.id
+      )
+  `)
+
+  return Number((result[0] as any).count)
+}
+
+/**
+ * Fetch overall fulfillment rate (% of requests with at least one quote).
+ */
+export async function fetchFulfillmentRate() {
+  const result = await db.execute(sql`
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE EXISTS (
+        SELECT 1 FROM quotes q WHERE q.request_id = spr.id
+      ))::int AS fulfilled
+    FROM spare_part_requests spr
+  `)
+
+  const row = result[0] as any
+  const total = Number(row.total)
+  const fulfilled = Number(row.fulfilled)
+  return {
+    total,
+    fulfilled,
+    rate: total > 0 ? parseFloat(((fulfilled / total) * 100).toFixed(1)) : 0,
+  }
+}
+
 let dashboardStatsCache: { data: any, timestamp: number } | null = null;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 

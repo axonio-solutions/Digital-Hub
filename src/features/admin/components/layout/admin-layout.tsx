@@ -5,9 +5,11 @@ import {
   IconActivity,
   IconUsers,
   IconBuildingStore,
-  IconHierarchy,
   IconArchive,
-  IconSettings,
+  IconChartBar,
+  IconHelpCircle,
+  IconReportMoney,
+  IconSend,
 } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import { NavMain } from '@/features/dashboard/components/layout/nav-main'
@@ -25,6 +27,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         icon: IconActivity,
       },
       {
+        title: t('nav.market_intelligence'),
+        url: '/dashboard/admin/intelligence',
+        icon: IconChartBar,
+      },
+      {
         title: t('nav.buyers_hub'),
         url: '/dashboard/admin/buyers',
         icon: IconUsers,
@@ -34,27 +41,32 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         url: '/dashboard/admin/sellers',
         icon: IconBuildingStore,
       },
+      {
+        title: t('nav.revenue'),
+        url: '/dashboard/admin/revenue',
+        icon: IconReportMoney,
+      },
     ],
     secondary: [
-      {
-        title: t('nav.user_moderation'),
-        url: '/dashboard/admin/users',
-        icon: IconUsers,
-      },
-      {
-        title: t('nav.categories'),
-        url: '/dashboard/admin/categories',
-        icon: IconHierarchy,
-      },
       {
         title: t('nav.request_audit'),
         url: '/dashboard/admin/audit',
         icon: IconArchive,
       },
       {
-        title: t('nav.admin_settings'),
-        url: '/dashboard/admin/settings',
-        icon: IconSettings,
+        title: t('nav.user_moderation'),
+        url: '/dashboard/admin/users',
+        icon: IconUsers,
+      },
+      {
+        title: t('nav.support'),
+        url: '/dashboard/support',
+        icon: IconHelpCircle,
+      },
+      {
+        title: t('nav.credit_requests'),
+        url: '/dashboard/admin/credit-requests',
+        icon: IconSend,
       },
     ],
   }

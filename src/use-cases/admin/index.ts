@@ -15,6 +15,11 @@ import {
   fetchSellerMetrics,
   fetchTopBuyers,
   fetchUserDistributionByWilaya,
+  fetchCategoryGapAnalysis,
+  fetchBrandGapAnalysis,
+  fetchRegionalGapAnalysis,
+  fetchUnservedRequests,
+  fetchFulfillmentRate,
 } from '@/data-access/analytics'
 import {
   getPartCategories,
@@ -33,7 +38,7 @@ import { CategoryInput, BrandInput } from '@/features/taxonomy/validations/taxon
  */
 
 const analyticsCache: Record<string, { data: any; timestamp: number }> = {}
-const ANALYTICS_CACHE_TTL = 60 * 1000 // 60 seconds
+const ANALYTICS_CACHE_TTL = 5 * 60 * 1000
 
 async function getCachedAnalytics(key: string, fetcher: () => Promise<any>) {
   const now = Date.now()
@@ -181,11 +186,19 @@ export async function getAdminDashboardStatsUseCase() {
   return await fetchAdminDashboardStats()
 }
 
-export async function activateSellerUseCase(userId: string) {
+export async function activateSellerUseCase(userId: string, adminId?: string) {
   const { updateUserStatus } = await import('@/data-access/users')
   const { NotificationTriggers } = await import('@/services/notification-triggers')
+  const { grantCredits } = await import('@/data-access/credits')
 
   await updateUserStatus(userId, 'active')
+
+  // Grant 20 welcome credits
+  try {
+    await grantCredits(userId, 20, 'bonus', adminId, 'Welcome bonus — seller activation')
+  } catch (error) {
+    console.error('Failed to grant welcome credits:', error)
+  }
 
   Promise.resolve().then(async () => {
     try {
@@ -200,4 +213,30 @@ export async function activateSellerUseCase(userId: string) {
 
 export async function getUserDetailsUseCase(userId: string) {
   return await fetchUserDetailsQuery(userId)
+}
+
+export async function getMarketGapAnalysisUseCase() {
+  return await getCachedAnalytics('marketGap', async () => {
+    const [
+      categoryGaps,
+      brandGaps,
+      regionalGaps,
+      unservedCount,
+      fulfillment,
+    ] = await Promise.all([
+      fetchCategoryGapAnalysis(),
+      fetchBrandGapAnalysis(),
+      fetchRegionalGapAnalysis(),
+      fetchUnservedRequests(),
+      fetchFulfillmentRate(),
+    ])
+
+    return {
+      categoryGaps,
+      brandGaps,
+      regionalGaps,
+      unservedCount,
+      fulfillment,
+    }
+  })
 }

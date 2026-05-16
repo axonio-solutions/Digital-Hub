@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import type { User } from '@/lib/auth';
 import { authMiddleware, adminMiddleware } from '@/features/auth/guards/auth'
-import { getAllUsersUseCase, getAdminMetricsUseCase, getBuyerAnalyticsUseCase, getSellerAnalyticsUseCase, getAdvancedSystemMetricsUseCase, getAdminDashboardStatsUseCase, toggleUserBanUseCase, activateSellerUseCase, getTaxonomyUseCase, createCategoryUseCase, updateCategoryUseCase, deleteCategoryUseCase, createBrandUseCase, updateBrandUseCase, deleteBrandUseCase, getUserDetailsUseCase } from '@/use-cases/admin/index'
+import { getAllUsersUseCase, getAdminMetricsUseCase, getBuyerAnalyticsUseCase, getSellerAnalyticsUseCase, getAdvancedSystemMetricsUseCase, getAdminDashboardStatsUseCase, toggleUserBanUseCase, activateSellerUseCase, getTaxonomyUseCase, createCategoryUseCase, updateCategoryUseCase, deleteCategoryUseCase, createBrandUseCase, updateBrandUseCase, deleteBrandUseCase, getUserDetailsUseCase, getMarketGapAnalysisUseCase } from '@/use-cases/admin/index'
 import { getAllRequestsUseCase } from '@/use-cases/requests/index'
 
 /**
@@ -64,8 +64,8 @@ export const toggleUserBanServerFn = createServerFn({ method: 'POST' })
 export const activateSellerServerFn = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
   .inputValidator((data: { userId: string }) => data)
-  .handler(async ({ data }) => {
-    return await activateSellerUseCase(data.userId)
+  .handler(async ({ data, context }) => {
+    return await activateSellerUseCase(data.userId, context.user?.id)
   })
 
 export const getTaxonomyServerFn = createServerFn({ method: 'GET' })
@@ -130,4 +130,10 @@ export const getUserDetailsServerFn = createServerFn({ method: 'GET' })
   .inputValidator((data: { userId: string }) => data)
   .handler(async ({ data }) => {
     return await getUserDetailsUseCase(data.userId)
+  })
+
+export const getMarketGapAnalysisServerFn = createServerFn({ method: 'GET' })
+  .middleware([adminMiddleware])
+  .handler(async () => {
+    return await getMarketGapAnalysisUseCase()
   })

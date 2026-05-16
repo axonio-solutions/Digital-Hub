@@ -9,6 +9,7 @@ export const adminKeys = {
   dashboardStats: () => [...adminKeys.all, 'dashboard', 'stats'] as const,
   users: () => [...adminKeys.all, 'users'] as const,
   recentActivity: () => [...adminKeys.all, 'recentActivity'] as const,
+  marketGap: () => [...adminKeys.all, 'marketGap'] as const,
 }
 
 export function useAdminMetrics() {

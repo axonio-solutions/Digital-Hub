@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { ColumnDef, useReactTable, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, getFacetedRowModel, getFacetedUniqueValues, ColumnFiltersState, SortingState, flexRender } from '@tanstack/react-table'
-import { UserX } from 'lucide-react'
+import { Coins, UserX } from 'lucide-react'
 import { UserProfileDialog } from './user-profile-dialog'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Button } from '@/components/ui/button'
@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import { useActivateSeller } from '@/features/admin/hooks/use-users'
 import { getAccountStatuses, getIntegrityStatuses, getRoles } from '../data/user-filters'
 import { useTranslation } from 'react-i18next'
+import { GrantCreditsDialog } from '@/features/credits/components/grant-credits-dialog'
 
 interface AdminUsersTableProps { users: Array<any>; onBan?: (userId: string) => void }
 
@@ -23,6 +24,8 @@ export function AdminUsersTable({ users = [], onBan }: AdminUsersTableProps) {
   const { t } = useTranslation('dashboard/admin')
   const [selectedUser, setSelectedUser] = useState<any | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [grantSeller, setGrantSeller] = useState<any | null>(null)
+  const [isGrantOpen, setIsGrantOpen] = useState(false)
   const { mutate: activateSeller } = useActivateSeller()
 
   const [rowSelection, setRowSelection] = useState({})
@@ -89,6 +92,11 @@ export function AdminUsersTable({ users = [], onBan }: AdminUsersTableProps) {
           <div className="flex justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
             {u.account_status === 'waitlisted' && (
               <Button variant="outline" size="sm" onClick={() => { activateSeller({ userId: u.id }); toast.success(t('users.actions.activated_success')) }} className="h-7 text-[10px]">{t('users.actions.activate')}</Button>
+            )}
+            {u.role === 'seller' && (
+              <Button variant="outline" size="sm" onClick={() => { setGrantSeller(u); setIsGrantOpen(true) }} className="h-7 text-[10px] gap-1">
+                <Coins className="size-3 text-amber-500" /> {t('users.actions.grant_credits')}
+              </Button>
             )}
             <Button variant="ghost" size="sm" onClick={() => handleViewDetails(u)} className="h-7 text-[10px]">{t('users.actions.view')}</Button>
           </div>
@@ -175,6 +183,12 @@ export function AdminUsersTable({ users = [], onBan }: AdminUsersTableProps) {
       <DataTablePagination table={table} />
 
       <UserProfileDialog user={selectedUser} open={isDialogOpen} onOpenChange={setIsDialogOpen} />
+      <GrantCreditsDialog
+        seller={grantSeller ? { id: grantSeller.id, name: grantSeller.name, storeName: grantSeller.storeName } : null}
+        open={isGrantOpen}
+        onOpenChange={setIsGrantOpen}
+        showPackages
+      />
     </div>
   )
 }

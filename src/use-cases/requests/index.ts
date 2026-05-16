@@ -1,18 +1,21 @@
+import { eq } from 'drizzle-orm'
+
+import type { User } from '@/lib/auth'
+
 import {
+  deleteRequestQuery,
   fetchAllRequestsQuery,
   fetchBuyerRequestsQuery,
   fetchOpenRequestsQuery,
   fetchRequestDetailsQuery,
   insertNewRequest,
-  updateRequestStatusQuery,
-  deleteRequestQuery,
   updateRequestFullQuery,
+  updateRequestStatusQuery,
 } from '@/data-access/requests'
-import { NotificationTriggers } from '@/services/notification-triggers'
 import { db } from '@/db'
 import { sparePartRequests } from '@/db/schema'
-import { eq } from 'drizzle-orm'
-import { type User } from '@/lib/auth'
+import { canDeleteRequest, validateRequestTransition } from '@/lib/state-machine'
+import { NotificationTriggers } from '@/services/notification-triggers'
 
 /**
  * Axis Layer 2: Requests Use Cases
@@ -135,52 +138,73 @@ export async function getRequestDetailsUseCase(
 
 export async function cancelRequestUseCase(requestId: string) {
   try {
+    const request = await fetchRequestDetailsQuery(requestId)
+    if (!request) return { success: false, error: 'Request not found' }
+    validateRequestTransition(request.status, 'cancelled')
     const result = await updateRequestStatusQuery(requestId, 'cancelled')
     if (!result || result.length === 0) {
       return { success: false, error: 'Failed to cancel request' }
     }
     return { success: true, data: result[0] }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error cancelling request:', error)
-    return { success: false, error: 'Failed to cancel request' }
+    return { success: false, error: error.message || 'Failed to cancel request' }
   }
 }
 
 export async function reopenRequestUseCase(requestId: string) {
   try {
+    const request = await fetchRequestDetailsQuery(requestId)
+    if (!request) return { success: false, error: 'Request not found' }
+    validateRequestTransition(request.status, 'open')
     const result = await updateRequestStatusQuery(requestId, 'open')
     if (!result || result.length === 0) {
       return { success: false, error: 'Failed to reopen request' }
     }
     return { success: true, data: result[0] }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error reopening request:', error)
-    return { success: false, error: 'Failed to reopen request' }
+    return { success: false, error: error.message || 'Failed to reopen request' }
   }
 }
 
 export async function deleteRequestUseCase(requestId: string) {
   try {
+    const request = await fetchRequestDetailsQuery(requestId)
+    if (!request) return { success: false, error: 'Request not found' }
+    if (!canDeleteRequest(request.status)) {
+      return { success: false, error: 'Cannot delete a fulfilled request' }
+    }
+    const hasAcceptedQuote = request.quotes?.some((q: any) => q.status === 'accepted')
+    if (hasAcceptedQuote) {
+      return { success: false, error: 'Cannot delete a request with an accepted quote' }
+    }
     const result = await deleteRequestQuery(requestId)
     if (!result || result.length === 0) {
       return { success: false, error: 'Failed to delete request' }
     }
     return { success: true, data: result[0] }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error deleting request:', error)
-    return { success: false, error: 'Failed to delete request' }
+    return { success: false, error: error.message || 'Failed to delete request' }
   }
 }
 
 export async function updateRequestUseCase(requestId: string, data: any) {
   try {
-    const result = await updateRequestFullQuery(requestId, data)
+    const request = await fetchRequestDetailsQuery(requestId)
+    if (!request) return { success: false, error: 'Request not found' }
+    if (request.status !== 'open') {
+      return { success: false, error: 'Can only edit an open request' }
+    }
+    const { status, ...safeData } = data
+    const result = await updateRequestFullQuery(requestId, safeData)
     if (!result || result.length === 0) {
       return { success: false, error: 'Failed to update request' }
     }
     return { success: true, data: result[0] }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error updating request:', error)
-    return { success: false, error: 'Failed to update request' }
+    return { success: false, error: error.message || 'Failed to update request' }
   }
 }

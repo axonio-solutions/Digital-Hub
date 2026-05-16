@@ -1,11 +1,6 @@
-import { CheckCircle2, Circle, XCircle, PencilLine } from 'lucide-react'
+import { CheckCircle2, Circle, XCircle } from 'lucide-react'
 
 export const requestStatuses = [
-  {
-    label: 'Draft',
-    value: 'draft',
-    icon: PencilLine,
-  },
   {
     label: 'Open',
     value: 'open',

@@ -3,7 +3,7 @@ import {
   fetchSellerSpecialtiesServerFn,
   updateSellerSpecialtiesServerFn,
 } from '@/fn/vendors'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 
 export function useSellerSpecialties() {
   return useQuery({
@@ -15,16 +15,17 @@ export function useSellerSpecialties() {
 
 export function useUpdateSellerSpecialties() {
   const queryClient = useQueryClient()
+  const { toast } = useToast('vendors')
   return useMutation({
     mutationFn: (data: { brandIds: string[], categoryIds: string[] }) =>
       updateSellerSpecialtiesServerFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['seller-specialties'] })
       queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
-      toast.success('Specialties updated successfully')
+      toast.success('toasts.specialties_updated')
     },
     onError: () => {
-      toast.error('Failed to update specialties')
+      toast.error('toasts.specialties_error')
     },
   })
 }
