@@ -13,7 +13,6 @@ import { users } from './auth'
 import { partCategories, vehicleBrands } from './taxonomy'
 
 export const requestStatusEnum = pgEnum('request_status', [
-  'draft',
   'open',
   'fulfilled',
   'cancelled',
@@ -22,6 +21,7 @@ export const quoteStatusEnum = pgEnum('quote_status', [
   'pending',
   'accepted',
   'rejected',
+  'withdrawn',
 ])
 export const partConditionEnum = pgEnum('part_condition', ['new', 'used'])
 
@@ -49,6 +49,7 @@ export const sparePartRequests = pgTable(
     isPriority: boolean('is_priority').default(false).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    deletedAt: timestamp('deleted_at'),
   },
   (table) => {
     return {
@@ -84,6 +85,7 @@ export const quotes = pgTable('quotes', {
   status: quoteStatusEnum('status').default('pending').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  deletedAt: timestamp('deleted_at'),
 }, (table) => [
   index('idx_quotes_seller_id').on(table.sellerId),
   index('idx_quotes_request_id').on(table.requestId),

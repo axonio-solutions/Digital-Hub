@@ -1,4 +1,4 @@
-import { boolean, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
@@ -25,6 +25,7 @@ export const users = pgTable('users', {
   city: text('city'),
   companyAddress: text('company_address'),
   commercialRegister: text('commercial_register'),
+  credits: integer('credits').default(0).notNull(),
 }, (table) => [
   index('idx_users_role').on(table.role),
   index('idx_users_account_status').on(table.account_status),

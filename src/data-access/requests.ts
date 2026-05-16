@@ -1,11 +1,11 @@
-import { and, count, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
+import { and, desc, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm'
 import { db } from '@/db'
 import { partCategories, quotes, sparePartRequests, vehicleBrands } from '@/db/schema'
 
 export async function fetchBuyerRequestsQuery(buyerId: string, options?: { limit?: number; offset?: number }) {
   const { limit, offset } = options || {}
   return await db.query.sparePartRequests.findMany({
-    where: eq(sparePartRequests.buyerId, buyerId),
+    where: and(eq(sparePartRequests.buyerId, buyerId), isNull(sparePartRequests.deletedAt)),
     orderBy: [desc(sparePartRequests.createdAt)],
     limit,
     offset,
@@ -23,7 +23,7 @@ export async function fetchBuyerRequestsQuery(buyerId: string, options?: { limit
 
 export async function fetchRequestDetailsQuery(requestId: string) {
   return await db.query.sparePartRequests.findFirst({
-    where: eq(sparePartRequests.id, requestId),
+    where: and(eq(sparePartRequests.id, requestId), isNull(sparePartRequests.deletedAt)),
     with: {
       category: true,
       brand: true,
@@ -49,7 +49,7 @@ export async function fetchOpenRequestsQuery(options?: {
 }) {
   const { limit = 20, offset = 0 } = options || {};
   
-  const conditions = [eq(sparePartRequests.status, 'open')];
+  const conditions = [eq(sparePartRequests.status, 'open'), isNull(sparePartRequests.deletedAt)];
   
   if (options?.specialtyFilter) {
     const specialtyConditions = [];
@@ -104,7 +104,7 @@ export async function fetchOpenRequestsQuery(options?: {
       updatedAt: sparePartRequests.updatedAt,
       category: partCategories,
       brand: vehicleBrands,
-      quotesCount: sql<number>`(SELECT COUNT(*)::int FROM ${quotes} WHERE ${quotes.requestId} = ${sparePartRequests.id})`,
+      quotesCount: sql<number>`(SELECT COUNT(*)::int FROM ${quotes} WHERE ${quotes.requestId} = ${sparePartRequests.id} AND ${quotes.deletedAt} IS NULL)`,
     })
     .from(sparePartRequests)
     .leftJoin(partCategories, eq(sparePartRequests.categoryId, partCategories.id))
@@ -117,6 +117,7 @@ export async function fetchOpenRequestsQuery(options?: {
 
 export async function fetchAllRequestsQuery(limit?: number) {
   return await db.query.sparePartRequests.findMany({
+    where: isNull(sparePartRequests.deletedAt),
     orderBy: [desc(sparePartRequests.createdAt)],
     limit,
     with: {
@@ -148,7 +149,7 @@ export async function insertNewRequest(data: any) {
   return newRequest[0]
 }
 
-export async function updateRequestStatusQuery(requestId: string, status: 'open' | 'fulfilled' | 'cancelled' | 'draft') {
+export async function updateRequestStatusQuery(requestId: string, status: 'open' | 'fulfilled' | 'cancelled') {
   return await db
     .update(sparePartRequests)
     .set({ status })
@@ -157,12 +158,9 @@ export async function updateRequestStatusQuery(requestId: string, status: 'open'
 }
 
 export async function deleteRequestQuery(requestId: string) {
-  await db
-    .delete(quotes)
-    .where(eq(quotes.requestId, requestId))
-
   return await db
-    .delete(sparePartRequests)
+    .update(sparePartRequests)
+    .set({ deletedAt: new Date() })
     .where(eq(sparePartRequests.id, requestId))
     .returning()
 }

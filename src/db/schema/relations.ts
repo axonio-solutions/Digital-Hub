@@ -3,6 +3,7 @@ import { accounts, sessions, users } from './auth'
 import { quotes, sparePartRequests } from './marketplace'
 import { partCategories, vehicleBrands } from './taxonomy'
 import { sellerBrands, sellerCategories } from './vendors'
+import { creditPackages, creditRequests, creditTransactions } from './credits'
 
 export const usersRelations = relations(users, ({ one, many }) => ({
   requests: many(sparePartRequests),
@@ -11,6 +12,9 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   accounts: many(accounts),
   sellerBrands: many(sellerBrands),
   sellerCategories: many(sellerCategories),
+  creditTransactions: many(creditTransactions),
+  creditRequests: many(creditRequests),
+  grantedTransactions: many(creditTransactions, { relationName: 'adminTransactions' }),
   notificationPreference: one(notificationPreferences, {
     fields: [users.id],
     references: [notificationPreferences.userId],
@@ -93,6 +97,21 @@ export const sellerCategoriesRelations = relations(sellerCategories, ({ one }) =
   }),
 }))
 
+export const creditRequestsRelations = relations(creditRequests, ({ one }) => ({
+  seller: one(users, {
+    fields: [creditRequests.sellerId],
+    references: [users.id],
+  }),
+  package: one(creditPackages, {
+    fields: [creditRequests.packageId],
+    references: [creditPackages.id],
+  }),
+  admin: one(users, {
+    fields: [creditRequests.adminId],
+    references: [users.id],
+  }),
+}))
+
 import { notifications, notificationPreferences } from './notifications'
 
 export const notificationPreferencesRelations = relations(notificationPreferences, ({ one }) => ({
@@ -107,5 +126,25 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
     fields: [notifications.userId],
     references: [users.id],
   }),
+}))
+
+export const creditTransactionsRelations = relations(creditTransactions, ({ one }) => ({
+  seller: one(users, {
+    fields: [creditTransactions.sellerId],
+    references: [users.id],
+  }),
+  admin: one(users, {
+    fields: [creditTransactions.adminId],
+    references: [users.id],
+    relationName: 'adminTransactions',
+  }),
+  package: one(creditPackages, {
+    fields: [creditTransactions.packageId],
+    references: [creditPackages.id],
+  }),
+}))
+
+export const creditPackagesRelations = relations(creditPackages, ({ many }) => ({
+  transactions: many(creditTransactions),
 }))
 
