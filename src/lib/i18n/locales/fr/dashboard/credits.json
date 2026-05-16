@@ -1,0 +1,160 @@
+{
+  "nav": {
+    "credit_hub": "Centre de Crédits",
+    "revenue": "Revenus"
+  },
+  "breadcrumbs": {
+    "credit_hub": "Centre de Crédits",
+    "revenue": "Revenus et Analyses"
+  },
+  "page": {
+    "title": "Centre de Crédits",
+    "subtitle": "Gérer les crédits des vendeurs et les forfaits"
+  },
+  "tabs": {
+    "distribute": "Distribuer des Crédits",
+    "packages": "Forfaits de Crédits"
+  },
+  "distribute": {
+    "title": "Distribuer des Crédits",
+    "search": "Rechercher des vendeurs par nom, email ou magasin...",
+    "no_results": "Aucun vendeur trouvé",
+    "columns": {
+      "seller": "Vendeur",
+      "store": "Magasin",
+      "balance": "Solde de Crédits",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "unknown_seller": "Inconnu",
+    "grant": {
+      "title": "Octroyer des Crédits",
+      "amount": "Montant des Crédits",
+      "description": "Description (optionnelle)",
+      "description_placeholder": "ex: Achat de forfait, bonus, ajustement...",
+      "confirm": "Octroyer {{amount}} Crédits",
+      "success": "{{amount}} crédits octroyés à {{name}}",
+      "error_amount": "Le montant doit être supérieur à 0",
+      "error_failed": "Échec de l'octroi de crédits",
+        "processing": "Traitement..."
+    },
+    "status": {
+      "active": "Actif",
+      "waitlisted": "En attente",
+      "new": "Nouveau"
+    }
+  },
+  "packages": {
+    "title": "Forfaits de Crédits",
+    "subtitle": "Gérer les forfaits de crédits disponibles à l'achat",
+    "add": "Ajouter un Forfait",
+    "edit": "Modifier le Forfait",
+    "delete": "Supprimer",
+    "delete_confirm": "Êtes-vous sûr de vouloir désactiver ce forfait ?",
+    "columns": {
+      "name": "Nom",
+      "credits": "Crédits",
+      "price": "Prix (DZD)",
+      "description": "Description",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "credits_unit": "crédits",
+    "form": {
+      "name": "Nom du Forfait",
+      "name_placeholder": "ex: Pack Démarrage",
+      "credits": "Nombre de Crédits",
+      "price": "Prix (DZD)",
+      "description": "Description",
+      "description_placeholder": "Décrivez ce que ce forfait inclut...",
+      "is_active": "Actif",
+      "save": "Enregistrer le Forfait",
+      "update": "Mettre à Jour",
+      "cancel": "Annuler",
+      "error_name_required": "Le nom du forfait est requis",
+      "error_credits_price": "Les crédits et le prix doivent être supérieurs à 0",
+      "id_prefix": "ID : {{id}}...",
+      "saving": "Enregistrement..."
+    },
+    "active": "Actif",
+    "inactive": "Inactif",
+    "created": "Forfait créé avec succès",
+    "updated": "Forfait mis à jour avec succès",
+    "toggled": "Statut du forfait mis à jour"
+  },
+  "billing": {
+    "title": "Facturation et Crédits",
+    "subtitle": "Suivez votre utilisation des crédits et l'historique des transactions",
+    "current_balance": "Solde Actuel",
+    "credits_available": "Crédits Disponibles",
+    "total_purchased": "Total Acheté",
+    "total_spent": "Total Dépensé",
+    "quote_count": "Devis Soumis",
+    "no_activity": "Aucune activité de facturation. Commencez à soumettre des devis !",
+    "request_action": "Demander des Crédits",
+    "request_title": "Demander des Crédits",
+    "request_select_package": "Veuillez sélectionner un forfait",
+    "request_no_packages": "Aucun forfait de crédit disponible pour le moment",
+    "request_success": "Demande de crédit soumise pour examen",
+    "request_error_submit": "Échec de la soumission de la demande",
+    "request_submitting": "Soumission..."
+  },
+  "revenue": {
+    "title": "Revenus et Analyses",
+    "subtitle": "Suivez les revenus de la plateforme, l'utilisation des crédits et les métriques des vendeurs",
+    "metrics": {
+      "monthly_revenue": "Revenu Mensuel",
+      "monthly_revenue_desc": "Crédits achetés au cours des 30 derniers jours",
+      "all_time_revenue": "Revenu Total",
+      "all_time_revenue_desc": "Total des achats de crédits à vie",
+      "credits_spent": "Crédits Consommés",
+      "credits_spent_desc": "Total des crédits utilisés pour les devis",
+      "active_with_credits": "Vendeurs avec Crédits",
+      "active_with_credits_desc": "Vendeurs actifs ayant un solde de crédits",
+      "new_sellers": "Nouveaux Vendeurs",
+      "new_sellers_desc": "Vendeurs inscrits ce mois-ci",
+      "total_packages": "Forfaits Actifs",
+      "total_packages_desc": "Forfaits de crédits actuellement actifs"
+    },
+    "transactions": "Transactions Récentes",
+    "no_transactions": "Aucune transaction de crédit pour le moment",
+    "showing_latest": "Affichage des {{count}} dernières",
+    "unknown_seller": "Inconnu",
+    "transaction_types": {
+      "purchase": "Achat",
+      "bonus": "Bonus",
+      "quote_spent": "Devis Consommé",
+      "admin_adjustment": "Ajustement"
+    }
+  },
+  "currency_dzd": "DZD",
+  "credit_requests": {
+    "title": "Demandes de Crédits",
+    "subtitle": "Examiner et gérer les demandes de crédit des vendeurs",
+    "filter_all": "Toutes",
+    "filter_pending": "En Attente",
+    "filter_approved": "Approuvées",
+    "filter_rejected": "Rejetées",
+    "no_requests": "Aucune demande de crédit trouvée",
+    "unknown_seller": "Inconnu",
+    "credits_label": "crédits",
+    "approve_grant": "Approuver & Octroyer",
+    "reject_reason_placeholder": "Raison (optionnelle)",
+    "reject_success": "Demande rejetée",
+    "reject_action": "Rejeter",
+    "admin_note_label": "Note admin :",
+    "grant_success": "{{credits}} crédits octroyés à {{name}}",
+    "columns": {
+      "seller": "Vendeur",
+      "credits": "Crédits",
+      "package": "Forfait",
+      "status": "Statut",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "tabs": {
+      "requests": "Demandes",
+      "packages": "Forfaits"
+    }
+  }
+}

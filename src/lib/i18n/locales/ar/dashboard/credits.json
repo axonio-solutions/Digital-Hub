@@ -1,0 +1,160 @@
+{
+  "nav": {
+    "credit_hub": "مركز الائتمان",
+    "revenue": "الإيرادات"
+  },
+  "breadcrumbs": {
+    "credit_hub": "مركز الائتمان",
+    "revenue": "الإيرادات والتحليلات"
+  },
+  "page": {
+    "title": "مركز الائتمان",
+    "subtitle": "إدارة أرصدة البائعين وباقات الائتمان"
+  },
+  "tabs": {
+    "distribute": "توزيع الأرصدة",
+    "packages": "باقات الائتمان"
+  },
+  "distribute": {
+    "title": "توزيع الأرصدة",
+    "search": "البحث عن البائعين بالاسم أو البريد الإلكتروني أو المتجر...",
+    "no_results": "لم يتم العثور على بائعين",
+    "columns": {
+      "seller": "البائع",
+      "store": "المتجر",
+      "balance": "رصيد الائتمان",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "unknown_seller": "غير معروف",
+    "grant": {
+      "title": "منح أرصدة",
+      "amount": "عدد الأرصدة",
+      "description": "الوصف (اختياري)",
+      "description_placeholder": "مثال: شراء باقة، مكافأة، تعديل...",
+      "confirm": "منح {{amount}} رصيد",
+      "success": "تم منح {{amount}} رصيد إلى {{name}}",
+      "error_amount": "يجب أن يكون المبلغ أكبر من 0",
+      "error_failed": "فشل في منح الأرصدة",
+        "processing": "جاري المعالجة..."
+    },
+    "status": {
+      "active": "نشط",
+      "waitlisted": "قائمة الانتظار",
+      "new": "جديد"
+    }
+  },
+  "packages": {
+    "title": "باقات الائتمان",
+    "subtitle": "إدارة باقات الائتمان المتاحة للشراء",
+    "add": "إضافة باقة",
+    "edit": "تعديل الباقة",
+    "delete": "حذف",
+    "delete_confirm": "هل أنت متأكد من رغبتك في إلغاء تنشيط هذه الباقة؟",
+    "columns": {
+      "name": "الاسم",
+      "credits": "الأرصدة",
+      "price": "السعر (دينار)",
+      "description": "الوصف",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "credits_unit": "رصيد",
+    "form": {
+      "name": "اسم الباقة",
+      "name_placeholder": "مثال: باقة البداية",
+      "credits": "عدد الأرصدة",
+      "price": "السعر (دينار جزائري)",
+      "description": "الوصف",
+      "description_placeholder": "صف ما تتضمنه هذه الباقة...",
+      "is_active": "نشط",
+      "save": "حفظ الباقة",
+      "update": "تحديث الباقة",
+      "cancel": "إلغاء",
+      "error_name_required": "اسم الباقة مطلوب",
+      "error_credits_price": "يجب أن تكون الأرصدة والسعر أكبر من 0",
+      "id_prefix": "المعرف: {{id}}...",
+      "saving": "جاري الحفظ..."
+    },
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "created": "تم إنشاء الباقة بنجاح",
+    "updated": "تم تحديث الباقة بنجاح",
+    "toggled": "تم تحديث حالة الباقة"
+  },
+  "billing": {
+    "title": "الفواتير والائتمان",
+    "subtitle": "تتبع استخدام الائتمان وسجل المعاملات",
+    "current_balance": "الرصيد الحالي",
+    "credits_available": "الأرصدة المتاحة",
+    "total_purchased": "إجمالي المشتريات",
+    "total_spent": "إجمالي المصروف",
+    "quote_count": "عروض الأسعار المقدمة",
+    "no_activity": "لا توجد نشاط فوترة بعد. ابدأ بتقديم عروض الأسعار!",
+    "request_action": "طلب ائتمان",
+    "request_title": "طلب ائتمان",
+    "request_select_package": "الرجاء اختيار باقة",
+    "request_no_packages": "لا توجد باقات ائتمان متاحة حالياً",
+    "request_success": "تم تقديم طلب الائتمان للمراجعة",
+    "request_error_submit": "فشل تقديم الطلب",
+    "request_submitting": "جاري التقديم..."
+  },
+  "revenue": {
+    "title": "الإيرادات والتحليلات",
+    "subtitle": "تتبع إيرادات المنصة واستخدام الأرصدة ومقاييس البائعين",
+    "metrics": {
+      "monthly_revenue": "الإيرادات الشهرية",
+      "monthly_revenue_desc": "الأرصدة المشتراة في آخر 30 يوماً",
+      "all_time_revenue": "إجمالي الإيرادات",
+      "all_time_revenue_desc": "إجمالي مشتريات الأرصدة",
+      "credits_spent": "الأرصدة المستهلكة",
+      "credits_spent_desc": "إجمالي الأرصدة المستخدمة في عروض الأسعار",
+      "active_with_credits": "بائعون برصيد",
+      "active_with_credits_desc": "البائعون النشطون الذين لديهم رصيد ائتماني",
+      "new_sellers": "بائعون جدد",
+      "new_sellers_desc": "البائعون المسجلون هذا الشهر",
+      "total_packages": "الباقات النشطة",
+      "total_packages_desc": "باقات الائتمان النشطة حالياً"
+    },
+    "transactions": "المعاملات الأخيرة",
+    "no_transactions": "لا توجد معاملات ائتمانية بعد",
+    "showing_latest": "عرض آخر {{count}}",
+    "unknown_seller": "غير معروف",
+    "transaction_types": {
+      "purchase": "شراء",
+      "bonus": "مكافأة",
+      "quote_spent": "عرض سعر",
+      "admin_adjustment": "تعديل"
+    }
+  },
+  "currency_dzd": "د.ج",
+  "credit_requests": {
+    "title": "طلبات الائتمان",
+    "subtitle": "مراجعة وإدارة طلبات الائتمان من البائعين",
+    "filter_all": "الكل",
+    "filter_pending": "قيد الانتظار",
+    "filter_approved": "مقبول",
+    "filter_rejected": "مرفوض",
+    "no_requests": "لم يتم العثور على طلبات ائتمان",
+    "unknown_seller": "غير معروف",
+    "credits_label": "رصيد",
+    "approve_grant": "قبول ومنح",
+    "reject_reason_placeholder": "السبب (اختياري)",
+    "reject_success": "تم رفض الطلب",
+    "reject_action": "رفض",
+    "admin_note_label": "ملاحظة المشرف:",
+    "grant_success": "تم منح {{credits}} رصيد إلى {{name}}",
+    "columns": {
+      "seller": "البائع",
+      "credits": "الأرصدة",
+      "package": "الباقة",
+      "status": "الحالة",
+      "date": "التاريخ",
+      "actions": "الإجراءات"
+    },
+    "tabs": {
+      "requests": "الطلبات",
+      "packages": "الباقات"
+    }
+  }
+}

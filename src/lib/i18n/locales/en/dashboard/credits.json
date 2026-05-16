@@ -1,0 +1,160 @@
+{
+  "nav": {
+    "credit_hub": "Credit Hub",
+    "revenue": "Revenue"
+  },
+  "breadcrumbs": {
+    "credit_hub": "Credit Hub",
+    "revenue": "Revenue & Analytics"
+  },
+  "page": {
+    "title": "Credit Hub",
+    "subtitle": "Manage seller credits and credit packages"
+  },
+  "tabs": {
+    "distribute": "Distribute Credits",
+    "packages": "Credit Packages"
+  },
+  "distribute": {
+    "title": "Distribute Credits",
+    "search": "Search sellers by name, email or store...",
+    "no_results": "No sellers found",
+    "columns": {
+      "seller": "Seller",
+      "store": "Store",
+      "balance": "Credit Balance",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "unknown_seller": "Unknown",
+    "grant": {
+      "title": "Grant Credits",
+      "amount": "Credit Amount",
+      "description": "Description (optional)",
+      "description_placeholder": "e.g. Package purchase, bonus, adjustment...",
+      "confirm": "Grant {{amount}} Credits",
+      "success": "{{amount}} credits granted to {{name}}",
+      "error_amount": "Amount must be greater than 0",
+      "error_failed": "Failed to grant credits",
+        "processing": "Processing..."
+    },
+    "status": {
+      "active": "Active",
+      "waitlisted": "Waitlisted",
+      "new": "New"
+    }
+  },
+  "packages": {
+    "title": "Credit Packages",
+    "subtitle": "Manage credit packages available for purchase",
+    "add": "Add Package",
+    "edit": "Edit Package",
+    "delete": "Delete",
+    "delete_confirm": "Are you sure you want to deactivate this package?",
+    "columns": {
+      "name": "Name",
+      "credits": "Credits",
+      "price": "Price (DZD)",
+      "description": "Description",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "credits_unit": "credits",
+    "form": {
+      "name": "Package Name",
+      "name_placeholder": "e.g. Starter Pack",
+      "credits": "Number of Credits",
+      "price": "Price (DZD)",
+      "description": "Description",
+      "description_placeholder": "Describe what this package includes...",
+      "is_active": "Active",
+      "save": "Save Package",
+      "update": "Update Package",
+      "cancel": "Cancel",
+      "error_name_required": "Package name is required",
+      "error_credits_price": "Credits and price must be greater than 0",
+      "id_prefix": "ID: {{id}}...",
+      "saving": "Saving..."
+    },
+    "active": "Active",
+    "inactive": "Inactive",
+    "created": "Package created successfully",
+    "updated": "Package updated successfully",
+    "toggled": "Package status updated"
+  },
+  "billing": {
+    "title": "Billing & Credits",
+    "subtitle": "Track your credit usage and transaction history",
+    "current_balance": "Current Balance",
+    "credits_available": "Credits Available",
+    "total_purchased": "Total Purchased",
+    "total_spent": "Total Spent",
+    "quote_count": "Quotes Submitted",
+    "no_activity": "No billing activity yet. Start submitting quotes!",
+    "request_action": "Request Credits",
+    "request_title": "Request Credits",
+    "request_select_package": "Please select a package",
+    "request_no_packages": "No credit packages available yet",
+    "request_success": "Credit request submitted for review",
+    "request_error_submit": "Failed to submit request",
+    "request_submitting": "Submitting..."
+  },
+  "revenue": {
+    "title": "Revenue & Analytics",
+    "subtitle": "Track platform revenue, credit usage, and seller metrics",
+    "metrics": {
+      "monthly_revenue": "Monthly Revenue",
+      "monthly_revenue_desc": "Credits purchased in last 30 days",
+      "all_time_revenue": "All-Time Revenue",
+      "all_time_revenue_desc": "Total lifetime credit purchases",
+      "credits_spent": "Credits Consumed",
+      "credits_spent_desc": "Total credits used on quotes",
+      "active_with_credits": "Sellers with Credits",
+      "active_with_credits_desc": "Active sellers who have credit balance",
+      "new_sellers": "New Sellers",
+      "new_sellers_desc": "Sellers registered this month",
+      "total_packages": "Active Packages",
+      "total_packages_desc": "Currently active credit packages"
+    },
+    "transactions": "Recent Transactions",
+    "no_transactions": "No credit transactions yet",
+    "showing_latest": "Showing latest {{count}}",
+    "unknown_seller": "Unknown",
+    "transaction_types": {
+      "purchase": "Purchase",
+      "bonus": "Bonus",
+      "quote_spent": "Quote Spent",
+      "admin_adjustment": "Adjustment"
+    }
+  },
+  "currency_dzd": "DZD",
+  "credit_requests": {
+    "title": "Credit Requests",
+    "subtitle": "Review and manage seller credit requests",
+    "filter_all": "All",
+    "filter_pending": "Pending",
+    "filter_approved": "Approved",
+    "filter_rejected": "Rejected",
+    "no_requests": "No credit requests found",
+    "unknown_seller": "Unknown",
+    "credits_label": "credits",
+    "approve_grant": "Approve & Grant",
+    "reject_reason_placeholder": "Reason (optional)",
+    "reject_success": "Request rejected",
+    "reject_action": "Reject",
+    "admin_note_label": "Admin note:",
+    "grant_success": "{{credits}} credits granted to {{name}}",
+    "columns": {
+      "seller": "Seller",
+      "credits": "Credits",
+      "package": "Package",
+      "status": "Status",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "tabs": {
+      "requests": "Requests",
+      "packages": "Packages"
+    }
+  }
+}
