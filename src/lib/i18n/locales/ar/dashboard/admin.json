@@ -80,6 +80,7 @@
     "vehicle": "المركبة",
     "year": "السنة",
     "buyer": "المشتري",
+    "guest": "ضيف",
     "lifecycle": "حالة دورة الحياة",
     "status_placeholder": "الحالة",
     "update": "تحديث دورة الحياة",
@@ -126,11 +127,42 @@
       "ban": "حظر المحدد",
       "selected": "تم تحديد {{count}}",
       "banned_success": "تم حظر {{count}} مستخدمين",
-      "activated_success": "تم تنشيط البائع"
+      "activated_success": "تم تنشيط البائع",
+      "grant_credits": "منح أرصدة"
     },
     "profile": {
       "title": "ملف المستخدم",
       "description": "عرض وإدارة تفاصيل حساب المستخدم.",
+      "credits": "ائتمان",
+      "banned": "محظور",
+      "unknown_brand": "غير معروف",
+      "pills": {
+        "requests": "الطلبات",
+        "days": "أيام",
+        "verified": "موثق",
+        "pending": "قيد الانتظار",
+        "quotes": "عروض الأسعار",
+        "brands": "العلامات",
+        "categories": "الفئات",
+        "priority": "الأولوية",
+        "days_active": "أيام النشاط"
+      },
+      "labels": {
+        "contact": "جهة الاتصال",
+        "email": "البريد",
+        "phone": "الهاتف",
+        "location": "الموقع",
+        "joined": "تاريخ التسجيل",
+        "role": "الدور",
+        "verified": "موثق",
+        "age": "العمر",
+        "store": "المتجر",
+        "reg_number": "رقم السجل",
+        "ban": "حظر",
+        "expires": "انتهاء",
+        "categories": "الفئات",
+        "brands": "العلامات"
+      },
       "suspended": "موقوف",
       "account_intelligence": "ذكاء الحساب",
       "account_meta": "بيانات الحساب",
@@ -176,7 +208,9 @@
     "health": {
       "optimal": "مثالي",
       "stable": "مستقر",
-      "low": "منخفض"
+      "low": "منخفض",
+      "healthy": "صحي",
+      "low_supply": "عرض منخفض"
     },
     "overview": {
       "thriving": "السوق مزدهر",
@@ -187,7 +221,30 @@
       "db_size": "حجم القاعدة",
       "recent_registrations": "تسجيلات جديدة",
       "view_analytics": "عرض التحليلات",
-      "recent_activity": "نشاط حديث"
+      "recent_activity": "نشاط حديث",
+      "admin_fallback": "مسؤول"
     }
+  },
+  "intelligence_page": {
+    "title": "ذكاء السوق",
+    "subtitle": "تحليل فجوة العرض والطلب وفرص البائعين",
+    "metrics": {
+      "open_demand": "الطلب المفتوح",
+      "active_sellers": "البائعون النشطون",
+      "unserved": "الطلبات غير المخدومة",
+      "fulfillment_rate": "معدل التنفيذ"
+    },
+    "category_gaps": "الفجوات حسب الفئة",
+    "brand_gaps": "الفجوات حسب العلامة",
+    "regional_gaps": "الفجوات حسب المنطقة",
+    "demand": "الطلب",
+    "supply": "العرض",
+    "gap": "الفجوة",
+    "unserved_title": "الطلبات غير المخدومة",
+    "unserved_desc": "طلبات مفتوحة بدون عروض — فرص فورية للبائعين",
+    "no_data": "لا توجد بيانات بعد",
+    "view_details": "عرض التفاصيل",
+    "chart_view": "رسم بياني",
+    "table_view": "جدول"
   }
 }

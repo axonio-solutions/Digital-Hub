@@ -26,6 +26,20 @@
     "toast_upload_success": "Image uploaded",
     "toast_upload_failed": "Upload failed"
   },
+  "toasts": {
+    "category_created": "Category created successfully",
+    "category_create_error": "Failed to create category",
+    "category_updated": "Category updated successfully",
+    "category_update_error": "Failed to update category",
+    "category_deleted": "Category deleted successfully",
+    "category_delete_error": "Failed to delete category",
+    "brand_created": "Brand cluster created successfully",
+    "brand_create_error": "Failed to create brand cluster",
+    "brand_updated": "Brand cluster updated successfully",
+    "brand_update_error": "Failed to update brand cluster",
+    "brand_deleted": "Brand cluster deleted successfully",
+    "brand_delete_error": "Failed to delete brand cluster"
+  },
   "tabs": {
     "categories": "Categories",
     "brands": "Car Brands"

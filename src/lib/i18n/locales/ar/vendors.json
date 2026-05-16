@@ -6,5 +6,9 @@
     "categories": "فئات قطع الغيار",
     "selected": "محدد",
     "save": "حفظ الإعدادات"
+  },
+  "toasts": {
+    "specialties_updated": "تم تحديث التخصصات بنجاح",
+    "specialties_error": "فشل تحديث التخصصات"
   }
 }

@@ -17,7 +17,12 @@
     "settings": "Account Settings",
     "support": "Help & Support",
     "cloud_logs": "Cloud Logs",
-    "admin_settings": "Admin Settings"
+    "admin_settings": "Admin Settings",
+    "market_intelligence": "Market Intelligence",
+    "credit_hub": "Credit Hub",
+    "revenue": "Revenue",
+    "billing": "Billing",
+    "credit_requests": "Credit Requests"
   },
   "labels": {
     "buyer_hub": "Buyer Hub",
@@ -42,7 +47,11 @@
     "admin_settings": "Admin Settings",
     "cloud_logs": "Cloud Logs",
     "support": "Help & Support",
-    "request_detail": "Request Detail"
+    "request_detail": "Request Detail",
+    "market_intelligence": "Market Intelligence",
+    "billing": "Billing",
+    "revenue": "Revenue",
+    "credit_requests": "Credit Requests"
   },
   "user_dropdown": {
     "role": "Role",

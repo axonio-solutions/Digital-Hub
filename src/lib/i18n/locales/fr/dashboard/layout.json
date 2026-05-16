@@ -17,7 +17,12 @@
     "settings": "Parametres",
     "support": "Aide & Support",
     "cloud_logs": "Logs Cloud",
-    "admin_settings": "Parametres Admin"
+    "admin_settings": "Parametres Admin",
+    "market_intelligence": "Intelligence Marché",
+    "credit_hub": "Centre de Crédits",
+    "revenue": "Revenus",
+    "billing": "Facturation",
+    "credit_requests": "Demandes de Crédits"
   },
   "labels": {
     "buyer_hub": "Espace Acheteur",
@@ -42,7 +47,11 @@
     "admin_settings": "Parametres Admin",
     "cloud_logs": "Logs Cloud",
     "support": "Aide & Support",
-    "request_detail": "Detail de la Demande"
+    "request_detail": "Detail de la Demande",
+    "market_intelligence": "Intelligence Marché",
+    "billing": "Facturation",
+    "revenue": "Revenus",
+    "credit_requests": "Demandes de Crédits"
   },
   "user_dropdown": {
     "role": "Role",

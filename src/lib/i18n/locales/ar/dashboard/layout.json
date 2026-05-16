@@ -17,7 +17,12 @@
     "settings": "الإعدادات",
     "support": "الدعم والمساعدة",
     "cloud_logs": "سجلات السحابة",
-    "admin_settings": "إعدادات المسؤول"
+    "admin_settings": "إعدادات المسؤول",
+    "market_intelligence": "ذكاء السوق",
+    "credit_hub": "مركز الائتمان",
+    "revenue": "الإيرادات",
+    "billing": "الفواتير",
+    "credit_requests": "طلبات الائتمان"
   },
   "labels": {
     "buyer_hub": "مركز المشتري",
@@ -42,7 +47,11 @@
     "admin_settings": "إعدادات المسؤول",
     "cloud_logs": "سجلات السحابة",
     "support": "الدعم والمساعدة",
-    "request_detail": "تفاصيل الطلب"
+    "request_detail": "تفاصيل الطلب",
+    "market_intelligence": "ذكاء السوق",
+    "billing": "الفواتير",
+    "revenue": "الإيرادات",
+    "credit_requests": "طلبات الائتمان"
   },
   "user_dropdown": {
     "role": "الدور",

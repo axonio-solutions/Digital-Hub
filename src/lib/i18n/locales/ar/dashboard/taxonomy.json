@@ -26,6 +26,20 @@
     "toast_upload_success": "تم رفع الصورة",
     "toast_upload_failed": "فشل الرفع"
   },
+  "toasts": {
+    "category_created": "تم إنشاء الفئة بنجاح",
+    "category_create_error": "فشل إنشاء الفئة",
+    "category_updated": "تم تحديث الفئة بنجاح",
+    "category_update_error": "فشل تحديث الفئة",
+    "category_deleted": "تم حذف الفئة بنجاح",
+    "category_delete_error": "فشل حذف الفئة",
+    "brand_created": "تم إنشاء مجموعة العلامة التجارية بنجاح",
+    "brand_create_error": "فشل إنشاء مجموعة العلامة التجارية",
+    "brand_updated": "تم تحديث مجموعة العلامة التجارية بنجاح",
+    "brand_update_error": "فشل تحديث مجموعة العلامة التجارية",
+    "brand_deleted": "تم حذف مجموعة العلامة التجارية بنجاح",
+    "brand_delete_error": "فشل حذف مجموعة العلامة التجارية"
+  },
   "tabs": {
     "categories": "الفئات",
     "brands": "علامات السيارات"

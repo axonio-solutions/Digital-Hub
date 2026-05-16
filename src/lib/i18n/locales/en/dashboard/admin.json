@@ -71,6 +71,7 @@
     "vehicle": "Vehicle",
     "year": "Year",
     "buyer": "Buyer",
+    "guest": "Guest",
     "lifecycle": "Lifecycle Status",
     "status_placeholder": "Status",
     "update": "Update Lifecycle",
@@ -117,10 +118,41 @@
       "ban": "Ban Selected",
       "selected": "{{count}} selected",
       "banned_success": "Banned {{count}} users",
-      "activated_success": "Seller activated"
+      "activated_success": "Seller activated",
+      "grant_credits": "Grant Credits"
     },
     "profile": {
       "title": "User Profile",
+      "credits": "Credits",
+      "banned": "Banned",
+      "unknown_brand": "Unknown",
+      "pills": {
+        "requests": "Requests",
+        "days": "Days",
+        "verified": "Verified",
+        "pending": "Pending",
+        "quotes": "Quotes",
+        "brands": "Brands",
+        "categories": "Categories",
+        "priority": "Priority",
+        "days_active": "Days Active"
+      },
+      "labels": {
+        "contact": "Contact",
+        "email": "Email",
+        "phone": "Phone",
+        "location": "Location",
+        "joined": "Joined",
+        "role": "Role",
+        "verified": "Verified",
+        "age": "Age",
+        "store": "Store",
+        "reg_number": "Reg #",
+        "ban": "Ban",
+        "expires": "Expires",
+        "categories": "Categories",
+        "brands": "Brands"
+      },
       "description": "View and manage user account details.",
       "suspended": "SUSPENDED",
       "account_intelligence": "Account Intelligence",
@@ -167,7 +199,9 @@
     "health": {
       "optimal": "Optimal",
       "stable": "Stable",
-      "low": "Low"
+      "low": "Low",
+      "healthy": "Healthy",
+      "low_supply": "Low Supply"
     },
     "overview": {
       "thriving": "Market is thriving",
@@ -178,7 +212,30 @@
       "db_size": "DB Size",
       "recent_registrations": "New Signups",
       "view_analytics": "View Analytics",
-      "recent_activity": "Recent Activity"
+      "recent_activity": "Recent Activity",
+      "admin_fallback": "Admin"
     }
+  },
+  "intelligence_page": {
+    "title": "Market Intelligence",
+    "subtitle": "Demand vs Supply Gap Analysis & Seller Opportunity Insights",
+    "metrics": {
+      "open_demand": "Open Demand",
+      "active_sellers": "Active Sellers",
+      "unserved": "Unserved Requests",
+      "fulfillment_rate": "Fulfillment Rate"
+    },
+    "category_gaps": "Category Gaps",
+    "brand_gaps": "Brand Gaps",
+    "regional_gaps": "Regional Gaps",
+    "demand": "Demand",
+    "supply": "Supply",
+    "gap": "Gap",
+    "unserved_title": "Unserved Requests",
+    "unserved_desc": "Open requests with zero quotes — immediate seller opportunities",
+    "no_data": "No data yet",
+    "view_details": "View Details",
+    "chart_view": "Chart",
+    "table_view": "Table"
   }
 }

@@ -71,6 +71,7 @@
     "vehicle": "Véhicule",
     "year": "Année",
     "buyer": "Acheteur",
+    "guest": "Invité",
     "lifecycle": "Statut du Cycle de Vie",
     "status_placeholder": "Statut",
     "update": "Mettre à jour le cycle de vie",
@@ -117,11 +118,42 @@
       "ban": "Bannir la Sélection",
       "selected": "{{count}} sélectionnés",
       "banned_success": "{{count}} utilisateurs bannis",
-      "activated_success": "Vendeur activé"
+      "activated_success": "Vendeur activé",
+      "grant_credits": "Octroyer des Crédits"
     },
     "profile": {
       "title": "Profil Utilisateur",
       "description": "Afficher et gérer les détails du compte utilisateur.",
+      "credits": "Crédits",
+      "banned": "BANNI",
+      "unknown_brand": "Inconnu",
+      "pills": {
+        "requests": "Demandes",
+        "days": "Jours",
+        "verified": "Vérifié",
+        "pending": "En attente",
+        "quotes": "Devis",
+        "brands": "Marques",
+        "categories": "Catégories",
+        "priority": "Priorité",
+        "days_active": "Jours Actif"
+      },
+      "labels": {
+        "contact": "Contact",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "location": "Localisation",
+        "joined": "Inscrit",
+        "role": "Rôle",
+        "verified": "Vérifié",
+        "age": "Âge",
+        "store": "Magasin",
+        "reg_number": "Reg #",
+        "ban": "Bannissement",
+        "expires": "Expire",
+        "categories": "Catégories",
+        "brands": "Marques"
+      },
       "suspended": "SUSPENDU",
       "account_intelligence": "Intelligence du Compte",
       "account_meta": "Meta du Compte",
@@ -167,7 +199,9 @@
     "health": {
       "optimal": "Optimal",
       "stable": "Stable",
-      "low": "Faible"
+      "low": "Faible",
+      "healthy": "Sain",
+      "low_supply": "Faible Offre"
     },
     "overview": {
       "thriving": "Le march\u00e9 prosp\u00e8re",
@@ -178,7 +212,30 @@
       "db_size": "Taille DB",
       "recent_registrations": "Nouvelles Inscriptions",
       "view_analytics": "Voir Analyses",
-      "recent_activity": "Activit\u00e9 R\u00e9cente"
+      "recent_activity": "Activit\u00e9 R\u00e9cente",
+      "admin_fallback": "Admin"
     }
+  },
+  "intelligence_page": {
+    "title": "Intelligence Marché",
+    "subtitle": "Analyse des écarts offre-demande et opportunités vendeurs",
+    "metrics": {
+      "open_demand": "Demande Ouverte",
+      "active_sellers": "Vendeurs Actifs",
+      "unserved": "Demandes Non Servies",
+      "fulfillment_rate": "Taux de Satisfaction"
+    },
+    "category_gaps": "Écarts par Catégorie",
+    "brand_gaps": "Écarts par Marque",
+    "regional_gaps": "Écarts par Région",
+    "demand": "Demande",
+    "supply": "Offre",
+    "gap": "Écart",
+    "unserved_title": "Demandes Non Servies",
+    "unserved_desc": "Demandes ouvertes sans aucun devis — opportunités vendeurs immédiates",
+    "no_data": "Pas encore de données",
+    "view_details": "Voir Détails",
+    "chart_view": "Graphique",
+    "table_view": "Tableau"
   }
 }

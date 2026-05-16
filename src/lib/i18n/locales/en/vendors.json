@@ -6,5 +6,9 @@
     "categories": "Part Categories",
     "selected": "Selected",
     "save": "Save Configuration"
+  },
+  "toasts": {
+    "specialties_updated": "Specialties updated successfully",
+    "specialties_error": "Failed to update specialties"
   }
 }

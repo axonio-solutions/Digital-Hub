@@ -6,5 +6,9 @@
     "categories": "Categories de Pieces",
     "selected": "Selectionne",
     "save": "Enregistrer la Configuration"
+  },
+  "toasts": {
+    "specialties_updated": "Specialites mises a jour avec succes",
+    "specialties_error": "Echec de la mise a jour des specialites"
   }
 }
