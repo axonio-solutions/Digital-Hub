@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   createQuoteServerFn,
-  deleteQuoteServerFn,
+  withdrawQuoteServerFn,
   fetchSellerStatsServerFn,
   getSellerQuotesServerFn,
   updateQuoteServerFn,
@@ -49,6 +49,7 @@ export function useSubmitQuote() {
       queryClient.invalidateQueries({ queryKey: ['requests'] })
       queryClient.invalidateQueries({ queryKey: sellerKeys.all })
       queryClient.invalidateQueries({ queryKey: ['buyer'] })
+      queryClient.invalidateQueries({ queryKey: ['credits', 'my-balance'] })
     },
   })
 }
@@ -57,7 +58,7 @@ export function useDeleteQuote() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (id: string) => {
-      const res = await deleteQuoteServerFn({ data: { id } })
+      const res = await withdrawQuoteServerFn({ data: { id } })
       if (!res.success) throw new Error(res.error)
       return res.data
     },

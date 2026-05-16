@@ -5,6 +5,7 @@ import {
   Bell, 
   ChevronLeft, 
   ChevronRight, 
+  Coins,
   Filter,
   FilterX,
   LayoutGrid,
@@ -12,7 +13,7 @@ import {
   Table as TableIcon
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 
 // Components
 import { RequestCard } from './request-card'
@@ -28,9 +29,9 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { 
-  Dialog, DialogContent, DialogDescription, DialogFooter, 
-  DialogHeader, DialogTitle, DialogTrigger 
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle
 } from '@/components/ui/dialog'
 
 // Hooks
@@ -42,6 +43,7 @@ import { tCategory } from '@/utils/category-utils'
 
 export function MarketplaceHub() {
   const { t, i18n } = useTranslation('marketplace')
+  const { toast: tst } = useToast('marketplace')
   const { data: user } = useAuth()
   const queryClient = useQueryClient()
   const search = useSearch({ from: '/_authed/dashboard/marketplace/' })
@@ -50,6 +52,7 @@ export function MarketplaceHub() {
   const [selectedRequest, setSelectedRequest] = useState<any>(null)
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid')
   const [newRequestsCount, setNewRequestsCount] = useState(0)
+  const [creditDialogOpen, setCreditDialogOpen] = useState(false)
 
   // Fetch Data
   const { data: taxonomy } = usePublicTaxonomy()
@@ -64,10 +67,10 @@ export function MarketplaceHub() {
     const channel = supabase.channel('public-marketplace-ui')
       .on('broadcast', { event: 'NEW_REQUEST' }, (payload) => {
         setNewRequestsCount(prev => prev + 1)
-        toast.info('New Request Available!', {
-          description: 'A new opportunity has been posted in the marketplace.',
+        tst.info('toasts.new_request_title', {
+          description: t('toasts.new_request_desc'),
           action: {
-            label: 'Show Now',
+            label: t('toasts.new_request_action'),
             onClick: () => {
               queryClient.invalidateQueries({ queryKey: requestKeys.open() })
               setNewRequestsCount(0)
@@ -98,6 +101,14 @@ export function MarketplaceHub() {
       : [...currentBrands, brandId]
     
     navigate({ search: (prev) => ({ ...prev, brands: nextBrands.length > 0 ? nextBrands : undefined, page: 1 }) })
+  }
+
+  const handleSendOffer = (request: any) => {
+    if (user?.role === 'seller' && ((user as any)?.credits ?? 0) <= 0) {
+      setCreditDialogOpen(true)
+      return
+    }
+    setSelectedRequest(request)
   }
 
   const clearFilters = () => {
@@ -269,7 +280,7 @@ export function MarketplaceHub() {
                       <RequestCard 
                         key={req.id} 
                         request={req} 
-                        onQuote={setSelectedRequest} 
+                        onQuote={handleSendOffer} 
                         isOwner={req.buyerId === user?.id}
                       />
                     ))
@@ -278,7 +289,7 @@ export function MarketplaceHub() {
                       data={requests} 
                       type="opportunity"
                       onAction={(action) => {
-                        if (action.type === 'send_offer') setSelectedRequest(action.item)
+                        if (action.type === 'send_offer') handleSendOffer(action.item)
                       }}
                     />
                   )}
@@ -296,6 +307,36 @@ export function MarketplaceHub() {
         onOpenChange={(open) => !open && setSelectedRequest(null)}
         user={user}
       />
+
+      {/* Insufficient credits dialog */}
+      <Dialog open={creditDialogOpen} onOpenChange={setCreditDialogOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Coins className="size-5 text-amber-500" />
+              {t('credit_dialog.title')}
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              {t('credit_dialog.description')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreditDialogOpen(false)} className="rounded-xl text-xs font-bold">
+              {t('credit_dialog.cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                setCreditDialogOpen(false)
+                navigate({ to: '/dashboard/billing' as any })
+              }}
+              className="rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white"
+            >
+              <Coins className="size-3.5 mr-1.5" />
+              {t('credit_dialog.request')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

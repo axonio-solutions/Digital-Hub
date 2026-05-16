@@ -1,11 +1,11 @@
 import { createServerFn } from '@tanstack/react-start'
 import { and, desc, eq, gte, sql } from 'drizzle-orm'
 import type { User } from '@/lib/auth'
-import { buyerMiddleware, sellerMiddleware } from '@/features/auth/guards/auth'
+import { adminMiddleware, buyerMiddleware, sellerMiddleware } from '@/features/auth/guards/auth'
 import { acceptQuoteSchema, quoteSchema } from '@/types/quote-schemas'
 import { db } from '@/db'
 import { quotes, sparePartRequests } from '@/db/schema'
-import { acceptQuoteUseCase, createQuoteUseCase, deleteQuoteUseCase, getQuotesBySellerUseCase, rejectQuoteUseCase, revokeQuoteUseCase, unrejectQuoteUseCase, updateQuoteUseCase } from '@/use-cases/quotes/index'
+import { acceptQuoteUseCase, createQuoteUseCase, deleteQuoteUseCase, getQuotesBySellerUseCase, rejectQuoteUseCase, revokeQuoteUseCase, unrejectQuoteUseCase, updateQuoteUseCase, withdrawQuoteUseCase } from '@/use-cases/quotes/index'
 
 /**
  * Axis Layer 3: Quotes Actions
@@ -14,9 +14,9 @@ import { acceptQuoteUseCase, createQuoteUseCase, deleteQuoteUseCase, getQuotesBy
 export const createQuoteServerFn = createServerFn({ method: 'POST' })
   .inputValidator((data: any) => data)
   .middleware([sellerMiddleware])
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const validated = quoteSchema.parse(data)
-    return await createQuoteUseCase(validated)
+    return await createQuoteUseCase(validated, context.user.id)
   })
 
 export const getSellerQuotesServerFn = createServerFn({ method: 'GET' })
@@ -45,7 +45,7 @@ export const acceptQuoteServerFn = createServerFn({ method: 'POST' })
     return await acceptQuoteUseCase(validated.quoteId, validated.requestId)
   })
 
-export const deleteQuoteServerFn = createServerFn({ method: 'POST' })
+export const withdrawQuoteServerFn = createServerFn({ method: 'POST' })
   .inputValidator((data: { id: string }) => data)
   .middleware([sellerMiddleware])
   .handler(async ({ data, context }) => {
@@ -59,6 +59,13 @@ export const deleteQuoteServerFn = createServerFn({ method: 'POST' })
       throw new Error('Forbidden: You do not own this quote')
     }
 
+    return await withdrawQuoteUseCase(data.id)
+  })
+
+export const deleteQuoteServerFn = createServerFn({ method: 'POST' })
+  .inputValidator((data: { id: string }) => data)
+  .middleware([adminMiddleware])
+  .handler(async ({ data }) => {
     return await deleteQuoteUseCase(data.id)
   })
 

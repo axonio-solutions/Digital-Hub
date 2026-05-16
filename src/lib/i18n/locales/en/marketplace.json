@@ -111,7 +111,10 @@
     "update_error": "Update failed",
     "delete_success": "Offer deleted successfully",
     "retract_success": "Quote retracted successfully",
-    "retract_error": "Failed to retract quote"
+    "retract_error": "Failed to retract quote",
+    "new_request_title": "New Request Available!",
+    "new_request_desc": "A new opportunity has been posted in the marketplace.",
+    "new_request_action": "Show Now"
   },
   "alerts": {
     "delete_confirm": "Permanently delete this offer? This cannot be undone."
@@ -148,6 +151,12 @@
     "submit_btn": "Submit Quote",
     "view_btn": "View Details",
     "no_results": "No results matching your filters."
+  },
+  "credit_dialog": {
+    "title": "Insufficient Credits",
+    "description": "Your credits have been consumed. Request more credits to continue submitting quotes.",
+    "cancel": "Cancel",
+    "request": "Request Credits"
   },
   "card": {
     "badge_looking": "Looking for Part",

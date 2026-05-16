@@ -1,18 +1,23 @@
 'use client'
 
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
-import { Loader2, Send, ShieldCheck, Zap } from 'lucide-react'
+import { Coins, Loader2, Send, ShieldCheck, Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-
+import { useNavigate } from '@tanstack/react-router'
 import type { QuoteInput } from '@/types/quote-schemas'
 import { quoteSchema } from '@/types/quote-schemas'
+import { useToast } from '@/hooks/use-toast'
 import { useSubmitQuote, useUpdateQuote } from '@/features/marketplace/hooks/use-marketplace'
 import { tCategory } from '@/utils/category-utils'
 import { CategoryDisplay } from '@/components/ui/category-display'
 
 import { Button } from '@/components/ui/button'
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle,
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -52,6 +57,8 @@ export function SubmitQuoteForm({
   showContext = true,
 }: SubmitQuoteFormProps) {
   const { t } = useTranslation('marketplace')
+  const navigate = useNavigate()
+  const [creditDialogOpen, setCreditDialogOpen] = useState(false)
   const form = useForm<QuoteInput>({
     resolver: zodResolver(quoteSchema),
     defaultValues: {
@@ -70,36 +77,47 @@ export function SubmitQuoteForm({
   const isEditing = !!quoteId
   const isCompact = layout === 'compact'
 
+  const { toast } = useToast('marketplace')
+
   function onSubmit(values: QuoteInput) {
     if (isEditing && quoteId) {
       updateQuote(
         { id: quoteId, data: values },
         {
           onSuccess: () => {
-            toast.success(t('toasts.update_success'))
+            toast.success('toasts.update_success')
             onSuccess()
           },
           onError: (err: any) => {
-            toast.error(t('toasts.update_error'), { description: err.message })
+            if (err.message?.toLowerCase().includes('credit')) {
+              setCreditDialogOpen(true)
+            } else {
+              toast.error('toasts.update_error', { error: err.message })
+            }
           },
         }
       )
     } else {
       submitQuote(values, {
         onSuccess: () => {
-          toast.success(t('toasts.submit_success'))
+          toast.success('toasts.submit_success')
           onSuccess()
         },
         onError: (err: any) => {
-          toast.error(t('toasts.submit_error'), { description: err.message })
+          if (err.message?.toLowerCase().includes('credit')) {
+            setCreditDialogOpen(true)
+          } else {
+            toast.error('toasts.submit_error', { error: err.message })
+          }
         },
       })
     }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={cn('flex flex-col h-full', isCompact ? 'gap-4' : 'gap-4 sm:gap-6')}>
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className={cn('flex flex-col h-full', isCompact ? 'gap-4' : 'gap-4 sm:gap-6')}>
         {showContext && vehicleInfo && (
           <div className="flex flex-wrap items-center gap-4 justify-between pb-4 border-b border-border">
             <div className="flex items-center gap-3">
@@ -262,5 +280,35 @@ export function SubmitQuoteForm({
         </Button>
       </form>
     </Form>
+
+    <Dialog open={creditDialogOpen} onOpenChange={setCreditDialogOpen}>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Coins className="size-5 text-amber-500" />
+            {t('credit_dialog.title')}
+          </DialogTitle>
+          <DialogDescription className="pt-2">
+            {t('credit_dialog.description')}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setCreditDialogOpen(false)} className="rounded-xl text-xs font-bold">
+            {t('credit_dialog.cancel')}
+          </Button>
+          <Button
+            onClick={() => {
+              setCreditDialogOpen(false)
+              navigate({ to: '/dashboard/billing' as any })
+            }}
+            className="rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white"
+          >
+            <Coins className="size-3.5 mr-1.5" />
+            {t('credit_dialog.request')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </>
   )
 }

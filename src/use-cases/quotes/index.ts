@@ -1,50 +1,108 @@
+import { and, eq, ne, sql } from 'drizzle-orm'
+
 import type { QuoteInput } from '@/types/quote-schemas'
-import { deleteQuote, fetchSellerQuotes, insertQuote, updateQuote, acceptQuoteTransaction, rejectQuoteTransaction, revokeAcceptedQuoteTransaction, unrejectQuoteTransaction } from '@/data-access/quotes'
-import { NotificationTriggers } from '@/services/notification-triggers'
+
+import {
+  acceptQuoteTransaction,
+  deleteQuote,
+  fetchSellerQuotes,
+  insertQuote,
+  rejectQuoteTransaction,
+  revokeAcceptedQuoteTransaction,
+  unrejectQuoteTransaction,
+  updateQuote,
+  withdrawQuoteTransaction,
+} from '@/data-access/quotes'
 import { db } from '@/db'
-import { and, eq, ne } from 'drizzle-orm'
-import { quotes } from '@/db/schema'
+import { creditTransactions, quotes, sparePartRequests, users } from '@/db/schema'
+import { validateQuoteTransition, validateRequestTransition } from '@/lib/state-machine'
+import { NotificationTriggers } from '@/services/notification-triggers'
 
 /**
  * Axis Layer 4: Use Cases for Quotes
  */
 
-export async function createQuoteUseCase(data: QuoteInput) {
+export async function createQuoteUseCase(data: QuoteInput, sellerId?: string) {
   let createdQuoteId: string | undefined;
 
-  const result = await db.transaction(async (tx) => {
-    try {
+  try {
+    const result = await db.transaction(async (tx) => {
+      const request = await tx.query.sparePartRequests.findFirst({
+        where: eq(sparePartRequests.id, data.requestId),
+      })
+      if (!request || request.status !== 'open') {
+        throw new Error('Cannot quote on a non-open request')
+      }
+
+      const [seller] = await tx
+        .select({ credits: users.credits })
+        .from(users)
+        .where(eq(users.id, sellerId || ''))
+
+      if (!seller || seller.credits < 1) {
+        throw new Error('Insufficient credits. You need at least 1 credit to submit a quote.')
+      }
+
+      await tx
+        .update(users)
+        .set({ credits: sql`${users.credits} - 1` })
+        .where(eq(users.id, sellerId || ''))
+
       const newQuote = await insertQuote(data, tx)
-      
+
       if (newQuote?.[0]?.id) {
         createdQuoteId = newQuote[0].id
+
+        await tx.insert(creditTransactions).values({
+          sellerId: sellerId || '',
+          amount: -1,
+          type: 'quote_spent',
+          referenceId: newQuote[0].id,
+          description: `Quote submission — ${request.partName}`,
+        })
       }
 
       return { success: true, data: newQuote[0] }
-    } catch (error) {
-      console.error('Error in createQuoteUseCase transaction:', error)
-      tx.rollback()
-      return { success: false, error: 'Failed to create quote' }
+    })
+
+    if (result.success && createdQuoteId) {
+      NotificationTriggers.onQuoteCreated(createdQuoteId).catch(console.error)
     }
-  })
 
-  // Decoupled side-effect: Execute outside the transaction block!
-  if (result.success && createdQuoteId) {
-    NotificationTriggers.onQuoteCreated(createdQuoteId).catch(console.error)
+    return result
+  } catch (error: any) {
+    if (!error.message?.toLowerCase().includes('credit')) {
+      console.error('Error in createQuoteUseCase transaction:', error)
+    }
+    return { success: false, error: error.message || 'Failed to create quote' }
   }
-
-  return result
 }
 
 export async function acceptQuoteUseCase(quoteId: string, requestId: string) {
   return await db.transaction(async (tx) => {
     try {
+      const request = await tx.query.sparePartRequests.findFirst({
+        where: eq(sparePartRequests.id, requestId),
+      })
+      if (!request) {
+        tx.rollback()
+        return { success: false, error: 'Request not found' }
+      }
+      validateRequestTransition(request.status, 'fulfilled')
+
+      const quote = await tx.query.quotes.findFirst({
+        where: eq(quotes.id, quoteId),
+      })
+      if (!quote) {
+        tx.rollback()
+        return { success: false, error: 'Quote not found' }
+      }
+      validateQuoteTransition(quote.status, 'accepted')
+
       await acceptQuoteTransaction(quoteId, requestId, tx)
       
-      // Notify the seller
       await NotificationTriggers.onQuoteAccepted(quoteId, tx)
 
-      // Broadcast rejection to other sellers
       const otherQuotes = await tx.query.quotes.findMany({
         where: and(eq(quotes.requestId, requestId), ne(quotes.id, quoteId))
       })
@@ -54,10 +112,10 @@ export async function acceptQuoteUseCase(quoteId: string, requestId: string) {
       }
 
       return { success: true }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error in acceptQuoteUseCase transaction:', error)
       tx.rollback()
-      return { success: false, error: 'Failed to accept quote' }
+      return { success: false, error: error.message || 'Failed to accept quote' }
     }
   })
 }
@@ -65,16 +123,38 @@ export async function acceptQuoteUseCase(quoteId: string, requestId: string) {
 export async function revokeQuoteUseCase(quoteId: string, requestId: string) {
   return await db.transaction(async (tx) => {
     try {
+      const request = await tx.query.sparePartRequests.findFirst({
+        where: eq(sparePartRequests.id, requestId),
+      })
+      if (!request) {
+        tx.rollback()
+        return { success: false, error: 'Request not found' }
+      }
+
+      const quote = await tx.query.quotes.findFirst({
+        where: eq(quotes.id, quoteId),
+      })
+      if (!quote) {
+        tx.rollback()
+        return { success: false, error: 'Quote not found' }
+      }
+
+      if (request.status === 'open' && quote.status !== 'accepted') {
+        return { success: true }
+      }
+
+      validateRequestTransition(request.status, 'open')
+      validateQuoteTransition(quote.status, 'rejected')
+
       await revokeAcceptedQuoteTransaction(quoteId, requestId, tx)
       
-      // Notify the seller
       await NotificationTriggers.onQuoteRevoked(quoteId, tx)
       
       return { success: true }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error in revokeQuoteUseCase transaction:', error)
       tx.rollback()
-      return { success: false, error: 'Failed to revoke quote' }
+      return { success: false, error: error.message || 'Failed to revoke quote' }
     }
   })
 }
@@ -82,16 +162,24 @@ export async function revokeQuoteUseCase(quoteId: string, requestId: string) {
 export async function unrejectQuoteUseCase(quoteId: string) {
   return await db.transaction(async (tx) => {
     try {
+      const quote = await tx.query.quotes.findFirst({
+        where: eq(quotes.id, quoteId),
+      })
+      if (!quote) {
+        tx.rollback()
+        return { success: false, error: 'Quote not found' }
+      }
+      validateQuoteTransition(quote.status, 'pending')
+
       const updated = await unrejectQuoteTransaction(quoteId, tx)
       
-      // Notify the seller
       await NotificationTriggers.onQuoteUnrejected(quoteId, tx)
 
       return { success: true, data: updated[0] }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error in unrejectQuoteUseCase transaction:', error)
       tx.rollback()
-      return { success: false, error: 'Failed to un-reject quote' }
+      return { success: false, error: error.message || 'Failed to un-reject quote' }
     }
   })
 }
@@ -99,27 +187,50 @@ export async function unrejectQuoteUseCase(quoteId: string) {
 export async function rejectQuoteUseCase(quoteId: string) {
   return await db.transaction(async (tx) => {
     try {
+      const quote = await tx.query.quotes.findFirst({
+        where: eq(quotes.id, quoteId),
+      })
+      if (!quote) {
+        tx.rollback()
+        return { success: false, error: 'Quote not found' }
+      }
+      validateQuoteTransition(quote.status, 'rejected')
+
       const updated = await rejectQuoteTransaction(quoteId, tx)
       
-      // Notify the seller
       await NotificationTriggers.onQuoteRejected(quoteId, tx)
       
       return { success: true, data: updated[0] }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error in rejectQuoteUseCase transaction:', error)
       tx.rollback()
-      return { success: false, error: 'Failed to reject quote' }
+      return { success: false, error: error.message || 'Failed to reject quote' }
     }
   })
 }
 
 export async function getQuotesBySellerUseCase(sellerId: string) {
   try {
-    const quotes = await fetchSellerQuotes(sellerId)
-    return { success: true, data: quotes }
+    const sellerQuotes = await fetchSellerQuotes(sellerId)
+    return { success: true, data: sellerQuotes }
   } catch (error) {
     console.error('Error in getQuotesBySellerUseCase:', error)
     return { success: false, error: 'Failed to fetch quotes' }
+  }
+}
+
+export async function withdrawQuoteUseCase(id: string) {
+  try {
+    const quote = await db.query.quotes.findFirst({
+      where: eq(quotes.id, id),
+    })
+    if (!quote) return { success: false, error: 'Quote not found' }
+    validateQuoteTransition(quote.status, 'withdrawn')
+    const withdrawn = await withdrawQuoteTransaction(id)
+    return { success: true, data: withdrawn[0] }
+  } catch (error: any) {
+    console.error('Error in withdrawQuoteUseCase:', error)
+    return { success: false, error: error.message || 'Failed to withdraw quote' }
   }
 }
 

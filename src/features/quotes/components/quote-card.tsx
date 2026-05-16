@@ -45,6 +45,7 @@ export function QuoteCard({
   const { t } = useTranslation('quotes')
   const isAccepted = quote.status === 'accepted'
   const isRejected = quote.status === 'rejected'
+  const isWithdrawn = quote.status === 'withdrawn'
   const isPending = !quote.status || quote.status === 'pending'
   const sellerName = quote.seller?.storeName || quote.seller?.name || t('card.authorized_seller')
   const sellerInitial = sellerName[0]?.toUpperCase() || 'S'
@@ -54,6 +55,7 @@ export function QuoteCard({
       'rounded-2xl p-4 sm:p-5 border shadow-sm',
       isAccepted && 'border-primary/40 bg-primary/[0.03]',
       isRejected && 'opacity-50 border-border bg-muted/20',
+      isWithdrawn && 'opacity-40 border-border bg-muted/10',
       isPending && 'border-border bg-card hover:border-primary/20'
     )}>
       {/* Top row: Avatar + Name + Price */}
@@ -76,6 +78,11 @@ export function QuoteCard({
             {isRejected && (
               <span className="text-[10px] font-bold text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                 {t('card.rejected', 'Rejected')}
+              </span>
+            )}
+            {isWithdrawn && (
+              <span className="text-[10px] font-bold text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                {t('card.withdrawn', 'Withdrawn')}
               </span>
             )}
           </div>
@@ -178,6 +185,10 @@ export function QuoteCard({
         ) : isPending && !isRequestOpen ? (
           <Button disabled variant="ghost" size="sm" className="flex-1 sm:flex-none h-10 rounded-xl text-xs font-bold opacity-50">
             {t('card.actions.closed')}
+          </Button>
+        ) : isWithdrawn ? (
+          <Button disabled variant="ghost" size="sm" className="flex-1 sm:flex-none h-10 rounded-xl text-xs font-bold opacity-50">
+            {t('card.actions.withdrawn', 'Withdrawn')}
           </Button>
         ) : null}
       </div>

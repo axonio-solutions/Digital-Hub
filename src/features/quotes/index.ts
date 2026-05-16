@@ -1,5 +1,4 @@
 export * from './components/quote-card'
 export * from './components/quote-list'
-export * from './components/marketplace-row-actions'
 export { SubmitQuoteForm } from '@/features/seller'
 export * from './hooks/use-quotes'

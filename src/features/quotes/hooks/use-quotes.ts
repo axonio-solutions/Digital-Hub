@@ -4,6 +4,7 @@ import {
   rejectQuoteServerFn,
   unrejectQuoteServerFn,
   revokeQuoteServerFn,
+  withdrawQuoteServerFn,
 } from '@/fn/quotes'
 
 export const quoteKeys = {
@@ -19,24 +20,21 @@ export function useAcceptQuote() {
       return res
     },
     onMutate: async (variables) => {
-      // Cancel outgoing refetches to prevent overwriting our optimistic update
       await queryClient.cancelQueries({ queryKey: ['requests'] })
       await queryClient.cancelQueries({ queryKey: ['requests', 'details', variables.requestId] })
       await queryClient.cancelQueries({ queryKey: quoteKeys.all })
 
-      // Snapshot previous values
       const previousRequestDetails = queryClient.getQueryData(['requests', 'details', variables.requestId])
       const previousQuotes = queryClient.getQueryData(quoteKeys.all)
 
-      // Optimistically update request details and status
       queryClient.setQueryData(['requests', 'details', variables.requestId], (old: any) => {
         if (!old) return old
         return {
           ...old,
-          status: 'ACCEPTED',
+          status: 'fulfilled',
           acceptedQuoteId: variables.quoteId,
-          quotes: old.quotes?.map((q: any) => 
-            q.id === variables.quoteId ? { ...q, status: 'ACCEPTED' } : q
+          quotes: old.quotes?.map((q: any) =>
+            q.id === variables.quoteId ? { ...q, status: 'accepted' } : { ...q, status: 'rejected' }
           )
         }
       })
@@ -76,10 +74,9 @@ export function useRejectQuote() {
       const previousRequests = queryClient.getQueryData(['requests'])
       const previousQuotes = queryClient.getQueryData(quoteKeys.all)
 
-      // Optimistically mark as rejected in the quotes cache
       queryClient.setQueryData(quoteKeys.all, (old: any) => {
         if (!Array.isArray(old)) return old
-        return old.map((q: any) => q.id === quoteId ? { ...q, status: 'REJECTED' } : q)
+        return old.map((q: any) => q.id === quoteId ? { ...q, status: 'rejected' } : q)
       })
 
       return { previousRequests, previousQuotes }
@@ -114,7 +111,7 @@ export function useUnrejectQuote() {
 
       queryClient.setQueryData(quoteKeys.all, (old: any) => {
         if (!Array.isArray(old)) return old
-        return old.map((q: any) => q.id === quoteId ? { ...q, status: 'PENDING' } : q)
+        return old.map((q: any) => q.id === quoteId ? { ...q, status: 'pending' } : q)
       })
 
       return { previousRequests, previousQuotes }
@@ -151,10 +148,10 @@ export function useRevokeQuote() {
         if (!old) return old
         return {
           ...old,
-          status: 'PENDING',
+          status: 'open',
           acceptedQuoteId: null,
-          quotes: old.quotes?.map((q: any) => 
-            q.id === variables.quoteId ? { ...q, status: 'PENDING' } : q
+          quotes: old.quotes?.map((q: any) =>
+            q.id === variables.quoteId ? { ...q, status: 'rejected' } : q
           )
         }
       })
@@ -178,3 +175,35 @@ export function useRevokeQuote() {
   })
 }
 
+export function useWithdrawQuote() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (quoteId: string) => {
+      const res = await withdrawQuoteServerFn({ data: { id: quoteId } })
+      if (!res.success) throw new Error((res as any).error)
+      return res
+    },
+    onMutate: async (quoteId) => {
+      await queryClient.cancelQueries({ queryKey: ['requests'] })
+      await queryClient.cancelQueries({ queryKey: quoteKeys.all })
+
+      const previousRequests = queryClient.getQueryData(['requests'])
+      const previousQuotes = queryClient.getQueryData(quoteKeys.all)
+
+      queryClient.setQueryData(quoteKeys.all, (old: any) => {
+        if (!Array.isArray(old)) return old
+        return old.map((q: any) => q.id === quoteId ? { ...q, status: 'withdrawn' } : q)
+      })
+
+      return { previousRequests, previousQuotes }
+    },
+    onError: (_err, _quoteId, context) => {
+      if (context?.previousRequests) queryClient.setQueryData(['requests'], context.previousRequests)
+      if (context?.previousQuotes) queryClient.setQueryData(quoteKeys.all, context.previousQuotes)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['requests'] })
+      queryClient.invalidateQueries({ queryKey: quoteKeys.all })
+    },
+  })
+}

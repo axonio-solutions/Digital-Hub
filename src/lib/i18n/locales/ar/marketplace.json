@@ -111,7 +111,10 @@
     "update_error": "فشل التحديث",
     "delete_success": "تم حذف العرض بنجاح",
     "retract_success": "تم سحب عرض السعر بنجاح",
-    "retract_error": "فشل سحب العرض"
+    "retract_error": "فشل سحب العرض",
+    "new_request_title": "طلب جديد متوفر!",
+    "new_request_desc": "تم نشر فرصة جديدة في السوق.",
+    "new_request_action": "عرض الآن"
   },
   "alerts": {
     "delete_confirm": "حذف هذا العرض نهائياً؟ لا يمكن التراجع عن هذا الإجراء."
@@ -220,6 +223,12 @@
   },
   "pagination": {
     "page": "صفحة {{number}}"
+  },
+  "credit_dialog": {
+    "title": "رصيد غير كافٍ",
+    "description": "تم استهلاك رصيدك. اطلب المزيد من الرصيد لمواصلة تقديم العروض.",
+    "cancel": "إلغاء",
+    "request": "طلب رصيد"
   },
   "footer": {
     "brand": "سوق ميليلة",
