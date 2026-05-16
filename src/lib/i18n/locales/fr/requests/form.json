@@ -69,10 +69,13 @@
     "success": {
       "updated_title": "Demande mise à jour !",
       "created_title": "Demande soumise !",
+      "submitted_title": "Demande soumise !",
       "updated_desc": "Votre demande a été mise à jour avec succès.",
       "created_desc": "Votre demande a été publiée avec succès. Les vendeurs pourront bientôt la voir et y répondre.",
+      "submitted_desc": "Votre demande a été publiée avec succès. Les vendeurs pourront bientôt la voir et y répondre.",
       "back_btn": "Retour au tableau de bord"
     },
+    "back_to_dashboard": "Retour au tableau de bord",
     "config": {
       "part_details_title": "Détails de la pièce",
       "part_details_desc": "Décrivez ce dont vous avez besoin.",

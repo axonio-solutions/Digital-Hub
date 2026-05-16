@@ -74,10 +74,13 @@
     "success": {
       "updated_title": "Request Updated!",
       "created_title": "Request Submitted!",
+      "submitted_title": "Request Submitted!",
       "updated_desc": "Your request has been updated successfully.",
       "created_desc": "Your part request has been published successfully. Sellers will now be able to view and respond to your request.",
+      "submitted_desc": "Your part request has been published successfully. Sellers will now be able to view and respond to your request.",
       "back_btn": "Back to Dashboard"
     },
+    "back_to_dashboard": "Back to Dashboard",
     "header": {
       "title": "New Request",
       "desc": "Create a part request",

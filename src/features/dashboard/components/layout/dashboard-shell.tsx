@@ -3,6 +3,7 @@
 import React from 'react'
 import { useLocation } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { useDirection } from '@radix-ui/react-direction'
 import { NotificationBell } from '@/features/notifications'
 import { UserMenu } from '@/components/navigation/user-menu'
 import { NavControls } from '@/components/navigation/nav-controls'
@@ -106,13 +107,14 @@ interface DashboardShellProps {
 export function DashboardShell({ children, sidebarContent }: DashboardShellProps) {
   const { data: user } = useAuth()
   const userId = user?.id || ''
+  const dir = useDirection()
 
   // Establish SSE connection for real-time updates
   useNotifications(userId)
 
   return (
     <SidebarProvider>
-      <AppSidebar>
+      <AppSidebar side={dir === 'rtl' ? 'right' : 'left'}>
         {sidebarContent}
       </AppSidebar>
 

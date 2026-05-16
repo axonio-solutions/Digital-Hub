@@ -69,10 +69,13 @@
     "success": {
       "updated_title": "تم تحديث الطلب!",
       "created_title": "تم تقديم الطلب!",
+      "submitted_title": "تم تقديم الطلب!",
       "updated_desc": "تم تحديث طلبك بنجاح.",
       "created_desc": "تم نشر طلبك بنجاح. سيتمكن البائعون من رؤيته والرد عليه قريباً.",
+      "submitted_desc": "تم نشر طلبك بنجاح. سيتمكن البائعون من رؤيته والرد عليه قريباً.",
       "back_btn": "العودة للوحة التحكم"
     },
+    "back_to_dashboard": "العودة للوحة التحكم",
     "config": {
       "part_details_title": "تفاصيل القطعة",
       "part_details_desc": "صف ما تحتاجه.",
