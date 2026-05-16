@@ -5,6 +5,11 @@
       "type": "remote",
       "url": "https://mcp.supabase.com/mcp",
       "enabled": true
+    },
+    "shoogle": {
+      "type": "remote",
+      "url": "https://mcp.shoogle.dev/mcp",
+      "enabled": true
     }
   }
 }

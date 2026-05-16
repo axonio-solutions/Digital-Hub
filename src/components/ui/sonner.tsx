@@ -5,9 +5,9 @@ import {
   OctagonXIcon,
   TriangleAlertIcon,
 } from 'lucide-react'
-import { useTheme } from 'next-themes'
-import { Toaster as Sonner  } from 'sonner'
-import type {ToasterProps} from 'sonner';
+import { useTheme } from '@/components/theme-provider'
+import { Toaster as Sonner } from 'sonner'
+import type { ToasterProps } from 'sonner'
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme()
@@ -29,6 +29,18 @@ const Toaster = ({ ...props }: ToasterProps) => {
           '--normal-text': 'var(--popover-foreground)',
           '--normal-border': 'var(--border)',
           '--border-radius': 'var(--radius)',
+          '--success-bg': 'var(--success)',
+          '--success-text': 'var(--success-foreground)',
+          '--success-border': 'var(--success-border)',
+          '--error-bg': 'var(--destructive)',
+          '--error-text': 'var(--destructive-foreground)',
+          '--error-border': 'var(--destructive-border)',
+          '--info-bg': 'var(--info)',
+          '--info-text': 'var(--info-foreground)',
+          '--info-border': 'var(--info-border)',
+          '--warning-bg': 'var(--warning)',
+          '--warning-text': 'var(--warning-foreground)',
+          '--warning-border': 'var(--warning-border)',
         } as React.CSSProperties
       }
       {...props}
