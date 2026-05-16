@@ -87,6 +87,7 @@ export function SellerQuotesHub() {
     const lost = timeFiltered.filter(
       (q: any) =>
         q.status === 'rejected' ||
+        q.status === 'withdrawn' ||
         (q.request?.status === 'fulfilled' && q.status !== 'accepted'),
     )
     return { wonQuotes: won, pendingQuotes: pending, lostQuotes: lost }

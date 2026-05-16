@@ -16,10 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 
 export function ContactContent() {
   const { t } = useTranslation('home/contact')
+  const { toast } = useToast('home/contact')
   const [isSending, setIsSending] = useState(false)
 
   const subjects = t('subjects', { returnObjects: true }) as Array<{ value: string; label: string }>
@@ -30,7 +31,7 @@ export function ContactContent() {
     // Simulate send — replace with actual API call
     await new Promise((r) => setTimeout(r, 1200))
     setIsSending(false)
-    toast.success(t('form.success'))
+    toast.success('form.success')
   }
 
   return (

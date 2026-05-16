@@ -30,6 +30,7 @@ const STATUS_VARIANT: Record<string, 'success' | 'info' | 'neutral'> = {
   accepted: 'success',
   pending: 'info',
   rejected: 'neutral',
+  withdrawn: 'neutral',
 }
 
 export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, footer }: RequestDetailsDialogProps) {

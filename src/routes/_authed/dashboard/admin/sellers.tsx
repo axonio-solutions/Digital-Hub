@@ -34,6 +34,16 @@ export const Route = createFileRoute('/_authed/dashboard/admin/sellers')({
       throw redirect({ to: '/dashboard' })
     }
   },
+  loader: async ({ context }) => {
+    const { getSellerAnalyticsServerFn } = await import('@/fn/admin')
+    const { adminKeys } = await import('@/features/admin/hooks/use-admin')
+    const promise = getSellerAnalyticsServerFn()
+    await context.queryClient.ensureQueryData({
+      queryKey: adminKeys.analytics('sellers'),
+      queryFn: () => promise as any,
+      staleTime: 5 * 60 * 1000,
+    })
+  },
   component: SellerAnalytics,
   pendingComponent: SellerAnalyticsSkeleton,
 })

@@ -31,12 +31,16 @@ import { Route as AuthedDashboardRequestsIndexRouteImport } from './routes/_auth
 import { Route as AuthedDashboardQuotesIndexRouteImport } from './routes/_authed/dashboard/quotes/index'
 import { Route as AuthedDashboardProfileIndexRouteImport } from './routes/_authed/dashboard/profile/index'
 import { Route as AuthedDashboardGarageIndexRouteImport } from './routes/_authed/dashboard/garage/index'
+import { Route as AuthedDashboardBillingIndexRouteImport } from './routes/_authed/dashboard/billing/index'
 import { Route as AuthedDashboardAuditIndexRouteImport } from './routes/_authed/dashboard/audit/index'
 import { Route as AuthedDashboardRequestsRequestIdRouteImport } from './routes/_authed/dashboard/requests/$requestId'
 import { Route as AuthedDashboardAdminSellersRouteImport } from './routes/_authed/dashboard/admin/sellers'
+import { Route as AuthedDashboardAdminIntelligenceRouteImport } from './routes/_authed/dashboard/admin/intelligence'
 import { Route as AuthedDashboardAdminCategoriesRouteImport } from './routes/_authed/dashboard/admin/categories'
 import { Route as AuthedDashboardAdminBuyersRouteImport } from './routes/_authed/dashboard/admin/buyers'
 import { Route as AuthedDashboardAdminUsersIndexRouteImport } from './routes/_authed/dashboard/admin/users/index'
+import { Route as AuthedDashboardAdminRevenueIndexRouteImport } from './routes/_authed/dashboard/admin/revenue/index'
+import { Route as AuthedDashboardAdminCreditRequestsIndexRouteImport } from './routes/_authed/dashboard/admin/credit-requests/index'
 import { Route as AuthedDashboardAdminAuditIndexRouteImport } from './routes/_authed/dashboard/admin/audit/index'
 
 const PublicRoute = PublicRouteImport.update({
@@ -155,6 +159,12 @@ const AuthedDashboardGarageIndexRoute =
     path: '/garage/',
     getParentRoute: () => AuthedDashboardRouteRoute,
   } as any)
+const AuthedDashboardBillingIndexRoute =
+  AuthedDashboardBillingIndexRouteImport.update({
+    id: '/billing/',
+    path: '/billing/',
+    getParentRoute: () => AuthedDashboardRouteRoute,
+  } as any)
 const AuthedDashboardAuditIndexRoute =
   AuthedDashboardAuditIndexRouteImport.update({
     id: '/audit/',
@@ -173,6 +183,12 @@ const AuthedDashboardAdminSellersRoute =
     path: '/sellers',
     getParentRoute: () => AuthedDashboardAdminRouteRoute,
   } as any)
+const AuthedDashboardAdminIntelligenceRoute =
+  AuthedDashboardAdminIntelligenceRouteImport.update({
+    id: '/intelligence',
+    path: '/intelligence',
+    getParentRoute: () => AuthedDashboardAdminRouteRoute,
+  } as any)
 const AuthedDashboardAdminCategoriesRoute =
   AuthedDashboardAdminCategoriesRouteImport.update({
     id: '/categories',
@@ -189,6 +205,18 @@ const AuthedDashboardAdminUsersIndexRoute =
   AuthedDashboardAdminUsersIndexRouteImport.update({
     id: '/users/',
     path: '/users/',
+    getParentRoute: () => AuthedDashboardAdminRouteRoute,
+  } as any)
+const AuthedDashboardAdminRevenueIndexRoute =
+  AuthedDashboardAdminRevenueIndexRouteImport.update({
+    id: '/revenue/',
+    path: '/revenue/',
+    getParentRoute: () => AuthedDashboardAdminRouteRoute,
+  } as any)
+const AuthedDashboardAdminCreditRequestsIndexRoute =
+  AuthedDashboardAdminCreditRequestsIndexRouteImport.update({
+    id: '/credit-requests/',
+    path: '/credit-requests/',
     getParentRoute: () => AuthedDashboardAdminRouteRoute,
   } as any)
 const AuthedDashboardAdminAuditIndexRoute =
@@ -215,9 +243,11 @@ export interface FileRoutesByFullPath {
   '/pricing/': typeof PublicPricingIndexRoute
   '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
+  '/dashboard/admin/intelligence': typeof AuthedDashboardAdminIntelligenceRoute
   '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
   '/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
   '/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
+  '/dashboard/billing/': typeof AuthedDashboardBillingIndexRoute
   '/dashboard/garage/': typeof AuthedDashboardGarageIndexRoute
   '/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
   '/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
@@ -225,6 +255,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/support/': typeof AuthedDashboardSupportIndexRoute
   '/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
   '/dashboard/admin/audit/': typeof AuthedDashboardAdminAuditIndexRoute
+  '/dashboard/admin/credit-requests/': typeof AuthedDashboardAdminCreditRequestsIndexRoute
+  '/dashboard/admin/revenue/': typeof AuthedDashboardAdminRevenueIndexRoute
   '/dashboard/admin/users/': typeof AuthedDashboardAdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -243,9 +275,11 @@ export interface FileRoutesByTo {
   '/pricing': typeof PublicPricingIndexRoute
   '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
+  '/dashboard/admin/intelligence': typeof AuthedDashboardAdminIntelligenceRoute
   '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
   '/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
   '/dashboard/audit': typeof AuthedDashboardAuditIndexRoute
+  '/dashboard/billing': typeof AuthedDashboardBillingIndexRoute
   '/dashboard/garage': typeof AuthedDashboardGarageIndexRoute
   '/dashboard/profile': typeof AuthedDashboardProfileIndexRoute
   '/dashboard/quotes': typeof AuthedDashboardQuotesIndexRoute
@@ -253,6 +287,8 @@ export interface FileRoutesByTo {
   '/dashboard/support': typeof AuthedDashboardSupportIndexRoute
   '/dashboard/users': typeof AuthedDashboardUsersIndexRoute
   '/dashboard/admin/audit': typeof AuthedDashboardAdminAuditIndexRoute
+  '/dashboard/admin/credit-requests': typeof AuthedDashboardAdminCreditRequestsIndexRoute
+  '/dashboard/admin/revenue': typeof AuthedDashboardAdminRevenueIndexRoute
   '/dashboard/admin/users': typeof AuthedDashboardAdminUsersIndexRoute
 }
 export interface FileRoutesById {
@@ -275,9 +311,11 @@ export interface FileRoutesById {
   '/_public/pricing/': typeof PublicPricingIndexRoute
   '/_authed/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
   '/_authed/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
+  '/_authed/dashboard/admin/intelligence': typeof AuthedDashboardAdminIntelligenceRoute
   '/_authed/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
   '/_authed/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
   '/_authed/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
+  '/_authed/dashboard/billing/': typeof AuthedDashboardBillingIndexRoute
   '/_authed/dashboard/garage/': typeof AuthedDashboardGarageIndexRoute
   '/_authed/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
   '/_authed/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
@@ -285,6 +323,8 @@ export interface FileRoutesById {
   '/_authed/dashboard/support/': typeof AuthedDashboardSupportIndexRoute
   '/_authed/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
   '/_authed/dashboard/admin/audit/': typeof AuthedDashboardAdminAuditIndexRoute
+  '/_authed/dashboard/admin/credit-requests/': typeof AuthedDashboardAdminCreditRequestsIndexRoute
+  '/_authed/dashboard/admin/revenue/': typeof AuthedDashboardAdminRevenueIndexRoute
   '/_authed/dashboard/admin/users/': typeof AuthedDashboardAdminUsersIndexRoute
 }
 export interface FileRouteTypes {
@@ -306,9 +346,11 @@ export interface FileRouteTypes {
     | '/pricing/'
     | '/dashboard/admin/buyers'
     | '/dashboard/admin/categories'
+    | '/dashboard/admin/intelligence'
     | '/dashboard/admin/sellers'
     | '/dashboard/requests/$requestId'
     | '/dashboard/audit/'
+    | '/dashboard/billing/'
     | '/dashboard/garage/'
     | '/dashboard/profile/'
     | '/dashboard/quotes/'
@@ -316,6 +358,8 @@ export interface FileRouteTypes {
     | '/dashboard/support/'
     | '/dashboard/users/'
     | '/dashboard/admin/audit/'
+    | '/dashboard/admin/credit-requests/'
+    | '/dashboard/admin/revenue/'
     | '/dashboard/admin/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -334,9 +378,11 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/dashboard/admin/buyers'
     | '/dashboard/admin/categories'
+    | '/dashboard/admin/intelligence'
     | '/dashboard/admin/sellers'
     | '/dashboard/requests/$requestId'
     | '/dashboard/audit'
+    | '/dashboard/billing'
     | '/dashboard/garage'
     | '/dashboard/profile'
     | '/dashboard/quotes'
@@ -344,6 +390,8 @@ export interface FileRouteTypes {
     | '/dashboard/support'
     | '/dashboard/users'
     | '/dashboard/admin/audit'
+    | '/dashboard/admin/credit-requests'
+    | '/dashboard/admin/revenue'
     | '/dashboard/admin/users'
   id:
     | '__root__'
@@ -365,9 +413,11 @@ export interface FileRouteTypes {
     | '/_public/pricing/'
     | '/_authed/dashboard/admin/buyers'
     | '/_authed/dashboard/admin/categories'
+    | '/_authed/dashboard/admin/intelligence'
     | '/_authed/dashboard/admin/sellers'
     | '/_authed/dashboard/requests/$requestId'
     | '/_authed/dashboard/audit/'
+    | '/_authed/dashboard/billing/'
     | '/_authed/dashboard/garage/'
     | '/_authed/dashboard/profile/'
     | '/_authed/dashboard/quotes/'
@@ -375,6 +425,8 @@ export interface FileRouteTypes {
     | '/_authed/dashboard/support/'
     | '/_authed/dashboard/users/'
     | '/_authed/dashboard/admin/audit/'
+    | '/_authed/dashboard/admin/credit-requests/'
+    | '/_authed/dashboard/admin/revenue/'
     | '/_authed/dashboard/admin/users/'
   fileRoutesById: FileRoutesById
 }
@@ -541,6 +593,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardGarageIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
     }
+    '/_authed/dashboard/billing/': {
+      id: '/_authed/dashboard/billing/'
+      path: '/billing'
+      fullPath: '/dashboard/billing/'
+      preLoaderRoute: typeof AuthedDashboardBillingIndexRouteImport
+      parentRoute: typeof AuthedDashboardRouteRoute
+    }
     '/_authed/dashboard/audit/': {
       id: '/_authed/dashboard/audit/'
       path: '/audit'
@@ -560,6 +619,13 @@ declare module '@tanstack/react-router' {
       path: '/sellers'
       fullPath: '/dashboard/admin/sellers'
       preLoaderRoute: typeof AuthedDashboardAdminSellersRouteImport
+      parentRoute: typeof AuthedDashboardAdminRouteRoute
+    }
+    '/_authed/dashboard/admin/intelligence': {
+      id: '/_authed/dashboard/admin/intelligence'
+      path: '/intelligence'
+      fullPath: '/dashboard/admin/intelligence'
+      preLoaderRoute: typeof AuthedDashboardAdminIntelligenceRouteImport
       parentRoute: typeof AuthedDashboardAdminRouteRoute
     }
     '/_authed/dashboard/admin/categories': {
@@ -583,6 +649,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardAdminUsersIndexRouteImport
       parentRoute: typeof AuthedDashboardAdminRouteRoute
     }
+    '/_authed/dashboard/admin/revenue/': {
+      id: '/_authed/dashboard/admin/revenue/'
+      path: '/revenue'
+      fullPath: '/dashboard/admin/revenue/'
+      preLoaderRoute: typeof AuthedDashboardAdminRevenueIndexRouteImport
+      parentRoute: typeof AuthedDashboardAdminRouteRoute
+    }
+    '/_authed/dashboard/admin/credit-requests/': {
+      id: '/_authed/dashboard/admin/credit-requests/'
+      path: '/credit-requests'
+      fullPath: '/dashboard/admin/credit-requests/'
+      preLoaderRoute: typeof AuthedDashboardAdminCreditRequestsIndexRouteImport
+      parentRoute: typeof AuthedDashboardAdminRouteRoute
+    }
     '/_authed/dashboard/admin/audit/': {
       id: '/_authed/dashboard/admin/audit/'
       path: '/audit'
@@ -596,8 +676,11 @@ declare module '@tanstack/react-router' {
 interface AuthedDashboardAdminRouteRouteChildren {
   AuthedDashboardAdminBuyersRoute: typeof AuthedDashboardAdminBuyersRoute
   AuthedDashboardAdminCategoriesRoute: typeof AuthedDashboardAdminCategoriesRoute
+  AuthedDashboardAdminIntelligenceRoute: typeof AuthedDashboardAdminIntelligenceRoute
   AuthedDashboardAdminSellersRoute: typeof AuthedDashboardAdminSellersRoute
   AuthedDashboardAdminAuditIndexRoute: typeof AuthedDashboardAdminAuditIndexRoute
+  AuthedDashboardAdminCreditRequestsIndexRoute: typeof AuthedDashboardAdminCreditRequestsIndexRoute
+  AuthedDashboardAdminRevenueIndexRoute: typeof AuthedDashboardAdminRevenueIndexRoute
   AuthedDashboardAdminUsersIndexRoute: typeof AuthedDashboardAdminUsersIndexRoute
 }
 
@@ -605,8 +688,14 @@ const AuthedDashboardAdminRouteRouteChildren: AuthedDashboardAdminRouteRouteChil
   {
     AuthedDashboardAdminBuyersRoute: AuthedDashboardAdminBuyersRoute,
     AuthedDashboardAdminCategoriesRoute: AuthedDashboardAdminCategoriesRoute,
+    AuthedDashboardAdminIntelligenceRoute:
+      AuthedDashboardAdminIntelligenceRoute,
     AuthedDashboardAdminSellersRoute: AuthedDashboardAdminSellersRoute,
     AuthedDashboardAdminAuditIndexRoute: AuthedDashboardAdminAuditIndexRoute,
+    AuthedDashboardAdminCreditRequestsIndexRoute:
+      AuthedDashboardAdminCreditRequestsIndexRoute,
+    AuthedDashboardAdminRevenueIndexRoute:
+      AuthedDashboardAdminRevenueIndexRoute,
     AuthedDashboardAdminUsersIndexRoute: AuthedDashboardAdminUsersIndexRoute,
   }
 
@@ -620,6 +709,7 @@ interface AuthedDashboardRouteRouteChildren {
   AuthedDashboardIndexRoute: typeof AuthedDashboardIndexRoute
   AuthedDashboardRequestsRequestIdRoute: typeof AuthedDashboardRequestsRequestIdRoute
   AuthedDashboardAuditIndexRoute: typeof AuthedDashboardAuditIndexRoute
+  AuthedDashboardBillingIndexRoute: typeof AuthedDashboardBillingIndexRoute
   AuthedDashboardGarageIndexRoute: typeof AuthedDashboardGarageIndexRoute
   AuthedDashboardProfileIndexRoute: typeof AuthedDashboardProfileIndexRoute
   AuthedDashboardQuotesIndexRoute: typeof AuthedDashboardQuotesIndexRoute
@@ -633,6 +723,7 @@ const AuthedDashboardRouteRouteChildren: AuthedDashboardRouteRouteChildren = {
   AuthedDashboardIndexRoute: AuthedDashboardIndexRoute,
   AuthedDashboardRequestsRequestIdRoute: AuthedDashboardRequestsRequestIdRoute,
   AuthedDashboardAuditIndexRoute: AuthedDashboardAuditIndexRoute,
+  AuthedDashboardBillingIndexRoute: AuthedDashboardBillingIndexRoute,
   AuthedDashboardGarageIndexRoute: AuthedDashboardGarageIndexRoute,
   AuthedDashboardProfileIndexRoute: AuthedDashboardProfileIndexRoute,
   AuthedDashboardQuotesIndexRoute: AuthedDashboardQuotesIndexRoute,

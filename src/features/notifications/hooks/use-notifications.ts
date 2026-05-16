@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -15,6 +15,9 @@ import {
  */
 export function useNotifications(_userId?: string) {
   const queryClient = useQueryClient()
+  const { t } = useTranslation('notifications')
+  const tRef = useRef(t)
+  tRef.current = t
 
   useEffect(() => {
     if (!_userId) return
@@ -118,19 +121,23 @@ export function useNotifications(_userId?: string) {
 
               // Trigger Visual Feedback for new notifications
               if (payload.eventType === 'INSERT') {
-                const isErrorType = ['ABANDONED_REQUEST', 'SPAM_FLAG', 'BOTTLENECK_ALERT'].includes(notification.type)
+                const _t = tRef.current
+                const typeKey = (notification.type ?? '').toLowerCase()
+                const isErrorType = ['abandoned_request', 'spam_flag', 'bottleneck_alert'].includes(typeKey)
+                const title = _t(`types.${typeKey}`, { defaultValue: notification.title || _t('toast.alert') })
+                const message = _t(`messages.${typeKey}`, { defaultValue: notification.message })
                 
                 if (isErrorType) {
-                  toast.error(notification.title || 'Alert', {
-                    description: notification.message,
+                  toast.error(title, {
+                    description: message,
                     duration: 8000,
                   })
                 } else {
-                  toast.success(notification.title || 'New Notification', {
-                    description: notification.message,
+                  toast.success(title, {
+                    description: message,
                     duration: 5000,
                     action: notification.linkUrl ? {
-                      label: 'View',
+                      label: _t('toast.view'),
                       onClick: () => {
                         window.location.href = notification.linkUrl
                       }

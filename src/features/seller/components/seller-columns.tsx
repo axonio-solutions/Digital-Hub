@@ -214,7 +214,7 @@ export const useSellerColumns = (
               variant={
                 status === 'accepted'
                   ? 'success'
-                  : status === 'rejected'
+                  : status === 'rejected' || status === 'withdrawn'
                     ? 'neutral'
                     : 'info'
               }
@@ -261,14 +261,18 @@ export const useSellerColumns = (
                       {t('table.edit_offer')}
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => onAction({ type: 'delete', item: quote })}
-                    className="text-rose-600 focus:text-rose-600"
-                  >
-                    <Trash2 className="me-2 h-4 w-4" />
-                    {t('table.withdraw_offer')}
-                  </DropdownMenuItem>
+                  {(quote.status === 'pending' || quote.status === 'rejected') && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => onAction({ type: 'delete', item: quote })}
+                        className="text-rose-600 focus:text-rose-600"
+                      >
+                        <Trash2 className="me-2 h-4 w-4" />
+                        {t('table.withdraw_offer')}
+                      </DropdownMenuItem>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

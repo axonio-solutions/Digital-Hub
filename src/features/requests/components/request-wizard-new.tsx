@@ -130,7 +130,7 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
       vehicleBrand: values.vehicleBrand,
       modelYear: `${values.vehicleModel} ${values.modelYear}`,
       notes: values.description,
-      status: values.status === 'draft' ? 'draft' : 'open',
+      status: 'open',
       imageUrls: values.imageUrls || [],
     }
 

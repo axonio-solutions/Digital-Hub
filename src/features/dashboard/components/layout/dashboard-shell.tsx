@@ -37,12 +37,18 @@ function DynamicBreadcrumb() {
     '/dashboard/quotes': t('breadcrumbs.my_quotes'),
     '/dashboard/profile': t('breadcrumbs.profile'),
     '/dashboard/garage': t('breadcrumbs.my_garage'),
+    '/dashboard/billing': t('breadcrumbs.billing'),
+    '/dashboard/audit': t('breadcrumbs.audit_log'),
+    '/dashboard/users': t('breadcrumbs.user_moderation'),
+    '/dashboard/support': t('breadcrumbs.support'),
     '/dashboard/admin/buyers': t('breadcrumbs.buyers_intelligence'),
     '/dashboard/admin/sellers': t('breadcrumbs.sellers_ecosystem'),
     '/dashboard/admin/categories': t('breadcrumbs.taxonomy_management'),
     '/dashboard/admin/users': t('breadcrumbs.user_moderation'),
     '/dashboard/admin/audit': t('breadcrumbs.audit_log'),
-    '/dashboard/support': t('breadcrumbs.support'),
+    '/dashboard/admin/intelligence': t('breadcrumbs.market_intelligence'),
+    '/dashboard/admin/revenue': t('breadcrumbs.revenue'),
+    '/dashboard/admin/credit-requests': t('breadcrumbs.credit_requests'),
   }
 
   let breadcrumbs: Array<{ pathname: string; title: string }> = []

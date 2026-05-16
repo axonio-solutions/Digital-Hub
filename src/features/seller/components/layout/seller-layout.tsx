@@ -2,6 +2,7 @@
 
 import React from 'react'
 import {
+  IconCoin,
   IconDashboard,
   IconHelpCircle,
   IconMessages,
@@ -32,6 +33,11 @@ export function SellerLayout({ children }: { children: React.ReactNode }) {
         title: t('nav.explore_marketplace'),
         url: '/explore',
         icon: IconSearch,
+      },
+      {
+        title: t('nav.billing'),
+        url: '/dashboard/billing',
+        icon: IconCoin,
       },
     ],
     secondary: [

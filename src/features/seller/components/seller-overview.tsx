@@ -2,12 +2,13 @@
 
 import React, { memo, useMemo } from 'react'
 import { Await, Link, getRouteApi } from '@tanstack/react-router'
-import { ArrowRight, BarChart3, ShoppingBag, Sparkles } from 'lucide-react'
+import { ArrowRight, BarChart3, Coins, ShoppingBag, Sparkles } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { format, isSameDay, startOfDay, subDays } from 'date-fns'
 import { ar, enUS, fr } from 'date-fns/locale'
 import { Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useAuth } from '@/features/auth/hooks/use-auth'
+import { useSellerCreditBalance } from '@/features/seller/hooks/use-billing'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
@@ -115,6 +116,7 @@ const QuickLink = memo(({ to, icon: Icon, title, desc }: { to: string; icon: Rea
 
 function StatsSection({ dashboardData, t, language, isRtl }: { dashboardData: DashboardData; t: any; language: string; isRtl?: boolean }) {
   const { stats, todayStats, chartQuotes } = dashboardData
+  const { data: creditData } = useSellerCreditBalance()
   const today = new Date()
   const dateLocale = useMemo(() => {
     const map: Record<string, any> = { en: enUS, fr, ar }
@@ -136,17 +138,20 @@ function StatsSection({ dashboardData, t, language, isRtl }: { dashboardData: Da
     })
   }, [chartQuotes, today, dateLocale])
 
+  const credits = creditData?.balance ?? 0
+
   const metrics = [
     { label: t('stats.won.label'), value: stats.won, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50' },
     { label: t('stats.active.label'), value: stats.pending, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50' },
     { label: t('stats.win_rate.label'), value: `${stats.winRate.toFixed(1)}%`, color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/50' },
     { label: t('stats.earnings.label'), value: `${stats.totalRevenue.toLocaleString(language)} DZD`, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/50' },
+    { label: t('billing.current_balance'), value: credits, color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/50' },
   ]
 
   return (
     <div className="flex flex-col gap-4">
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {metrics.map((m) => (
           <div key={m.label} className={cn('flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all', m.color)}>
             <span className="text-xl font-black tabular-nums leading-none">{typeof m.value === 'number' ? m.value : m.value}</span>
@@ -203,9 +208,10 @@ function StatsSection({ dashboardData, t, language, isRtl }: { dashboardData: Da
       </div>
 
       {/* Quick Links */}
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
         <QuickLink to="/dashboard/quotes" icon={BarChart3} title={t('actions.view_quotes')} desc={t('actions.view_quotes_desc', { count: stats.totalQuotes })} />
         <QuickLink to="/explore" icon={ShoppingBag} title={t('actions.browse_requests')} desc={t('actions.browse_requests_desc')} />
+        <QuickLink to="/dashboard/billing" icon={Coins} title={t('billing.title')} desc={t('billing.credits_available')} />
       </div>
     </div>
   )
@@ -214,7 +220,7 @@ function StatsSection({ dashboardData, t, language, isRtl }: { dashboardData: Da
 // --- Main Component ---
 
 export function SellerOverview() {
-  const { t, i18n } = useTranslation(['dashboard/seller', 'dashboard/layout'])
+  const { t, i18n } = useTranslation(['dashboard/seller', 'dashboard/layout', 'dashboard/credits'])
   const { data: user } = useAuth()
   const isRtl = i18n.dir() === 'rtl'
 
@@ -261,8 +267,8 @@ export function SellerOverview() {
 function OverviewSkeleton() {
   return (
     <div className="flex-1 flex flex-col gap-4 w-full animate-pulse">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        {Array.from({ length: 5 }).map((_, i) => (
           <Skeleton key={i} className="h-16 w-full rounded-2xl" />
         ))}
       </div>
@@ -270,7 +276,8 @@ function OverviewSkeleton() {
         <Skeleton className="md:col-span-1 h-[280px] rounded-2xl" />
         <Skeleton className="md:col-span-2 h-[280px] rounded-2xl" />
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Skeleton className="h-[84px] rounded-2xl" />
         <Skeleton className="h-[84px] rounded-2xl" />
         <Skeleton className="h-[84px] rounded-2xl" />
       </div>

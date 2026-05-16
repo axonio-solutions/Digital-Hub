@@ -7,6 +7,7 @@ import {
   Archive,
   CircleUserRound,
   ClipboardList,
+  Coins,
   Layers,
   Loader2,
   LogOut,
@@ -14,6 +15,7 @@ import {
   Tag,
   Users,
 } from 'lucide-react'
+import { useSellerCreditBalance } from '@/features/seller/hooks/use-billing'
 import { authClient } from '@/lib/auth-client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -38,6 +40,7 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const creditQuery = useSellerCreditBalance()
 
   const name = user?.name || user?.email || ''
   const email = user?.email || ''
@@ -58,6 +61,7 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
     if (role === 'seller') {
       return [
         { to: '/dashboard/quotes', label: t('nav.my_quotes'), icon: Tag },
+        { to: '/dashboard/billing', label: t('nav.billing'), icon: Coins },
       ]
     }
     return [
@@ -112,16 +116,24 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-foreground truncate leading-tight">{name}</p>
             <p className="text-[11px] text-muted-foreground truncate mt-0.5">{email}</p>
-            <span className={cn(
-              "inline-flex items-center mt-1.5 h-5 px-2 rounded-md text-[9px] font-black uppercase tracking-widest",
-              role === 'seller'
-                ? "bg-primary/10 text-primary border border-primary/20"
-                : role === 'admin'
-                  ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
-                  : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-            )}>
-              {role === 'admin' ? t('roles.admin', { ns: 'common' }) : role === 'seller' ? t('roles.seller', { ns: 'common' }) : t('roles.buyer', { ns: 'common' })}
-            </span>
+            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+              <span className={cn(
+                "inline-flex items-center h-5 px-2 rounded-md text-[9px] font-black uppercase tracking-widest",
+                role === 'seller'
+                  ? "bg-primary/10 text-primary border border-primary/20"
+                  : role === 'admin'
+                    ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
+                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+              )}>
+                {role === 'admin' ? t('roles.admin', { ns: 'common' }) : role === 'seller' ? t('roles.seller', { ns: 'common' }) : t('roles.buyer', { ns: 'common' })}
+              </span>
+              {role === 'seller' && (
+                <span className="inline-flex items-center gap-1 h-5 px-2 rounded-md text-[9px] font-black tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/30">
+                  <Coins className="size-3" />
+                  {creditQuery.data?.balance ?? 0}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 

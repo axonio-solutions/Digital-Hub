@@ -34,6 +34,16 @@ export const Route = createFileRoute('/_authed/dashboard/admin/buyers')({
       throw redirect({ to: '/dashboard' })
     }
   },
+  loader: async ({ context }) => {
+    const { getBuyerAnalyticsServerFn } = await import('@/fn/admin')
+    const { adminKeys } = await import('@/features/admin/hooks/use-admin')
+    const promise = getBuyerAnalyticsServerFn()
+    await context.queryClient.ensureQueryData({
+      queryKey: adminKeys.analytics('buyers'),
+      queryFn: () => promise as any,
+      staleTime: 5 * 60 * 1000,
+    })
+  },
   component: BuyerAnalytics,
   pendingComponent: BuyerAnalyticsSkeleton,
 })

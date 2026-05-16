@@ -28,17 +28,16 @@ export const Route = createFileRoute('/_authed/dashboard/')({
       }
     }
     if (role === 'admin') {
-      const { getAdminDashboardStatsServerFn } = await import('@/fn/admin')
-      const { getAdvancedSystemMetricsServerFn } = await import('@/fn/admin')
-      const { getRecentActivityServerFn } = await import('@/fn/admin')
+      const { getAdminDashboardStatsServerFn, getAdvancedSystemMetricsServerFn, getRecentActivityServerFn, getMarketGapAnalysisServerFn } = await import('@/fn/admin')
       const statsPromise = getAdminDashboardStatsServerFn()
       const metricsPromise = getAdvancedSystemMetricsServerFn()
       const activityPromise = getRecentActivityServerFn()
+      const marketGapPromise = getMarketGapAnalysisServerFn()
       await Promise.allSettled([
         context.queryClient.ensureQueryData({
           queryKey: adminKeys.dashboardStats(),
           queryFn: () => (statsPromise as any),
-          staleTime: 60 * 1000,
+          staleTime: 2 * 60 * 1000,
         }),
         context.queryClient.ensureQueryData({
           queryKey: adminKeys.systemMetrics(),
@@ -49,6 +48,11 @@ export const Route = createFileRoute('/_authed/dashboard/')({
           queryKey: adminKeys.recentActivity(),
           queryFn: () => (activityPromise as any),
           staleTime: 30 * 1000,
+        }),
+        context.queryClient.ensureQueryData({
+          queryKey: adminKeys.marketGap(),
+          queryFn: () => (marketGapPromise as any),
+          staleTime: 2 * 60 * 1000,
         }),
       ])
       return {}
