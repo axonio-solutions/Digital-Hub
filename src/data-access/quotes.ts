@@ -69,13 +69,19 @@ export async function revokeAcceptedQuoteTransaction(
 
   const [quoteUpdate] = await client
     .update(quotes)
-    .set({ status: 'rejected', updatedAt: new Date() })
+    .set({ status: 'pending', updatedAt: new Date() })
     .where(and(eq(quotes.id, quoteId), eq(quotes.status, 'accepted')))
     .returning()
 
   if (!quoteUpdate) {
     throw new StateConflictError('Quote is not in accepted state')
   }
+
+  // Restore all other rejected quotes for this request back to pending
+  await client
+    .update(quotes)
+    .set({ status: 'pending', updatedAt: new Date() })
+    .where(and(eq(quotes.requestId, requestId), ne(quotes.id, quoteId), eq(quotes.status, 'rejected')))
 
   const [requestUpdate] = await client
     .update(sparePartRequests)

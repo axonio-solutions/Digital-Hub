@@ -4,10 +4,8 @@ import { useState } from 'react'
 import {
   ArrowLeft,
   Calendar,
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Clock,
   Edit,
   Loader2,
   MapPin,
@@ -48,13 +46,12 @@ import { EditRequestDialog } from '@/features/requests/components/edit-request-d
 import { QuoteList } from '@/features/quotes/components/quote-list'
 import { CategoryDisplay } from '@/components/ui/category-display'
 import { tCategory } from '@/utils/category-utils'
-
 function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
     <div className="flex items-center gap-3 py-1.5">
       <Icon className="size-4 text-muted-foreground shrink-0" />
       <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground w-20 shrink-0">{label}</span>
-      <span className="text-sm font-bold text-foreground">{value}</span>
+      <span className="text-sm text-foreground">{value}</span>
     </div>
   )
 }
@@ -184,6 +181,21 @@ export function BuyerRequestDetails() {
       {/* Image card */}
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-muted/30 shadow-sm">
         <ImageSlider images={request.imageUrls || []} alt={request.partName} />
+        <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2 z-10">
+          <GlowingBadge
+            variant={isOpen ? 'success' : 'neutral'}
+            pulse={isOpen}
+            className="px-2.5 py-1 shadow-lg"
+          >
+            {isOpen ? t('labels.status_open') : t(`labels.status_${request.status}`, { defaultValue: request.status })}
+          </GlowingBadge>
+          {isOpen && quotesCount > 0 && (
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-background/90 backdrop-blur-sm text-xs font-bold text-foreground shadow-lg">
+              <MessageSquare className="size-3 text-primary" />
+              {t('quotes.count', { count: quotesCount })}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Brand + Year */}
@@ -204,25 +216,9 @@ export function BuyerRequestDetails() {
         {request.partName}
       </h1>
 
-      {/* Status + Offer count */}
-      <div className="flex items-center gap-3">
-        <GlowingBadge
-          variant={isOpen ? 'success' : 'neutral'}
-          pulse={isOpen}
-          className="px-2.5 py-1"
-        >
-          {isOpen ? t('labels.status_open') : t(`labels.status_${request.status}`, { defaultValue: request.status })}
-        </GlowingBadge>
-        {isOpen && quotesCount > 0 && (
-          <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
-            <MessageSquare className="size-3 text-primary" />
-            {t('quotes.count', { count: quotesCount })}
-          </span>
-        )}
-      </div>
 
-      {/* Actions row */}
-      <div className="flex items-center gap-3">
+      {/* Actions row — hidden on mobile, shown on desktop in sidebar */}
+      <div className="hidden lg:flex items-center gap-3">
         {isOpen ? (
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <Button
@@ -297,7 +293,7 @@ export function BuyerRequestDetails() {
           <div className="flex items-center gap-3 py-1.5">
             <Tag className="size-4 text-muted-foreground shrink-0" />
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground w-20 shrink-0">{t('labels.part_category')}</span>
-            <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
+            <span className="text-sm text-foreground flex items-center gap-1.5">
               <CategoryDisplay category={request.category} showName={false} iconClassName="size-3.5" />
               {tCategory(categoryName, t)}
             </span>
@@ -305,6 +301,7 @@ export function BuyerRequestDetails() {
         )}
         {request.notes && <InfoRow icon={MessageSquare} label={t('labels.description')} value={request.notes} />}
       </div>
+
     </>
   )
 
@@ -347,26 +344,73 @@ export function BuyerRequestDetails() {
       </div>
 
       {/* FIXED BOTTOM CTA — mobile only */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-t border-border px-3 py-3 lg:hidden" style={{ paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))' }}>
-        {isOpen ? (
-          <Button onClick={handleCancel} disabled={isCancelling} className="w-full h-12 rounded-xl gap-2 text-sm font-bold shadow-lg shadow-primary/20">
-            {isCancelling ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <CheckCircle2 className="size-4" />
-            )}
-            {t('actions.close_request_btn')}
-          </Button>
-        ) : (
-          <Button onClick={handleReopen} disabled={isReopening} className="w-full h-12 rounded-xl gap-2 text-sm font-bold">
-            {isReopening ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <Clock className="size-4" />
-            )}
-            {t('actions.reopen_request_btn')}
-          </Button>
-        )}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-t border-border px-3 py-2 lg:hidden" style={{ paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))' }}>
+        <div className="flex items-center gap-2">
+          {isOpen ? (
+            <>
+              <Button
+                disabled={isEditDialogOpen}
+                onClick={() => setIsEditDialogOpen(true)}
+                className="flex-1 gap-1 h-9 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap"
+              >
+                <Edit className="size-3.5 shrink-0" />
+                {t('actions.edit')}
+              </Button>
+              <Button
+                variant="outline"
+                disabled={isCancelling}
+                onClick={handleCancel}
+                className="flex-1 gap-1 h-9 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap border-orange-200 text-orange-600 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-400 dark:hover:bg-orange-950"
+              >
+                {isCancelling ? (
+                  <Loader2 className="size-3.5 animate-spin shrink-0" />
+                ) : (
+                  <XCircle className="size-3.5 shrink-0" />
+                )}
+                {t('actions.close_request_btn')}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                disabled={isEditDialogOpen}
+                onClick={() => setIsEditDialogOpen(true)}
+                className="flex-1 gap-1 h-9 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap"
+              >
+                <Edit className="size-3.5 shrink-0" />
+                {t('actions.edit')}
+              </Button>
+              <Button
+                variant="outline"
+                disabled={isReopening}
+                onClick={handleReopen}
+                className="flex-1 gap-1 h-9 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950"
+              >
+                {isReopening ? (
+                  <Loader2 className="size-3.5 animate-spin shrink-0" />
+                ) : (
+                  <RefreshCcw className="size-3.5 shrink-0" />
+                )}
+                {t('actions.reopen_request_btn')}
+              </Button>
+            </>
+          )}
+          {request.status !== 'fulfilled' && (
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={isDeleting}
+              onClick={() => setIsDeleteDialogOpen(true)}
+              className="size-9 shrink-0 rounded-lg border-red-100 bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 dark:border-red-900 dark:bg-red-950/50 dark:text-red-400 dark:hover:bg-red-950"
+            >
+              {isDeleting ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <Trash2 className="size-3.5" />
+              )}
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* DIALOGS */}

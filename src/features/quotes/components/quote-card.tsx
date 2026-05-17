@@ -8,6 +8,8 @@ import {
   MapPin,
   Phone,
   RotateCcw,
+  Shield,
+  Tag,
   Undo2,
   XCircle,
 } from 'lucide-react'
@@ -87,18 +89,6 @@ export function QuoteCard({
             )}
           </div>
 
-          <div className="flex items-center gap-3 mt-1 text-[11px] font-medium text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Clock className="size-3" />
-              {formatRelativeTime(quote.createdAt)}
-            </span>
-            <span className="flex items-center gap-1 truncate">
-              <MapPin className="size-3 shrink-0" />
-              <span className="truncate max-w-[120px]">
-                {quote.seller?.wilaya || quote.seller?.city || quote.seller?.address || t('card.default_location')}
-              </span>
-            </span>
-          </div>
         </div>
 
         {/* Price */}
@@ -110,20 +100,29 @@ export function QuoteCard({
             {quote.price.toLocaleString()}
             <span className="text-[10px] font-bold text-muted-foreground ml-0.5">{t('columns.currency')}</span>
           </p>
-          <span className="inline-block mt-0.5 text-[10px] font-bold text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
-            {quote.condition ? t(`columns.conditions.${quote.condition}`, { defaultValue: quote.condition }) : t('columns.conditions.used')}
-          </span>
+
         </div>
       </div>
 
-      {/* Notes */}
-      <div className={cn(
-        'mt-3 rounded-xl p-3 sm:p-4 border',
-        isAccepted ? 'bg-primary/5 border-primary/10' : 'bg-muted/30 border-border/50'
-      )}>
-        <p className="text-sm text-foreground/80 italic leading-relaxed">
-          "{quote.notes || t('card.default_note', 'No additional notes.')}"
-        </p>
+      {/* Primary info chips */}
+      <div className="mt-3 flex flex-wrap items-center gap-1.5">
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-muted/60 text-xs font-bold text-foreground">
+          <Tag className="size-3.5 text-muted-foreground" />
+          {quote.condition ? t(`columns.conditions.${quote.condition}`, { defaultValue: quote.condition }) : t('columns.conditions.used')}
+        </span>
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-muted/60 text-xs font-bold text-foreground">
+          <MapPin className="size-3.5 text-muted-foreground" />
+          {quote.seller?.wilaya || quote.seller?.city || quote.seller?.address || t('card.default_location')}
+        </span>
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-muted/60 text-xs font-bold text-foreground">
+          <Shield className="size-3.5 text-muted-foreground" />
+          {quote.warranty || t('card.no_warranty')}
+        </span>
+      </div>
+
+      <div className="mt-2 flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground">
+        <Clock className="size-3" />
+        <span>{formatRelativeTime(quote.createdAt)}</span>
       </div>
 
       {/* Actions */}

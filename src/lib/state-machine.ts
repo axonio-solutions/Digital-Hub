@@ -13,7 +13,7 @@ const allowedRequestTransitions: Record<string, Array<string> | undefined> = {
 
 const allowedQuoteTransitions: Record<string, Array<string> | undefined> = {
   pending: ['accepted', 'rejected', 'withdrawn'],
-  accepted: ['rejected'],
+  accepted: ['pending'],
   rejected: ['pending', 'withdrawn'],
   withdrawn: [],
 }

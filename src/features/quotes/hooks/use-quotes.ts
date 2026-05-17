@@ -150,9 +150,7 @@ export function useRevokeQuote() {
           ...old,
           status: 'open',
           acceptedQuoteId: null,
-          quotes: old.quotes?.map((q: any) =>
-            q.id === variables.quoteId ? { ...q, status: 'rejected' } : q
-          )
+          quotes: old.quotes?.map((q: any) => ({ ...q, status: 'pending' }))
         }
       })
 

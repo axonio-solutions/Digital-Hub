@@ -4,6 +4,7 @@
     "rejected": "Rejected",
     "default_location": "Algeria",
     "default_note": "Hello! We have this exact part in stock. Inspected and ready to ship.",
+    "no_warranty": "No warranty",
     "ago": "ago",
     "actions": {
       "revoke": "Revoke Acceptance",

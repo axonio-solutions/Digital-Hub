@@ -144,7 +144,7 @@ export async function revokeQuoteUseCase(quoteId: string, requestId: string) {
       }
 
       validateRequestTransition(request.status, 'open')
-      validateQuoteTransition(quote.status, 'rejected')
+      validateQuoteTransition(quote.status, 'pending')
 
       await revokeAcceptedQuoteTransaction(quoteId, requestId, tx)
       

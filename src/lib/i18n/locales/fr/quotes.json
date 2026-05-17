@@ -4,6 +4,7 @@
     "rejected": "Rejeté",
     "default_location": "Algérie",
     "default_note": "Bonjour ! Nous avons exactement cette pièce en stock. Vérifiée et prête à expédier.",
+    "no_warranty": "Aucune garantie",
     "ago": "il y a",
     "actions": {
       "revoke": "Révoquer l'Acceptation",

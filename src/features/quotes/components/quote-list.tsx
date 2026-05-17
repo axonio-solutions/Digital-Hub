@@ -50,7 +50,7 @@ export function QuoteList({
   return (
     <div className="flex flex-col gap-4 sm:gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
         <h2 className="text-lg sm:text-xl font-black text-foreground uppercase tracking-tight flex items-center gap-2 sm:gap-3">
           {t('quotes.title', 'Offers')}
           <span className="inline-flex items-center justify-center h-6 min-w-[24px] px-2 rounded-full bg-primary/10 text-primary text-xs font-black">
