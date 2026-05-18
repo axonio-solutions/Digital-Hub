@@ -601,29 +601,38 @@ function SpecialtiesStep({ formData, setFormData }: any) {
           </div>
         </div>
 
-        <div className="space-y-3">
-          <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{t('specialties_step.categories')}</Label>
-          <div className="flex flex-wrap gap-2">
-            {taxonomy?.data?.categories?.map((cat: any) => {
-              const active = formData.categoryIds?.includes(cat.id)
-              return (
-                <Badge
-                  key={cat.id}
-                  variant={active ? 'default' : 'outline'}
-                  className={cn(
-                    'cursor-pointer h-8 px-4 border-2 transition-all',
-                    active
-                      ? 'bg-primary border-primary text-primary-foreground shadow-md'
-                      : 'hover:border-primary/20 hover:bg-primary/5 text-muted-foreground',
-                  )}
-                  onClick={() => toggleCategory(cat.id)}
-                >
-                  {tCategory(cat.name, t)}
-                </Badge>
-              )
-            })}
+          <div className="space-y-3">
+            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{t('specialties_step.categories')}</Label>
+            <div className="flex flex-wrap gap-2">
+              {taxonomy?.data?.categories?.map((cat: any) => {
+                const active = formData.categoryIds?.includes(cat.id)
+                return (
+                  <Badge
+                    key={cat.id}
+                    variant={active ? 'default' : 'outline'}
+                    className={cn(
+                      'cursor-pointer h-10 px-4 border-2 transition-all flex items-center gap-2',
+                      active
+                        ? 'bg-primary border-primary text-primary-foreground shadow-md'
+                        : 'hover:border-primary/20 hover:bg-primary/5 text-muted-foreground bg-background',
+                    )}
+                    onClick={() => toggleCategory(cat.id)}
+                  >
+                    {cat.imageUrl && (
+                      <div className="h-6 w-6 rounded-sm bg-white flex items-center justify-center p-0.5 shrink-0 overflow-hidden">
+                        <img
+                          src={cat.imageUrl}
+                          alt={cat.name}
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
+                    )}
+                    <span>{tCategory(cat.name, t)}</span>
+                  </Badge>
+                )
+              })}
+            </div>
           </div>
-        </div>
       </div>
     </div>
   )
