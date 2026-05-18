@@ -2,8 +2,14 @@
   "card": {
     "authorized_seller": "Vendeur Vérifié",
     "rejected": "Rejeté",
+    "withdrawn": "Retiré",
     "default_location": "Algérie",
     "default_note": "Bonjour ! Nous avons exactement cette pièce en stock. Vérifiée et prête à expédier.",
+    "price_label": "Prix de l'Offre",
+    "condition_label": "État",
+    "location_label": "Localisation",
+    "warranty_label": "Garantie",
+    "submitted_label": "Soumis",
     "no_warranty": "Aucune garantie",
     "ago": "il y a",
     "actions": {

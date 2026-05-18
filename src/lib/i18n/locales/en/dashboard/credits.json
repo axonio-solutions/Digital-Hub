@@ -73,6 +73,7 @@
       "cancel": "Cancel",
       "error_name_required": "Package name is required",
       "error_credits_price": "Credits and price must be greater than 0",
+      "error": "Operation failed",
       "id_prefix": "ID: {{id}}...",
       "saving": "Saving..."
     },
@@ -140,6 +141,7 @@
     "credits_label": "credits",
     "approve_grant": "Approve & Grant",
     "reject_reason_placeholder": "Reason (optional)",
+    "error": "Operation failed",
     "reject_success": "Request rejected",
     "reject_action": "Reject",
     "admin_note_label": "Admin note:",

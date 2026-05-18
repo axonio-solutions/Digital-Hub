@@ -190,6 +190,7 @@
     "login_required": "Please sign in to create or edit a request",
     "update_success": "Request updated successfully!",
     "create_success": "Request submitted successfully!",
-    "process_error": "Something went wrong. Please try again."
+    "process_error": "Something went wrong. Please try again.",
+    "validation_error": "Please fix the form errors before submitting."
   }
 }

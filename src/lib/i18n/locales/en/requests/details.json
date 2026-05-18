@@ -7,7 +7,7 @@
     "oem_number": "OEM / Part Number", "not_specified": "Not specified", "buyer_notes": "Buyer Notes",
     "no_notes": "No notes provided.", "network_id": "Request ID", "broadcasted": "Posted",
     "na": "N/A", "regional_origin": "Region", "market_traction": "Interest", "responses": "Offers",
-    "location": "Location", "description": "Description", "status_open": "Open",
+    "location": "Location", "description": "Description", "status_open": "Open", "status_fulfilled": "Fulfilled", "status_cancelled": "Cancelled",
     "condition": "Condition", "warranty": "Warranty", "submitted": "Submitted",
     "part": "Part", "vehicle": "Vehicle", "oem": "OEM"
   },
@@ -22,12 +22,17 @@
     "deleting": "Deleting..."
   },
   "toasts": {
+    "error": "An error occurred",
     "request_closed": "Request closed",
     "request_reopened": "Request reopened",
     "request_deleted": "Request deleted",
     "link_copied": "Link copied",
     "no_whatsapp": "No WhatsApp number",
-    "phone_unavailable": "Phone number not available"
+    "phone_unavailable": "Phone number not available",
+    "offer_accepted": "Offer accepted successfully",
+    "offer_declined": "Offer declined",
+    "offer_restored": "Offer restored successfully",
+    "acceptance_revoked": "Acceptance revoked"
   },
   "errors": { "not_found": "Request Not Found", "not_found_desc": "We couldn't find the request you're looking for." },
   "hints": { "fulfill_desc": "Mark this request as fulfilled or no longer needed.", "closed_desc": "This request is closed. Reopen it to receive more offers." },

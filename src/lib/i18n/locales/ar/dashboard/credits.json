@@ -73,6 +73,7 @@
       "cancel": "إلغاء",
       "error_name_required": "اسم الباقة مطلوب",
       "error_credits_price": "يجب أن تكون الأرصدة والسعر أكبر من 0",
+      "error": "فشلت العملية",
       "id_prefix": "المعرف: {{id}}...",
       "saving": "جاري الحفظ..."
     },
@@ -140,6 +141,7 @@
     "credits_label": "رصيد",
     "approve_grant": "قبول ومنح",
     "reject_reason_placeholder": "السبب (اختياري)",
+    "error": "فشلت العملية",
     "reject_success": "تم رفض الطلب",
     "reject_action": "رفض",
     "admin_note_label": "ملاحظة المشرف:",

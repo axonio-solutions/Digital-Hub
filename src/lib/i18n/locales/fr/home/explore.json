@@ -54,6 +54,9 @@
   "pagination": {
     "page": "Page {{number}}"
   },
+  "errors": {
+    "unauthorized_seller": "Seuls les vendeurs peuvent envoyer des devis"
+  },
   "footer": {
     "brand": "Marché MLILA",
     "terms": "Conditions",

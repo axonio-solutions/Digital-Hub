@@ -54,6 +54,9 @@
   "pagination": {
     "page": "صفحة {{number}}"
   },
+  "errors": {
+    "unauthorized_seller": "فقط البائعون يمكنهم إرسال عروض الأسعار"
+  },
   "footer": {
     "brand": "سوق ميليلة",
     "terms": "الشروط",

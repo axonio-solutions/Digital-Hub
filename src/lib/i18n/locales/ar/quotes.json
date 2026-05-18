@@ -2,8 +2,14 @@
   "card": {
     "authorized_seller": "بائع معتمد",
     "rejected": "مرفوض",
+    "withdrawn": "تم السحب",
     "default_location": "الجزائر",
     "default_note": "مرحباً! هذه القطعة متوفرة لدينا. تم فحص الجودة وهي جاهزة للشحن.",
+    "price_label": "سعر العرض",
+    "condition_label": "الحالة",
+    "location_label": "الموقع",
+    "warranty_label": "الضمان",
+    "submitted_label": "تاريخ التقديم",
     "no_warranty": "لا يوجد ضمان",
     "ago": "منذ",
     "actions": {

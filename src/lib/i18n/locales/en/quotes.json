@@ -2,8 +2,14 @@
   "card": {
     "authorized_seller": "Verified Seller",
     "rejected": "Rejected",
+    "withdrawn": "Withdrawn",
     "default_location": "Algeria",
     "default_note": "Hello! We have this exact part in stock. Inspected and ready to ship.",
+    "price_label": "Offer Price",
+    "condition_label": "Condition",
+    "location_label": "Location",
+    "warranty_label": "Warranty",
+    "submitted_label": "Submitted",
     "no_warranty": "No warranty",
     "ago": "ago",
     "actions": {

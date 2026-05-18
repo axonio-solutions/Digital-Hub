@@ -190,6 +190,7 @@
     "login_required": "Connectez-vous pour créer ou modifier une demande",
     "update_success": "Demande mise à jour avec succès !",
     "create_success": "Demande soumise avec succès !",
-    "process_error": "Une erreur est survenue. Veuillez réessayer."
+    "process_error": "Une erreur est survenue. Veuillez réessayer.",
+    "validation_error": "Veuillez corriger les erreurs du formulaire avant de soumettre."
   }
 }

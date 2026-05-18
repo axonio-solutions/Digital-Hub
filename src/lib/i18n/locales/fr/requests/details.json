@@ -7,7 +7,7 @@
     "oem_number": "Réf. OEM", "not_specified": "Non spécifié", "buyer_notes": "Notes de l'Acheteur",
     "no_notes": "Aucune note fournie.", "network_id": "ID Demande", "broadcasted": "Publié",
     "na": "N/A", "regional_origin": "Région", "market_traction": "Intérêt", "responses": "Offres",
-    "location": "Région", "description": "Description", "status_open": "Ouvert",
+    "location": "Région", "description": "Description", "status_open": "Ouvert", "status_fulfilled": "Satisfaite", "status_cancelled": "Annulée",
     "condition": "État", "warranty": "Garantie", "submitted": "Soumis le",
     "part": "Pièce", "vehicle": "Véhicule", "oem": "OEM"
   },
@@ -21,12 +21,17 @@
     "deleting": "Suppression..."
   },
   "toasts": {
+    "error": "Une erreur s'est produite",
     "request_closed": "Demande fermée",
     "request_reopened": "Demande réouverte",
     "request_deleted": "Demande supprimée",
     "link_copied": "Lien copié",
     "no_whatsapp": "Numéro WhatsApp non disponible",
-    "phone_unavailable": "Numéro de téléphone non disponible"
+    "phone_unavailable": "Numéro de téléphone non disponible",
+    "offer_accepted": "Offre acceptée avec succès",
+    "offer_declined": "Offre refusée",
+    "offer_restored": "Offre restaurée avec succès",
+    "acceptance_revoked": "Acceptation révoquée"
   },
   "errors": { "not_found": "Demande introuvable", "not_found_desc": "Nous n'avons pas trouvé la demande recherchée." },
   "hints": { "fulfill_desc": "Marquez cette demande comme satisfaite.", "closed_desc": "Cette demande est fermée. Réouvrez-la pour recevoir plus d'offres." },

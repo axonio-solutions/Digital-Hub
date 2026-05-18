@@ -54,6 +54,9 @@
   "pagination": {
     "page": "Page {{number}}"
   },
+  "errors": {
+    "unauthorized_seller": "Only sellers can send quotes"
+  },
   "footer": {
     "brand": "MLILA Marketplace",
     "terms": "Terms",

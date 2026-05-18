@@ -73,6 +73,7 @@
       "cancel": "Annuler",
       "error_name_required": "Le nom du forfait est requis",
       "error_credits_price": "Les crédits et le prix doivent être supérieurs à 0",
+      "error": "Échec de l'opération",
       "id_prefix": "ID : {{id}}...",
       "saving": "Enregistrement..."
     },
@@ -140,6 +141,7 @@
     "credits_label": "crédits",
     "approve_grant": "Approuver & Octroyer",
     "reject_reason_placeholder": "Raison (optionnelle)",
+    "error": "Échec de l'opération",
     "reject_success": "Demande rejetée",
     "reject_action": "Rejeter",
     "admin_note_label": "Note admin :",

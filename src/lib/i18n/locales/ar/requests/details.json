@@ -7,7 +7,7 @@
     "oem_number": "رقم OEM", "not_specified": "غير محدد", "buyer_notes": "ملاحظات المشتري",
     "no_notes": "لا توجد ملاحظات.", "network_id": "معرف الطلب", "broadcasted": "تاريخ النشر",
     "na": "غير متاح", "regional_origin": "المنطقة", "market_traction": "الاهتمام", "responses": "العروض",
-    "location": "المنطقة", "description": "الوصف", "status_open": "مفتوح",
+    "location": "المنطقة", "description": "الوصف", "status_open": "مفتوح", "status_fulfilled": "مكتمل", "status_cancelled": "ملغي",
     "condition": "الحالة", "warranty": "الضمان", "submitted": "تاريخ التقديم",
     "part": "القطعة", "vehicle": "المركبة", "oem": "رقم OEM"
   },
@@ -21,12 +21,17 @@
     "deleting": "جاري الحذف..."
   },
   "toasts": {
+    "error": "حدث خطأ",
     "request_closed": "تم إغلاق الطلب",
     "request_reopened": "تم إعادة فتح الطلب",
     "request_deleted": "تم حذف الطلب",
     "link_copied": "تم نسخ الرابط",
     "no_whatsapp": "رقم واتساب غير متوفر",
-    "phone_unavailable": "رقم الهاتف غير متوفر"
+    "phone_unavailable": "رقم الهاتف غير متوفر",
+    "offer_accepted": "تم قبول العرض بنجاح",
+    "offer_declined": "تم رفض العرض",
+    "offer_restored": "تم استعادة العرض بنجاح",
+    "acceptance_revoked": "تم إلغاء القبول"
   },
   "errors": { "not_found": "الطلب غير موجود", "not_found_desc": "لم نتمكن من العثور على الطلب الذي تبحث عنه." },
   "hints": { "fulfill_desc": "ضع علامة على هذا الطلب كمنفذ.", "closed_desc": "هذا الطلب مغلق. أعد فتحه لتلقي المزيد من العروض." },
