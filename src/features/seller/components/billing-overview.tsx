@@ -18,6 +18,10 @@ import {
   ShoppingBag,
   ArrowRight,
 } from 'lucide-react'
+import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination'
 
 const DATE_LOCALE: Record<string, string> = {
   en: 'en-US',
@@ -36,14 +40,96 @@ export function BillingOverview() {
   const balance = data?.balance ?? 0
   const transactions = data?.transactions ?? []
 
-  const { totalSpent, totalPurchased } = useMemo(() => {
-    let spent = 0, purchased = 0
+  const { totalSpent, totalPurchased, quoteCount } = useMemo(() => {
+    let spent = 0, purchased = 0, quotes = 0
     for (const txn of transactions) {
       if (txn.amount < 0) spent += Math.abs(txn.amount)
       else purchased += txn.amount
+      if (txn.type === 'quote_spent') quotes++
     }
-    return { totalSpent: spent, totalPurchased: purchased }
+    return { totalSpent: spent, totalPurchased: purchased, quoteCount: quotes }
   }, [transactions])
+
+  const columns: Array<ColumnDef<any>> = useMemo(() => {
+    const tc = (key: string) => t(`dashboard/credits:${key}`)
+    return [
+    {
+      id: 'transaction',
+      header: tc('revenue.columns.transaction'),
+      cell: ({ row }) => {
+        const txn = row.original
+        const isCredit = txn.amount > 0
+        return (
+          <div className="flex items-center gap-3">
+            <div className={cn(
+              'p-1.5 rounded-lg shrink-0',
+              isCredit ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-red-100 dark:bg-red-900/30',
+            )}>
+              {isCredit
+                ? <ArrowUpRight className="size-4 text-emerald-600 dark:text-emerald-400" />
+                : <ArrowDownRight className="size-4 text-red-600 dark:text-red-400" />
+              }
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-xs truncate">
+                  {tc(`revenue.transaction_types.${txn.type}`)}
+                </span>
+                <GlowingBadge
+                  variant={txn.type === 'quote_spent' ? 'error' : txn.type === 'bonus' ? 'warning' : isCredit ? 'success' : 'default'}
+                  className="text-[9px] uppercase"
+                >
+                  {tc(`revenue.transaction_types.${txn.type}`)}
+                </GlowingBadge>
+              </div>
+              {txn.description && (
+                <p className="text-[10px] text-muted-foreground truncate mt-0.5">
+                  {txn.description}
+                </p>
+              )}
+            </div>
+          </div>
+        )
+      },
+    },
+    {
+      id: 'date',
+      header: tc('revenue.columns.date'),
+      cell: ({ row }) => {
+        const txn = row.original
+        return (
+          <span className="text-xs text-muted-foreground">
+            {txn.createdAt && new Date(txn.createdAt).toLocaleDateString(locale)}
+          </span>
+        )
+      },
+    },
+    {
+      id: 'amount',
+      header: () => <span className="text-end block">{tc('revenue.columns.amount')}</span>,
+      cell: ({ row }) => {
+        const txn = row.original
+        const isCredit = txn.amount > 0
+        return (
+          <span className={cn(
+            'text-end block text-sm font-black tabular-nums',
+            isCredit ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400',
+          )}>
+            {isCredit ? '+' : ''}{txn.amount}
+          </span>
+        )
+      },
+    },
+    ]
+  }, [t, locale])
+
+  const table = useReactTable({
+    data: transactions,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageSize: 10 } },
+  })
 
   if (isLoading) {
     return (
@@ -62,7 +148,7 @@ export function BillingOverview() {
     <DirectionProvider dir={dir}>
       <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2" dir={dir}>
         {/* Header */}
-        <div className="flex items-start sm:items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="size-10 rounded-2xl bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-amber-500/20 shrink-0">
               <Coins className="size-5" />
@@ -78,7 +164,7 @@ export function BillingOverview() {
           </div>
           <Button
             onClick={() => setRequestDialogOpen(true)}
-            className="h-9 px-4 rounded-xl gap-2 text-xs font-bold shrink-0 bg-amber-600 hover:bg-amber-700 text-white shadow-sm"
+            className="h-9 px-4 rounded-xl gap-2 text-xs font-bold w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white shadow-sm"
           >
             <Send className="size-3.5" />
             {tc('billing.request_action')}
@@ -124,7 +210,7 @@ export function BillingOverview() {
               <TrendingUp className="size-3 text-blue-500" /> {tc('billing.quote_count')}
             </span>
             <span className="text-xl font-black tabular-nums text-blue-700 dark:text-blue-300">
-              {totalSpent.toLocaleString()}
+              {quoteCount.toLocaleString()}
             </span>
           </div>
         </div>
@@ -135,65 +221,8 @@ export function BillingOverview() {
             {tc('revenue.transactions')}
           </p>
 
-          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-            {transactions.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground text-sm font-medium px-4">
-                {tc('revenue.no_transactions')}
-              </div>
-            ) : (
-              <div className="divide-y divide-border">
-                {transactions.slice(0, 30).map((txn: any) => (
-                  <div key={txn.id} className="flex items-center gap-3 px-4 py-3 text-sm">
-                    <div
-                      className={cn(
-                        'p-1.5 rounded-lg shrink-0',
-                        txn.type === 'purchase' || txn.type === 'bonus'
-                          ? 'bg-emerald-100 dark:bg-emerald-900/30'
-                          : 'bg-red-100 dark:bg-red-900/30',
-                      )}
-                    >
-                      {txn.amount > 0 ? (
-                        <ArrowUpRight className="size-4 text-emerald-600 dark:text-emerald-400" />
-                      ) : (
-                        <ArrowDownRight className="size-4 text-red-600 dark:text-red-400" />
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-xs truncate">
-                          {txn.description || tc(`revenue.transaction_types.${txn.type}`)}
-                        </span>
-                        <GlowingBadge
-                          variant={txn.type === 'quote_spent' ? 'error' : txn.type === 'bonus' ? 'warning' : 'success'}
-                          className="text-[9px] uppercase"
-                        >
-                          {tc(`revenue.transaction_types.${txn.type}`)}
-                        </GlowingBadge>
-                      </div>
-                      <span className="text-[10px] text-muted-foreground">
-                        {txn.createdAt && new Date(txn.createdAt).toLocaleDateString(locale)}
-                      </span>
-                    </div>
-
-                    <span
-                      className={cn(
-                        'text-sm font-black tabular-nums shrink-0',
-                        txn.amount > 0
-                          ? 'text-emerald-600 dark:text-emerald-400'
-                          : 'text-red-600 dark:text-red-400',
-                      )}
-                    >
-                      {txn.amount > 0 ? '+' : ''}{txn.amount}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {transactions.length === 0 && (
-            <div className="flex flex-col items-center gap-3 pt-4">
+          {transactions.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 py-12">
               <ShoppingBag className="size-10 text-muted-foreground/20" />
               <p className="text-sm font-bold text-muted-foreground">
                 {tc('billing.no_activity')}
@@ -203,6 +232,40 @@ export function BillingOverview() {
                   {t('dashboard/seller:actions.browse_requests')} <ArrowRight className="size-3.5 ms-1.5" />
                 </a>
               </Button>
+            </div>
+          ) : (
+            <div className="rounded-2xl bg-card border border-border shadow-sm">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader className="bg-muted/50">
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id} className="text-xs font-bold">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="border-t border-border px-4 py-3">
+                <DataTablePagination table={table} />
+              </div>
             </div>
           )}
         </div>

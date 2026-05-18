@@ -61,4 +61,5 @@ export const creditTransactionTypes = [
   'bonus',
   'quote_spent',
   'admin_adjustment',
+  'credit_request_approved',
 ] as const

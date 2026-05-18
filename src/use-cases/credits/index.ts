@@ -116,7 +116,7 @@ export async function approveCreditRequestUseCase(
     .where(eq(creditRequests.id, id))
 
   // Grant the credits
-  await grantCredits(req.sellerId, req.credits, 'purchase', adminId, `Credit request approved — ${req.credits} credits`)
+  await grantCredits(req.sellerId, req.credits, 'credit_request_approved', adminId, `Credit request approved — ${req.credits} credits`)
 
   return { success: true }
 }
