@@ -8,6 +8,8 @@ import viteTsConfigPaths from 'vite-tsconfig-paths'
 
 import tailwindcss from '@tailwindcss/vite'
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 const config = defineConfig({
   resolve: {
     alias: {
@@ -22,8 +24,12 @@ const config = defineConfig({
     }),
     tailwindcss(),
     tanstackStart(),
-    netlify(),
     viteReact(),
+    cloudflare({
+      viteEnvironment: {
+        name: "ssr"
+      }
+    }),
   ],
 })
 
