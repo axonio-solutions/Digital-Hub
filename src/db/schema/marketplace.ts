@@ -62,6 +62,9 @@ export const sparePartRequests = pgTable(
         table.categoryId
       ),
       idx_requests_buyer: index('idx_requests_buyer_id').on(table.buyerId),
+      idx_requests_buyer_status: index('idx_requests_buyer_status').on(table.buyerId, table.status),
+      idx_requests_category_status: index('idx_requests_category_status').on(table.categoryId, table.status),
+      idx_requests_brand_status: index('idx_requests_brand_status').on(table.brandId, table.status),
       idx_requests_created: index('idx_requests_created_at').on(table.createdAt),
       gin_idx_part_search: index('gin_idx_part_search').using(
         'gin',

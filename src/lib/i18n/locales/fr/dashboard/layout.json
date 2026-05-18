@@ -22,7 +22,8 @@
     "credit_hub": "Centre de Crédits",
     "revenue": "Revenus",
     "billing": "Facturation",
-    "credit_requests": "Demandes de Crédits"
+    "credit_requests": "Demandes de Crédits",
+    "admin_profile": "Profil Admin"
   },
   "labels": {
     "buyer_hub": "Espace Acheteur",

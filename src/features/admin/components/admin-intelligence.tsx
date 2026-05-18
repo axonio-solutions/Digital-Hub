@@ -7,6 +7,7 @@ import {
   Store,
   HelpCircle,
   TrendingUp,
+  RefreshCw,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -15,23 +16,25 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  Legend,
 } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DirectionProvider } from '@/components/ui/direction'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 import { useMarketGapAnalysis } from '@/features/admin/hooks/use-analytics'
+import { tCategory } from '@/utils/category-utils'
+import { WILAYAS } from '@/lib/constants/wilayas'
 
-function GapComparisonChart({ data, nameKey, t }: { data: any[]; nameKey: string; t: (key: string) => string }) {
+function GapComparisonChart({ data, nameKey, t, translateName, dir }: { data: any[]; nameKey: string; t: (key: string) => string; translateName: (value: string) => string; dir?: string }) {
   const chartData = useMemo(
     () =>
       data.slice(0, 8).map((item) => ({
-        name: item[nameKey],
+        name: translateName(item[nameKey]),
         Demand: item.demand,
         Supply: item.supplySellers,
         Gap: item.gap,
@@ -54,7 +57,7 @@ function GapComparisonChart({ data, nameKey, t }: { data: any[]; nameKey: string
           className="h-full w-full"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} barGap={2} barCategoryGap="20%" margin={{ left: -10, right: 8, top: 8, bottom: 0 }}>
+            <BarChart data={chartData} barGap={2} barCategoryGap="20%" margin={{ left: -10, right: 8, top: 8, bottom: dir === 'rtl' ? 16 : 0 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-800" vertical={false} />
               <XAxis
                 dataKey="name"
@@ -65,13 +68,11 @@ function GapComparisonChart({ data, nameKey, t }: { data: any[]; nameKey: string
                 interval={0}
                 angle={-20}
                 textAnchor="end"
-                height={60}
+                height={dir === 'rtl' ? 80 : 60}
               />
               <YAxis tickLine={false} axisLine={false} className="text-[10px] font-medium text-slate-500" tick={{ fontSize: 10 }} />
               <ChartTooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} content={<ChartTooltipContent />} />
-              <Legend
-                wrapperStyle={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', paddingTop: '8px' }}
-              />
+              <ChartLegend content={<ChartLegendContent payload={[] as any} />} />
               <Bar dataKey="Demand" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={32} />
               <Bar dataKey="Supply" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={32} />
             </BarChart>
@@ -88,7 +89,7 @@ function UnservedBadge({ gap }: { gap: number }) {
   return <Badge variant="destructive" className="text-[10px] font-bold">{gap}</Badge>
 }
 
-function GapSummaryTable({ data, nameKey, t }: { data: any[]; nameKey: string; t: (key: string) => string }) {
+function GapSummaryTable({ data, nameKey, t, translateName }: { data: any[]; nameKey: string; t: (key: string) => string; translateName: (value: string) => string }) {
   const maxDemand = Math.max(...data.map((d) => d.demand || 0), 1)
 
   return (
@@ -102,7 +103,7 @@ function GapSummaryTable({ data, nameKey, t }: { data: any[]; nameKey: string; t
           {data.slice(0, 8).map((item) => (
             <div key={item[nameKey]} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{item[nameKey]}</p>
+                <p className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{translateName(item[nameKey])}</p>
                 <div className="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden mt-1.5">
                   <div
                     className="h-full rounded-full bg-blue-500 transition-all duration-500"
@@ -137,9 +138,39 @@ function GapSummaryTable({ data, nameKey, t }: { data: any[]; nameKey: string; t
   )
 }
 
+function SectionError({ message, onRetry }: { message: string; onRetry?: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 py-12">
+      <HelpCircle className="size-8 text-muted-foreground/50" />
+      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center max-w-xs">{message}</p>
+      {onRetry && (
+        <Button variant="outline" size="sm" onClick={onRetry} className="gap-1.5 text-xs font-bold">
+          <RefreshCw className="size-3" />
+          Retry
+        </Button>
+      )}
+    </div>
+  )
+}
+
 export function AdminIntelligence() {
-  const { t } = useTranslation('dashboard/admin')
-  const { data: analysis, isLoading } = useMarketGapAnalysis()
+  const { t, i18n } = useTranslation('dashboard/admin')
+  const { t: tw } = useTranslation('wilayas')
+  const { data: analysis, isLoading, isError, refetch } = useMarketGapAnalysis()
+
+  const translateName = useMemo(
+    () => (nameKey: string, value: string) => {
+      if (nameKey === 'wilaya') {
+        const id = WILAYAS.find((w) => w.name === value)?.id
+        return id ? tw(id) : value
+      }
+      if (nameKey === 'category') {
+        return tCategory(value, t)
+      }
+      return value
+    },
+    [t, tw],
+  )
 
   const totalDemand = useMemo(
     () => (analysis?.categoryGaps || []).reduce((s: number, c: any) => s + c.demand, 0),
@@ -148,6 +179,14 @@ export function AdminIntelligence() {
 
   if (isLoading && !analysis) {
     return <AdminIntelligenceSkeleton />
+  }
+
+  if (isError && !analysis) {
+    return (
+      <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2">
+        <SectionError message={t('intelligence_page.no_data')} onRetry={() => refetch()} />
+      </div>
+    )
   }
 
   const metrics = [
@@ -216,6 +255,7 @@ export function AdminIntelligence() {
 
       {/* Tabs: Bar Chart view / Summary Table view */}
       <Card className="rounded-2xl border-border shadow-sm overflow-hidden">
+        <DirectionProvider dir={i18n.dir()}>
         <Tabs defaultValue="chart" className="w-full">
           <div className="flex items-center justify-between px-5 pt-4 pb-0">
             <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
@@ -228,13 +268,14 @@ export function AdminIntelligence() {
           </div>
           <div className="p-5 pt-3">
             <TabsContent value="chart" className="m-0">
-              <GapComparisonChart data={analysis?.categoryGaps || []} nameKey="category" t={t} />
+              <GapComparisonChart data={analysis?.categoryGaps || []} nameKey="category" t={t} translateName={(v) => translateName('category', v)} dir={i18n.dir()} />
             </TabsContent>
             <TabsContent value="table" className="m-0">
-              <GapSummaryTable data={analysis?.categoryGaps || []} nameKey="category" t={t} />
+              <GapSummaryTable data={analysis?.categoryGaps || []} nameKey="category" t={t} translateName={(v) => translateName('category', v)} />
             </TabsContent>
           </div>
         </Tabs>
+        </DirectionProvider>
       </Card>
 
       {/* Brand Gaps + Regional Gaps */}
@@ -243,13 +284,13 @@ export function AdminIntelligence() {
           <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-3">
             {t('intelligence_page.brand_gaps')}
           </p>
-          <GapSummaryTable data={analysis?.brandGaps || []} nameKey="brand" t={t} />
+          <GapSummaryTable data={analysis?.brandGaps || []} nameKey="brand" t={t} translateName={(v) => translateName('brand', v)} />
         </Card>
         <Card className="rounded-2xl border-border shadow-sm p-5">
           <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-3">
             {t('intelligence_page.regional_gaps')}
           </p>
-          <GapSummaryTable data={analysis?.regionalGaps || []} nameKey="wilaya" t={t} />
+          <GapSummaryTable data={analysis?.regionalGaps || []} nameKey="wilaya" t={t} translateName={(v) => translateName('wilaya', v)} />
         </Card>
       </div>
     </div>

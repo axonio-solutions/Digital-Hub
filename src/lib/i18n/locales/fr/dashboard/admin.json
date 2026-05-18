@@ -216,6 +216,27 @@
       "admin_fallback": "Admin"
     }
   },
+  "overview": {
+    "time_filter": {
+      "all": "Tout",
+      "7d": "7 Jours",
+      "30d": "30 Jours",
+      "90d": "90 Jours"
+    }
+  },
+  "charts": {
+    "market_activity": {
+      "title": "Activité du Marché",
+      "requests": "Demandes",
+      "quotes": "Devis"
+    },
+    "supply_gaps": {
+      "title": "Écarts d'Offre par Catégorie",
+      "demand": "Demande",
+      "supply": "Offre",
+      "gap": "Écart"
+    }
+  },
   "intelligence_page": {
     "title": "Intelligence Marché",
     "subtitle": "Analyse des écarts offre-demande et opportunités vendeurs",

@@ -27,26 +27,20 @@ export const Route = createFileRoute('/_authed/dashboard/')({
       }
     }
     if (role === 'admin') {
-      const { getAdminDashboardStatsServerFn, getAdvancedSystemMetricsServerFn, getRecentActivityServerFn, getMarketGapAnalysisServerFn } = await import('@/fn/admin')
-      const statsPromise = getAdminDashboardStatsServerFn()
-      const metricsPromise = getAdvancedSystemMetricsServerFn()
-      const activityPromise = getRecentActivityServerFn()
+      const { getAdminDashboardStatsServerFn, getAdvancedSystemMetricsServerFn, getMarketGapAnalysisServerFn } = await import('@/fn/admin')
+      const statsPromise = getAdminDashboardStatsServerFn({ data: { days: 30 } })
+      const metricsPromise = getAdvancedSystemMetricsServerFn({ data: { days: 30 } })
       const marketGapPromise = getMarketGapAnalysisServerFn()
       await Promise.allSettled([
         context.queryClient.ensureQueryData({
-          queryKey: adminKeys.dashboardStats(),
+          queryKey: [...adminKeys.dashboardStats(), 30],
           queryFn: () => (statsPromise as any),
           staleTime: 2 * 60 * 1000,
         }),
         context.queryClient.ensureQueryData({
-          queryKey: adminKeys.systemMetrics(),
+          queryKey: [...adminKeys.systemMetrics(), 30],
           queryFn: () => (metricsPromise as any),
           staleTime: 2 * 60 * 1000,
-        }),
-        context.queryClient.ensureQueryData({
-          queryKey: adminKeys.recentActivity(),
-          queryFn: () => (activityPromise as any),
-          staleTime: 30 * 1000,
         }),
         context.queryClient.ensureQueryData({
           queryKey: adminKeys.marketGap(),

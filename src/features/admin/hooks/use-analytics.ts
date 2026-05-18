@@ -14,7 +14,7 @@ const GC_TIME = 30 * 60 * 1000
 export function useBuyerAnalytics() {
   return useQuery({
     queryKey: adminKeys.analytics('buyers'),
-    queryFn: () => (getBuyerAnalyticsServerFn as any)(),
+    queryFn: () => getBuyerAnalyticsServerFn(),
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
     refetchOnWindowFocus: false,
@@ -24,17 +24,17 @@ export function useBuyerAnalytics() {
 export function useSellerAnalytics() {
   return useQuery({
     queryKey: adminKeys.analytics('sellers'),
-    queryFn: () => (getSellerAnalyticsServerFn as any)(),
+    queryFn: () => getSellerAnalyticsServerFn(),
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
     refetchOnWindowFocus: false,
   })
 }
 
-export function useSystemMetrics() {
+export function useSystemMetrics(days?: number) {
   return useQuery({
-    queryKey: adminKeys.systemMetrics(),
-    queryFn: () => (getAdvancedSystemMetricsServerFn as any)(),
+    queryKey: [...adminKeys.systemMetrics(), days],
+    queryFn: () => getAdvancedSystemMetricsServerFn({ data: { days } }),
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
     refetchOnWindowFocus: false,
@@ -44,17 +44,17 @@ export function useSystemMetrics() {
 export function useMarketGapAnalysis() {
   return useQuery({
     queryKey: adminKeys.marketGap(),
-    queryFn: () => (getMarketGapAnalysisServerFn as any)(),
+    queryFn: () => getMarketGapAnalysisServerFn(),
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
     refetchOnWindowFocus: false,
   })
 }
 
-export function useAdminDashboardStats() {
+export function useAdminDashboardStats(days?: number) {
   return useQuery({
-    queryKey: adminKeys.dashboardStats(),
-    queryFn: () => (getAdminDashboardStatsServerFn as any)(),
+    queryKey: [...adminKeys.dashboardStats(), days],
+    queryFn: () => getAdminDashboardStatsServerFn({ data: { days } }),
     staleTime: 2 * 60 * 1000,
     gcTime: GC_TIME,
     refetchOnWindowFocus: false,

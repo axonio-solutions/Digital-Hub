@@ -22,7 +22,8 @@
     "credit_hub": "مركز الائتمان",
     "revenue": "الإيرادات",
     "billing": "الفواتير",
-    "credit_requests": "طلبات الائتمان"
+    "credit_requests": "طلبات الائتمان",
+    "admin_profile": "ملف المسؤول"
   },
   "labels": {
     "buyer_hub": "مركز المشتري",

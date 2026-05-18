@@ -22,7 +22,8 @@
     "credit_hub": "Credit Hub",
     "revenue": "Revenue",
     "billing": "Billing",
-    "credit_requests": "Credit Requests"
+    "credit_requests": "Credit Requests",
+    "admin_profile": "Admin Profile"
   },
   "labels": {
     "buyer_hub": "Buyer Hub",

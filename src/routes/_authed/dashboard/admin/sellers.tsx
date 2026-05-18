@@ -40,9 +40,9 @@ export const Route = createFileRoute('/_authed/dashboard/admin/sellers')({
     const promise = getSellerAnalyticsServerFn()
     await context.queryClient.ensureQueryData({
       queryKey: adminKeys.analytics('sellers'),
-      queryFn: () => promise as any,
+      queryFn: () => promise,
       staleTime: 5 * 60 * 1000,
-    })
+    }).catch(() => {})
   },
   component: SellerAnalytics,
   pendingComponent: SellerAnalyticsSkeleton,

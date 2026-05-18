@@ -225,6 +225,27 @@
       "admin_fallback": "مسؤول"
     }
   },
+  "overview": {
+    "time_filter": {
+      "all": "الكل",
+      "7d": "٧ أيام",
+      "30d": "٣٠ يوماً",
+      "90d": "٩٠ يوماً"
+    }
+  },
+  "charts": {
+    "market_activity": {
+      "title": "نشاط السوق",
+      "requests": "الطلبات",
+      "quotes": "عروض الأسعار"
+    },
+    "supply_gaps": {
+      "title": "فجوات العرض حسب الفئة",
+      "demand": "الطلب",
+      "supply": "العرض",
+      "gap": "الفجوة"
+    }
+  },
   "intelligence_page": {
     "title": "ذكاء السوق",
     "subtitle": "تحليل فجوة العرض والطلب وفرص البائعين",

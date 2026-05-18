@@ -1,437 +1,353 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   ArrowRight,
-  Download,
   Users,
   Store,
   ClipboardList,
   MessageSquare,
   TrendingUp,
-  Database,
-  UserPlus,
   HelpCircle,
+  UserPlus,
   BarChart3,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import {
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  BarChart,
+  Cell,
+  LabelList,
+} from 'recharts'
 import { useTranslation } from 'react-i18next'
-import { Skeleton } from '@/components/ui/skeleton'
-import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
-import { Button } from '@/components/ui/button'
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import {
   useAdminDashboardStats,
   useSystemMetrics,
   useMarketGapAnalysis,
 } from '@/features/admin/hooks/use-analytics'
-import { useRecentActivity } from '@/features/admin/hooks/use-admin'
-import { MarketplaceActivityTable } from './marketplace-activity-table'
-import { type MarketplaceActivity } from './marketplace-columns'
+import { tCategory } from '@/utils/category-utils'
+import { DirectionProvider } from '@/components/ui/direction'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 
-function DonutGauge({ value, max, label, isHealthy, healthText }: { value: number; max: number; label: string; isHealthy: boolean; healthText: string }) {
-  const pct = Math.min((value / max) * 100, 100)
-  const radius = 42
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference - (pct / 100) * circumference
-  const color = isHealthy ? 'hsl(160,84%,39%)' : 'hsl(30,80%,50%)'
-  const trackColor = 'hsl(var(--muted))'
+type TimeRange = 7 | 30 | 90 | undefined
+
+function RequestsVsQuotesChart({ data, dir }: { data: { date: string; requests: number; quotes: number }[]; dir: 'ltr' | 'rtl' }) {
+  const { t } = useTranslation('dashboard/admin')
+  const isEmpty = data.length === 0
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      <div className="relative">
-        <svg width="120" height="120" viewBox="0 0 120 120" className="-rotate-90">
-          {/* Glow effect */}
-          <defs>
-            <filter id="gaugeGlow">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-          </defs>
-          {/* Track */}
-          <circle cx="60" cy="60" r={radius} fill="none" stroke={trackColor} strokeWidth="12" />
-          {/* Value arc */}
-          <circle
-            cx="60" cy="60" r={radius} fill="none" stroke={color}
-            strokeWidth="12" strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            filter="url(#gaugeGlow)"
-            className="transition-all duration-700 ease-out"
-          />
-        </svg>
-        {/* Center label */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-          <span className="text-3xl font-black tabular-nums tracking-tighter text-foreground">
-            {value.toFixed(1)}
-          </span>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground leading-tight mt-0.5">
-            {label}
-          </span>
-        </div>
+    <DirectionProvider dir={dir}>
+      <div className="h-[220px] sm:h-[300px] w-full">
+        {isEmpty ? (
+          <div className="flex h-full items-center justify-center">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('intelligence_page.no_data')}</p>
+          </div>
+        ) : (
+          <ChartContainer
+            config={{
+              requests: { label: t('charts.market_activity.requests'), color: '#3b82f6' },
+              quotes: { label: t('charts.market_activity.quotes'), color: '#10b981' },
+            }}
+            className="h-full w-full [&_.recharts-legend-wrapper]:!overflow-x-auto [&_.recharts-legend-wrapper]:!flex"
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={data} margin={{ left: -16, right: 4, top: 8, bottom: dir === 'rtl' ? 20 : 4 }}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-800" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  className="text-[10px] font-medium text-slate-500"
+                  tick={{ fontSize: 10 }}
+                  interval="preserveStartEnd"
+                />
+                <YAxis tickLine={false} axisLine={false} className="text-[10px] font-medium text-slate-500" tick={{ fontSize: 10 }} width={35} />
+                <ChartTooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent payload={[] as any} />} />
+                <Bar dataKey="requests" fill="#3b82f6" radius={[3, 3, 0, 0]} maxBarSize={24} opacity={0.85} />
+                <Line type="monotone" dataKey="quotes" stroke="#10b981" strokeWidth={2} dot={false} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        )}
       </div>
-      <div className="flex items-center gap-1.5">
-        <div className={cn('size-1.5 rounded-full', isHealthy ? 'bg-emerald-500' : 'bg-amber-500')} />
-        <span className={cn(
-          'text-[10px] font-bold uppercase tracking-widest',
-          isHealthy ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
-        )}>
-          {healthText}
-        </span>
+    </DirectionProvider>
+  )
+}
+
+function CategorySupplyGapsChart({ data, dir }: { data: { category: string; demand: number; supplySellers: number; gap: number }[]; dir: 'ltr' | 'rtl' }) {
+  const { t } = useTranslation('dashboard/admin')
+  const displayData = useMemo(() => data.slice(0, 6), [data])
+  const isEmpty = displayData.length === 0
+  const maxVal = useMemo(() => {
+    const m = Math.max(...displayData.map(d => Math.max(d.demand, d.supplySellers)), 1)
+    return Math.ceil(m * 1.3)
+  }, [displayData])
+  const gapPalette = useMemo(() => {
+    const gaps = displayData.map(d => d.gap)
+    const maxGap = Math.max(...gaps, 1)
+    return displayData.map(d => {
+      const ratio = d.gap / maxGap
+      if (ratio > 0.7) return '#ef4444'
+      if (ratio > 0.4) return '#f59e0b'
+      return '#3b82f6'
+    })
+  }, [displayData])
+
+  return (
+    <DirectionProvider dir={dir}>
+      <div className="h-[220px] sm:h-[300px] w-full">
+        {isEmpty ? (
+          <div className="flex h-full items-center justify-center">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('intelligence_page.no_data')}</p>
+          </div>
+        ) : (
+          <ChartContainer
+            config={{
+              demand: { label: t('charts.supply_gaps.demand'), color: '#3b82f6' },
+              supplySellers: { label: t('charts.supply_gaps.supply'), color: '#10b981' },
+              gap: { label: t('charts.supply_gaps.gap'), color: '#ef4444' },
+            }}
+            className="h-full w-full [&_.recharts-legend-wrapper]:!overflow-x-auto [&_.recharts-legend-wrapper]:!flex"
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={displayData} layout="vertical" margin={{ left: dir === 'rtl' ? 10 : 4, right: 24, top: 8, bottom: 0 }} barGap={2} barCategoryGap="20%">
+                <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-800" horizontal={false} />
+                <XAxis type="number" tickLine={false} axisLine={false} className="text-[10px] font-medium text-slate-500" tick={{ fontSize: 10 }} domain={[0, maxVal]} />
+                <YAxis
+                  type="category"
+                  dataKey="category"
+                  tickLine={false}
+                  axisLine={false}
+                  className="text-[9px] sm:text-[10px] font-medium text-slate-500"
+                  tick={{ fontSize: 9 }}
+                  width={dir === 'rtl' ? 60 : 50}
+                  tickFormatter={(val) => {
+                    const translated = tCategory(val, t)
+                    const maxLen = dir === 'rtl' ? 10 : 8
+                    return translated.length > maxLen ? translated.slice(0, maxLen) + '…' : translated
+                  }}
+                />
+                <ChartTooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent payload={[] as any} />} />
+                <Bar dataKey="demand" radius={[0, 3, 3, 0]} maxBarSize={16}>
+                  {displayData.map((_, idx) => (
+                    <Cell key={idx} fill={gapPalette[idx]} />
+                  ))}
+                  <LabelList dataKey="gap" position="right" className="text-[9px] sm:text-[10px] font-bold fill-muted-foreground" />
+                </Bar>
+                <Bar dataKey="supplySellers" fill="#10b981" radius={[0, 3, 3, 0]} maxBarSize={16} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        )}
+      </div>
+    </DirectionProvider>
+  )
+}
+
+function StatCard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string | number; color: string }) {
+  return (
+    <div className={cn('flex items-center gap-3 px-4 py-4 sm:px-5 sm:py-5 rounded-2xl transition-all', color)}>
+      <div className="p-2 rounded-xl bg-background/40 shrink-0">
+        <Icon className="size-5 sm:size-6" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-base sm:text-xl font-black tabular-nums leading-none text-foreground">
+          {typeof value === 'number' ? value.toLocaleString() : value}
+        </p>
+        <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground leading-tight mt-1 truncate">
+          {label}
+        </p>
       </div>
     </div>
   )
 }
 
 export function AdminOverview() {
-  const { t } = useTranslation(['dashboard/admin', 'dashboard/layout'])
+  const { t, i18n } = useTranslation(['dashboard/admin', 'dashboard/layout'])
   const { data: user } = useAuth()
-  const { data: stats, isLoading: isStatsLoading } = useAdminDashboardStats()
-  const { data: systemMetrics, isLoading: isMetricsLoading } = useSystemMetrics()
-  const { data: recentActivity } = useRecentActivity()
+  const [days, setDays] = useState<TimeRange>(30)
+
+  const { data: stats, isLoading: isStatsLoading } = useAdminDashboardStats(days)
+  const { data: systemMetrics, isLoading: isMetricsLoading } = useSystemMetrics(days)
   const { data: gapAnalysis } = useMarketGapAnalysis()
 
   const isLoading = isStatsLoading || isMetricsLoading
+  const dir = i18n.dir() as 'ltr' | 'rtl'
 
-  const volData = systemMetrics?.requestVolume || []
-  const displayVol = useMemo(() => volData.slice(-10), [volData])
-  const maxVol = useMemo(
-    () => Math.max(...displayVol.map((d: any) => d.count || 0), 1),
-    [displayVol],
-  )
+  const timeRanges: { label: string; value: TimeRange }[] = [
+    { label: t('overview.time_filter.all'), value: undefined },
+    { label: t('overview.time_filter.7d'), value: 7 },
+    { label: t('overview.time_filter.30d'), value: 30 },
+    { label: t('overview.time_filter.90d'), value: 90 },
+  ]
 
-  const registrations = systemMetrics?.recentRegistrations?.[0]?.count || 0
-  const dbSize = systemMetrics?.dbStats?.totalSize || '—'
+  const chartData = useMemo(() => {
+    const volumeMap = new Map<string, number>()
+    const quoteMap = new Map<string, number>()
 
-  const allRequests = recentActivity?.data || []
-  const tableData: MarketplaceActivity[] = useMemo(
-    () =>
-      allRequests.map((req: any) => ({
-        id: req.id,
-        partName: req.partName,
-        buyer: req.buyer?.name || t('table.guest'),
-        brand: req.vehicleBrand,
-        year: req.modelYear,
-        status: req.status,
-        offers: req.quotes?.length || 0,
-        createdAt:
-          typeof req.createdAt === 'string'
-            ? req.createdAt
-            : req.createdAt?.toISOString?.() || new Date().toISOString(),
-        image: req.imageUrls?.[0],
-      })),
-    [allRequests],
-  )
+    for (const r of systemMetrics?.requestVolume || []) {
+      volumeMap.set(r.date, r.count)
+    }
+    for (const q of systemMetrics?.quoteVolume || []) {
+      quoteMap.set(q.date, q.count)
+    }
 
-  if (isLoading && !stats && !systemMetrics) {
+    const allDates = new Set([...volumeMap.keys(), ...quoteMap.keys()])
+    return Array.from(allDates).sort().map(date => ({
+      date,
+      requests: volumeMap.get(date) || 0,
+      quotes: quoteMap.get(date) || 0,
+    }))
+  }, [systemMetrics?.requestVolume, systemMetrics?.quoteVolume])
+
+  const totalBuyers = stats?.totalBuyers ?? 0
+  const totalSellers = stats?.totalSellers ?? 0
+  const openRequests = stats?.openRequests ?? 0
+  const totalQuotes = stats?.totalQuotes ?? 0
+  const avgOffers = stats?.avgOffersPerRequest ?? 0
+  const isHealthy = (stats?.marketHealth ?? '').toLowerCase().includes('healthy')
+  const registrations = stats?.totalUsers ?? 0
+  const unservedCount = gapAnalysis?.unservedCount ?? 0
+  const fulfillmentRate = gapAnalysis?.fulfillment?.rate ?? 0
+  const gapCategoriesCount = (gapAnalysis?.categoryGaps || []).filter((c: any) => c.gap > 0).length
+
+  if (isLoading && !stats) {
     return <AdminOverviewSkeleton />
   }
 
-  const totalBuyers = stats?.totalBuyers || 0
-  const totalSellers = stats?.totalSellers || 0
-  const openRequestsCount = stats?.openRequests || 0
-  const totalQuotes = stats?.totalQuotes || 0
-  const avgOffers = stats?.avgOffersPerRequest || 0
-  const marketHealth = stats?.marketHealth || 'N/A'
-  const isHealthy = marketHealth.toLowerCase().includes('healthy')
-
-  const metrics = [
-    { label: t('stats.buyers.label'), value: totalBuyers, icon: Users, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/30' },
-    { label: t('stats.sellers.label'), value: totalSellers, icon: Store, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30' },
-    { label: t('stats.demands.label'), value: openRequestsCount, icon: ClipboardList, color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/30' },
-    { label: t('stats.supply.label'), value: totalQuotes, icon: MessageSquare, color: 'text-violet-500 bg-violet-50 dark:bg-violet-950/30' },
-  ]
-
   return (
-    <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-violet-500/20 shrink-0">
-              {(user?.name || t('users.overview.admin_fallback')).charAt(0)}
+    <div className="flex-1 flex flex-col gap-4 sm:gap-6 w-full pb-8 pt-2">
+      <DirectionProvider dir={dir}>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <div className="size-9 sm:size-10 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-violet-500/20 shrink-0">
+                {(user?.name || 'A').charAt(0)}
+              </div>
+              <div>
+                <h2 className="text-lg sm:text-2xl font-black tracking-tight leading-tight text-foreground">
+                  {t('welcome', { name: user?.name || 'Admin' })}
+                </h2>
+                <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+                  {isHealthy ? t('users.overview.thriving') : t('users.overview.needs_attention')}
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
-                {t('welcome', { name: user?.name || t('users.overview.admin_fallback') })}
-              </h2>
-              <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-                {isHealthy ? t('users.overview.thriving') : t('users.overview.needs_attention')}
-              </p>
-            </div>
+          </div>
+
+          <div className="flex gap-1.5 overflow-x-auto pb-1" dir={dir}>
+            {timeRanges.map((range) => (
+              <button
+                key={String(range.value)}
+                onClick={() => setDays(range.value)}
+                className={cn(
+                  'shrink-0 h-7 sm:h-8 text-[10px] font-bold px-2.5 sm:px-3 rounded-lg border transition-colors',
+                  days === range.value
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'bg-background text-muted-foreground border-border hover:bg-accent',
+                )}
+              >
+                {range.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          className="h-10 px-4 rounded-xl border-slate-200 dark:border-slate-800 gap-2 font-bold text-xs uppercase tracking-wider shadow-sm w-full sm:w-auto"
-        >
-          <Download size={14} />
-          {t('export')}
-        </Button>
-      </div>
+        {/* All Stats — 8 cards, 4x2 grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+          <StatCard icon={Users} label={t('stats.buyers.label')} value={totalBuyers} color="text-blue-600 bg-blue-50 dark:bg-blue-950/30" />
+          <StatCard icon={Store} label={t('stats.sellers.label')} value={totalSellers} color="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30" />
+          <StatCard icon={ClipboardList} label={t('stats.demands.label')} value={openRequests} color="text-amber-600 bg-amber-50 dark:bg-amber-950/30" />
+          <StatCard icon={MessageSquare} label={t('stats.supply.label')} value={totalQuotes} color="text-violet-600 bg-violet-50 dark:bg-violet-950/30" />
+          <StatCard icon={TrendingUp} label={t('users.overview.avg_offers')} value={avgOffers.toFixed(1)} color="text-sky-600 bg-sky-50 dark:bg-sky-950/30" />
+          <StatCard icon={BarChart3} label={t('intelligence_page.metrics.fulfillment_rate')} value={`${fulfillmentRate}%`} color="text-teal-600 bg-teal-50 dark:bg-teal-950/30" />
+          <StatCard icon={HelpCircle} label={t('intelligence_page.metrics.unserved')} value={unservedCount} color="text-rose-600 bg-rose-50 dark:bg-rose-950/30" />
+          <StatCard icon={UserPlus} label={t('users.overview.recent_registrations')} value={registrations} color="text-indigo-600 bg-indigo-50 dark:bg-indigo-950/30" />
+        </div>
 
-      {/* Compact Metrics */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {metrics.map((m) => (
-          <div
-            key={m.label}
-            className={cn(
-              'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
-              m.color,
-            )}
-          >
-            <div className="flex items-center gap-1.5">
-              <m.icon className="size-4" />
-              <span className="text-xl font-black tabular-nums leading-none">
-                {typeof m.value === 'number' ? m.value.toLocaleString() : m.value}
-              </span>
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
-              {m.label}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Health Snapshot Row - Fixed mobile badge overflow */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
-          <div className="p-2 rounded-xl bg-primary/10 shrink-0">
-            <TrendingUp className="size-4 text-primary" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
-              {t('users.overview.avg_offers')}
+        {/* Market Gaps Summary — 3 cards, above charts */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
+              {t('intelligence_page.title')}
             </p>
-            <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">{avgOffers.toFixed(1)}</p>
+            <Button asChild variant="ghost" size="sm" className="h-auto py-1 px-2 text-xs font-bold gap-1">
+              <Link to="/dashboard/admin/intelligence">
+                {t('users.overview.view_analytics')} <ArrowRight className="size-3" />
+              </Link>
+            </Button>
           </div>
-          <GlowingBadge
-            variant={isHealthy ? 'success' : 'warning'}
-            pulse={!isHealthy}
-            className="shrink-0 text-[9px]"
-          >
-            <span className="sm:max-w-[80px] truncate">
-              {isHealthy ? t('users.health.optimal') : t('users.health.low')}
-            </span>
-          </GlowingBadge>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+            <StatCard icon={BarChart3} label={t('intelligence_page.metrics.fulfillment_rate')} value={`${fulfillmentRate}%`} color="text-teal-600 bg-teal-50 dark:bg-teal-950/30" />
+            <StatCard icon={HelpCircle} label={t('intelligence_page.metrics.unserved')} value={unservedCount.toLocaleString()} color="text-rose-600 bg-rose-50 dark:bg-rose-950/30" />
+            <StatCard icon={ClipboardList} label={t('intelligence_page.category_gaps')} value={gapCategoriesCount} color="text-amber-600 bg-amber-50 dark:bg-amber-950/30" />
+          </div>
         </div>
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
-          <div className="p-2 rounded-xl bg-blue-500/10 shrink-0">
-            <UserPlus className="size-4 text-blue-500" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
-              {t('users.overview.recent_registrations')}
+
+        {/* Charts: side by side on lg, stacked on mobile */}
+        <div className="grid gap-3 sm:gap-4 lg:grid-cols-12">
+          <div className="lg:col-span-7 rounded-2xl bg-card border border-border shadow-sm p-3 sm:p-5 min-w-0">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2 sm:mb-3">
+              {t('charts.market_activity.title')}
             </p>
-            <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">{registrations.toLocaleString()}</p>
+            <RequestsVsQuotesChart data={chartData} dir={dir} />
           </div>
-        </div>
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
-          <div className="p-2 rounded-xl bg-amber-500/10 shrink-0">
-            <Database className="size-4 text-amber-500" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
-              {t('users.overview.db_size')}
+          <div className="lg:col-span-5 rounded-2xl bg-card border border-border shadow-sm p-3 sm:p-5 min-w-0">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2 sm:mb-3">
+              {t('charts.supply_gaps.title')}
             </p>
-            <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">{dbSize}</p>
+            <CategorySupplyGapsChart data={gapAnalysis?.categoryGaps || []} dir={dir} />
           </div>
         </div>
-      </div>
-
-      {/* Charts Section */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 dark:text-slate-400/60">
-            {t('charts.request_volume.title')}
-          </p>
-          <Button asChild variant="ghost" size="sm" className="h-auto py-1 px-2 text-xs font-bold gap-1">
-            <Link to="/dashboard/admin/buyers">
-              {t('users.overview.view_analytics')} <ArrowRight className="size-3" />
-            </Link>
-          </Button>
-        </div>
-
-        <div className="grid gap-4 lg:grid-cols-7">
-          {/* Request Volume Bar Chart */}
-          <div className="lg:col-span-4 rounded-2xl bg-card border border-border shadow-sm p-5">
-            <div className="flex h-[200px] items-end gap-2 px-2">
-              {displayVol.length === 0 ? (
-                <div className="flex h-full w-full items-center justify-center">
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    {t('charts.request_volume.insufficient')}
-                  </p>
-                </div>
-              ) : (
-                displayVol.map((node: any, idx: number) => {
-                  const height = (node.count / maxVol) * 100
-                  const isHighlight = idx === displayVol.length - 1
-                  return (
-                    <div key={idx} className="flex-1 flex flex-col justify-end items-center h-full gap-1">
-                      <span className={cn(
-                        'text-[9px] font-bold tabular-nums transition-colors',
-                        isHighlight
-                          ? 'text-primary dark:text-primary'
-                          : 'text-muted-foreground/40 dark:text-slate-500/40'
-                      )}>
-                        {node.count}
-                      </span>
-                      <div
-                        className={cn(
-                          'w-full rounded-t-md transition-all duration-300',
-                          isHighlight
-                            ? 'bg-primary shadow-sm shadow-primary/20 dark:shadow-primary/30'
-                            : 'bg-primary/15 hover:bg-primary/30 dark:bg-primary/20 dark:hover:bg-primary/35',
-                        )}
-                        style={{ height: `${Math.max(height, 2)}%` }}
-                      />
-                      <span className="text-[9px] font-medium text-muted-foreground/50 dark:text-slate-500/50 uppercase mt-1 truncate w-full text-center">
-                        {node.date?.slice(-2) || '—'}
-                      </span>
-                    </div>
-                  )
-                })
-              )}
-            </div>
-          </div>
-
-          {/* Donut Gauge - Clean SVG, zero Recharts dependency */}
-          <div className="lg:col-span-3 rounded-2xl bg-card border border-border shadow-sm p-5 flex flex-col items-center justify-center">
-            <DonutGauge value={avgOffers} max={5} label={t('users.overview.avg_offers')} isHealthy={isHealthy} healthText={isHealthy ? t('users.health.healthy') : t('users.health.low_supply')} />
-          </div>
-        </div>
-      </div>
-
-      {/* Market Gaps Summary */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 dark:text-slate-400/60">
-            {t('intelligence_page.title')}
-          </p>
-          <Button asChild variant="ghost" size="sm" className="h-auto py-1 px-2 text-xs font-bold gap-1">
-            <Link to="/dashboard/admin/intelligence">
-              {t('users.overview.view_analytics')} <ArrowRight className="size-3" />
-            </Link>
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
-            <div className="p-2 rounded-xl bg-blue-500/10 shrink-0">
-              <ClipboardList className="size-4 text-blue-500" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
-                {t('intelligence_page.metrics.open_demand')}
-              </p>
-              <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">
-                {(gapAnalysis?.categoryGaps || []).reduce((s: number, c: any) => s + c.demand, 0).toLocaleString()}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
-            <div className="p-2 rounded-xl bg-emerald-500/10 shrink-0">
-              <TrendingUp className="size-4 text-emerald-500" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
-                {t('intelligence_page.metrics.fulfillment_rate')}
-              </p>
-              <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">
-                {gapAnalysis?.fulfillment?.rate || 0}%
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
-            <div className="p-2 rounded-xl bg-amber-500/10 shrink-0">
-              <HelpCircle className="size-4 text-amber-500" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
-                {t('intelligence_page.metrics.unserved')}
-              </p>
-              <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">
-                {gapAnalysis?.unservedCount || 0}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800">
-            <div className="p-2 rounded-xl bg-violet-500/10 shrink-0">
-              <BarChart3 className="size-4 text-violet-500" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 leading-none mb-0.5">
-                {t('intelligence_page.category_gaps')}
-              </p>
-              <p className="text-sm font-black tabular-nums leading-tight text-slate-900 dark:text-slate-100">
-                {(gapAnalysis?.categoryGaps || []).filter((c: any) => c.gap > 0).length}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Activity Section */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 dark:text-slate-400/60">
-            {t('users.overview.recent_activity')}
-          </p>
-          <Button asChild variant="ghost" size="sm" className="h-auto py-1 px-2 text-xs font-bold gap-1">
-            <Link to="/dashboard/admin/audit">
-              {t('table.full_audit')} <ArrowRight className="size-3" />
-            </Link>
-          </Button>
-        </div>
-
-        <MarketplaceActivityTable data={tableData} />
-      </div>
+      </DirectionProvider>
     </div>
   )
 }
 
 function AdminOverviewSkeleton() {
   return (
-    <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div className="flex-1 flex flex-col gap-4 sm:gap-6 w-full pb-8 pt-2 animate-pulse">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Skeleton className="size-10 rounded-2xl shrink-0" />
+          <Skeleton className="size-9 sm:size-10 rounded-2xl shrink-0" />
           <div className="space-y-1.5">
-            <Skeleton className="h-6 w-40 rounded-lg" />
-            <Skeleton className="h-3.5 w-56 rounded-md" />
+            <Skeleton className="h-5 sm:h-6 w-40 rounded-lg" />
+            <Skeleton className="h-3 w-48 rounded-md" />
           </div>
         </div>
-        <Skeleton className="h-10 w-full sm:w-28 rounded-xl" />
+        <Skeleton className="h-7 sm:h-8 w-40 rounded-lg" />
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-16 w-full rounded-2xl" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <Skeleton key={i} className="h-14 rounded-2xl" />
         ))}
       </div>
 
+      <div className="grid gap-4 lg:grid-cols-12">
+        <Skeleton className="lg:col-span-7 h-[250px] sm:h-[300px] rounded-2xl" />
+        <Skeleton className="lg:col-span-5 h-[250px] sm:h-[300px] rounded-2xl" />
+      </div>
+
+      <Skeleton className="h-3.5 w-28 rounded-md" />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-14 w-full rounded-2xl" />
+          <Skeleton key={i} className="h-14 rounded-2xl" />
         ))}
-      </div>
-
-      <div className="space-y-3">
-        <Skeleton className="h-3.5 w-40 rounded-md" />
-        <div className="grid gap-4 lg:grid-cols-7">
-          <Skeleton className="lg:col-span-4 h-[240px] w-full rounded-2xl" />
-          <Skeleton className="lg:col-span-3 h-[240px] w-full rounded-2xl" />
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <Skeleton className="h-3.5 w-28 rounded-md" />
-        <Skeleton className="h-[300px] w-full rounded-2xl" />
       </div>
     </div>
   )

@@ -7,6 +7,8 @@ import {
   Timer,
   Users,
   BarChart3,
+  HelpCircle,
+  RefreshCw,
 } from 'lucide-react'
 import { AlgeriaMap } from './algeria-map'
 import { useSellerAnalytics } from '@/features/admin/hooks/use-analytics'
@@ -19,13 +21,14 @@ import {
 } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 const CHART_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
 
 export function SellerAnalytics() {
   const { t } = useTranslation('dashboard/admin')
-  const { data: analytics, isLoading } = useSellerAnalytics()
+  const { data: analytics, isLoading, isError, refetch } = useSellerAnalytics()
 
   const categoryDistribution = useMemo(() => {
     return [...(analytics?.demandByCategory || [])].sort((a: any, b: any) => b.count - a.count).slice(0, 5)
@@ -42,6 +45,14 @@ export function SellerAnalytics() {
 
   if (isLoading && !analytics) {
     return <SellerAnalyticsSkeleton />
+  }
+
+  if (isError && !analytics) {
+    return (
+      <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2">
+        <SectionError message={t('intelligence_page.no_data')} onRetry={() => refetch()} />
+      </div>
+    )
   }
 
   const metrics = [
@@ -212,6 +223,21 @@ export function SellerAnalytics() {
           <AlgeriaMap data={analytics?.distribution || []} role="seller" className="h-full w-full" />
         </div>
       </div>
+    </div>
+  )
+}
+
+function SectionError({ message, onRetry }: { message: string; onRetry?: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 py-12">
+      <HelpCircle className="size-8 text-muted-foreground/50" />
+      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center max-w-xs">{message}</p>
+      {onRetry && (
+        <Button variant="outline" size="sm" onClick={onRetry} className="gap-1.5 text-xs font-bold">
+          <RefreshCw className="size-3" />
+          Retry
+        </Button>
+      )}
     </div>
   )
 }

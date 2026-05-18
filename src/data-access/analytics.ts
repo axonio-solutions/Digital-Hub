@@ -189,7 +189,7 @@ export async function fetchSellerMetrics() {
     totalQuotesResult,
     acceptedQuotesResult,
     avgSpeedResult,
-    health,
+    totalRequestsResult,
   ] = await Promise.all([
     db.select({ value: count() }).from(users).where(eq(users.role, 'seller')),
     db.select({ value: count() }).from(quotes),
@@ -199,16 +199,17 @@ export async function fetchSellerMetrics() {
     })
     .from(quotes)
     .innerJoin(sparePartRequests, eq(quotes.requestId, sparePartRequests.id)),
-    fetchMarketHealth(),
+    db.select({ value: count() }).from(sparePartRequests),
   ])
 
   const totalSellers = totalSellersResult[0].value
   const totalQuotes = totalQuotesResult[0].value
   const acceptedQuotes = acceptedQuotesResult[0].value
+  const totalRequests = totalRequestsResult[0].value
   const avgSpeedSeconds = Number(avgSpeedResult[0].avgSpeed) || 0
-  
-  const avgResponseTime = avgSpeedSeconds > 60 
-    ? (avgSpeedSeconds / 60).toFixed(1) + 'm' 
+
+  const avgResponseTime = avgSpeedSeconds > 60
+    ? (avgSpeedSeconds / 60).toFixed(1) + 'm'
     : avgSpeedSeconds.toFixed(0) + 's'
 
   const conversionRate =
@@ -220,7 +221,7 @@ export async function fetchSellerMetrics() {
     acceptedQuotes,
     conversionRate: `${conversionRate}%`,
     avgResponseTime,
-    avgQuotesPerRequest: health.avgOffersPerRequest
+    avgQuotesPerRequest: totalRequests > 0 ? parseFloat((totalQuotes / totalRequests).toFixed(1)) : 0,
   }
 }
 
@@ -271,10 +272,10 @@ export async function fetchSellerCategoryFocus() {
 /**
  * Fetch advanced system metrics.
  */
-export async function fetchAdvancedSystemMetrics() {
-  // Registrations over last 30 days
-  const thirtyDaysAgo = new Date()
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+export async function fetchAdvancedSystemMetrics(days: number = 30) {
+  // Registrations over last N days
+  const ago = new Date()
+  ago.setDate(ago.getDate() - days)
 
   const recentRegistrationsQueryResult = await db
     .select({
@@ -282,7 +283,7 @@ export async function fetchAdvancedSystemMetrics() {
       count: count(),
     })
     .from(users)
-    .where(gte(users.createdAt, thirtyDaysAgo))
+    .where(gte(users.createdAt, ago))
     .groupBy(sql`DATE(${users.createdAt})`)
     .orderBy(sql`DATE(${users.createdAt})`)
 
@@ -318,11 +319,11 @@ export async function fetchAdvancedSystemMetrics() {
 }
 
 /**
- * Fetch daily request volume for the last 30 days only.
+ * Fetch daily request volume for the last N days.
  */
-export async function fetchRequestVolume() {
-  const thirtyDaysAgo = new Date()
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+export async function fetchRequestVolume(days: number = 30) {
+  const ago = new Date()
+  ago.setDate(ago.getDate() - days)
 
   const result = await db
     .select({
@@ -330,10 +331,10 @@ export async function fetchRequestVolume() {
       count: count(),
     })
     .from(sparePartRequests)
-    .where(gte(sparePartRequests.createdAt, thirtyDaysAgo))
+    .where(gte(sparePartRequests.createdAt, ago))
     .groupBy(sql`to_char(${sparePartRequests.createdAt}, 'YYYY-MM-DD')`)
     .orderBy(sql`to_char(${sparePartRequests.createdAt}, 'YYYY-MM-DD')`)
-    .limit(30)
+    .limit(days)
 
   return result.map((r) => ({
     date: r.date,
@@ -342,11 +343,11 @@ export async function fetchRequestVolume() {
 }
 
 /**
- * Fetch daily quote volume for the last 30 days.
+ * Fetch daily quote volume for the last N days.
  */
-export async function fetchQuoteVolume() {
-  const oneYearAgo = new Date()
-  oneYearAgo.setDate(oneYearAgo.getDate() - 365)
+export async function fetchQuoteVolume(days: number = 30) {
+  const ago = new Date()
+  ago.setDate(ago.getDate() - days)
 
   const result = await db
     .select({
@@ -354,7 +355,7 @@ export async function fetchQuoteVolume() {
       count: count(),
     })
     .from(quotes)
-    .where(gte(quotes.createdAt, oneYearAgo))
+    .where(gte(quotes.createdAt, ago))
     .groupBy(sql`DATE(${quotes.createdAt})`)
     .orderBy(sql`DATE(${quotes.createdAt})`)
 
@@ -368,11 +369,22 @@ export async function fetchQuoteVolume() {
  * Fetch overall market liquidity health.
  * Average offers per request.
  */
-export async function fetchMarketHealth() {
-  const totalRequestsResult = await db
-    .select({ value: count() })
-    .from(sparePartRequests)
-  const totalQuotesResult = await db.select({ value: count() }).from(quotes)
+export async function fetchMarketHealth(days?: number) {
+  const fromDate = days
+    ? new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+    : undefined
+
+  const reqCond = fromDate ? gte(sparePartRequests.createdAt, fromDate) : undefined
+  const quoteCond = fromDate ? gte(quotes.createdAt, fromDate) : undefined
+
+  const [totalRequestsResult, totalQuotesResult] = await Promise.all([
+    reqCond
+      ? db.select({ value: count() }).from(sparePartRequests).where(reqCond)
+      : db.select({ value: count() }).from(sparePartRequests),
+    quoteCond
+      ? db.select({ value: count() }).from(quotes).where(quoteCond)
+      : db.select({ value: count() }).from(quotes),
+  ])
 
   const totalRequests = totalRequestsResult[0].value
   const totalQuotes = totalQuotesResult[0].value
@@ -389,20 +401,55 @@ export async function fetchMarketHealth() {
 }
 
 /**
+ * Fetch combined gap summary: unserved count + fulfillment rate in one query.
+ */
+export async function fetchGapSummary() {
+  const result = await db.execute(sql`
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE EXISTS (
+        SELECT 1 FROM quotes q WHERE q.request_id = spr.id
+      ))::int AS fulfilled,
+      COUNT(*) FILTER (WHERE spr.status = 'open' AND NOT EXISTS (
+        SELECT 1 FROM quotes q WHERE q.request_id = spr.id
+      ))::int AS unserved
+    FROM spare_part_requests spr
+  `)
+
+  const row = result[0] as any
+  const total = Number(row.total)
+  const fulfilled = Number(row.fulfilled)
+  const unserved = Number(row.unserved)
+  return {
+    total,
+    fulfilled,
+    unserved,
+    rate: total > 0 ? parseFloat(((fulfilled / total) * 100).toFixed(1)) : 0,
+  }
+}
+
+/**
  * Fetch demand vs supply gap analysis by category.
- * Returns categories with high demand but low seller coverage.
+ * Uses LATERAL subqueries to avoid cartesian product between requests and quotes.
  */
 export async function fetchCategoryGapAnalysis() {
   const result = await db.execute(sql`
     SELECT
       pc.name AS category,
-      COUNT(DISTINCT spr.id)::int AS demand,
-      COUNT(DISTINCT q.seller_id)::int AS supply_sellers,
-      COUNT(DISTINCT spr.id) - COUNT(DISTINCT q.seller_id) AS gap
+      COALESCE(spr_stats.demand, 0)::int AS demand,
+      COALESCE(quote_stats.seller_count, 0)::int AS supply_sellers,
+      COALESCE(spr_stats.demand, 0) - COALESCE(quote_stats.seller_count, 0) AS gap
     FROM part_categories pc
-    LEFT JOIN spare_part_requests spr ON spr.category_id = pc.id AND spr.status = 'open'
-    LEFT JOIN quotes q ON q.request_id = spr.id
-    GROUP BY pc.name
+    LEFT JOIN LATERAL (
+      SELECT COUNT(DISTINCT id) AS demand
+      FROM spare_part_requests
+      WHERE category_id = pc.id AND status = 'open'
+    ) spr_stats ON true
+    LEFT JOIN LATERAL (
+      SELECT COUNT(DISTINCT q.seller_id) AS seller_count
+      FROM quotes q
+      WHERE q.request_id IN (SELECT id FROM spare_part_requests WHERE category_id = pc.id AND status = 'open')
+    ) quote_stats ON true
     ORDER BY gap DESC
     LIMIT 10
   `)
@@ -417,18 +464,26 @@ export async function fetchCategoryGapAnalysis() {
 
 /**
  * Fetch demand vs supply gap analysis by vehicle brand.
+ * Uses LATERAL subqueries to avoid cartesian product.
  */
 export async function fetchBrandGapAnalysis() {
   const result = await db.execute(sql`
     SELECT
       vb.brand AS brand,
-      COUNT(DISTINCT spr.id)::int AS demand,
-      COUNT(DISTINCT q.seller_id)::int AS supply_sellers,
-      COUNT(DISTINCT spr.id) - COUNT(DISTINCT q.seller_id) AS gap
+      COALESCE(spr_stats.demand, 0)::int AS demand,
+      COALESCE(quote_stats.seller_count, 0)::int AS supply_sellers,
+      COALESCE(spr_stats.demand, 0) - COALESCE(quote_stats.seller_count, 0) AS gap
     FROM vehicle_brands vb
-    LEFT JOIN spare_part_requests spr ON spr.brand_id = vb.id AND spr.status = 'open'
-    LEFT JOIN quotes q ON q.request_id = spr.id
-    GROUP BY vb.brand
+    LEFT JOIN LATERAL (
+      SELECT COUNT(DISTINCT id) AS demand
+      FROM spare_part_requests
+      WHERE brand_id = vb.id AND status = 'open'
+    ) spr_stats ON true
+    LEFT JOIN LATERAL (
+      SELECT COUNT(DISTINCT q.seller_id) AS seller_count
+      FROM quotes q
+      WHERE q.request_id IN (SELECT id FROM spare_part_requests WHERE brand_id = vb.id AND status = 'open')
+    ) quote_stats ON true
     ORDER BY gap DESC
     LIMIT 10
   `)
@@ -443,19 +498,27 @@ export async function fetchBrandGapAnalysis() {
 
 /**
  * Fetch demand vs supply gap analysis by wilaya (region).
+ * Uses LATERAL subqueries to avoid cartesian product.
  */
 export async function fetchRegionalGapAnalysis() {
   const result = await db.execute(sql`
     SELECT
       COALESCE(u.wilaya, 'Unknown') AS wilaya,
-      COUNT(DISTINCT spr.id)::int AS demand,
-      COUNT(DISTINCT q.seller_id)::int AS supply_sellers,
-      COUNT(DISTINCT spr.id) - COUNT(DISTINCT q.seller_id) AS gap
+      COALESCE(spr_stats.demand, 0)::int AS demand,
+      COALESCE(quote_stats.seller_count, 0)::int AS supply_sellers,
+      COALESCE(spr_stats.demand, 0) - COALESCE(quote_stats.seller_count, 0) AS gap
     FROM users u
-    LEFT JOIN spare_part_requests spr ON spr.buyer_id = u.id AND spr.status = 'open'
-    LEFT JOIN quotes q ON q.request_id = spr.id
+    LEFT JOIN LATERAL (
+      SELECT COUNT(DISTINCT id) AS demand
+      FROM spare_part_requests
+      WHERE buyer_id = u.id AND status = 'open'
+    ) spr_stats ON true
+    LEFT JOIN LATERAL (
+      SELECT COUNT(DISTINCT q.seller_id) AS seller_count
+      FROM quotes q
+      WHERE q.request_id IN (SELECT id FROM spare_part_requests WHERE buyer_id = u.id AND status = 'open')
+    ) quote_stats ON true
     WHERE u.role = 'buyer'
-    GROUP BY u.wilaya
     ORDER BY gap DESC
   `)
 
@@ -469,6 +532,7 @@ export async function fetchRegionalGapAnalysis() {
 
 /**
  * Fetch count of unserved open requests (requests with zero quotes).
+ * Deprecated: use fetchGapSummary instead.
  */
 export async function fetchUnservedRequests() {
   const result = await db.execute(sql`
@@ -485,6 +549,7 @@ export async function fetchUnservedRequests() {
 
 /**
  * Fetch overall fulfillment rate (% of requests with at least one quote).
+ * Deprecated: use fetchGapSummary instead.
  */
 export async function fetchFulfillmentRate() {
   const result = await db.execute(sql`
@@ -506,25 +571,30 @@ export async function fetchFulfillmentRate() {
   }
 }
 
-let dashboardStatsCache: { data: any, timestamp: number } | null = null;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-
 /**
  * Fetch consolidated dashboard stats for the Admin Overview.
  */
-export async function fetchAdminDashboardStats() {
-  const now = Date.now();
-  if (dashboardStatsCache && now - dashboardStatsCache.timestamp < CACHE_TTL) {
-    return dashboardStatsCache.data;
-  }
+export async function fetchAdminDashboardStats(days?: number) {
+  const fromDate = days
+    ? new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+    : undefined
+  const fromDateStr = fromDate
+    ? fromDate.toISOString().replace('T', ' ').replace('Z', '')
+    : undefined
+
+  const userDateFilter = fromDateStr ? sql`AND created_at >= ${fromDateStr}::timestamp` : sql``
+  const reqDateFilter = fromDateStr ? sql`WHERE created_at >= ${fromDateStr}::timestamp` : sql``
+  const openReqDateFilter = fromDateStr ? sql`AND created_at >= ${fromDateStr}::timestamp` : sql``
+  const quoteDateFilter = fromDateStr ? sql`WHERE created_at >= ${fromDateStr}::timestamp` : sql``
 
   const result = await db.execute(sql`
     SELECT 
-      (SELECT COUNT(*) FROM users WHERE role = 'buyer')::int as total_buyers,
-      (SELECT COUNT(*) FROM users WHERE role = 'seller')::int as total_sellers,
-      (SELECT COUNT(*) FROM spare_part_requests)::int as total_requests,
-      (SELECT COUNT(*) FROM spare_part_requests WHERE status = 'open')::int as open_requests,
-      (SELECT COUNT(*) FROM quotes)::int as total_quotes
+      (SELECT COUNT(*) FROM users WHERE role = 'buyer' ${userDateFilter})::int as total_buyers,
+      (SELECT COUNT(*) FROM users WHERE role = 'seller' ${userDateFilter})::int as total_sellers,
+      (SELECT COUNT(*) FROM spare_part_requests ${reqDateFilter})::int as total_requests,
+      (SELECT COUNT(*) FROM spare_part_requests WHERE status = 'open' ${openReqDateFilter})::int as open_requests,
+      (SELECT COUNT(*) FROM quotes ${quoteDateFilter})::int as total_quotes,
+      (SELECT COUNT(*) FROM users ${fromDateStr ? sql`WHERE created_at >= ${fromDateStr}::timestamp` : sql``})::int as total_users
   `)
 
   const data = result[0] as {
@@ -533,6 +603,7 @@ export async function fetchAdminDashboardStats() {
     total_requests: number
     open_requests: number
     total_quotes: number
+    total_users: number
   }
 
   const avgOffersPerRequest =
@@ -540,16 +611,14 @@ export async function fetchAdminDashboardStats() {
       ? parseFloat((data.total_quotes / data.total_requests).toFixed(1))
       : 0
 
-  const finalData = {
+  return {
     totalBuyers: data.total_buyers,
     totalSellers: data.total_sellers,
     totalQuotes: data.total_quotes,
     totalRequests: data.total_requests,
     openRequests: data.open_requests,
+    totalUsers: data.total_users,
     marketHealth: avgOffersPerRequest >= 3 ? 'Healthy' : 'Low Supply',
     avgOffersPerRequest,
   }
-
-  dashboardStatsCache = { data: finalData, timestamp: now };
-  return finalData;
 }

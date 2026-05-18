@@ -1,8 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import type { User } from '@/lib/auth';
 import { authMiddleware, adminMiddleware } from '@/features/auth/guards/auth'
 import { getAllUsersUseCase, getAdminMetricsUseCase, getBuyerAnalyticsUseCase, getSellerAnalyticsUseCase, getAdvancedSystemMetricsUseCase, getAdminDashboardStatsUseCase, toggleUserBanUseCase, activateSellerUseCase, getTaxonomyUseCase, createCategoryUseCase, updateCategoryUseCase, deleteCategoryUseCase, createBrandUseCase, updateBrandUseCase, deleteBrandUseCase, getUserDetailsUseCase, getMarketGapAnalysisUseCase } from '@/use-cases/admin/index'
-import { getAllRequestsUseCase } from '@/use-cases/requests/index'
 
 /**
  * Axis Layer 3: Admin Actions
@@ -33,25 +31,21 @@ export const getSellerAnalyticsServerFn = createServerFn({ method: 'GET' })
   })
 
 export const getAdvancedSystemMetricsServerFn = createServerFn({
-  method: 'GET',
+  method: 'POST',
 })
   .middleware([adminMiddleware])
-  .handler(async () => {
-    return await getAdvancedSystemMetricsUseCase()
+  .inputValidator((data: { days?: number }) => data)
+  .handler(async ({ data }) => {
+    return await getAdvancedSystemMetricsUseCase(data.days)
   })
 
 export const getAdminDashboardStatsServerFn = createServerFn({
-  method: 'GET',
+  method: 'POST',
 })
   .middleware([adminMiddleware])
-  .handler(async () => {
-    return await getAdminDashboardStatsUseCase()
-  })
-
-export const getRecentActivityServerFn = createServerFn({ method: 'GET' })
-  .middleware([adminMiddleware])
-  .handler(async () => {
-    return await getAllRequestsUseCase(10)
+  .inputValidator((data: { days?: number }) => data)
+  .handler(async ({ data }) => {
+    return await getAdminDashboardStatsUseCase(data.days)
   })
 
 export const toggleUserBanServerFn = createServerFn({ method: 'POST' })

@@ -216,6 +216,27 @@
       "admin_fallback": "Admin"
     }
   },
+  "overview": {
+    "time_filter": {
+      "all": "All Time",
+      "7d": "7 Days",
+      "30d": "30 Days",
+      "90d": "90 Days"
+    }
+  },
+  "charts": {
+    "market_activity": {
+      "title": "Market Activity",
+      "requests": "Requests",
+      "quotes": "Quotes"
+    },
+    "supply_gaps": {
+      "title": "Category Supply Gaps",
+      "demand": "Demand",
+      "supply": "Supply",
+      "gap": "Gap"
+    }
+  },
   "intelligence_page": {
     "title": "Market Intelligence",
     "subtitle": "Demand vs Supply Gap Analysis & Seller Opportunity Insights",

@@ -18,8 +18,7 @@ import {
   fetchCategoryGapAnalysis,
   fetchBrandGapAnalysis,
   fetchRegionalGapAnalysis,
-  fetchUnservedRequests,
-  fetchFulfillmentRate,
+  fetchGapSummary,
 } from '@/data-access/analytics'
 import {
   getPartCategories,
@@ -36,20 +35,6 @@ import { CategoryInput, BrandInput } from '@/features/taxonomy/validations/taxon
 /**
  * Axis Layer 4: Use Cases for Admin
  */
-
-const analyticsCache: Record<string, { data: any; timestamp: number }> = {}
-const ANALYTICS_CACHE_TTL = 5 * 60 * 1000
-
-async function getCachedAnalytics(key: string, fetcher: () => Promise<any>) {
-  const now = Date.now()
-  const cached = analyticsCache[key]
-  if (cached && now - cached.timestamp < ANALYTICS_CACHE_TTL) {
-    return cached.data
-  }
-  const data = await fetcher()
-  analyticsCache[key] = { data, timestamp: now }
-  return data
-}
 
 export async function getAdminMetricsUseCase() {
   return await fetchGlobalMetrics()
@@ -117,73 +102,71 @@ export async function deleteBrandUseCase(id: string) {
 }
 
 export async function getBuyerAnalyticsUseCase() {
-  return await getCachedAnalytics('buyer', async () => {
-    const [
-      metrics,
-      distribution,
-      demandByCategory,
-      demandByOrigin,
-      regionalDemand,
-      requestVolume,
-      topBuyers,
-    ] = await Promise.all([
-      fetchBuyerMetrics(),
-      fetchUserDistributionByWilaya('buyer'),
-      fetchDemandByCategory(),
-      fetchDemandByOrigin(),
-      fetchRegionalDemand(),
-      fetchRequestVolume(),
-      fetchTopBuyers(),
-    ])
+  const [
+    metrics,
+    distribution,
+    demandByCategory,
+    demandByOrigin,
+    regionalDemand,
+    requestVolume,
+    topBuyers,
+  ] = await Promise.all([
+    fetchBuyerMetrics(),
+    fetchUserDistributionByWilaya('buyer'),
+    fetchDemandByCategory(),
+    fetchDemandByOrigin(),
+    fetchRegionalDemand(),
+    fetchRequestVolume(),
+    fetchTopBuyers(),
+  ])
 
-    return {
-      metrics,
-      distribution,
-      demandByCategory,
-      demandByOrigin,
-      regionalDemand,
-      requestVolume,
-      topBuyers,
-    }
-  })
+  return {
+    metrics,
+    distribution,
+    demandByCategory,
+    demandByOrigin,
+    regionalDemand,
+    requestVolume,
+    topBuyers,
+  }
 }
 
 export async function getSellerAnalyticsUseCase() {
-  return await getCachedAnalytics('seller', async () => {
-    const [metrics, distribution, segments, demandByCategory, quoteVolume] = await Promise.all([
-      fetchSellerMetrics(),
-      fetchUserDistributionByWilaya('seller'),
-      fetchMerchantSegmentation(),
-      fetchSellerCategoryFocus(),
-      fetchQuoteVolume()
-    ])
-    
-    return { 
-      metrics, 
-      distribution, 
-      segments, 
-      demandByCategory,
-      requestVolume: quoteVolume 
-    }
-  })
+  const [metrics, distribution, segments, demandByCategory, quoteVolume] = await Promise.all([
+    fetchSellerMetrics(),
+    fetchUserDistributionByWilaya('seller'),
+    fetchMerchantSegmentation(),
+    fetchSellerCategoryFocus(),
+    fetchQuoteVolume()
+  ])
+  
+  return { 
+    metrics, 
+    distribution, 
+    segments, 
+    demandByCategory,
+    requestVolume: quoteVolume 
+  }
 }
 
-export async function getAdvancedSystemMetricsUseCase() {
-  const [systemMetrics, requestVolume, marketHealth] = await Promise.all([
-    fetchAdvancedSystemMetrics(),
-    fetchRequestVolume(),
-    fetchMarketHealth(),
+export async function getAdvancedSystemMetricsUseCase(days?: number) {
+  const [systemMetrics, requestVolume, quoteVolume, marketHealth] = await Promise.all([
+    fetchAdvancedSystemMetrics(days),
+    fetchRequestVolume(days ?? 30),
+    fetchQuoteVolume(days ?? 30),
+    fetchMarketHealth(days),
   ])
 
   return {
     ...systemMetrics,
     requestVolume,
+    quoteVolume,
     marketHealth,
   }
 }
 
-export async function getAdminDashboardStatsUseCase() {
-  return await fetchAdminDashboardStats()
+export async function getAdminDashboardStatsUseCase(days?: number) {
+  return await fetchAdminDashboardStats(days)
 }
 
 export async function activateSellerUseCase(userId: string, adminId?: string) {
@@ -193,7 +176,6 @@ export async function activateSellerUseCase(userId: string, adminId?: string) {
 
   await updateUserStatus(userId, 'active')
 
-  // Grant 20 welcome credits
   try {
     await grantCredits(userId, 20, 'bonus', adminId, 'Welcome bonus — seller activation')
   } catch (error) {
@@ -216,27 +198,18 @@ export async function getUserDetailsUseCase(userId: string) {
 }
 
 export async function getMarketGapAnalysisUseCase() {
-  return await getCachedAnalytics('marketGap', async () => {
-    const [
-      categoryGaps,
-      brandGaps,
-      regionalGaps,
-      unservedCount,
-      fulfillment,
-    ] = await Promise.all([
-      fetchCategoryGapAnalysis(),
-      fetchBrandGapAnalysis(),
-      fetchRegionalGapAnalysis(),
-      fetchUnservedRequests(),
-      fetchFulfillmentRate(),
-    ])
+  const [categoryGaps, brandGaps, regionalGaps, gapSummary] = await Promise.all([
+    fetchCategoryGapAnalysis(),
+    fetchBrandGapAnalysis(),
+    fetchRegionalGapAnalysis(),
+    fetchGapSummary(),
+  ])
 
-    return {
-      categoryGaps,
-      brandGaps,
-      regionalGaps,
-      unservedCount,
-      fulfillment,
-    }
-  })
+  return {
+    categoryGaps,
+    brandGaps,
+    regionalGaps,
+    unservedCount: gapSummary.unserved,
+    fulfillment: { total: gapSummary.total, fulfilled: gapSummary.fulfilled, rate: gapSummary.rate },
+  }
 }
