@@ -79,7 +79,9 @@ export async function createQuoteUseCase(data: QuoteInput, sellerId?: string) {
 }
 
 export async function acceptQuoteUseCase(quoteId: string, requestId: string) {
-  return await db.transaction(async (tx) => {
+  let otherQuoteIds: string[] = []
+
+  const result = await db.transaction(async (tx) => {
     try {
       const request = await tx.query.sparePartRequests.findFirst({
         where: eq(sparePartRequests.id, requestId),
@@ -100,16 +102,11 @@ export async function acceptQuoteUseCase(quoteId: string, requestId: string) {
       validateQuoteTransition(quote.status, 'accepted')
 
       await acceptQuoteTransaction(quoteId, requestId, tx)
-      
-      await NotificationTriggers.onQuoteAccepted(quoteId, tx)
 
       const otherQuotes = await tx.query.quotes.findMany({
         where: and(eq(quotes.requestId, requestId), ne(quotes.id, quoteId))
       })
-      
-      for (const q of otherQuotes) {
-        await NotificationTriggers.onQuoteRejected(q.id, tx)
-      }
+      otherQuoteIds = otherQuotes.map(q => q.id)
 
       return { success: true }
     } catch (error: any) {
@@ -118,6 +115,15 @@ export async function acceptQuoteUseCase(quoteId: string, requestId: string) {
       return { success: false, error: error.message || 'Failed to accept quote' }
     }
   })
+
+  if (result.success) {
+    await Promise.all([
+      NotificationTriggers.onQuoteAccepted(quoteId),
+      ...otherQuoteIds.map(id => NotificationTriggers.onQuoteRejected(id)),
+    ])
+  }
+
+  return result
 }
 
 export async function revokeQuoteUseCase(quoteId: string, requestId: string) {

@@ -31,6 +31,12 @@ interface QuoteCardProps {
   isRevoking?: boolean
 }
 
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/)
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase()
+  return name.substring(0, 2).toUpperCase()
+}
+
 export function QuoteCard({
   quote,
   isRequestOpen,
@@ -49,147 +55,206 @@ export function QuoteCard({
   const isRejected = quote.status === 'rejected'
   const isWithdrawn = quote.status === 'withdrawn'
   const isPending = !quote.status || quote.status === 'pending'
+
   const sellerName = quote.seller?.storeName || quote.seller?.name || t('card.authorized_seller')
-  const sellerInitial = sellerName[0]?.toUpperCase() || 'S'
+  const initials = getInitials(sellerName)
+
+  const conditionLabel = quote.condition
+    ? t(`columns.conditions.${quote.condition}`, { defaultValue: quote.condition })
+    : t('columns.conditions.used')
+
+  const locationLabel = quote.seller?.wilaya || quote.seller?.city || quote.seller?.address || t('card.default_location')
+  const warrantyLabel = quote.warranty || t('card.no_warranty')
 
   return (
-    <div className={cn(
-      'rounded-2xl p-4 sm:p-5 border shadow-sm',
-      isAccepted && 'border-primary/40 bg-primary/[0.03]',
-      isRejected && 'opacity-50 border-border bg-muted/20',
-      isWithdrawn && 'opacity-40 border-border bg-muted/10',
-      isPending && 'border-border bg-card hover:border-primary/20'
-    )}>
-      {/* Top row: Avatar + Name + Price */}
-      <div className="flex items-start gap-3 sm:gap-4">
-        <div className={cn(
-          'size-10 sm:size-12 rounded-xl flex items-center justify-center font-black text-base sm:text-lg shrink-0 border',
-          isAccepted
-            ? 'bg-primary text-primary-foreground border-primary'
-            : 'bg-primary/10 text-primary border-primary/20'
-        )}>
-          {sellerInitial}
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-sm sm:text-base font-black text-foreground uppercase tracking-tight truncate">
-              {sellerName}
-            </h3>
-            {isAccepted && <CheckCircle2 className="size-4 text-primary shrink-0" />}
-            {isRejected && (
-              <span className="text-[10px] font-bold text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                {t('card.rejected', 'Rejected')}
-              </span>
-            )}
-            {isWithdrawn && (
-              <span className="text-[10px] font-bold text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                {t('card.withdrawn', 'Withdrawn')}
-              </span>
-            )}
+    <div
+      className={cn(
+        'rounded-2xl border bg-card overflow-hidden transition-all duration-300 ease-in-out',
+        isAccepted && 'border-primary/30 ring-1 ring-primary/10',
+        isRejected && 'border-muted bg-muted/10',
+        isWithdrawn && 'opacity-50 border-muted bg-muted/5',
+        isPending && 'hover:border-primary/20 hover:shadow-sm',
+      )}
+    >
+      <div className="p-4 sm:p-5">
+        {/* Seller + Status */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div
+              className={cn(
+                'size-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0',
+                isAccepted
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-primary/10 text-primary',
+              )}
+            >
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-foreground truncate">{sellerName}</p>
+              <p className="text-[11px] text-muted-foreground">{t('card.authorized_seller')}</p>
+            </div>
           </div>
 
+          {isAccepted && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 px-3 py-1.5 rounded-full shrink-0 shadow-sm">
+              <CheckCircle2 className="size-3.5" />
+              {t('columns.statuses.accepted')}
+            </span>
+          )}
+          {isRejected && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-900/40 px-3 py-1.5 rounded-full shrink-0 shadow-sm">
+              <XCircle className="size-3.5" />
+              {t('card.rejected')}
+            </span>
+          )}
+          {isWithdrawn && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full shrink-0 shadow-sm">
+              {t('card.withdrawn')}
+            </span>
+          )}
+          {isPending && isRequestOpen && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 px-3 py-1.5 rounded-full shrink-0 shadow-sm">
+              {t('columns.statuses.pending')}
+            </span>
+          )}
         </div>
 
         {/* Price */}
-        <div className="text-right shrink-0">
-          <p className={cn(
-            'text-lg sm:text-xl font-black tracking-tight',
-            isAccepted ? 'text-primary' : 'text-foreground'
-          )}>
-            {quote.price.toLocaleString()}
-            <span className="text-[10px] font-bold text-muted-foreground ml-0.5">{t('columns.currency')}</span>
-          </p>
-
+        <div className="mt-4 sm:mt-5 py-3 sm:py-4 px-4 sm:px-5 -mx-4 sm:-mx-5 bg-muted/30 border-y border-border/40">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+              {t('card.price_label')}
+            </span>
+            <div className="text-end">
+              <span
+                className={cn(
+                  'text-4xl sm:text-5xl font-black tracking-tight leading-none',
+                  isAccepted ? 'text-primary' : 'text-foreground',
+                )}
+              >
+                {quote.price.toLocaleString()}
+              </span>
+              <span className="text-sm font-bold text-muted-foreground ms-1.5">{t('columns.currency')}</span>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Primary info chips */}
-      <div className="mt-3 flex flex-wrap items-center gap-1.5">
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-muted/60 text-xs font-bold text-foreground">
-          <Tag className="size-3.5 text-muted-foreground" />
-          {quote.condition ? t(`columns.conditions.${quote.condition}`, { defaultValue: quote.condition }) : t('columns.conditions.used')}
-        </span>
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-muted/60 text-xs font-bold text-foreground">
-          <MapPin className="size-3.5 text-muted-foreground" />
-          {quote.seller?.wilaya || quote.seller?.city || quote.seller?.address || t('card.default_location')}
-        </span>
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-muted/60 text-xs font-bold text-foreground">
-          <Shield className="size-3.5 text-muted-foreground" />
-          {quote.warranty || t('card.no_warranty')}
-        </span>
-      </div>
+        {/* Details grid */}
+        <div className="mt-4 grid grid-cols-2 gap-px bg-border/40 rounded-xl overflow-hidden">
+          <div className="bg-card px-3.5 py-2.5">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+              <Tag className="size-3" />
+              {t('card.condition_label')}
+            </p>
+            <p className="text-sm font-bold text-foreground mt-0.5">{conditionLabel}</p>
+          </div>
+          <div className="bg-card px-3.5 py-2.5">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+              <MapPin className="size-3" />
+              {t('card.location_label')}
+            </p>
+            <p className="text-sm font-bold text-foreground mt-0.5 truncate">{locationLabel}</p>
+          </div>
+          <div className="bg-card px-3.5 py-2.5">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+              <Shield className="size-3" />
+              {t('card.warranty_label')}
+            </p>
+            <p className="text-sm font-bold text-foreground mt-0.5">{warrantyLabel}</p>
+          </div>
+          <div className="bg-card px-3.5 py-2.5">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+              <Clock className="size-3" />
+              {t('card.submitted_label')}
+            </p>
+            <p className="text-sm font-bold text-foreground mt-0.5">{formatRelativeTime(quote.createdAt)}</p>
+          </div>
+        </div>
 
-      <div className="mt-2 flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground">
-        <Clock className="size-3" />
-        <span>{formatRelativeTime(quote.createdAt)}</span>
-      </div>
-
-      {/* Actions */}
-      <div className="mt-3 flex items-center gap-2 flex-wrap sm:justify-end">
-        {isAccepted ? (
-          <>
+        {/* Actions */}
+        <div className="mt-4 flex flex-row items-center gap-2">
+          {isAccepted ? (
+            <>
+              <Button
+                onClick={() => onContact(quote.seller)}
+                variant="default"
+                className="flex-1 h-10 rounded-lg gap-1.5 text-sm font-medium shadow-sm transition-all duration-200"
+              >
+                <Phone className="size-4" />
+                {t('card.actions.contact')}
+              </Button>
+              <Button
+                onClick={() => onRevoke(quote.id)}
+                disabled={isRevoking}
+                variant="outline"
+                className={cn(
+                  'flex-1 h-10 rounded-lg gap-1.5 text-sm font-medium border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950 transition-all duration-200',
+                  isRevoking && 'animate-pulse',
+                )}
+              >
+                <span className="inline-flex items-center gap-2 transition-all duration-300">
+                  {isRevoking ? <Loader2 className="size-4 animate-spin" /> : <Undo2 className="size-4" />}
+                  <span>{isRevoking ? t('card.actions.revoking') : t('card.actions.revoke')}</span>
+                </span>
+              </Button>
+            </>
+          ) : isRejected ? (
             <Button
-              onClick={() => onRevoke(quote.id)}
-              disabled={isRevoking}
+              onClick={() => onUnreject(quote.id)}
+              disabled={isUnrejecting}
               variant="outline"
-              size="sm"
-              className="flex-1 sm:flex-none h-10 rounded-xl gap-2 text-xs font-bold border-red-200 text-red-600 hover:bg-red-50"
+              className={cn(
+                'flex-1 h-10 rounded-lg gap-1.5 text-sm font-medium border-primary/30 text-primary hover:bg-primary/5 transition-all duration-200',
+                isUnrejecting && 'animate-pulse',
+              )}
             >
-              {isRevoking ? <Loader2 className="size-3.5 animate-spin" /> : <Undo2 className="size-3.5" />}
-              {isRevoking ? t('card.actions.revoking') : t('card.actions.revoke')}
+              <span className="inline-flex items-center gap-2 transition-all duration-300">
+                {isUnrejecting ? <Loader2 className="size-4 animate-spin" /> : <RotateCcw className="size-4" />}
+                <span>{isUnrejecting ? t('card.actions.unrejecting') : t('card.actions.unreject')}</span>
+              </span>
             </Button>
-            <Button
-              onClick={() => onContact(quote.seller)}
-              size="sm"
-              className="flex-1 sm:flex-none h-10 rounded-xl gap-2 text-xs font-bold shadow-sm"
-            >
-              <Phone className="size-3.5" />
-              {t('card.actions.contact')}
+          ) : isPending && isRequestOpen ? (
+            <>
+              <Button
+                onClick={() => onAccept(quote.id)}
+                disabled={isAccepting}
+                variant="default"
+                className={cn(
+                  'flex-1 h-10 rounded-lg gap-1.5 text-sm font-medium shadow-sm transition-all duration-200',
+                  isAccepting && 'animate-pulse',
+                )}
+              >
+                <span className="inline-flex items-center gap-2 transition-all duration-300">
+                  {isAccepting ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4" />}
+                  <span>{isAccepting ? t('card.actions.accepting') : t('card.actions.accept')}</span>
+                </span>
+              </Button>
+              <Button
+                onClick={() => onReject(quote.id)}
+                disabled={isRejecting}
+                variant="outline"
+                className={cn(
+                  'flex-1 h-10 rounded-lg gap-1.5 text-sm font-medium transition-all duration-200',
+                  isRejecting && 'animate-pulse',
+                )}
+              >
+                <span className="inline-flex items-center gap-2 transition-all duration-300">
+                  {isRejecting ? <Loader2 className="size-4 animate-spin" /> : <XCircle className="size-4" />}
+                  <span>{isRejecting ? t('card.actions.rejecting') : t('card.actions.reject')}</span>
+                </span>
+              </Button>
+            </>
+          ) : isPending && !isRequestOpen ? (
+            <Button disabled variant="ghost" className="flex-1 h-10 rounded-lg text-sm font-medium opacity-50">
+              {t('card.actions.closed')}
             </Button>
-          </>
-        ) : isRejected ? (
-          <Button
-            onClick={() => onUnreject(quote.id)}
-            disabled={isUnrejecting}
-            variant="outline"
-            size="sm"
-            className="flex-1 sm:flex-none h-10 rounded-xl gap-2 text-xs font-bold"
-          >
-            {isUnrejecting ? <Loader2 className="size-3.5 animate-spin" /> : <RotateCcw className="size-3.5" />}
-            {isUnrejecting ? t('card.actions.unrejecting') : t('card.actions.unreject')}
-          </Button>
-        ) : isPending && isRequestOpen ? (
-          <>
-            <Button
-              onClick={() => onReject(quote.id)}
-              disabled={isRejecting}
-              variant="outline"
-              size="sm"
-              className="flex-1 sm:flex-none h-10 rounded-xl gap-2 text-xs font-bold"
-            >
-              {isRejecting ? <Loader2 className="size-3.5 animate-spin" /> : <XCircle className="size-3.5" />}
-              {isRejecting ? t('card.actions.rejecting') : t('card.actions.reject')}
+          ) : isWithdrawn ? (
+            <Button disabled variant="ghost" className="flex-1 h-10 rounded-lg text-sm font-medium opacity-50">
+              {t('card.withdrawn')}
             </Button>
-            <Button
-              onClick={() => onAccept(quote.id)}
-              disabled={isAccepting}
-              size="sm"
-              className="flex-1 sm:flex-none h-10 rounded-xl gap-2 text-xs font-bold shadow-sm"
-            >
-              {isAccepting ? <Loader2 className="size-3.5 animate-spin" /> : <CheckCircle2 className="size-3.5" />}
-              {isAccepting ? t('card.actions.accepting') : t('card.actions.accept')}
-            </Button>
-          </>
-        ) : isPending && !isRequestOpen ? (
-          <Button disabled variant="ghost" size="sm" className="flex-1 sm:flex-none h-10 rounded-xl text-xs font-bold opacity-50">
-            {t('card.actions.closed')}
-          </Button>
-        ) : isWithdrawn ? (
-          <Button disabled variant="ghost" size="sm" className="flex-1 sm:flex-none h-10 rounded-xl text-xs font-bold opacity-50">
-            {t('card.actions.withdrawn', 'Withdrawn')}
-          </Button>
-        ) : null}
+          ) : null}
+        </div>
       </div>
     </div>
   )
