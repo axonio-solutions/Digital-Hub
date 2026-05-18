@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery, queryOptions } from '@tanstack/react-query'
 import {
   getAdvancedSystemMetricsServerFn,
   getAdminDashboardStatsServerFn,
@@ -7,28 +7,38 @@ import {
   getMarketGapAnalysisServerFn,
 } from '@/fn/admin'
 import { adminKeys } from './use-admin'
+import type { BuyerAnalyticsData, SellerAnalyticsData } from '@/types/analytics'
 
 const STALE_TIME = 5 * 60 * 1000
 const GC_TIME = 30 * 60 * 1000
 
+export const adminAnalyticsQueries = {
+  buyers: () =>
+    queryOptions({
+      queryKey: adminKeys.analytics('buyers'),
+      queryFn: () => getBuyerAnalyticsServerFn() as Promise<BuyerAnalyticsData>,
+      staleTime: STALE_TIME,
+      gcTime: GC_TIME,
+      placeholderData: keepPreviousData,
+      refetchOnWindowFocus: false,
+    }),
+  sellers: () =>
+    queryOptions({
+      queryKey: adminKeys.analytics('sellers'),
+      queryFn: () => getSellerAnalyticsServerFn() as Promise<SellerAnalyticsData>,
+      staleTime: STALE_TIME,
+      gcTime: GC_TIME,
+      placeholderData: keepPreviousData,
+      refetchOnWindowFocus: false,
+    }),
+}
+
 export function useBuyerAnalytics() {
-  return useQuery({
-    queryKey: adminKeys.analytics('buyers'),
-    queryFn: () => getBuyerAnalyticsServerFn(),
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    refetchOnWindowFocus: false,
-  })
+  return useQuery(adminAnalyticsQueries.buyers())
 }
 
 export function useSellerAnalytics() {
-  return useQuery({
-    queryKey: adminKeys.analytics('sellers'),
-    queryFn: () => getSellerAnalyticsServerFn(),
-    staleTime: STALE_TIME,
-    gcTime: GC_TIME,
-    refetchOnWindowFocus: false,
-  })
+  return useQuery(adminAnalyticsQueries.sellers())
 }
 
 export function useSystemMetrics(days?: number) {

@@ -1,16 +1,11 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import {
-  TrendingUp,
-  Timer,
-  Users,
-  BarChart3,
-  HelpCircle,
-  RefreshCw,
-} from 'lucide-react'
+import { TrendingUp, Timer, Users, BarChart3 } from 'lucide-react'
 import { AlgeriaMap } from './algeria-map'
 import { useBuyerAnalytics } from '@/features/admin/hooks/use-analytics'
+import { AnalyticsBase, AdminAnalyticsSkeleton } from './analytics-base'
+import type { AnalyticsMetric } from './analytics-base'
 import { useTranslation } from 'react-i18next'
 import {
   BarChart,
@@ -19,9 +14,6 @@ import {
   Cell,
 } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 
 const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6366f1']
 
@@ -35,27 +27,10 @@ export function BuyerAnalytics() {
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
-  const activeData = useMemo(() => {
-    if (activeIndex === null || !analytics?.requestVolume) return null
-    return analytics.requestVolume[activeIndex]
-  }, [activeIndex, analytics?.requestVolume])
-
-  if (isLoading && !analytics) {
-    return <BuyerAnalyticsSkeleton />
-  }
-
-  if (isError && !analytics) {
-    return (
-      <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2">
-        <SectionError message={t('intelligence_page.no_data')} onRetry={() => refetch()} />
-      </div>
-    )
-  }
-
-  const metrics = [
+  const metrics: AnalyticsMetric[] = [
     {
       label: t('metrics.avg_offers'),
-      value: analytics?.metrics?.avgOffersPerRequest || '0',
+      value: analytics?.metrics?.avgOffersPerRequest?.toString() || '0',
       icon: BarChart3,
       color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/30',
     },
@@ -79,63 +54,35 @@ export function BuyerAnalytics() {
     },
   ]
 
-  return (
-    <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2">
-      {/* Header - Buyer Dash Style */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="size-10 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-blue-500/20 shrink-0">
-            <BarChart3 className="size-5" />
-          </div>
-          <div className="space-y-0.5">
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
-              {t('intelligence.buyer')}
-            </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-              {t('subtitle.buyer')}
-            </p>
-          </div>
-        </div>
+  const activeData = activeIndex !== null && analytics?.requestVolume
+    ? analytics.requestVolume[activeIndex]
+    : null
 
-        <div className="flex items-center gap-3 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+  return (
+    <AnalyticsBase
+      title={t('intelligence.buyer')}
+      subtitle={t('subtitle.buyer')}
+      headerIcon={<BarChart3 className="size-5" />}
+      headerGradient="bg-gradient-to-br from-blue-600 to-cyan-600 shadow-lg shadow-blue-500/20"
+      badgeContent={
+        <>
           <div className="size-2 rounded-full bg-primary shadow-[0_0_6px_rgba(var(--primary),0.5)]" />
           <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider leading-none">
             {analytics?.metrics?.totalRequests || 0} {t('metrics.inquiries_tracked')}
           </span>
-        </div>
-      </div>
-
-      {/* Compact Metrics */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {metrics.map((m) => (
-          <div
-            key={m.label}
-            className={cn('flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all', m.color)}
-          >
-            <div className="flex items-center gap-1.5">
-              <m.icon className="size-4" />
-              <span className="text-xl font-black tabular-nums leading-none">{m.value}</span>
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
-              {m.label}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Charts Section */}
-      <div className="space-y-3">
-        <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
-          {t('charts.request_volume_title')}
-        </p>
-
-        <div className="grid gap-4 lg:grid-cols-7">
-          {/* Request Volume Bar Chart */}
+        </>
+      }
+      metrics={metrics}
+      chartsSectionTitle={t('charts.request_volume_title')}
+      chartsContent={
+        <>
           <div className="lg:col-span-4 rounded-2xl bg-card border border-border shadow-sm p-5">
             <div className="flex h-[200px] items-end gap-2 px-2">
               {(analytics?.requestVolume || []).length === 0 ? (
                 <div className="flex h-full w-full items-center justify-center">
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">No data yet</p>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    {t('intelligence_page.no_data')}
+                  </p>
                 </div>
               ) : (
                 <ChartContainer
@@ -172,7 +119,6 @@ export function BuyerAnalytics() {
             )}
           </div>
 
-          {/* Brand Origin Summary */}
           <div className="lg:col-span-3 rounded-2xl bg-card border border-border shadow-sm p-5">
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 text-center">
               {t('charts.brand_origin')}
@@ -204,68 +150,20 @@ export function BuyerAnalytics() {
               })}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Map Section */}
-      <div className="rounded-2xl bg-card border border-border shadow-sm p-5 sm:p-8 overflow-hidden">
-        <div className="flex justify-between items-start mb-6">
-          <div className="space-y-0.5">
-            <h3 className="font-black text-lg text-foreground uppercase leading-tight">
-              {t('distribution.buyer_title')}
-            </h3>
-            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
-              {t('distribution.regional_concentration')}
-            </p>
-          </div>
-        </div>
-        <div className="relative flex items-center justify-center bg-slate-50/5 dark:bg-slate-900/5 rounded-3xl overflow-hidden min-h-[350px] sm:min-h-[450px] lg:min-h-[500px]">
-          <AlgeriaMap data={analytics?.distribution || []} role="buyer" className="h-full w-full" />
-        </div>
-      </div>
-    </div>
+        </>
+      }
+      mapTitle={t('distribution.buyer_title')}
+      mapDescription={t('distribution.regional_concentration')}
+      mapContent={
+        <AlgeriaMap data={analytics?.distribution || []} role="buyer" className="h-full w-full" />
+      }
+      isLoading={isLoading}
+      isError={isError}
+      errorMessage={t('intelligence_page.no_data')}
+      onRetry={() => refetch()}
+      hasData={!!analytics}
+    />
   )
 }
 
-function SectionError({ message, onRetry }: { message: string; onRetry?: () => void }) {
-  return (
-    <div className="flex flex-col items-center justify-center gap-3 py-12">
-      <HelpCircle className="size-8 text-muted-foreground/50" />
-      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center max-w-xs">{message}</p>
-      {onRetry && (
-        <Button variant="outline" size="sm" onClick={onRetry} className="gap-1.5 text-xs font-bold">
-          <RefreshCw className="size-3" />
-          Retry
-        </Button>
-      )}
-    </div>
-  )
-}
-
-function BuyerAnalyticsSkeleton() {
-  return (
-    <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2 animate-pulse">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <Skeleton className="size-10 rounded-2xl shrink-0" />
-          <div className="space-y-1.5">
-            <Skeleton className="h-6 w-48 rounded-lg" />
-            <Skeleton className="h-3.5 w-64 rounded-md" />
-          </div>
-        </div>
-        <Skeleton className="h-9 w-44 rounded-xl" />
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-16 w-full rounded-2xl" />
-        ))}
-      </div>
-      <Skeleton className="h-3.5 w-36 rounded-md" />
-      <div className="grid gap-4 lg:grid-cols-7">
-        <Skeleton className="lg:col-span-4 h-[240px] w-full rounded-2xl" />
-        <Skeleton className="lg:col-span-3 h-[240px] w-full rounded-2xl" />
-      </div>
-      <Skeleton className="h-[400px] w-full rounded-2xl" />
-    </div>
-  )
-}
+export { AdminAnalyticsSkeleton }
