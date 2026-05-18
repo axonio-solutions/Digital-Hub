@@ -15,3 +15,9 @@ axis
 .netlify
 tmp/
 tmp_run_enum_migration.js
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
