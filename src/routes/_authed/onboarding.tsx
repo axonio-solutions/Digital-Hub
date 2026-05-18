@@ -101,25 +101,19 @@ function OnboardingFlow() {
         ...formData,
         role: formData.role as 'buyer' | 'seller',
       }
-      toast.info(`[DEBUG] Sending onboarding for role: ${formData.role}`)
 
-      try {
-        const result = await completeOnboardingFn({ data: payload })
-        toast.info(`[DEBUG] Server response: ${JSON.stringify(result)}`)
-        return result
-      } catch (fetchErr: any) {
-        toast.error(`[DEBUG] Server call failed: ${fetchErr?.message || String(fetchErr)}`)
-        throw fetchErr
-      }
+      const result = await completeOnboardingFn({ data: payload })
+      return result
     },
     onSuccess: (response) => {
+      toast.success('toast.success')
       const target = response?.account_status === 'waitlisted' ? '/waitlist' : '/dashboard'
       setRedirectTarget(target)
       setIsSuccess(true)
     },
     onError: (err: any) => {
       console.error('Onboarding error:', err)
-      toast.error(`[DEBUG] onError: ${err?.message || String(err)}`)
+      toast.error('toast.error')
     },
   })
 
