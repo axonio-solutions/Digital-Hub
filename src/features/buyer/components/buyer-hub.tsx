@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Plus, Zap, MessageSquare, CheckCircle2, RefreshCcw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from '@tanstack/react-router'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { useBuyerRequests } from '../hooks/use-buyer'
 import { BuyerListView } from './buyer-list-view'
 import { BuyerGridView } from './buyer-grid-view'
@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils'
 
 export function BuyerHub() {
   const { t } = useTranslation(['requests/hub', 'requests/list', 'dashboard/buyer'])
+  const { toast } = useToast('requests/hub')
   const [view, setView] = useState<'list' | 'grid'>('grid')
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -57,24 +58,24 @@ export function BuyerHub() {
       case 'close_request':
         setPendingAction({ type: 'close_request', id: action.item.id })
         cancelRequest(action.item.id, {
-          onSuccess: () => toast.success(t('toasts.closed', 'Request closed')),
-          onError: (err: any) => toast.error(err.message || t('toasts.error')),
+          onSuccess: () => toast.success('toasts.closed'),
+          onError: (err: any) => toast.error('toasts.error', { error: err.message }),
           onSettled: clearPending,
         })
         break
       case 'reopen_request':
         setPendingAction({ type: 'reopen_request', id: action.item.id })
         reopenRequest(action.item.id, {
-          onSuccess: () => toast.success(t('toasts.reopened', 'Request reopened')),
-          onError: (err: any) => toast.error(err.message || t('toasts.error')),
+          onSuccess: () => toast.success('toasts.reopened'),
+          onError: (err: any) => toast.error('toasts.error', { error: err.message }),
           onSettled: clearPending,
         })
         break
       case 'delete_request':
         setPendingAction({ type: 'delete_request', id: action.item.id })
         deleteRequest(action.item.id, {
-          onSuccess: () => toast.success(t('toasts.deleted', 'Request deleted')),
-          onError: (err: any) => toast.error(err.message || t('toasts.error')),
+          onSuccess: () => toast.success('toasts.deleted'),
+          onError: (err: any) => toast.error('toasts.error', { error: err.message }),
           onSettled: clearPending,
         })
         break
@@ -116,7 +117,8 @@ export function BuyerHub() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-2 shrink-0">
+        {/* Desktop toolbar */}
+        <div className="hidden sm:flex items-center gap-2 shrink-0">
           <Button
             variant="outline"
             size="icon"
@@ -127,11 +129,11 @@ export function BuyerHub() {
           >
             <RefreshCcw className={cn("size-4", isRefetching && "animate-spin [animation-direction:reverse]")} />
           </Button>
-          <div className="w-px h-8 bg-border/40 hidden sm:block shrink-0" />
+          <div className="w-px h-8 bg-border/40 block shrink-0" />
           <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
             <DialogTrigger asChild>
               <Button
-                className="font-black uppercase text-xs tracking-widest h-11 px-4 sm:px-6 shadow-lg shadow-primary/20 rounded-2xl whitespace-nowrap gap-2 flex-1 sm:flex-none"
+                className="font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl whitespace-nowrap gap-2"
                 onMouseEnter={handlePrefetchTaxonomy}
               >
                 <Plus className="size-4 shrink-0" />
@@ -171,6 +173,28 @@ export function BuyerHub() {
           ))}
         </div>
       )}
+
+      {/* Mobile action buttons */}
+      <div className="sm:hidden flex items-center gap-2">
+        <Button
+          onClick={() => setIsNewRequestOpen(true)}
+          className="flex-1 font-black uppercase text-xs tracking-widest h-11 px-4 shadow-lg shadow-primary/20 rounded-2xl gap-2"
+          onMouseEnter={handlePrefetchTaxonomy}
+        >
+          <Plus className="size-4 shrink-0" />
+          {t('buttons.new_demand')}
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-11 rounded-xl border-border/60 hover:bg-accent shrink-0"
+          onClick={() => refetch()}
+          disabled={isRefetching}
+          title={t('buttons.refresh')}
+        >
+          <RefreshCcw className={cn("size-4", isRefetching && "animate-spin [animation-direction:reverse]")} />
+        </Button>
+      </div>
 
       {/* Section header with view controls */}
       <div className="flex items-center justify-between gap-3">

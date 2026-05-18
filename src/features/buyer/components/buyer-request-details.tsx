@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   ArrowLeft,
   Calendar,
+  Car,
   ChevronLeft,
   ChevronRight,
   Edit,
@@ -17,7 +18,7 @@ import {
   Trash2,
   XCircle,
 } from 'lucide-react'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import {
   useCancelRequest,
   useDeleteRequest,
@@ -146,23 +147,31 @@ export function BuyerRequestDetails() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [contactingSeller, setContactingSeller] = useState<any>(null)
 
-  const handleCancel = () => cancelRequest(requestId, { onSuccess: () => toast.success(t('toasts.request_closed')), onError: (err: any) => toast.error(err.message) })
-  const handleReopen = () => reopenRequest(requestId, { onSuccess: () => toast.success(t('toasts.request_reopened')), onError: (err: any) => toast.error(err.message) })
-  const handleDelete = () => deleteRequest(requestId, { onSuccess: () => { toast.success(t('toasts.request_deleted')); navigate({ to: '/dashboard/requests' }) }, onError: (err: any) => toast.error(err.message) })
-  const handleShare = () => { navigator.clipboard.writeText(window.location.href); toast.success(t('toasts.link_copied')) }
+  const { toast } = useToast('requests/details')
 
-  const handleAccept = (quoteId: string) => { setProcessingQuoteId(quoteId); acceptQuote({ quoteId, requestId }, { onSuccess: () => setProcessingQuoteId(null), onError: (err: any) => { toast.error(err.message); setProcessingQuoteId(null) } }) }
-  const handleReject = (quoteId: string) => { setProcessingQuoteId(quoteId); rejectQuote(quoteId, { onSuccess: () => setProcessingQuoteId(null), onError: (err: any) => { toast.error(err.message); setProcessingQuoteId(null) } }) }
-  const handleUnreject = (quoteId: string) => { setProcessingQuoteId(quoteId); unrejectQuote(quoteId, { onSuccess: () => setProcessingQuoteId(null), onError: (err: any) => { toast.error(err.message); setProcessingQuoteId(null) } }) }
-  const handleRevoke = (quoteId: string) => { setProcessingQuoteId(quoteId); revokeQuote({ quoteId, requestId }, { onSuccess: () => setProcessingQuoteId(null), onError: (err: any) => { toast.error(err.message); setProcessingQuoteId(null) } }) }
+  const handleCancel = () => cancelRequest(requestId, { onSuccess: () => toast.success('toasts.request_closed'), onError: (err: any) => toast.error('toasts.error', { error: err.message }) })
+
+  const handleReopen = () => reopenRequest(requestId, { onSuccess: () => toast.success('toasts.request_reopened'), onError: (err: any) => toast.error('toasts.error', { error: err.message }) })
+
+  const handleDelete = () => deleteRequest(requestId, { onSuccess: () => { toast.success('toasts.request_deleted'); navigate({ to: '/dashboard/requests' }) }, onError: (err: any) => toast.error('toasts.error', { error: err.message }) })
+
+  const handleShare = () => { navigator.clipboard.writeText(window.location.href); toast.success('toasts.link_copied') }
+
+  const handleAccept = (quoteId: string) => { setProcessingQuoteId(quoteId); acceptQuote({ quoteId, requestId }, { onSuccess: () => { toast.success('toasts.offer_accepted'); setProcessingQuoteId(null) }, onError: (err: any) => { toast.error('toasts.error', { error: err.message }); setProcessingQuoteId(null) } }) }
+
+  const handleReject = (quoteId: string) => { setProcessingQuoteId(quoteId); rejectQuote(quoteId, { onSuccess: () => { toast.success('toasts.offer_declined'); setProcessingQuoteId(null) }, onError: (err: any) => { toast.error('toasts.error', { error: err.message }); setProcessingQuoteId(null) } }) }
+
+  const handleUnreject = (quoteId: string) => { setProcessingQuoteId(quoteId); unrejectQuote(quoteId, { onSuccess: () => { toast.success('toasts.offer_restored'); setProcessingQuoteId(null) }, onError: (err: any) => { toast.error('toasts.error', { error: err.message }); setProcessingQuoteId(null) } }) }
+
+  const handleRevoke = (quoteId: string) => { setProcessingQuoteId(quoteId); revokeQuote({ quoteId, requestId }, { onSuccess: () => { toast.success('toasts.acceptance_revoked'); setProcessingQuoteId(null) }, onError: (err: any) => { toast.error('toasts.error', { error: err.message }); setProcessingQuoteId(null) } }) }
 
   const handleContactWhatsApp = (seller: any) => {
     const number = seller?.whatsappNumber || seller?.phoneNumber
-    if (!number) { toast.error(t('toasts.no_whatsapp')); return }
+    if (!number) { toast.error('toasts.no_whatsapp'); return }
     window.open(`https://wa.me/${number.replace(/\D/g, '')}?text=${encodeURIComponent(t('contact.whatsapp_message', { name: seller.storeName || seller.name, part: request?.partName || 'part' }))}`, '_blank')
   }
   const handleContactCall = (phoneNumber?: string) => {
-    if (!phoneNumber) { toast.error(t('toasts.phone_unavailable')); return }
+    if (!phoneNumber) { toast.error('toasts.phone_unavailable'); return }
     window.location.href = `tel:${phoneNumber}`
   }
 
@@ -208,7 +217,7 @@ export function BuyerRequestDetails() {
           )}
         </div>
         <span>{brandName}</span>
-        {request.modelYear && <><span className="text-border">·</span><span>{request.modelYear}</span></>}
+        {request.modelYear && <><Car className="size-3.5" /><span>{request.modelYear}</span></>}
       </div>
 
       {/* Part Name */}

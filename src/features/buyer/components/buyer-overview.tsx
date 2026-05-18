@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { ArrowRight, Car, CheckCircle2, MessageSquare, Plus, Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { PartCard } from '@/components/ui/part-card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils'
 
 export function BuyerOverview() {
   const { t } = useTranslation(['dashboard/buyer', 'requests/details'])
+  const { toast } = useToast('requests/details')
   const { data: user } = useAuth()
   const buyerId = user?.id || ''
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
@@ -41,15 +42,15 @@ export function BuyerOverview() {
         break
       case 'close_request':
         setPendingAction({ type: 'close_request', id: action.item.id })
-        cancelRequest(action.item.id, { onSuccess: () => toast.success(t('toasts.request_closed', { ns: 'requests/details' })), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
+        cancelRequest(action.item.id, { onSuccess: () => toast.success('toasts.request_closed'), onError: (err: any) => toast.error('toasts.error', { error: err.message }), onSettled: clearPending })
         break
       case 'reopen_request':
         setPendingAction({ type: 'reopen_request', id: action.item.id })
-        reopenRequest(action.item.id, { onSuccess: () => toast.success(t('toasts.request_reopened', { ns: 'requests/details' })), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
+        reopenRequest(action.item.id, { onSuccess: () => toast.success('toasts.request_reopened'), onError: (err: any) => toast.error('toasts.error', { error: err.message }), onSettled: clearPending })
         break
       case 'delete_request':
         setPendingAction({ type: 'delete_request', id: action.item.id })
-        deleteRequest(action.item.id, { onSuccess: () => toast.success(t('toasts.request_deleted', { ns: 'requests/details' })), onError: (err: any) => toast.error(err.message), onSettled: clearPending })
+        deleteRequest(action.item.id, { onSuccess: () => toast.success('toasts.request_deleted'), onError: (err: any) => toast.error('toasts.error', { error: err.message }), onSettled: clearPending })
         break
     }
   }, [navigate, cancelRequest, deleteRequest, reopenRequest, clearPending])
@@ -93,34 +94,40 @@ export function BuyerOverview() {
           </div>
         </div>
 
-        <Button onClick={() => setIsNewRequestOpen(true)} className="font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full sm:w-auto">
+        <Button onClick={() => setIsNewRequestOpen(true)} className="hidden sm:inline-flex font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full sm:w-auto">
           <Plus className="size-4 me-2" />
           {t('new_demand', 'New Demand')}
         </Button>
       </div>
 
-      {requests.length > 0 ? (
-        <>
-          <div className="grid grid-cols-3 gap-3">
-            {metrics.map((m) => (
-              <div
-                key={m.label}
-                className={cn(
-                  'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
-                  m.color
-                )}
-              >
-                <div className="flex items-center gap-1.5">
-                  <m.icon className="size-4" />
-                  <span className="text-xl font-black tabular-nums leading-none">{m.value}</span>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
-                  {m.label}
-                </span>
+      {requests.length > 0 && (
+        <div className="grid grid-cols-3 gap-3">
+          {metrics.map((m) => (
+            <div
+              key={m.label}
+              className={cn(
+                'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
+                m.color
+              )}
+            >
+              <div className="flex items-center gap-1.5">
+                <m.icon className="size-4" />
+                <span className="text-xl font-black tabular-nums leading-none">{m.value}</span>
               </div>
-            ))}
-          </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
+                {m.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
 
+      <Button onClick={() => setIsNewRequestOpen(true)} className="sm:hidden font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full">
+        <Plus className="size-4 me-2" />
+        {t('new_demand', 'New Demand')}
+      </Button>
+
+      {requests.length > 0 ? (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
@@ -128,7 +135,7 @@ export function BuyerOverview() {
               </p>
               <Button asChild variant="ghost" size="sm" className="h-auto py-1 px-2 text-xs font-bold gap-1">
                 <Link to="/dashboard/requests">
-                  {t('recent.view_all')} <ArrowRight className="size-3" />
+                  {t('recent.view_all')} <ArrowRight className="size-3 rtl:rotate-180" />
                 </Link>
               </Button>
             </div>
@@ -161,7 +168,6 @@ export function BuyerOverview() {
               ))}
             </div>
           </div>
-        </>
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center gap-6 py-16 px-4">
           <div className="size-20 rounded-[2rem] bg-primary/10 flex items-center justify-center shadow-inner">
