@@ -43,11 +43,17 @@
   "overview": {
     "today_sales": "Acceptation du Jour",
     "accepted_today": "Accepté Aujourd'hui",
+    "pending_today": "En Attente",
     "revenue_today": "Revenu",
-    "rejected_today": "Annulé",
+    "cancelled_today": "Annulé",
     "weekly_title": "7 Derniers Jours",
     "weekly_desc": "Ventes et annulations de la dernière semaine.",
     "accepted_count": "accepté"
+  },
+  "billing": {
+    "title": "Facturation et Crédits",
+    "current_balance": "Solde Actuel",
+    "credits_available": "Crédits Disponibles"
   },
   "settings": {
     "verified_badge": "Entreprise Vérifiée",

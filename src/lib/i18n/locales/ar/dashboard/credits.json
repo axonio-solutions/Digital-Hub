@@ -121,11 +121,17 @@
     "no_transactions": "لا توجد معاملات ائتمانية بعد",
     "showing_latest": "عرض آخر {{count}}",
     "unknown_seller": "غير معروف",
+    "columns": {
+      "transaction": "المعاملة",
+      "date": "التاريخ",
+      "amount": "المبلغ"
+    },
     "transaction_types": {
       "purchase": "شراء",
       "bonus": "مكافأة",
-      "quote_spent": "عرض سعر",
-      "admin_adjustment": "تعديل"
+      "quote_spent": "تقديم عرض سعر",
+      "admin_adjustment": "تعديل",
+      "credit_request_approved": "تمت الموافقة على طلب الائتمان"
     }
   },
   "currency_dzd": "د.ج",

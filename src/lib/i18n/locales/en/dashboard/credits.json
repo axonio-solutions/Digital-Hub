@@ -121,11 +121,17 @@
     "no_transactions": "No credit transactions yet",
     "showing_latest": "Showing latest {{count}}",
     "unknown_seller": "Unknown",
+    "columns": {
+      "transaction": "Transaction",
+      "date": "Date",
+      "amount": "Amount"
+    },
     "transaction_types": {
       "purchase": "Purchase",
       "bonus": "Bonus",
-      "quote_spent": "Quote Spent",
-      "admin_adjustment": "Adjustment"
+      "quote_spent": "Quote Submission",
+      "admin_adjustment": "Adjustment",
+      "credit_request_approved": "Credit Request Approved"
     }
   },
   "currency_dzd": "DZD",

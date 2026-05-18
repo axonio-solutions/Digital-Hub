@@ -43,11 +43,17 @@
   "overview": {
     "today_sales": "المقبولات اليوم",
     "accepted_today": "المقبول اليوم",
+    "pending_today": "قيد الانتظار",
     "revenue_today": "الإيرادات",
-    "rejected_today": "ملغي",
+    "cancelled_today": "ملغي",
     "weekly_title": "آخر 7 أيام",
     "weekly_desc": "المبيعات والإلغاءات خلال الأسبوع الماضي.",
     "accepted_count": "مقبول"
+  },
+  "billing": {
+    "title": "الفواتير والائتمان",
+    "current_balance": "الرصيد الحالي",
+    "credits_available": "الأرصدة المتاحة"
   },
   "settings": {
     "verified_badge": "نشاط تجاري موثوق",
