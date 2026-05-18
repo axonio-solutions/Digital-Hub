@@ -4,16 +4,12 @@ import {
   fetchAdvancedSystemMetrics,
   fetchAdminDashboardStats,
   fetchBuyerMetrics,
-  fetchDemandByCategory,
   fetchDemandByOrigin,
   fetchMarketHealth,
-  fetchMerchantSegmentation,
-  fetchRegionalDemand,
   fetchRequestVolume,
   fetchQuoteVolume,
   fetchSellerCategoryFocus,
   fetchSellerMetrics,
-  fetchTopBuyers,
   fetchUserDistributionByWilaya,
   fetchCategoryGapAnalysis,
   fetchBrandGapAnalysis,
@@ -102,40 +98,25 @@ export async function deleteBrandUseCase(id: string) {
 }
 
 export async function getBuyerAnalyticsUseCase() {
-  const [
-    metrics,
-    distribution,
-    demandByCategory,
-    demandByOrigin,
-    regionalDemand,
-    requestVolume,
-    topBuyers,
-  ] = await Promise.all([
+  const [metrics, distribution, demandByOrigin, requestVolume] = await Promise.all([
     fetchBuyerMetrics(),
     fetchUserDistributionByWilaya('buyer'),
-    fetchDemandByCategory(),
     fetchDemandByOrigin(),
-    fetchRegionalDemand(),
     fetchRequestVolume(),
-    fetchTopBuyers(),
   ])
 
   return {
     metrics,
     distribution,
-    demandByCategory,
     demandByOrigin,
-    regionalDemand,
     requestVolume,
-    topBuyers,
   }
 }
 
 export async function getSellerAnalyticsUseCase() {
-  const [metrics, distribution, segments, demandByCategory, quoteVolume] = await Promise.all([
+  const [metrics, distribution, demandByCategory, quoteVolume] = await Promise.all([
     fetchSellerMetrics(),
     fetchUserDistributionByWilaya('seller'),
-    fetchMerchantSegmentation(),
     fetchSellerCategoryFocus(),
     fetchQuoteVolume()
   ])
@@ -143,7 +124,6 @@ export async function getSellerAnalyticsUseCase() {
   return { 
     metrics, 
     distribution, 
-    segments, 
     demandByCategory,
     requestVolume: quoteVolume 
   }
