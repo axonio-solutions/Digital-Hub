@@ -35,7 +35,8 @@
     "statuses": {
       "accepted": "Accepted",
       "pending": "Pending",
-      "rejected": "Declined"
+      "rejected": "Declined",
+      "withdrawn": "Withdrawn"
     },
     "currency": "DZD",
     "conditions": {

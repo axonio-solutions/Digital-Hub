@@ -35,7 +35,8 @@
     "statuses": {
       "accepted": "Accepté",
       "pending": "En attente",
-      "rejected": "Refusé"
+      "rejected": "Refusé",
+      "withdrawn": "Retiré"
     },
     "currency": "DA",
     "conditions": {

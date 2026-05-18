@@ -36,7 +36,8 @@
     "statuses": {
       "accepted": "مقبول",
       "pending": "قيد الانتظار",
-      "rejected": "مرفوض"
+      "rejected": "مرفوض",
+      "withdrawn": "مسحوب"
     },
     "currency": "د.ج",
     "conditions": {
