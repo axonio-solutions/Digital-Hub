@@ -2,7 +2,6 @@
 
 import React from 'react'
 import {
-  IconCar,
   IconClipboardList,
   IconDashboard,
   IconHelpCircle,
@@ -27,11 +26,6 @@ export function BuyerLayout({ children }: { children: React.ReactNode }) {
         title: t('nav.demands_hub'),
         url: '/dashboard/requests',
         icon: IconClipboardList,
-      },
-      {
-        title: t('nav.my_garage'),
-        url: '/dashboard/garage',
-        icon: IconCar,
       },
     ],
     secondary: [

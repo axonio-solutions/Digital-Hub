@@ -30,7 +30,6 @@ import { Route as AuthedDashboardSupportIndexRouteImport } from './routes/_authe
 import { Route as AuthedDashboardRequestsIndexRouteImport } from './routes/_authed/dashboard/requests/index'
 import { Route as AuthedDashboardQuotesIndexRouteImport } from './routes/_authed/dashboard/quotes/index'
 import { Route as AuthedDashboardProfileIndexRouteImport } from './routes/_authed/dashboard/profile/index'
-import { Route as AuthedDashboardGarageIndexRouteImport } from './routes/_authed/dashboard/garage/index'
 import { Route as AuthedDashboardBillingIndexRouteImport } from './routes/_authed/dashboard/billing/index'
 import { Route as AuthedDashboardAuditIndexRouteImport } from './routes/_authed/dashboard/audit/index'
 import { Route as AuthedDashboardRequestsRequestIdRouteImport } from './routes/_authed/dashboard/requests/$requestId'
@@ -153,12 +152,6 @@ const AuthedDashboardProfileIndexRoute =
     path: '/profile/',
     getParentRoute: () => AuthedDashboardRouteRoute,
   } as any)
-const AuthedDashboardGarageIndexRoute =
-  AuthedDashboardGarageIndexRouteImport.update({
-    id: '/garage/',
-    path: '/garage/',
-    getParentRoute: () => AuthedDashboardRouteRoute,
-  } as any)
 const AuthedDashboardBillingIndexRoute =
   AuthedDashboardBillingIndexRouteImport.update({
     id: '/billing/',
@@ -248,7 +241,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
   '/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
   '/dashboard/billing/': typeof AuthedDashboardBillingIndexRoute
-  '/dashboard/garage/': typeof AuthedDashboardGarageIndexRoute
   '/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
   '/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
   '/dashboard/requests/': typeof AuthedDashboardRequestsIndexRoute
@@ -280,7 +272,6 @@ export interface FileRoutesByTo {
   '/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
   '/dashboard/audit': typeof AuthedDashboardAuditIndexRoute
   '/dashboard/billing': typeof AuthedDashboardBillingIndexRoute
-  '/dashboard/garage': typeof AuthedDashboardGarageIndexRoute
   '/dashboard/profile': typeof AuthedDashboardProfileIndexRoute
   '/dashboard/quotes': typeof AuthedDashboardQuotesIndexRoute
   '/dashboard/requests': typeof AuthedDashboardRequestsIndexRoute
@@ -316,7 +307,6 @@ export interface FileRoutesById {
   '/_authed/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
   '/_authed/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
   '/_authed/dashboard/billing/': typeof AuthedDashboardBillingIndexRoute
-  '/_authed/dashboard/garage/': typeof AuthedDashboardGarageIndexRoute
   '/_authed/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
   '/_authed/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
   '/_authed/dashboard/requests/': typeof AuthedDashboardRequestsIndexRoute
@@ -351,7 +341,6 @@ export interface FileRouteTypes {
     | '/dashboard/requests/$requestId'
     | '/dashboard/audit/'
     | '/dashboard/billing/'
-    | '/dashboard/garage/'
     | '/dashboard/profile/'
     | '/dashboard/quotes/'
     | '/dashboard/requests/'
@@ -383,7 +372,6 @@ export interface FileRouteTypes {
     | '/dashboard/requests/$requestId'
     | '/dashboard/audit'
     | '/dashboard/billing'
-    | '/dashboard/garage'
     | '/dashboard/profile'
     | '/dashboard/quotes'
     | '/dashboard/requests'
@@ -418,7 +406,6 @@ export interface FileRouteTypes {
     | '/_authed/dashboard/requests/$requestId'
     | '/_authed/dashboard/audit/'
     | '/_authed/dashboard/billing/'
-    | '/_authed/dashboard/garage/'
     | '/_authed/dashboard/profile/'
     | '/_authed/dashboard/quotes/'
     | '/_authed/dashboard/requests/'
@@ -586,13 +573,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardProfileIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
     }
-    '/_authed/dashboard/garage/': {
-      id: '/_authed/dashboard/garage/'
-      path: '/garage'
-      fullPath: '/dashboard/garage/'
-      preLoaderRoute: typeof AuthedDashboardGarageIndexRouteImport
-      parentRoute: typeof AuthedDashboardRouteRoute
-    }
     '/_authed/dashboard/billing/': {
       id: '/_authed/dashboard/billing/'
       path: '/billing'
@@ -710,7 +690,6 @@ interface AuthedDashboardRouteRouteChildren {
   AuthedDashboardRequestsRequestIdRoute: typeof AuthedDashboardRequestsRequestIdRoute
   AuthedDashboardAuditIndexRoute: typeof AuthedDashboardAuditIndexRoute
   AuthedDashboardBillingIndexRoute: typeof AuthedDashboardBillingIndexRoute
-  AuthedDashboardGarageIndexRoute: typeof AuthedDashboardGarageIndexRoute
   AuthedDashboardProfileIndexRoute: typeof AuthedDashboardProfileIndexRoute
   AuthedDashboardQuotesIndexRoute: typeof AuthedDashboardQuotesIndexRoute
   AuthedDashboardRequestsIndexRoute: typeof AuthedDashboardRequestsIndexRoute
@@ -724,7 +703,6 @@ const AuthedDashboardRouteRouteChildren: AuthedDashboardRouteRouteChildren = {
   AuthedDashboardRequestsRequestIdRoute: AuthedDashboardRequestsRequestIdRoute,
   AuthedDashboardAuditIndexRoute: AuthedDashboardAuditIndexRoute,
   AuthedDashboardBillingIndexRoute: AuthedDashboardBillingIndexRoute,
-  AuthedDashboardGarageIndexRoute: AuthedDashboardGarageIndexRoute,
   AuthedDashboardProfileIndexRoute: AuthedDashboardProfileIndexRoute,
   AuthedDashboardQuotesIndexRoute: AuthedDashboardQuotesIndexRoute,
   AuthedDashboardRequestsIndexRoute: AuthedDashboardRequestsIndexRoute,

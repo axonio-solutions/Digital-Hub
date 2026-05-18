@@ -37,7 +37,6 @@ function DynamicBreadcrumb() {
     '/dashboard/requests': t('breadcrumbs.demands_hub'),
     '/dashboard/quotes': t('breadcrumbs.my_quotes'),
     '/dashboard/profile': t('breadcrumbs.profile'),
-    '/dashboard/garage': t('breadcrumbs.my_garage'),
     '/dashboard/billing': t('breadcrumbs.billing'),
     '/dashboard/audit': t('breadcrumbs.audit_log'),
     '/dashboard/users': t('breadcrumbs.user_moderation'),
