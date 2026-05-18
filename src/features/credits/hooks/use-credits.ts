@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   getSellersWithCreditsServerFn,
   grantCreditsServerFn,
@@ -119,6 +119,8 @@ export function useRevenueMetrics() {
     queryFn: () => (getRevenueMetricsServerFn as any)(),
     staleTime: 2 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
   })
 }
 

@@ -1,6 +1,5 @@
 'use client'
 
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Coins,
@@ -9,9 +8,12 @@ import {
   Package,
   Banknote,
   Users,
+  HelpCircle,
+  RefreshCw,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
 import { DirectionProvider } from '@/components/ui/direction'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -29,75 +31,69 @@ const DATE_LOCALE: Record<string, string> = {
 export function RevenueMetrics() {
   const { t, i18n } = useTranslation('dashboard/credits')
   const locale = DATE_LOCALE[i18n.language] || 'en-US'
-  const { data: metrics, isLoading } = useRevenueMetrics()
+  const { data: metrics, isLoading, isError, refetch } = useRevenueMetrics()
   const { data: allTransactions = [] } = useCreditTransactions()
 
-  const transactions = useMemo(
-    () => allTransactions.filter((txn: any) => txn.type !== 'quote_spent'),
-    [allTransactions],
-  )
+  const transactions = allTransactions.filter((txn: any) => txn.type !== 'quote_spent')
 
-  const metricCards = useMemo(
-    () => [
-      {
-        label: t('revenue.metrics.monthly_revenue'),
-        value: metrics?.monthlyRevenue ?? 0,
-        desc: t('revenue.metrics.monthly_revenue_desc'),
-        icon: TrendingUp,
-        color: 'text-emerald-600 dark:text-emerald-400',
-        bg: 'from-emerald-500/10 to-emerald-600/5',
-        format: (v: number) => `${v.toLocaleString()} ${t('currency_dzd')}`,
-      },
-      {
-        label: t('revenue.metrics.all_time_revenue'),
-        value: metrics?.allTimeRevenue ?? 0,
-        desc: t('revenue.metrics.all_time_revenue_desc'),
-        icon: Banknote,
-        color: 'text-blue-600 dark:text-blue-400',
-        bg: 'from-blue-500/10 to-blue-600/5',
-        format: (v: number) => `${v.toLocaleString()} ${t('currency_dzd')}`,
-      },
-      {
-        label: t('revenue.metrics.credits_spent'),
-        value: metrics?.totalCreditsSpent ?? 0,
-        desc: t('revenue.metrics.credits_spent_desc'),
-        icon: Coins,
-        color: 'text-violet-600 dark:text-violet-400',
-        bg: 'from-violet-500/10 to-violet-600/5',
-        format: (v: number) => v.toLocaleString(),
-      },
-      {
-        label: t('revenue.metrics.active_with_credits'),
-        value: metrics?.activeSellersWithCredits ?? 0,
-        desc: t('revenue.metrics.active_with_credits_desc'),
-        icon: Users,
-        color: 'text-amber-600 dark:text-amber-400',
-        bg: 'from-amber-500/10 to-amber-600/5',
-        format: (v: number) => `${v}/${metrics?.totalActiveSellers ?? 0}`,
-      },
-      {
-        label: t('revenue.metrics.new_sellers'),
-        value: metrics?.newSellersThisMonth ?? 0,
-        desc: t('revenue.metrics.new_sellers_desc'),
-        icon: UserPlus,
-        color: 'text-rose-600 dark:text-rose-400',
-        bg: 'from-rose-500/10 to-rose-600/5',
-        format: (v: number) => v.toLocaleString(),
-      },
-      {
-        label: t('revenue.metrics.total_packages'),
-        value: metrics?.totalPackages ?? 0,
-        desc: t('revenue.metrics.total_packages_desc'),
-        icon: Package,
-        color: 'text-sky-600 dark:text-sky-400',
-        bg: 'from-sky-500/10 to-sky-600/5',
-        format: (v: number) => v.toLocaleString(),
-      },
-    ],
-    [metrics, t],
-  )
+  const metricCards = [
+    {
+      label: t('revenue.metrics.monthly_revenue'),
+      value: metrics?.monthlyRevenue ?? 0,
+      desc: t('revenue.metrics.monthly_revenue_desc'),
+      icon: TrendingUp,
+      color: 'text-emerald-600 dark:text-emerald-400',
+      bg: 'from-emerald-500/10 to-emerald-600/5',
+      format: (v: number) => `${v.toLocaleString()} ${t('currency_dzd')}`,
+    },
+    {
+      label: t('revenue.metrics.all_time_revenue'),
+      value: metrics?.allTimeRevenue ?? 0,
+      desc: t('revenue.metrics.all_time_revenue_desc'),
+      icon: Banknote,
+      color: 'text-blue-600 dark:text-blue-400',
+      bg: 'from-blue-500/10 to-blue-600/5',
+      format: (v: number) => `${v.toLocaleString()} ${t('currency_dzd')}`,
+    },
+    {
+      label: t('revenue.metrics.credits_spent'),
+      value: metrics?.totalCreditsSpent ?? 0,
+      desc: t('revenue.metrics.credits_spent_desc'),
+      icon: Coins,
+      color: 'text-violet-600 dark:text-violet-400',
+      bg: 'from-violet-500/10 to-violet-600/5',
+      format: (v: number) => v.toLocaleString(),
+    },
+    {
+      label: t('revenue.metrics.active_with_credits'),
+      value: metrics?.activeSellersWithCredits ?? 0,
+      desc: t('revenue.metrics.active_with_credits_desc'),
+      icon: Users,
+      color: 'text-amber-600 dark:text-amber-400',
+      bg: 'from-amber-500/10 to-amber-600/5',
+      format: (v: number) => `${v}/${metrics?.totalActiveSellers ?? 0}`,
+    },
+    {
+      label: t('revenue.metrics.new_sellers'),
+      value: metrics?.newSellersThisMonth ?? 0,
+      desc: t('revenue.metrics.new_sellers_desc'),
+      icon: UserPlus,
+      color: 'text-rose-600 dark:text-rose-400',
+      bg: 'from-rose-500/10 to-rose-600/5',
+      format: (v: number) => v.toLocaleString(),
+    },
+    {
+      label: t('revenue.metrics.total_packages'),
+      value: metrics?.totalPackages ?? 0,
+      desc: t('revenue.metrics.total_packages_desc'),
+      icon: Package,
+      color: 'text-sky-600 dark:text-sky-400',
+      bg: 'from-sky-500/10 to-sky-600/5',
+      format: (v: number) => v.toLocaleString(),
+    },
+  ]
 
-  if (isLoading) {
+  if (isLoading && !metrics) {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -110,10 +106,24 @@ export function RevenueMetrics() {
     )
   }
 
+  if (isError && !metrics) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-12">
+        <HelpCircle className="size-8 text-muted-foreground/50" />
+        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center max-w-xs">
+          {t('revenue.no_transactions')}
+        </p>
+        <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-1.5 text-xs font-bold">
+          <RefreshCw className="size-3" />
+          Retry
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <DirectionProvider dir={i18n.dir()}>
     <div className="space-y-6">
-      {/* Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {metricCards.map((m) => (
           <div
@@ -139,7 +149,6 @@ export function RevenueMetrics() {
         ))}
       </div>
 
-      {/* Recent Transactions */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
