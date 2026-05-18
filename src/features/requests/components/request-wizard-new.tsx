@@ -5,7 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslation } from 'react-i18next'
 import { Check, ChevronLeft, ChevronRight, Loader2, Sparkles } from 'lucide-react'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 
 // Steps
 import { useCreateRequest, useUpdateRequest } from '../hooks/use-requests'
@@ -17,8 +17,8 @@ import { PhotosStep } from './wizard-steps/photos-step-new'
 import { ReviewStep } from './wizard-steps/review-step-new'
 
 // Hooks & Types
-import type { ProductFormData } from '@/types/product-schemas'
-import { productFormSchema } from '@/types/product-schemas'
+import type { RequestFormData } from '@/types/request-schemas'
+import { requestFormSchema } from '@/types/request-schemas'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 
 // UI Components
@@ -39,6 +39,7 @@ interface RequestWizardProps {
 
 export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizardProps) {
   const { t, i18n } = useTranslation('requests/form')
+  const { toast } = useToast('requests/form')
   const isRtl = i18n.dir() === 'rtl'
 
   const STEPS = [
@@ -58,26 +59,19 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
-  const methods = useForm<ProductFormData>({
-    resolver: zodResolver(productFormSchema) as any,
+  const methods = useForm<RequestFormData>({
+    resolver: zodResolver(requestFormSchema),
     defaultValues: {
       partName: initialData?.partName || '',
       description: initialData?.notes || '',
-      status: initialData ? (initialData?.status || 'open') : 'published',
       vehicleBrand: initialData?.vehicleBrand || '',
       vehicleModel: initialData?.modelYear ? initialData.modelYear.split(' ')[0] : '',
       modelYear: initialData?.modelYear ? initialData.modelYear.split(' ').slice(1).join(' ') : '',
-      categories: initialData?.category ? [initialData.category.name] : [],
       categoryId: initialData?.categoryId || undefined,
       brandId: initialData?.brandId || undefined,
-      tags: [],
-      variations: [],
-      expectedPrice: '',
-      budgetType: 'negotiable',
-      template: 'default',
       imageUrls: initialData?.imageUrls || [],
     },
-    mode: 'onChange',
+    mode: 'onBlur',
   })
 
   const watchPartName = methods.watch('partName')
@@ -113,42 +107,47 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
     }
   }
 
-  const handleSubmitFinal = async () => {
+  const handleSubmitFinal = () => {
     if (!user?.id) {
-      toast.error(t('toasts.login_required'))
+      toast.error('toasts.login_required')
       return
     }
 
-    setIsSubmitting(true)
-    const values = methods.getValues()
+    methods.handleSubmit(
+      async (values) => {
+        setIsSubmitting(true)
+        const payload = {
+          buyerId: user.id,
+          partName: values.partName,
+          categoryId: values.categoryId,
+          brandId: values.brandId,
+          vehicleBrand: values.vehicleBrand,
+          modelYear: `${values.vehicleModel} ${values.modelYear}`,
+          notes: values.description,
+          status: 'open',
+          imageUrls: values.imageUrls || [],
+        }
 
-    const payload = {
-      buyerId: user.id,
-      partName: values.partName,
-      categoryId: values.categoryId,
-      brandId: values.brandId,
-      vehicleBrand: values.vehicleBrand,
-      modelYear: `${values.vehicleModel} ${values.modelYear}`,
-      notes: values.description,
-      status: 'open',
-      imageUrls: values.imageUrls || [],
-    }
-
-    try {
-      if (isEditing && initialData?.id) {
-        await updateRequest.mutateAsync({ id: initialData.id, payload })
-        toast.success(t('toasts.update_success'))
-      } else {
-        await createRequest.mutateAsync(payload)
-        toast.success(t('toasts.create_success'))
-      }
-      setIsSuccess(true)
-    } catch (error: any) {
-      console.error(error)
-      toast.error(error.message || t('toasts.process_error'))
-    } finally {
-      setIsSubmitting(false)
-    }
+        try {
+          if (isEditing && initialData?.id) {
+            await updateRequest.mutateAsync({ id: initialData.id, payload })
+            toast.success('toasts.update_success')
+          } else {
+            await createRequest.mutateAsync(payload)
+            toast.success('toasts.create_success')
+          }
+          setIsSuccess(true)
+        } catch (error: any) {
+          console.error(error)
+          toast.error('toasts.process_error', { error: error.message })
+        } finally {
+          setIsSubmitting(false)
+        }
+      },
+      () => {
+        toast.error('toasts.validation_error')
+      },
+    )()
   }
 
   const contentRef = useRef<HTMLDivElement>(null)

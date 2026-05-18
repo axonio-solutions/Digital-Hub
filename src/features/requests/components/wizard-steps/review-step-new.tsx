@@ -13,7 +13,7 @@ import {
   Hash
 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import type { ProductFormData } from '@/types/product-schemas'
+import type { RequestFormData } from '@/types/request-schemas'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
@@ -23,7 +23,7 @@ interface ReviewStepProps {
 
 export function ReviewStep({ onEditStep }: ReviewStepProps) {
   const { t } = useTranslation('requests/form')
-  const { watch } = useFormContext<ProductFormData>()
+  const { watch } = useFormContext<RequestFormData>()
 
   const values = watch()
   const imageUrls = values.imageUrls || []

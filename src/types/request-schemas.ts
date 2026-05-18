@@ -20,5 +20,19 @@ export const updateRequestSchema = z.object({
   payload: createRequestSchema.partial(),
 })
 
+export const requestFormSchema = z.object({
+  partName: z.string().min(2, 'Part name must be at least 2 characters'),
+  description: z.string().optional(),
+  vehicleBrand: z.string().min(1, 'Vehicle brand is required'),
+  vehicleModel: z.string().min(1, 'Vehicle model is required'),
+  modelYear: z.string().min(1, 'Model year is required'),
+  vinNumber: z.string().optional(),
+  categoryId: z.string().optional(),
+  brandId: z.string().optional(),
+  imageUrls: z.array(z.string()).optional(),
+})
+
+export type RequestFormData = z.infer<typeof requestFormSchema>
+
 export type CreateRequestInput = z.infer<typeof createRequestSchema>
 export type UpdateRequestInput = z.infer<typeof updateRequestSchema>

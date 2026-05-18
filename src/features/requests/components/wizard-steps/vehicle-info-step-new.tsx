@@ -3,7 +3,7 @@
 import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
 import { CarFront, HelpCircle, Calendar, Hash } from 'lucide-react'
-import type { ProductFormData } from '@/types/product-schemas'
+import type { RequestFormData } from '@/types/request-schemas'
 import {
   FormControl,
   FormField,
@@ -22,7 +22,7 @@ import { motion } from 'framer-motion'
 
 export function VehicleInfoStep() {
   const { t } = useTranslation('requests/form')
-  const { control } = useFormContext<ProductFormData>()
+  const { control } = useFormContext<RequestFormData>()
 
   return (
     <motion.div

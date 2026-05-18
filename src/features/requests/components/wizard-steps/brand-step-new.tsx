@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
 import { motion } from 'framer-motion'
 import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
-import type { ProductFormData } from '@/types/product-schemas'
+import type { RequestFormData } from '@/types/request-schemas'
 import { Building2, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -78,7 +78,7 @@ function BrandItem({ brand, isSelected }: { brand: any; isSelected: boolean }) {
 export function BrandStep() {
   const { t } = useTranslation('requests/form')
   const { data: taxonomy, isLoading } = useTaxonomy()
-  const { setValue, watch } = useFormContext<ProductFormData>()
+  const { setValue, watch } = useFormContext<RequestFormData>()
 
   const selectedBrandId = watch('brandId')
 

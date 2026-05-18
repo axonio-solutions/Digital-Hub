@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
 import { Camera, Loader2, Trash2, UploadCloud, CheckCircle2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { ProductFormData } from '@/types/product-schemas'
+import type { RequestFormData } from '@/types/request-schemas'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { supabase } from '@/lib/supabase-client'
@@ -18,7 +18,7 @@ export function PhotosStep() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dropZoneRef = useRef<HTMLDivElement>(null)
 
-  const { setValue, watch } = useFormContext<ProductFormData>()
+  const { setValue, watch } = useFormContext<RequestFormData>()
 
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -86,6 +86,7 @@ export function PhotosStep() {
       setSelectedImages([])
     } catch (error) {
       console.error('Upload error:', error)
+      setSelectedImages([])
     } finally {
       setIsUploading(false)
       setUploadProgress(0)

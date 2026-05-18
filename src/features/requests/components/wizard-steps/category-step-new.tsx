@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
 import { motion } from 'framer-motion'
 import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
-import type { ProductFormData } from '@/types/product-schemas'
+import type { RequestFormData } from '@/types/request-schemas'
 import { Check, LayoutGrid } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -24,7 +24,7 @@ export function CategoryStep() {
   const { t, i18n } = useTranslation('requests/form')
   const dir = i18n.dir()
   const { data: taxonomy, isLoading } = useTaxonomy()
-  const { setValue, watch } = useFormContext<ProductFormData>()
+  const { setValue, watch } = useFormContext<RequestFormData>()
 
   const selectedCategoryId = watch('categoryId')
 
@@ -102,7 +102,7 @@ export function CategoryStep() {
                     <Label
                       htmlFor={`category-${category.id}`}
                       className={cn(
-                        'relative flex items-center gap-3.5 p-3.5 rounded-xl border-2 cursor-pointer transition-all select-none rtl:flex-row-reverse',
+                        'relative flex items-center gap-3.5 p-3.5 rounded-xl border-2 cursor-pointer transition-all select-none flex-row',
                         'hover:bg-muted/40',
                         'peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40 peer-focus-visible:ring-offset-1',
                         isSelected
@@ -110,16 +110,20 @@ export function CategoryStep() {
                           : 'border-border hover:border-border/80',
                       )}
                     >
-                      {/* Selected check */}
+                      {/* Icon / Image */}
                       <div
                         className={cn(
-                          'size-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-200',
+                          'size-11 rounded-xl flex items-center justify-center shrink-0 transition-all',
                           isSelected
-                            ? 'bg-primary scale-100 opacity-100'
-                            : 'bg-muted-foreground/10 scale-75 opacity-0',
+                            ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
+                            : 'bg-muted text-muted-foreground',
                         )}
                       >
-                        <Check className="size-3.5 text-primary-foreground" />
+                        {imageUrl ? (
+                          <img src={imageUrl} alt={category.name} className="size-6 object-contain" />
+                        ) : (
+                          <span className="text-xs font-bold">{initials}</span>
+                        )}
                       </div>
 
                       {/* Text */}
@@ -139,20 +143,16 @@ export function CategoryStep() {
                         )}
                       </div>
 
-                      {/* Icon / Image */}
+                      {/* Selected check */}
                       <div
                         className={cn(
-                          'size-11 rounded-xl flex items-center justify-center shrink-0 transition-all',
+                          'size-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-200',
                           isSelected
-                            ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
-                            : 'bg-muted text-muted-foreground',
+                            ? 'bg-primary scale-100 opacity-100'
+                            : 'bg-muted-foreground/10 scale-75 opacity-0',
                         )}
                       >
-                        {imageUrl ? (
-                          <img src={imageUrl} alt={category.name} className="size-6 object-contain" />
-                        ) : (
-                          <span className="text-xs font-bold">{initials}</span>
-                        )}
+                        <Check className="size-3.5 text-primary-foreground" />
                       </div>
                     </Label>
                   </div>
