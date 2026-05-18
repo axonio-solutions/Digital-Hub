@@ -5,7 +5,7 @@ import { ArrowRight, ChevronLeft, ChevronRight, Search, Sparkles } from 'lucide-
 import { Link, getRouteApi, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { SendOfferDialog } from './send-offer-dialog'
 import { CategoryBar } from './explore/category-bar'
 import { MarketplaceFeed } from './explore/marketplace-feed'
@@ -25,6 +25,7 @@ export function PublicMarketplace() {
   const [searchInput, setSearchInput] = useState('')
 
   const { t, i18n } = useTranslation(['home/explore', 'marketplace'])
+  const { toast } = useToast('home/explore')
   const isRtl = i18n.dir() === 'rtl'
 
   const { q: urlSearchQuery = '' } = routeApi.useSearch()
@@ -76,7 +77,7 @@ export function PublicMarketplace() {
       return
     }
     if (userRole !== 'seller') {
-      toast.error(t('errors.unauthorized_seller', 'Only sellers can send quotes.'))
+      toast.error('errors.unauthorized_seller')
       return
     }
     if (req.buyerId === (user as any)?.id) return

@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import {
   AlertTriangle,
   EyeOff,
@@ -25,6 +25,7 @@ import { Label } from '@/components/ui/label'
 
 export function AccountManagement() {
   const { t } = useTranslation('dashboard/settings')
+  const { toast } = useToast('dashboard/settings')
   const { data: user } = useAuth()
 
   const { mutate: deactivate, isPending: isDeactivating } = useMutation({
@@ -32,13 +33,13 @@ export function AccountManagement() {
       return await (deactivateAccountServerFn as any)({ data: { userId } })
     },
     onSuccess: () => {
-      toast.success(t('messages.account_deactivated'), {
-        description: t('messages.account_deactivated_desc'),
+      toast.success('messages.account_deactivated', {
+        description: 'messages.account_deactivated_desc',
       })
       window.location.href = '/'
     },
     onError: () => {
-      toast.error(t('messages.deactivation_failed'))
+      toast.error('messages.deactivation_failed')
     },
   })
 
@@ -47,13 +48,13 @@ export function AccountManagement() {
       return await (deleteAccountServerFn as any)({ data: { userId } })
     },
     onSuccess: () => {
-      toast.success(t('messages.account_deleted'), {
-        description: t('messages.account_deleted_desc'),
+      toast.success('messages.account_deleted', {
+        description: 'messages.account_deleted_desc',
       })
       window.location.href = '/'
     },
     onError: () => {
-      toast.error(t('messages.deletion_failed'))
+      toast.error('messages.deletion_failed')
     },
   })
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useMemo, useState } from 'react'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { ColumnDef, useReactTable, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, getFacetedRowModel, getFacetedUniqueValues, ColumnFiltersState, SortingState, flexRender } from '@tanstack/react-table'
 import { Coins, UserX } from 'lucide-react'
 import { UserProfileDialog } from './user-profile-dialog'
@@ -22,6 +22,7 @@ interface AdminUsersTableProps { users: Array<any>; onBan?: (userId: string) => 
 
 export function AdminUsersTable({ users = [], onBan }: AdminUsersTableProps) {
   const { t } = useTranslation('dashboard/admin')
+  const { toast } = useToast('dashboard/admin')
   const [selectedUser, setSelectedUser] = useState<any | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [grantSeller, setGrantSeller] = useState<any | null>(null)
@@ -91,7 +92,7 @@ export function AdminUsersTable({ users = [], onBan }: AdminUsersTableProps) {
         return (
           <div className="flex justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
             {u.account_status === 'waitlisted' && (
-              <Button variant="outline" size="sm" onClick={() => { activateSeller({ userId: u.id }); toast.success(t('users.actions.activated_success')) }} className="h-7 text-[10px]">{t('users.actions.activate')}</Button>
+              <Button variant="outline" size="sm" onClick={() => { activateSeller({ userId: u.id }); toast.success('users.actions.activated_success') }} className="h-7 text-[10px]">{t('users.actions.activate')}</Button>
             )}
             {u.role === 'seller' && (
               <Button variant="outline" size="sm" onClick={() => { setGrantSeller(u); setIsGrantOpen(true) }} className="h-7 text-[10px] gap-1">
@@ -140,7 +141,7 @@ export function AdminUsersTable({ users = [], onBan }: AdminUsersTableProps) {
               {t('users.actions.selected', { count: selectedCount })}
             </span>
             <Button variant="destructive" size="sm"
-              onClick={() => { const ids = table.getSelectedRowModel().rows.map((r: any) => r.original.id); ids.forEach((id: string) => onBan?.(id)); table.resetRowSelection(); toast.error(t('users.actions.banned_success', { count: ids.length })) }}
+              onClick={() => { const ids = table.getSelectedRowModel().rows.map((r: any) => r.original.id); ids.forEach((id: string) => onBan?.(id)); table.resetRowSelection(); toast.error('users.actions.banned_success', { values: { count: ids.length } }) }}
               className="h-7 text-[10px]"><UserX className="me-1.5 size-3.5" /> {t('users.actions.ban')}</Button>
           </div>
         )}

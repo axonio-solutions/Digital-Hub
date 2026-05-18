@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { useEffect } from 'react'
 import { Loader2, MapPin } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -91,6 +91,7 @@ const WILAYAS = [
 
 export function BuyerSettings() {
   const { t } = useTranslation('dashboard/settings')
+  const { toast } = useToast('dashboard/settings')
   const queryClient = useQueryClient()
   const { data: user } = useAuth()
 
@@ -123,12 +124,12 @@ export function BuyerSettings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth'] })
-      toast.success(t('delivery.save'), {
-        description: t('delivery.desc'),
+      toast.success('delivery.save', {
+        description: 'delivery.desc',
       })
     },
     onError: () => {
-      toast.error(t('messages.update_failed'))
+      toast.error('messages.update_failed')
     },
   })
 

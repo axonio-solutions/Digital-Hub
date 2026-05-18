@@ -14,7 +14,7 @@ import {
   Zap
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 
 import { RequestDetailsCompact } from './request-details-compact'
 import { SubmitQuoteForm } from './submit-quote-form'
@@ -44,6 +44,7 @@ interface MarketplaceRowActionsProps {
 
 export function MarketplaceRowActions({ quote }: MarketplaceRowActionsProps) {
   const { t } = useTranslation('marketplace')
+  const { toast } = useToast('marketplace')
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   
@@ -52,11 +53,11 @@ export function MarketplaceRowActions({ quote }: MarketplaceRowActionsProps) {
   const handleRetract = () => {
     deleteQuote(quote.id, {
       onSuccess: () => {
-        toast.success(t('toasts.retract_success'))
+        toast.success('toasts.retract_success')
         setIsDeleteDialogOpen(false)
       },
       onError: () => {
-        toast.error(t('toasts.retract_error'))
+        toast.error('toasts.retract_error')
       }
     })
   }

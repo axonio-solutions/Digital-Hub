@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -33,6 +33,7 @@ interface PackageDialogProps {
 
 export function PackageDialog({ pkg, open, onOpenChange }: PackageDialogProps) {
   const { t } = useTranslation('dashboard/credits')
+  const { toast } = useToast('dashboard/credits')
   const isEditing = !!pkg?.id
   const [name, setName] = useState('')
   const [credits, setCredits] = useState(0)
@@ -61,11 +62,11 @@ export function PackageDialog({ pkg, open, onOpenChange }: PackageDialogProps) {
 
   const handleSave = () => {
     if (!name.trim()) {
-      toast.error(t('packages.form.error_name_required'))
+      toast.error('packages.form.error_name_required')
       return
     }
     if (credits <= 0 || price <= 0) {
-      toast.error(t('packages.form.error_credits_price'))
+      toast.error('packages.form.error_credits_price')
       return
     }
 
@@ -76,19 +77,19 @@ export function PackageDialog({ pkg, open, onOpenChange }: PackageDialogProps) {
         { id: pkg!.id!, ...data, isActive },
         {
           onSuccess: () => {
-            toast.success(t('packages.updated'))
+            toast.success('packages.updated')
             onOpenChange(false)
           },
-          onError: (err: any) => toast.error(err.message),
+          onError: (err: any) => toast.error('packages.error', { error: err.message }),
         },
       )
     } else {
       create(data, {
         onSuccess: () => {
-          toast.success(t('packages.created'))
+          toast.success('packages.created')
           onOpenChange(false)
         },
-        onError: (err: any) => toast.error(err.message),
+        onError: (err: any) => toast.error('packages.error', { error: err.message }),
       })
     }
   }

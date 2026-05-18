@@ -11,11 +11,12 @@ type ToastOptions = {
   description?: string
   duration?: number
   action?: ToastAction
+  values?: Record<string, any>
 }
 
 type ErrorToastOptions = Omit<ToastOptions, 'action'> & {
   error?: string
-}
+} & Record<string, any>
 
 function resolveLabel(labelOrKey: string, t: (key: string) => string): string {
   return labelOrKey.startsWith('toasts.') || labelOrKey.includes('.')
@@ -28,7 +29,7 @@ export function useToast(namespace?: string) {
 
   const success = useCallback(
     (key: string, options?: ToastOptions) => {
-      sonnerToast.success(t(key), {
+      sonnerToast.success(t(key, options?.values), {
         description: options?.description ? resolveLabel(options.description, t) : undefined,
         duration: options?.duration ?? 4000,
         action: options?.action
@@ -44,7 +45,7 @@ export function useToast(namespace?: string) {
 
   const error = useCallback(
     (key: string, options?: ErrorToastOptions) => {
-      sonnerToast.error(t(key), {
+      sonnerToast.error(t(key, options?.values), {
         description: options?.error ?? (options?.description ? resolveLabel(options.description, t) : undefined),
         duration: options?.duration ?? 5000,
       })
@@ -54,7 +55,7 @@ export function useToast(namespace?: string) {
 
   const info = useCallback(
     (key: string, options?: ToastOptions) => {
-      sonnerToast.info(t(key), {
+      sonnerToast.info(t(key, options?.values), {
         description: options?.description ? resolveLabel(options.description, t) : undefined,
         duration: options?.duration ?? 4000,
         action: options?.action
@@ -70,7 +71,7 @@ export function useToast(namespace?: string) {
 
   const warning = useCallback(
     (key: string, options?: ToastOptions) => {
-      sonnerToast.warning(t(key), {
+      sonnerToast.warning(t(key, options?.values), {
         description: options?.description ? resolveLabel(options.description, t) : undefined,
         duration: options?.duration ?? 4000,
         action: options?.action

@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { useEffect } from 'react'
 import { Loader2, MapPin, User as UserIcon } from 'lucide-react'
 import {
@@ -43,6 +43,7 @@ import {
 export function GeneralInfoForm() {
   const { t } = useTranslation('dashboard/settings')
   const { t: tw } = useTranslation('wilayas')
+  const { toast } = useToast('dashboard/settings')
   const queryClient = useQueryClient()
   const { data: user } = useAuth()
 
@@ -80,10 +81,10 @@ export function GeneralInfoForm() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth'] })
-      toast.success(t('messages.profile_updated'))
+      toast.success('messages.profile_updated')
     },
     onError: () => {
-      toast.error(t('messages.update_failed'))
+      toast.error('messages.update_failed')
     },
   })
 

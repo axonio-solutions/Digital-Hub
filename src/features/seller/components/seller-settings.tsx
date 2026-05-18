@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { useEffect } from 'react'
 import { Briefcase, FileText, Loader2, Store } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export function SellerSettings() {
   const { t } = useTranslation('dashboard/seller')
+  const { toast } = useToast('dashboard/seller')
   const queryClient = useQueryClient()
   const { data: user } = useAuth()
 
@@ -48,10 +49,10 @@ export function SellerSettings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth'] })
-      toast.success(t('settings.toasts.success'))
+      toast.success('settings.toasts.success')
     },
     onError: () => {
-      toast.error(t('settings.toasts.error'))
+      toast.error('settings.toasts.error')
     },
   })
 

@@ -14,7 +14,7 @@ import {
   Phone,
   Send,
 } from 'lucide-react'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -45,6 +45,7 @@ const formSchema = z.object({
 
 export function SupportHub() {
   const { t } = useTranslation('dashboard/buyer')
+  const { toast } = useToast('dashboard/buyer')
   const { data: user } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -66,9 +67,9 @@ export function SupportHub() {
       const res = await submitSupportTicketServerFn({ data: values })
       if (!res.success) throw new Error(res.error)
       setIsSuccess(true)
-      toast.success(t('support.form.success'))
+      toast.success('support.form.success')
     } catch (error: any) {
-      toast.error(error.message || t('support.form.error'))
+      toast.error('support.form.error', { error: error.message })
     } finally {
       setIsSubmitting(false)
     }

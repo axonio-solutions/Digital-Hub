@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { z } from 'zod'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
@@ -23,6 +23,7 @@ type AuthInput = z.infer<typeof authSchema>
 
 export function LoginForm() {
   const { t } = useTranslation('auth/login')
+  const { toast } = useToast('auth/login')
   const router = useRouter()
 
   const authSchema = z.object({
@@ -101,8 +102,8 @@ export function LoginForm() {
     },
     onSuccess: async () => {
       console.log('[LoginForm] Authentication flow complete, redirecting...')
-      toast.success(t('login.toasts.success_title'), {
-        description: t('login.toasts.success_desc'),
+      toast.success('login.toasts.success_title', {
+        description: 'login.toasts.success_desc',
       })
 
       // We do not need to manually refetch queries or invalidate the router here
@@ -116,8 +117,8 @@ export function LoginForm() {
       window.location.href = redirectUrl
     },
     onError: (error: Error) => {
-      toast.error(t('login.toasts.error_title'), {
-        description: error.message || t('login.errors.check_credentials'),
+      toast.error('login.toasts.error_title', {
+        description: error.message || 'login.errors.check_credentials',
       })
     },
   })

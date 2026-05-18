@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { useActivateSeller, useToggleUserBan, useUserDetails } from '@/features/admin/hooks/use-users'
 import { useTranslation } from 'react-i18next'
 import { tCategory } from '@/utils/category-utils'
@@ -20,6 +20,7 @@ interface UserProfileDialogProps { user: any | null; open: boolean; onOpenChange
 
 export function UserProfileDialog({ user, open, onOpenChange }: UserProfileDialogProps) {
   const { t } = useTranslation('dashboard/admin')
+  const { toast } = useToast('dashboard/admin')
   const { mutate: activateSeller } = useActivateSeller()
   const { mutate: toggleBan } = useToggleUserBan()
   const [copied, setCopied] = useState<string | null>(null)
@@ -45,7 +46,7 @@ export function UserProfileDialog({ user, open, onOpenChange }: UserProfileDialo
     navigator.clipboard.writeText(text)
     setCopied(key)
     setTimeout(() => setCopied(null), 2000)
-    toast.success(t('users.profile.copied'))
+    toast.success('users.profile.copied')
   }
 
   const requestCount = u.requests?.length ?? (role === 'buyer' ? '...' : 0)
@@ -190,13 +191,13 @@ export function UserProfileDialog({ user, open, onOpenChange }: UserProfileDialo
               </Button>
             )}
             {isWaitlisted && (
-              <Button onClick={() => { activateSeller({ userId: u.id }); toast.success(t('users.profile.success.activated')) }}
+              <Button onClick={() => { activateSeller({ userId: u.id }); toast.success('users.profile.success.activated') }}
                 className="h-9 bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase text-[10px] tracking-wider rounded-lg px-4 w-full sm:w-auto">
                 <UserCheck size={14} className="me-1.5" /> {t('users.profile.activate')}
               </Button>
             )}
             <Button variant={isBanned ? 'default' : 'destructive'}
-              onClick={() => { toggleBan({ userId: u.id, isBanned: !isBanned }); toast.success(isBanned ? t('users.profile.success.restored') : t('users.profile.success.suspended')) }}
+              onClick={() => { toggleBan({ userId: u.id, isBanned: !isBanned }); toast.success(isBanned ? 'users.profile.success.restored' : 'users.profile.success.suspended') }}
               className="h-9 font-bold uppercase text-[10px] tracking-wider rounded-lg px-4 w-full sm:w-auto">
               {isBanned ? <><ShieldCheck size={14} className="me-1.5" /> {t('users.profile.restore')}</>
                 : <><UserX size={14} className="me-1.5" /> {t('users.profile.suspend')}</>}

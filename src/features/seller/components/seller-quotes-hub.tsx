@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowUpDown, Banknote, Calendar, CheckCircle2, Clock, TrendingDown, TrendingUp, XCircle } from 'lucide-react'
 import { isAfter, isToday, startOfDay, subDays } from 'date-fns'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { SellerQuotesTable } from './seller-quotes-table'
 import { SubmitQuoteForm } from '@/features/marketplace'
 import { useAuth } from '@/features/auth/hooks/use-auth'
@@ -32,6 +32,7 @@ function getTimeCutoff(window: TimeWindow): Date | null {
 
 export function SellerQuotesHub() {
   const { t, i18n } = useTranslation('quotes')
+  const { toast } = useToast('quotes')
   const [selectedQuote, setSelectedQuote] = useState<any>(null)
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
   const [isRequestDetailsOpen, setIsRequestDetailsOpen] = useState(false)
@@ -68,7 +69,7 @@ export function SellerQuotesHub() {
       case 'delete':
         if (confirm(t('hub.confirm.withdraw'))) {
           deleteQuote.mutate(action.item.id, {
-            onSuccess: () => toast.success(t('hub.toasts.withdrawn')),
+            onSuccess: () => toast.success('hub.toasts.withdrawn'),
           })
         }
         break

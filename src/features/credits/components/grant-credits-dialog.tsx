@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { Coins, Loader2, Package, Store, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -28,6 +28,7 @@ interface GrantCreditsDialogProps {
 
 export function GrantCreditsDialog({ seller, open, onOpenChange, showPackages }: GrantCreditsDialogProps) {
   const { t } = useTranslation('dashboard/credits')
+  const { toast } = useToast('dashboard/credits')
   const [amount, setAmount] = useState<number>(0)
   const [description, setDescription] = useState('')
   const { mutate: grantCredits, isPending } = useGrantCredits()
@@ -37,20 +38,20 @@ export function GrantCreditsDialog({ seller, open, onOpenChange, showPackages }:
 
   const handleGrant = () => {
     if (amount <= 0) {
-      toast.error(t('distribute.grant.error_amount'))
+      toast.error('distribute.grant.error_amount')
       return
     }
     grantCredits(
       { sellerId: seller.id, amount, description: description || undefined },
       {
         onSuccess: () => {
-          toast.success(t('distribute.grant.success', { amount, name: seller.name }))
+          toast.success('distribute.grant.success', { values: { amount, name: seller.name } })
           setAmount(0)
           setDescription('')
           onOpenChange(false)
         },
         onError: (err: any) => {
-          toast.error(err.message || t('distribute.grant.error_failed'))
+          toast.error('distribute.grant.error_failed', { error: err.message })
         },
       },
     )

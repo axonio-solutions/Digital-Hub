@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { Loader2, Camera, User, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase-client'
 import { updateProfileServerFn } from '@/fn/users'
@@ -28,6 +28,7 @@ export function AvatarUpload({
   onUploadComplete,
 }: AvatarUploadProps) {
   const { t } = useTranslation('dashboard/settings')
+  const { toast } = useToast('dashboard/settings')
   const queryClient = useQueryClient()
   const [isUploading, setIsUploading] = useState(false)
   const [displayImage, setDisplayImage] = useState<string | null>(currentImage || null)
@@ -45,7 +46,7 @@ export function AvatarUpload({
     if (!file) return
 
     if (!file.type.startsWith('image/')) {
-      toast.error(t('avatar.upload_error'))
+      toast.error('avatar.upload_error')
       return
     }
 
@@ -80,10 +81,10 @@ export function AvatarUpload({
       // Force sync navigation bar and other auth-dependent UIs
       await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
       
-      toast.success(t('avatar.upload_success'))
+      toast.success('avatar.upload_success')
     } catch (error: any) {
       console.error(error)
-      toast.error(error.message || t('avatar.upload_failed'))
+      toast.error('avatar.upload_failed', { error: error.message })
     } finally {
       setIsUploading(false)
     }
@@ -103,9 +104,9 @@ export function AvatarUpload({
       // Force sync navigation bar
       await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
       
-      toast.success(t('avatar.remove_success'))
+      toast.success('avatar.remove_success')
     } catch (error: any) {
-      toast.error(t('avatar.remove_failed'))
+      toast.error('avatar.remove_failed')
     } finally {
       setIsUploading(false)
     }

@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { tCategory } from '@/utils/category-utils'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -62,6 +62,7 @@ export const Route = createFileRoute('/_authed/onboarding')({
 
 function OnboardingFlow() {
   const { t } = useTranslation('dashboard/onboarding')
+  const { toast } = useToast('dashboard/onboarding')
   const [currentStep, setCurrentStep] = useState(1)
   const [isSuccess, setIsSuccess] = useState(false)
   const [redirectTarget, setRedirectTarget] = useState('/dashboard')
@@ -152,7 +153,7 @@ function OnboardingFlow() {
   const handleNext = async () => {
     const valid = isStepValid()
     if (!valid) {
-      toast.error(t('toast.fill_fields'))
+      toast.error('toast.fill_fields')
       return
     }
 

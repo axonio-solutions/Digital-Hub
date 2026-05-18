@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { Calendar, Check, Coins, X } from 'lucide-react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
@@ -17,6 +17,7 @@ export const useCreditRequestsColumns = (
   isRejecting: boolean,
 ): Array<ColumnDef<any>> => {
   const { t } = useTranslation('dashboard/credits')
+  const { toast } = useToast('dashboard/credits')
 
   return [
     {
@@ -109,9 +110,9 @@ export const useCreditRequestsColumns = (
                   { id: req.id },
                   {
                     onSuccess: () => {
-                      toast.success(t('credit_requests.grant_success', { credits: req.credits, name: req.seller?.name }))
+                      toast.success('credit_requests.grant_success', { values: { credits: req.credits, name: req.seller?.name } })
                     },
-                    onError: (err: any) => toast.error(err.message),
+                        onError: (err: any) => toast.error('credit_requests.error', { error: err.message }),
                   } as any,
                 )
               }}
@@ -137,9 +138,9 @@ export const useCreditRequestsColumns = (
                         onSuccess: () => {
                           setShowReject(false)
                           setNote('')
-                          toast.success(t('credit_requests.reject_success'))
+                          toast.success('credit_requests.reject_success')
                         },
-                        onError: (err: any) => toast.error(err.message),
+                    onError: (err: any) => toast.error('credit_requests.error', { error: err.message }),
                       } as any,
                     )
                   }}

@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { supabase } from '@/lib/supabase-client'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { categorySchema, type CategoryInput } from '@/features/taxonomy/validations/taxonomy'
 import { useCreateCategory, useUpdateCategory } from '../hooks/use-taxonomy'
 
@@ -54,6 +54,7 @@ export function CategoryDialog({
   onOpenChange,
 }: CategoryDialogProps) {
   const { t } = useTranslation('dashboard/taxonomy')
+  const { toast } = useToast('dashboard/taxonomy')
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -88,7 +89,7 @@ export function CategoryDialog({
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (!file.type.startsWith('image/')) { toast.error(t('dialog.toast_upload_error')); return }
+    if (!file.type.startsWith('image/')) { toast.error('dialog.toast_upload_error'); return }
 
     try {
       setIsUploading(true)
@@ -104,9 +105,9 @@ export function CategoryDialog({
       const { data: { publicUrl } } = supabase.storage.from('taxonomy').getPublicUrl(fileName)
       form.setValue('imageUrl', publicUrl)
       setPreviewImage(publicUrl)
-      toast.success(t('dialog.toast_upload_success'))
+      toast.success('dialog.toast_upload_success')
     } catch (error: any) {
-      toast.error(error.message || t('dialog.toast_upload_failed'))
+      toast.error('dialog.toast_upload_failed', { error: error.message })
     } finally {
       setIsUploading(false)
     }

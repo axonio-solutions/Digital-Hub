@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { Plus, Package, Pencil, Power, PowerOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
@@ -13,6 +13,7 @@ import { PackageDialog } from './package-dialog'
 
 export function CreditPackages() {
   const { t } = useTranslation('dashboard/credits')
+  const { toast } = useToast('dashboard/credits')
   const { data: packages = [], isLoading } = useCreditPackages()
   const { mutate: toggleStatus } = useToggleCreditPackageStatus()
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -22,8 +23,8 @@ export function CreditPackages() {
     toggleStatus(
       { id, isActive: !currentActive },
       {
-        onSuccess: () => toast.success(t('packages.toggled')),
-        onError: (err: any) => toast.error(err.message),
+        onSuccess: () => toast.success('packages.toggled'),
+        onError: (err: any) => toast.error('packages.error', { error: err.message }),
       },
     )
   }

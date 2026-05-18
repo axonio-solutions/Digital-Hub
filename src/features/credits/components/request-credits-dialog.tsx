@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { Check, Coins, Loader2, Package, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -23,6 +23,7 @@ interface RequestCreditsDialogProps {
 
 export function RequestCreditsDialog({ open, onOpenChange }: RequestCreditsDialogProps) {
   const { t, i18n } = useTranslation('dashboard/credits')
+  const { toast } = useToast('dashboard/credits')
   const [selectedPkgId, setSelectedPkgId] = useState<string | null>(null)
   const { mutate: requestCredits, isPending } = useRequestCredits()
   const { data: packages = [], isLoading } = useActiveCreditPackages()
@@ -32,18 +33,18 @@ export function RequestCreditsDialog({ open, onOpenChange }: RequestCreditsDialo
 
   const handleRequest = () => {
     if (!selectedPkg) {
-      toast.error(t('billing.request_select_package'))
+      toast.error('billing.request_select_package')
       return
     }
     requestCredits(
       { credits: selectedPkg.credits, packageId: selectedPkg.id },
       {
         onSuccess: () => {
-          toast.success(t('billing.request_success'))
+          toast.success('billing.request_success')
           setSelectedPkgId(null)
           onOpenChange(false)
         },
-        onError: (err: any) => toast.error(err.message || t('billing.request_error_submit')),
+        onError: (err: any) => toast.error('billing.request_error_submit', { error: err.message }),
       },
     )
   }

@@ -7,7 +7,7 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Separator } from '@/components/ui/separator'
-import { toast } from 'sonner'
+import { useToast } from '@/hooks/use-toast'
 import { 
   getNotificationPreferencesServerFn, 
   updateNotificationPreferencesServerFn 
@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next'
 
 export function NotificationPreferences({ user }: { user: any }) {
   const { t } = useTranslation('dashboard/settings')
+  const { toast } = useToast('dashboard/settings')
   const queryClient = useQueryClient()
   const role = user?.role || 'buyer'
 
@@ -31,10 +32,10 @@ export function NotificationPreferences({ user }: { user: any }) {
     mutationFn: (data: any) => updateNotificationPreferencesServerFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notification-settings'] })
-      toast.success(t('messages.preferences_updated'))
+      toast.success('messages.preferences_updated')
     },
     onError: () => {
-      toast.error(t('messages.update_pref_failed'))
+      toast.error('messages.update_pref_failed')
     }
   })
 
@@ -194,8 +195,8 @@ export function NotificationPreferences({ user }: { user: any }) {
                 size="sm"
                 onClick={() => {
                   flagAsSpamServerFn({ data: 'TEST-123' })
-                    .then(() => toast.success(t('messages.admin_alert_triggered')))
-                    .catch(() => toast.error(t('messages.admin_alert_failed')))
+                    .then(() => toast.success('messages.admin_alert_triggered'))
+                    .catch(() => toast.error('messages.admin_alert_failed'))
                 }}
               >
                 {t('notifications_section.trigger_button')}
