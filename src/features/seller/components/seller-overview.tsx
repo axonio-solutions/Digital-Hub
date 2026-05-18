@@ -1,7 +1,7 @@
 'use client'
 
 import React, { memo, useMemo } from 'react'
-import { Await, Link, getRouteApi } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { ArrowRight, BarChart3, Coins, ShoppingBag, Sparkles } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { format, isSameDay, startOfDay, subDays } from 'date-fns'
@@ -9,16 +9,15 @@ import { ar, enUS, fr } from 'date-fns/locale'
 import { Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useSellerCreditBalance } from '@/features/seller/hooks/use-billing'
+import { useSellerDashboardStats } from '@/features/marketplace/hooks/use-marketplace'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
-const routeApi = getRouteApi('/_authed/dashboard/')
-
 interface DashboardData {
   stats: { won: number; pending: number; winRate: number; totalRevenue: number; totalQuotes: number }
-  todayStats: { won: number; pending: number; revenue: number }
+  todayStats: { won: number; pending: number; lost: number; revenue: number }
   recentSales: Array<{ id: string; price: number; updatedAt: string | Date; status: string; request?: { partName?: string } | null }>
   chartQuotes: Array<{ price: number; updatedAt: string | Date }>
 }
@@ -112,6 +111,37 @@ const QuickLink = memo(({ to, icon: Icon, title, desc }: { to: string; icon: Rea
   </Link>
 ))
 
+// --- Stats Cards ---
+
+function StatsCards({ stats, creditData, t, language, className }: {
+  stats: DashboardData['stats']
+  creditData?: { balance?: number } | null
+  t: any
+  language: string
+  className?: string
+}) {
+  const credits = creditData?.balance ?? 0
+
+  const metrics = [
+    { label: t('stats.won.label'), value: stats.won, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50' },
+    { label: t('stats.active.label'), value: stats.pending, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50' },
+    { label: t('stats.win_rate.label'), value: `${stats.winRate.toFixed(1)}%`, color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/50' },
+    { label: t('stats.earnings.label'), value: `${stats.totalRevenue.toLocaleString(language)} DZD`, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/50' },
+    { label: t('billing.current_balance'), value: credits, color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/50' },
+  ]
+
+  return (
+    <div className={cn('grid grid-cols-2 sm:grid-cols-5 gap-3', className)}>
+      {metrics.map((m) => (
+        <div key={m.label} className={cn('flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all', m.color)}>
+          <span className="text-xl font-black tabular-nums leading-none">{typeof m.value === 'number' ? m.value : m.value}</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">{m.label}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // --- Main Content ---
 
 function StatsSection({ dashboardData, t, language, isRtl }: { dashboardData: DashboardData; t: any; language: string; isRtl?: boolean }) {
@@ -138,27 +168,10 @@ function StatsSection({ dashboardData, t, language, isRtl }: { dashboardData: Da
     })
   }, [chartQuotes, today, dateLocale])
 
-  const credits = creditData?.balance ?? 0
-
-  const metrics = [
-    { label: t('stats.won.label'), value: stats.won, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50' },
-    { label: t('stats.active.label'), value: stats.pending, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50' },
-    { label: t('stats.win_rate.label'), value: `${stats.winRate.toFixed(1)}%`, color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/50' },
-    { label: t('stats.earnings.label'), value: `${stats.totalRevenue.toLocaleString(language)} DZD`, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/50' },
-    { label: t('billing.current_balance'), value: credits, color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/50' },
-  ]
-
   return (
     <div className="flex flex-col gap-4">
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {metrics.map((m) => (
-          <div key={m.label} className={cn('flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all', m.color)}>
-            <span className="text-xl font-black tabular-nums leading-none">{typeof m.value === 'number' ? m.value : m.value}</span>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">{m.label}</span>
-          </div>
-        ))}
-      </div>
+      {/* Desktop Stats — hidden on mobile (shown above explore button) */}
+      <StatsCards stats={stats} creditData={creditData} t={t} language={language} className="hidden sm:grid" />
 
       {/* Today's Sales + Weekly Chart */}
       <div className="grid gap-4 md:grid-cols-3">
@@ -177,14 +190,18 @@ function StatsSection({ dashboardData, t, language, isRtl }: { dashboardData: Da
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">{t('overview.accepted_today', 'Accepted Today')}</p>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 pt-3 border-t border-border">
+            <div className="grid grid-cols-4 gap-1 pt-3 border-t border-border">
               <div className="text-center">
                 <p className="text-sm font-black tabular-nums text-emerald-600 dark:text-emerald-400">{todayStats.won}</p>
                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">{t('overview.accepted_today', 'Accepted')}</p>
               </div>
               <div className="text-center">
-                <p className="text-sm font-black tabular-nums text-red-500 dark:text-red-400">{todayStats.pending}</p>
-                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">{t('overview.rejected_today', 'Pending')}</p>
+                <p className="text-sm font-black tabular-nums text-blue-600 dark:text-blue-400">{todayStats.pending}</p>
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">{t('overview.pending_today', 'Pending')}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-black tabular-nums text-red-500 dark:text-red-400">{todayStats.lost}</p>
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">{t('overview.cancelled_today', 'Cancelled')}</p>
               </div>
               <div className="text-center">
                 <p className="text-sm font-black tabular-nums text-foreground">{todayStats.revenue.toLocaleString(language)}</p>
@@ -224,11 +241,13 @@ export function SellerOverview() {
   const { data: user } = useAuth()
   const isRtl = i18n.dir() === 'rtl'
 
-  const { statsPromise } = routeApi.useLoaderData()
+  const { data: dashboardData, isLoading } = useSellerDashboardStats(user?.id || '')
+  const { data: creditData } = useSellerCreditBalance()
+  const language = i18n.language
 
   return (
     <div className="flex-1 flex flex-col gap-4 w-full pb-8" dir={isRtl ? 'rtl' : 'ltr'}>
-      {/* Header */}
+      {/* Title + Explore row */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
@@ -244,6 +263,18 @@ export function SellerOverview() {
           </div>
         </div>
 
+        {/* Mobile Stats — between title and explore button */}
+        {!isLoading && dashboardData && (
+          <div className="block sm:hidden">
+            <StatsCards
+              stats={dashboardData.stats}
+              creditData={creditData}
+              t={t}
+              language={language}
+            />
+          </div>
+        )}
+
         <Button asChild className="font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full sm:w-auto">
           <Link to="/explore">
             <Sparkles className="size-4 me-2" />
@@ -253,11 +284,11 @@ export function SellerOverview() {
       </div>
 
       {/* Content */}
-      <React.Suspense fallback={<OverviewSkeleton />}>
-        <Await promise={statsPromise!}>
-          {(dashboardData) => <StatsSection dashboardData={dashboardData} t={t} language={i18n.language} isRtl={isRtl} />}
-        </Await>
-      </React.Suspense>
+      {isLoading ? (
+        <OverviewSkeleton />
+      ) : dashboardData ? (
+        <StatsSection dashboardData={dashboardData} t={t} language={language} isRtl={isRtl} />
+      ) : null}
     </div>
   )
 }

@@ -172,6 +172,7 @@ export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
       SELECT 
         SUM(CASE WHEN ${quotes.status} = 'accepted' THEN 1 ELSE 0 END) as today_won,
         SUM(CASE WHEN ${quotes.status} = 'pending' THEN 1 ELSE 0 END) as today_pending,
+        SUM(CASE WHEN ${quotes.status} IN ('rejected', 'withdrawn') THEN 1 ELSE 0 END) as today_lost,
         SUM(CASE WHEN ${quotes.status} = 'accepted' THEN ${quotes.price} ELSE 0 END) as today_revenue
       FROM ${quotes}
       WHERE ${quotes.sellerId} = ${context.user.id}
@@ -217,6 +218,7 @@ export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
       todayStats: {
         won: Number(todayRow.today_won || 0),
         pending: Number(todayRow.today_pending || 0),
+        lost: Number(todayRow.today_lost || 0),
         revenue: Number(todayRow.today_revenue || 0),
       },
       recentSales,

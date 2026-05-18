@@ -243,7 +243,35 @@ export class NotificationTriggers {
         status: quote.request.status,
         quotesCount: Number(rowCount.value),
         quoteId: quote.id,
-        quoteStatus: 'revoked'
+        quoteStatus: 'pending'
+      },
+    }, tx)
+  }
+
+  static async onQuoteWithdrawn(quoteId: string, tx?: any) {
+    const client = tx || db
+    const quote = await client.query.quotes.findFirst({
+      where: eq(quotes.id, quoteId),
+      with: { request: true }
+    })
+    if (!quote || !quote.request) return
+
+    const [rowCount] = await client
+      .select({ value: count() })
+      .from(quotes)
+      .where(eq(quotes.requestId, quote.requestId))
+
+    await NotificationService.send({
+      userId: quote.request.buyerId,
+      type: 'QUOTE_STATUS_CHANGE',
+      title: 'Offer Withdrawn',
+      message: `A seller has withdrawn their offer for ${quote.request.partName}.`,
+      referenceId: quote.requestId,
+      linkUrl: `/dashboard/requests/${quote.requestId}`,
+      metadata: {
+        requestId: quote.requestId,
+        status: quote.request.status,
+        quotesCount: Number(rowCount.value),
       },
     }, tx)
   }

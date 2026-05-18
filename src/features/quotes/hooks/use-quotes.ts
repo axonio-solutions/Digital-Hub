@@ -45,7 +45,11 @@ export function useAcceptQuote() {
           status: 'fulfilled',
           acceptedQuoteId: variables.quoteId,
           quotes: old.quotes?.map((q: any) =>
-            q.id === variables.quoteId ? { ...q, status: 'accepted' } : { ...q, status: 'rejected' }
+            q.id === variables.quoteId
+              ? { ...q, status: 'accepted' }
+              : q.status === 'pending'
+                ? { ...q, status: 'rejected' }
+                : q
           )
         }
       })
@@ -156,7 +160,11 @@ export function useRevokeQuote() {
           ...old,
           status: 'open',
           acceptedQuoteId: null,
-          quotes: old.quotes?.map((q: any) => ({ ...q, status: 'pending' }))
+          quotes: old.quotes?.map((q: any) =>
+            q.status === 'rejected' || q.status === 'accepted'
+              ? { ...q, status: 'pending' }
+              : q
+          )
         }
       })
 

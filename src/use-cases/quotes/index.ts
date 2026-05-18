@@ -106,7 +106,9 @@ export async function acceptQuoteUseCase(quoteId: string, requestId: string) {
       const otherQuotes = await tx.query.quotes.findMany({
         where: and(eq(quotes.requestId, requestId), ne(quotes.id, quoteId))
       })
-      otherQuoteIds = otherQuotes.map(q => q.id)
+      otherQuoteIds = otherQuotes
+        .filter(q => q.status !== 'withdrawn')
+        .map(q => q.id)
 
       return { success: true }
     } catch (error: any) {
@@ -233,6 +235,9 @@ export async function withdrawQuoteUseCase(id: string) {
     if (!quote) return { success: false, error: 'Quote not found' }
     validateQuoteTransition(quote.status, 'withdrawn')
     const withdrawn = await withdrawQuoteTransaction(id)
+    
+    await NotificationTriggers.onQuoteWithdrawn(id)
+    
     return { success: true, data: withdrawn[0] }
   } catch (error: any) {
     console.error('Error in withdrawQuoteUseCase:', error)

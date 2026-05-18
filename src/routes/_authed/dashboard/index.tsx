@@ -11,13 +11,12 @@ export const Route = createFileRoute('/_authed/dashboard/')({
     const role = (context.user)?.role || 'buyer'
     if (role === 'seller') {
       const { fetchSellerStatsServerFn } = await import('@/fn/quotes')
-      const statsPromise = fetchSellerStatsServerFn()
       await context.queryClient.ensureQueryData({
         queryKey: sellerKeys.dashboard(context.user.id),
-        queryFn: async () => await statsPromise,
+        queryFn: () => fetchSellerStatsServerFn(),
         staleTime: 60 * 1000,
       }).catch(() => {})
-      return { statsPromise: defer(statsPromise) }
+      return {}
     }
     if (role === 'buyer') {
       const { fetchBuyerRequestsServerFn } = await import('@/fn/requests')
