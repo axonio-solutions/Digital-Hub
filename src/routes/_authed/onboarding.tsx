@@ -185,14 +185,14 @@ function OnboardingFlow() {
   const renderStepContent = () => {
     if (isSuccess) {
       return (
-        <div className="flex flex-col items-center justify-center space-y-6 py-12 text-center">
+          <div className="flex flex-col items-center justify-center space-y-6 py-12 text-center">
           <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
             <Check className="h-12 w-12 text-primary" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold">Onboarding Complete!</h2>
+            <h2 className="text-2xl font-bold">{t('complete.title')}</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Your profile has been successfully set up. You are now ready to start using Digital-Hub.
+              {t('complete.description')}
             </p>
           </div>
           <Button
@@ -200,8 +200,8 @@ function OnboardingFlow() {
             className="mt-4 px-8"
             onClick={() => window.location.href = redirectTarget}
           >
-            {redirectTarget === '/waitlist' ? 'Go to Waitlist' : 'Go to Dashboard'}
-            <ChevronRight className="ml-2 h-4 w-4" />
+            {redirectTarget === '/waitlist' ? t('complete.go_to_waitlist') : t('complete.go_to_dashboard')}
+            <ChevronRight className="ml-2 h-4 w-4 rtl:mr-2 rtl:ml-0 rtl:rotate-180" />
           </Button>
         </div>
       )
@@ -452,11 +452,11 @@ function OnboardingFlow() {
                     'mt-4 text-center text-[10px] md:text-xs font-bold uppercase tracking-widest',
                     currentStep >= step.id ? 'text-primary' : 'text-muted-foreground'
                   )}>
-                    {step.id === 4 && formData.role === 'buyer' ? 'Personal' : step.title}
+                    {step.id === 4 && formData.role === 'buyer' ? t('location_step.buyer_title') : step.title}
                   </div>
                   {idx < arr.length - 1 && (
                     <div className={cn(
-                      'absolute top-6 left-[calc(50%+24px)] h-1 w-[calc(100%-48px)] -translate-y-1/2 bg-muted transition-colors duration-500',
+                      'absolute top-6 left-[calc(50%+24px)] rtl:left-auto rtl:right-[calc(50%+24px)] h-1 w-[calc(100%-48px)] -translate-y-1/2 bg-muted transition-colors duration-500',
                       currentStep > step.id && 'bg-primary/50'
                     )} />
                   )}

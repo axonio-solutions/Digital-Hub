@@ -54,6 +54,12 @@
     "categories": "Part Categories",
     "loading": "Loading market specialties..."
   },
+  "complete": {
+    "title": "Onboarding Complete!",
+    "description": "Your profile has been successfully set up. You are now ready to start using Digital-Hub.",
+    "go_to_dashboard": "Go to Dashboard",
+    "go_to_waitlist": "Go to Waitlist"
+  },
   "nav": {
     "back": "Back",
     "select_role": "Select a Role",

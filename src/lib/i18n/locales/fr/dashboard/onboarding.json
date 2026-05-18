@@ -54,6 +54,12 @@
     "categories": "Catégories de pièces",
     "loading": "Chargement des spécialités du marché..."
   },
+  "complete": {
+    "title": "Inscription terminée !",
+    "description": "Votre profil a été configuré avec succès. Vous êtes maintenant prêt à utiliser Digital-Hub.",
+    "go_to_dashboard": "Aller au tableau de bord",
+    "go_to_waitlist": "Aller à la liste d'attente"
+  },
   "nav": {
     "back": "Retour",
     "select_role": "Choisir un rôle",
