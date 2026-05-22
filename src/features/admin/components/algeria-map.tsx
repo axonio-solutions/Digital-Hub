@@ -19,68 +19,78 @@ interface AlgeriaMapProps {
 }
 
 // Memoized Individual Wilaya Shape Component
-const MemoizedWilaya = React.memo(({ 
-  id, 
-  shape, 
-  wilayaName,
-  density, 
-  fillColor,
-  isSignificant,
-  isHovered,
-  role,
-  onHover,
-  onLeave,
-  isMounted
-}: {
-  id: string,
-  shape: any,
-  wilayaName: string,
-  density: number,
-  fillColor: string,
-  isSignificant: boolean,
-  isHovered: boolean,
-  role: 'buyer' | 'seller',
-  onHover: (id: string) => void,
-  onLeave: () => void,
-  isMounted: boolean
-}) => {
-  const shapeProps = {
-    id: id,
-    fill: isHovered
-      ? role === 'buyer' ? '#3b82f6' : '#10b981'
-      : fillColor,
-    stroke: isHovered ? '#ffffff' : isSignificant ? '#0369a1' : 'currentColor',
-    strokeOpacity: isSignificant ? 0.3 : 0.05,
-    strokeWidth: isHovered ? '2' : '0.5',
-    className: 'wilayaPath cursor-pointer transition-all duration-300 outline-none',
-    onMouseEnter: () => onHover(id),
-    onMouseLeave: onLeave,
-  }
+const MemoizedWilaya = React.memo(
+  ({
+    id,
+    shape,
+    wilayaName,
+    density,
+    fillColor,
+    isSignificant,
+    isHovered,
+    role,
+    onHover,
+    onLeave,
+    isMounted,
+  }: {
+    id: string
+    shape: any
+    wilayaName: string
+    density: number
+    fillColor: string
+    isSignificant: boolean
+    isHovered: boolean
+    role: 'buyer' | 'seller'
+    onHover: (id: string) => void
+    onLeave: () => void
+    isMounted: boolean
+  }) => {
+    const shapeProps = {
+      id: id,
+      fill: isHovered ? (role === 'buyer' ? '#3b82f6' : '#10b981') : fillColor,
+      stroke: isHovered
+        ? '#ffffff'
+        : isSignificant
+          ? '#0369a1'
+          : 'currentColor',
+      strokeOpacity: isSignificant ? 0.3 : 0.05,
+      strokeWidth: isHovered ? '2' : '0.5',
+      className:
+        'wilayaPath cursor-pointer transition-all duration-300 outline-none',
+      onMouseEnter: () => onHover(id),
+      onMouseLeave: onLeave,
+    }
 
-  const pathElement = shape.type === 'path' 
-    ? <path d={shape.d} {...shapeProps} />
-    : <polygon points={shape.points} {...shapeProps} />
+    const pathElement =
+      shape.type === 'path' ? (
+        <path d={shape.d} {...shapeProps} />
+      ) : (
+        <polygon points={shape.points} {...shapeProps} />
+      )
 
-  if (!isMounted) return pathElement
+    if (!isMounted) return pathElement
 
-  return (
-    <Tooltip delayDuration={0}>
-      <TooltipTrigger asChild>{pathElement}</TooltipTrigger>
-      <TooltipContent className="bg-white border-slate-200 text-slate-900 p-3 rounded-xl shadow-xl z-50">
-        <div className="space-y-1">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{id.replace('_', ' ')}</p>
-          <p className="text-sm font-black">{wilayaName || 'Territory'}</p>
-          <div className="flex items-center gap-2 pt-1">
-            <div className="size-1.5 rounded-full bg-primary" />
-            <p className="text-xs font-bold text-slate-600">
-              {density} {role === 'buyer' ? 'Buyers' : 'Sellers'}
+    return (
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>{pathElement}</TooltipTrigger>
+        <TooltipContent className="bg-white border-slate-200 text-slate-900 p-3 rounded-xl shadow-xl z-50">
+          <div className="space-y-1">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              {id.replace('_', ' ')}
             </p>
+            <p className="text-sm font-black">{wilayaName || 'Territory'}</p>
+            <div className="flex items-center gap-2 pt-1">
+              <div className="size-1.5 rounded-full bg-primary" />
+              <p className="text-xs font-bold text-slate-600">
+                {density} {role === 'buyer' ? 'Buyers' : 'Sellers'}
+              </p>
+            </div>
           </div>
-        </div>
-      </TooltipContent>
-    </Tooltip>
-  )
-})
+        </TooltipContent>
+      </Tooltip>
+    )
+  },
+)
 
 MemoizedWilaya.displayName = 'WilayaShape'
 
@@ -419,8 +429,8 @@ export function AlgeriaMap({
     return name
       .toLowerCase()
       .trim()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "") // Remove accents
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove accents
       .replace(/[-_]/g, ' ') // Standardize separators
   }
 
@@ -478,9 +488,9 @@ export function AlgeriaMap({
             const wilayaName = ID_TO_WILAYA[id]
             const density = wilayaDensityMap.get(id) || 0
             const fillColor = wilayaColorMap.get(id) || '#f8fafc'
-            
+
             return (
-              <MemoizedWilaya 
+              <MemoizedWilaya
                 key={id}
                 id={id}
                 shape={shape}
@@ -500,18 +510,26 @@ export function AlgeriaMap({
 
         {/* Simplified Compact Legend */}
         <div className="mt-8 flex flex-wrap gap-6 justify-center items-center py-4 px-8 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800/50">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 me-2 border-r pe-4 border-slate-200 dark:border-slate-800">Density Legend</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 me-2 border-r pe-4 border-slate-200 dark:border-slate-800">
+            Density Legend
+          </div>
           <div className="flex items-center gap-2">
             <div className="size-2 rounded-full bg-sky-100" />
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Low Presence</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
+              Low Presence
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="size-2 rounded-full bg-sky-300" />
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Established</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
+              Established
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="size-2 rounded-full bg-sky-500" />
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Network Core</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
+              Network Core
+            </span>
           </div>
         </div>
       </div>

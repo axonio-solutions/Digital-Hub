@@ -1,7 +1,7 @@
 'use client'
 
-import type { ReactNode } from 'react'
 import { HelpCircle, RefreshCw } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
@@ -19,7 +19,7 @@ interface AnalyticsBaseSharedProps {
   headerIcon: ReactNode
   headerGradient: string
   badgeContent?: ReactNode
-  metrics: AnalyticsMetric[]
+  metrics: Array<AnalyticsMetric>
   chartsSectionTitle?: string
   chartsContent?: ReactNode
   mapTitle: string
@@ -102,9 +102,7 @@ export function AnalyticsBase({
           <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
             {chartsSectionTitle}
           </p>
-          <div className="grid gap-4 lg:grid-cols-7">
-            {chartsContent}
-          </div>
+          <div className="grid gap-4 lg:grid-cols-7">{chartsContent}</div>
         </div>
       )}
 
@@ -127,7 +125,11 @@ export function AnalyticsBase({
   )
 }
 
-export function AnalyticsMetricsGrid({ metrics }: { metrics: AnalyticsMetric[] }) {
+export function AnalyticsMetricsGrid({
+  metrics,
+}: {
+  metrics: Array<AnalyticsMetric>
+}) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {metrics.map((m) => (
@@ -140,10 +142,17 @@ export function AnalyticsMetricsGrid({ metrics }: { metrics: AnalyticsMetric[] }
 export function AnalyticsMetricCard({ metric }: { metric: AnalyticsMetric }) {
   const Icon = metric.icon
   return (
-    <div className={cn('flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all', metric.color)}>
+    <div
+      className={cn(
+        'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
+        metric.color,
+      )}
+    >
       <div className="flex items-center gap-1.5">
         <Icon className="size-4" />
-        <span className="text-xl font-black tabular-nums leading-none">{metric.value}</span>
+        <span className="text-xl font-black tabular-nums leading-none">
+          {metric.value}
+        </span>
       </div>
       <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
         {metric.label}
@@ -152,15 +161,28 @@ export function AnalyticsMetricCard({ metric }: { metric: AnalyticsMetric }) {
   )
 }
 
-export function SectionError({ message, onRetry }: { message?: string; onRetry?: () => void }) {
+export function SectionError({
+  message,
+  onRetry,
+}: {
+  message?: string
+  onRetry?: () => void
+}) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-12">
       <HelpCircle className="size-8 text-muted-foreground/50" />
       {message && (
-        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center max-w-xs">{message}</p>
+        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center max-w-xs">
+          {message}
+        </p>
       )}
       {onRetry && (
-        <Button variant="outline" size="sm" onClick={onRetry} className="gap-1.5 text-xs font-bold">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onRetry}
+          className="gap-1.5 text-xs font-bold"
+        >
           <RefreshCw className="size-3" />
           Retry
         </Button>

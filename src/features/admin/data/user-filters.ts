@@ -1,5 +1,13 @@
-import { Activity, CheckCircle, Lock, Shield, ShieldOff, ShoppingBag, User } from 'lucide-react'
-import { TFunction } from 'i18next'
+import {
+  Activity,
+  CheckCircle,
+  Lock,
+  Shield,
+  ShieldOff,
+  ShoppingBag,
+  User,
+} from 'lucide-react'
+import type { TFunction } from 'i18next'
 
 export const getRoles = (t: TFunction) => [
   {

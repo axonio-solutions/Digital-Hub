@@ -1,13 +1,13 @@
-import { keepPreviousData, useQuery, queryOptions } from '@tanstack/react-query'
-import {
-  getAdvancedSystemMetricsServerFn,
-  getAdminDashboardStatsServerFn,
-  getBuyerAnalyticsServerFn,
-  getSellerAnalyticsServerFn,
-  getMarketGapAnalysisServerFn,
-} from '@/fn/admin'
+import { keepPreviousData, queryOptions, useQuery } from '@tanstack/react-query'
 import { adminKeys } from './use-admin'
 import type { BuyerAnalyticsData, SellerAnalyticsData } from '@/types/analytics'
+import {
+  getAdminDashboardStatsServerFn,
+  getAdvancedSystemMetricsServerFn,
+  getBuyerAnalyticsServerFn,
+  getMarketGapAnalysisServerFn,
+  getSellerAnalyticsServerFn,
+} from '@/fn/admin'
 
 const STALE_TIME = 5 * 60 * 1000
 const GC_TIME = 30 * 60 * 1000
@@ -25,7 +25,8 @@ export const adminAnalyticsQueries = {
   sellers: () =>
     queryOptions({
       queryKey: adminKeys.analytics('sellers'),
-      queryFn: () => getSellerAnalyticsServerFn() as Promise<SellerAnalyticsData>,
+      queryFn: () =>
+        getSellerAnalyticsServerFn() as Promise<SellerAnalyticsData>,
       staleTime: STALE_TIME,
       gcTime: GC_TIME,
       placeholderData: keepPreviousData,

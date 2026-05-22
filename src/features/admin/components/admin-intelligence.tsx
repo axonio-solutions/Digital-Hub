@@ -4,21 +4,27 @@ import { useMemo } from 'react'
 import {
   BarChart3,
   ClipboardList,
-  Store,
   HelpCircle,
-  TrendingUp,
   RefreshCw,
+  Store,
+  TrendingUp,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
   CartesianGrid,
   ResponsiveContainer,
+  XAxis,
+  YAxis,
 } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart'
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
@@ -30,7 +36,19 @@ import { useMarketGapAnalysis } from '@/features/admin/hooks/use-analytics'
 import { tCategory } from '@/utils/category-utils'
 import { WILAYAS } from '@/lib/constants/wilayas'
 
-function GapComparisonChart({ data, nameKey, t, translateName, dir }: { data: any[]; nameKey: string; t: (key: string) => string; translateName: (value: string) => string; dir?: string }) {
+function GapComparisonChart({
+  data,
+  nameKey,
+  t,
+  translateName,
+  dir,
+}: {
+  data: Array<any>
+  nameKey: string
+  t: (key: string) => string
+  translateName: (value: string) => string
+  dir?: string
+}) {
   const chartData = useMemo(
     () =>
       data.slice(0, 8).map((item) => ({
@@ -46,7 +64,9 @@ function GapComparisonChart({ data, nameKey, t, translateName, dir }: { data: an
     <div className="h-[300px] w-full">
       {chartData.length === 0 ? (
         <div className="flex h-full items-center justify-center">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('intelligence_page.no_data')}</p>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            {t('intelligence_page.no_data')}
+          </p>
         </div>
       ) : (
         <ChartContainer
@@ -57,8 +77,22 @@ function GapComparisonChart({ data, nameKey, t, translateName, dir }: { data: an
           className="h-full w-full"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} barGap={2} barCategoryGap="20%" margin={{ left: -10, right: 8, top: 8, bottom: dir === 'rtl' ? 16 : 0 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-800" vertical={false} />
+            <BarChart
+              data={chartData}
+              barGap={2}
+              barCategoryGap="20%"
+              margin={{
+                left: -10,
+                right: 8,
+                top: 8,
+                bottom: dir === 'rtl' ? 16 : 0,
+              }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                className="stroke-slate-200 dark:stroke-slate-800"
+                vertical={false}
+              />
               <XAxis
                 dataKey="name"
                 tickLine={false}
@@ -70,11 +104,31 @@ function GapComparisonChart({ data, nameKey, t, translateName, dir }: { data: an
                 textAnchor="end"
                 height={dir === 'rtl' ? 80 : 60}
               />
-              <YAxis tickLine={false} axisLine={false} className="text-[10px] font-medium text-slate-500" tick={{ fontSize: 10 }} />
-              <ChartTooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} content={<ChartTooltipContent />} />
-              <ChartLegend content={<ChartLegendContent payload={[] as any} />} />
-              <Bar dataKey="Demand" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={32} />
-              <Bar dataKey="Supply" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={32} />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                className="text-[10px] font-medium text-slate-500"
+                tick={{ fontSize: 10 }}
+              />
+              <ChartTooltip
+                cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+                content={<ChartTooltipContent />}
+              />
+              <ChartLegend
+                content={<ChartLegendContent payload={[] as any} />}
+              />
+              <Bar
+                dataKey="Demand"
+                fill="#3b82f6"
+                radius={[4, 4, 0, 0]}
+                maxBarSize={32}
+              />
+              <Bar
+                dataKey="Supply"
+                fill="#10b981"
+                radius={[4, 4, 0, 0]}
+                maxBarSize={32}
+              />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
@@ -84,26 +138,60 @@ function GapComparisonChart({ data, nameKey, t, translateName, dir }: { data: an
 }
 
 function UnservedBadge({ gap }: { gap: number }) {
-  if (gap <= 0) return <Badge variant="secondary" className="text-[10px] font-bold">0</Badge>
-  if (gap <= 2) return <Badge variant="outline" className="text-[10px] font-bold border-amber-300 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30">{gap}</Badge>
-  return <Badge variant="destructive" className="text-[10px] font-bold">{gap}</Badge>
+  if (gap <= 0)
+    return (
+      <Badge variant="secondary" className="text-[10px] font-bold">
+        0
+      </Badge>
+    )
+  if (gap <= 2)
+    return (
+      <Badge
+        variant="outline"
+        className="text-[10px] font-bold border-amber-300 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30"
+      >
+        {gap}
+      </Badge>
+    )
+  return (
+    <Badge variant="destructive" className="text-[10px] font-bold">
+      {gap}
+    </Badge>
+  )
 }
 
-function GapSummaryTable({ data, nameKey, t, translateName }: { data: any[]; nameKey: string; t: (key: string) => string; translateName: (value: string) => string }) {
+function GapSummaryTable({
+  data,
+  nameKey,
+  t,
+  translateName,
+}: {
+  data: Array<any>
+  nameKey: string
+  t: (key: string) => string
+  translateName: (value: string) => string
+}) {
   const maxDemand = Math.max(...data.map((d) => d.demand || 0), 1)
 
   return (
     <div className="space-y-1">
       {data.length === 0 ? (
         <div className="flex h-[200px] items-center justify-center">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('intelligence_page.no_data')}</p>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            {t('intelligence_page.no_data')}
+          </p>
         </div>
       ) : (
         <div className="divide-y divide-slate-100 dark:divide-slate-800">
           {data.slice(0, 8).map((item) => (
-            <div key={item[nameKey]} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+            <div
+              key={item[nameKey]}
+              className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0"
+            >
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{translateName(item[nameKey])}</p>
+                <p className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
+                  {translateName(item[nameKey])}
+                </p>
                 <div className="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden mt-1.5">
                   <div
                     className="h-full rounded-full bg-blue-500 transition-all duration-500"
@@ -112,8 +200,12 @@ function GapSummaryTable({ data, nameKey, t, translateName }: { data: any[]; nam
                 </div>
               </div>
               <div className="flex items-center gap-3 tabular-nums shrink-0">
-                <span className="text-xs font-black text-blue-600 dark:text-blue-400 w-6 text-right">{item.demand}</span>
-                <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 w-6 text-right">{item.supplySellers}</span>
+                <span className="text-xs font-black text-blue-600 dark:text-blue-400 w-6 text-right">
+                  {item.demand}
+                </span>
+                <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 w-6 text-right">
+                  {item.supplySellers}
+                </span>
                 <UnservedBadge gap={item.gap} />
               </div>
             </div>
@@ -138,13 +230,26 @@ function GapSummaryTable({ data, nameKey, t, translateName }: { data: any[]; nam
   )
 }
 
-function SectionError({ message, onRetry }: { message: string; onRetry?: () => void }) {
+function SectionError({
+  message,
+  onRetry,
+}: {
+  message: string
+  onRetry?: () => void
+}) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-12">
       <HelpCircle className="size-8 text-muted-foreground/50" />
-      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center max-w-xs">{message}</p>
+      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center max-w-xs">
+        {message}
+      </p>
       {onRetry && (
-        <Button variant="outline" size="sm" onClick={onRetry} className="gap-1.5 text-xs font-bold">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onRetry}
+          className="gap-1.5 text-xs font-bold"
+        >
           <RefreshCw className="size-3" />
           Retry
         </Button>
@@ -173,7 +278,11 @@ export function AdminIntelligence() {
   )
 
   const totalDemand = useMemo(
-    () => (analysis?.categoryGaps || []).reduce((s: number, c: any) => s + c.demand, 0),
+    () =>
+      (analysis?.categoryGaps || []).reduce(
+        (s: number, c: any) => s + c.demand,
+        0,
+      ),
     [analysis?.categoryGaps],
   )
 
@@ -184,7 +293,10 @@ export function AdminIntelligence() {
   if (isError && !analysis) {
     return (
       <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2">
-        <SectionError message={t('intelligence_page.no_data')} onRetry={() => refetch()} />
+        <SectionError
+          message={t('intelligence_page.no_data')}
+          onRetry={() => refetch()}
+        />
       </div>
     )
   }
@@ -240,11 +352,16 @@ export function AdminIntelligence() {
         {metrics.map((m) => (
           <div
             key={m.label}
-            className={cn('flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all', m.color)}
+            className={cn(
+              'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
+              m.color,
+            )}
           >
             <div className="flex items-center gap-1.5">
               <m.icon className="size-4" />
-              <span className="text-xl font-black tabular-nums leading-none text-foreground">{m.value}</span>
+              <span className="text-xl font-black tabular-nums leading-none text-foreground">
+                {m.value}
+              </span>
             </div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
               {m.label}
@@ -256,25 +373,46 @@ export function AdminIntelligence() {
       {/* Tabs: Bar Chart view / Summary Table view */}
       <Card className="rounded-2xl border-border shadow-sm overflow-hidden">
         <DirectionProvider dir={i18n.dir()}>
-        <Tabs defaultValue="chart" className="w-full">
-          <div className="flex items-center justify-between px-5 pt-4 pb-0">
-            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
-              {t('intelligence_page.category_gaps')}
-            </p>
-            <TabsList className="h-8">
-              <TabsTrigger value="chart" className="text-[10px] font-bold px-3">{t('intelligence_page.chart_view')}</TabsTrigger>
-              <TabsTrigger value="table" className="text-[10px] font-bold px-3">{t('intelligence_page.table_view')}</TabsTrigger>
-            </TabsList>
-          </div>
-          <div className="p-5 pt-3">
-            <TabsContent value="chart" className="m-0">
-              <GapComparisonChart data={analysis?.categoryGaps || []} nameKey="category" t={t} translateName={(v) => translateName('category', v)} dir={i18n.dir()} />
-            </TabsContent>
-            <TabsContent value="table" className="m-0">
-              <GapSummaryTable data={analysis?.categoryGaps || []} nameKey="category" t={t} translateName={(v) => translateName('category', v)} />
-            </TabsContent>
-          </div>
-        </Tabs>
+          <Tabs defaultValue="chart" className="w-full">
+            <div className="flex items-center justify-between px-5 pt-4 pb-0">
+              <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
+                {t('intelligence_page.category_gaps')}
+              </p>
+              <TabsList className="h-8">
+                <TabsTrigger
+                  value="chart"
+                  className="text-[10px] font-bold px-3"
+                >
+                  {t('intelligence_page.chart_view')}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="table"
+                  className="text-[10px] font-bold px-3"
+                >
+                  {t('intelligence_page.table_view')}
+                </TabsTrigger>
+              </TabsList>
+            </div>
+            <div className="p-5 pt-3">
+              <TabsContent value="chart" className="m-0">
+                <GapComparisonChart
+                  data={analysis?.categoryGaps || []}
+                  nameKey="category"
+                  t={t}
+                  translateName={(v) => translateName('category', v)}
+                  dir={i18n.dir()}
+                />
+              </TabsContent>
+              <TabsContent value="table" className="m-0">
+                <GapSummaryTable
+                  data={analysis?.categoryGaps || []}
+                  nameKey="category"
+                  t={t}
+                  translateName={(v) => translateName('category', v)}
+                />
+              </TabsContent>
+            </div>
+          </Tabs>
         </DirectionProvider>
       </Card>
 
@@ -284,13 +422,23 @@ export function AdminIntelligence() {
           <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-3">
             {t('intelligence_page.brand_gaps')}
           </p>
-          <GapSummaryTable data={analysis?.brandGaps || []} nameKey="brand" t={t} translateName={(v) => translateName('brand', v)} />
+          <GapSummaryTable
+            data={analysis?.brandGaps || []}
+            nameKey="brand"
+            t={t}
+            translateName={(v) => translateName('brand', v)}
+          />
         </Card>
         <Card className="rounded-2xl border-border shadow-sm p-5">
           <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-3">
             {t('intelligence_page.regional_gaps')}
           </p>
-          <GapSummaryTable data={analysis?.regionalGaps || []} nameKey="wilaya" t={t} translateName={(v) => translateName('wilaya', v)} />
+          <GapSummaryTable
+            data={analysis?.regionalGaps || []}
+            nameKey="wilaya"
+            t={t}
+            translateName={(v) => translateName('wilaya', v)}
+          />
         </Card>
       </div>
     </div>

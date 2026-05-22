@@ -3,13 +3,13 @@
 import React from 'react'
 import {
   IconActivity,
-  IconUsers,
-  IconBuildingStore,
   IconArchive,
+  IconBuildingStore,
   IconChartBar,
   IconReportMoney,
   IconSend,
   IconSettings,
+  IconUsers,
 } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import { NavMain } from '@/features/dashboard/components/layout/nav-main'
@@ -77,5 +77,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     </>
   )
 
-  return <DashboardShell sidebarContent={sidebarContent}>{children}</DashboardShell>
+  return (
+    <DashboardShell sidebarContent={sidebarContent}>{children}</DashboardShell>
+  )
 }
