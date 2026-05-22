@@ -1,0 +1,13 @@
+[
+  {
+    "date": "2026-05-21",
+    "scope": "app",
+    "macrostructure": "Workbench (home) + Long Document (content pages)",
+    "theme": "brand blue hue 260° — custom token layer over existing shadcn palette",
+    "theme_axes": "light / geometric-sans / cool",
+    "nav": "N5 floating pill",
+    "footer": "Ft1 mast-headed",
+    "enrichment": "none (UI mockup frames on home only)",
+    "brief": "MLILA Digital Hub — public pages redesign · genre: modern-minimal · Algeria auto-parts B2B marketplace"
+  }
+]
