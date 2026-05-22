@@ -5,46 +5,50 @@ import { SellerOverview } from '@/features/seller'
 import { AdminOverview } from '@/features/admin/components/admin-overview'
 import { sellerKeys } from '@/features/marketplace/hooks/use-marketplace'
 import { adminKeys } from '@/features/admin/hooks/use-admin'
+import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
 
 export const Route = createFileRoute('/_authed/dashboard/')({
   loader: async ({ context }) => {
-    const role = (context.user)?.role || 'buyer'
+    const role = context.user?.role || 'buyer'
     if (role === 'seller') {
       const { fetchSellerStatsServerFn } = await import('@/fn/quotes')
       await context.queryClient.ensureQueryData({
         queryKey: sellerKeys.dashboard(context.user.id),
         queryFn: () => fetchSellerStatsServerFn(),
         staleTime: 60 * 1000,
-      }).catch(() => {})
+      })
       return {}
     }
     if (role === 'buyer') {
       const { fetchBuyerRequestsServerFn } = await import('@/fn/requests')
-      const buyerId = (context.user)?.id
+      const buyerId = context.user?.id
       if (buyerId) {
         const requestsPromise = fetchBuyerRequestsServerFn()
         return { buyerRequests: defer(requestsPromise) }
       }
     }
     if (role === 'admin') {
-      const { getAdminDashboardStatsServerFn, getAdvancedSystemMetricsServerFn, getMarketGapAnalysisServerFn } = await import('@/fn/admin')
-      const statsPromise = getAdminDashboardStatsServerFn({ data: { days: 30 } })
-      const metricsPromise = getAdvancedSystemMetricsServerFn({ data: { days: 30 } })
-      const marketGapPromise = getMarketGapAnalysisServerFn()
+      const {
+        getAdminDashboardStatsServerFn,
+        getAdvancedSystemMetricsServerFn,
+        getMarketGapAnalysisServerFn,
+      } = await import('@/fn/admin')
       await Promise.allSettled([
         context.queryClient.ensureQueryData({
           queryKey: [...adminKeys.dashboardStats(), 30],
-          queryFn: () => (statsPromise as any),
+          queryFn: () =>
+            getAdminDashboardStatsServerFn({ data: { days: 30 } }) as any,
           staleTime: 2 * 60 * 1000,
         }),
         context.queryClient.ensureQueryData({
           queryKey: [...adminKeys.systemMetrics(), 30],
-          queryFn: () => (metricsPromise as any),
+          queryFn: () =>
+            getAdvancedSystemMetricsServerFn({ data: { days: 30 } }) as any,
           staleTime: 2 * 60 * 1000,
         }),
         context.queryClient.ensureQueryData({
           queryKey: adminKeys.marketGap(),
-          queryFn: () => (marketGapPromise as any),
+          queryFn: () => getMarketGapAnalysisServerFn() as any,
           staleTime: 2 * 60 * 1000,
         }),
       ])
@@ -53,6 +57,7 @@ export const Route = createFileRoute('/_authed/dashboard/')({
     return {}
   },
   component: DashboardOverview,
+  errorComponent: RouteErrorFallback,
 })
 
 function DashboardOverview() {

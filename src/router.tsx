@@ -13,6 +13,8 @@ export const createRouter = () => {
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60 * 5, // 5 minutes
+        retry: 1,
+        retryDelay: 1000,
       },
     },
   })
@@ -23,6 +25,8 @@ export const createRouter = () => {
     context: { queryClient, user: null as any, session: null as any },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    defaultPendingMs: 0,
+    defaultPendingMinMs: 500,
   })
 
   setupRouterSsrQueryIntegration({ router, queryClient })

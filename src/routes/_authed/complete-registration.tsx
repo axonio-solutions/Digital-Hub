@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import {
@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/card'
 import { AvatarUpload } from '@/features/upload/components/avatar-upload'
 import { Button } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authed/complete-registration')({
   component: CompleteRegistration,
@@ -43,16 +42,14 @@ function CompleteRegistration() {
             currentImage={user?.image}
             name={user?.name}
           />
-          
+
           <div className="text-center space-y-2">
             <p className="text-sm font-medium text-muted-foreground">
               A profile picture helps other users recognize you.
             </p>
             <div className="pt-4">
               <Button asChild className="w-full sm:w-auto font-bold">
-                <Link to="/dashboard">
-                  Continue to Dashboard
-                </Link>
+                <Link to="/dashboard">Continue to Dashboard</Link>
               </Button>
             </div>
           </div>

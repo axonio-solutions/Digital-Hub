@@ -12,18 +12,18 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 // 2. Import the *Panel* versions (not the floating default ones)
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
+import { useTranslation } from 'react-i18next'
+import { z } from 'zod'
+import styles from '../styles.css?url'
+import { DefaultNotFound } from './components/errors/-default-not-found'
+import type { MyRouterContext } from '@/types/router'
 import { Toaster } from '@/components/ui/sonner'
 import { DirectionProvider } from '@/components/ui/direction'
 import { authQueries } from '@/features/auth/queries/auth-queries'
 import { useNotifications } from '@/features/notifications/hooks/use-notifications'
 
-import styles from '../styles.css?url'
-import { DefaultNotFound } from './components/errors/-default-not-found'
-import type { MyRouterContext } from '@/types/router'
 import { ThemeProvider } from '@/components/theme-provider'
 import { I18nProvider } from '@/components/i18n-provider'
-import { useTranslation } from 'react-i18next'
-import { z } from 'zod'
 
 const rootSearchSchema = z.object({
   lang: z.enum(['en', 'fr', 'ar']).optional(),
@@ -87,7 +87,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   }),
   component: () => {
     const { user } = Route.useRouteContext()
-    const { lang } = Route.useSearch() as RootSearch
+    const { lang } = Route.useSearch()
     const { i18n } = useTranslation()
 
     // Subscribe to real-time notifications
@@ -107,7 +107,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         <I18nProvider>
           <DirectionProvider direction={direction}>
             <Outlet />
-            <Toaster position={direction === 'rtl' ? 'bottom-left' : 'bottom-right'} closeButton />
+            <Toaster
+              position={direction === 'rtl' ? 'bottom-left' : 'bottom-right'}
+              closeButton
+            />
           </DirectionProvider>
         </I18nProvider>
 

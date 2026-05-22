@@ -1,15 +1,21 @@
 import * as React from 'react'
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 
 // 1. Dynamic Imports with Named Export Handling
 const AdminLayout = React.lazy(() =>
-  import('@/features/admin/components/layout/admin-layout').then((m) => ({ default: m.AdminLayout }))
+  import('@/features/admin/components/layout/admin-layout').then((m) => ({
+    default: m.AdminLayout,
+  })),
 )
 const SellerLayout = React.lazy(() =>
-  import('@/features/seller/components/layout/seller-layout').then((m) => ({ default: m.SellerLayout }))
+  import('@/features/seller/components/layout/seller-layout').then((m) => ({
+    default: m.SellerLayout,
+  })),
 )
 const BuyerLayout = React.lazy(() =>
-  import('@/features/buyer/components/layout/buyer-layout').then((m) => ({ default: m.BuyerLayout }))
+  import('@/features/buyer/components/layout/buyer-layout').then((m) => ({
+    default: m.BuyerLayout,
+  })),
 )
 
 // 2. Fallback Skeleton Component
@@ -42,7 +48,7 @@ function DashboardSkeleton() {
 function DashboardLayoutSelector() {
   const { user } = Route.useRouteContext()
 
-  const role = (user as any)?.role || 'buyer'
+  const role = user?.role || 'buyer'
 
   return (
     <React.Suspense fallback={<DashboardSkeleton />}>

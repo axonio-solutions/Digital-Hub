@@ -1,16 +1,22 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Clock,
+  LogOut,
+  Mail,
+  ShieldCheck,
+} from 'lucide-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Clock, CheckCircle2, ShieldCheck, Mail, ArrowLeft, LogOut } from 'lucide-react'
 import { authQueries } from '@/features/auth/queries/auth-queries'
-import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { useRouter } from '@tanstack/react-router'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageToggle } from '@/components/language-toggle'
 import { authClient } from '@/lib/auth-client'
-import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/_authed/waitlist')({
   component: WaitlistPage,
@@ -47,14 +53,18 @@ function WaitlistPage() {
       <div className="absolute top-6 right-6 z-50 flex items-center gap-3">
         <LanguageToggle />
         <ThemeToggle />
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           onClick={handleLogout}
           disabled={isLoggingOut}
           className="gap-2 backdrop-blur-sm bg-card/10 hover:bg-destructive/10 hover:text-destructive border-border"
         >
-          {isLoggingOut ? <Clock className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
+          {isLoggingOut ? (
+            <Clock className="h-4 w-4 animate-spin" />
+          ) : (
+            <LogOut className="h-4 w-4" />
+          )}
           <span className="hidden sm:inline">{t('nav.logout')}</span>
         </Button>
       </div>
@@ -64,7 +74,7 @@ function WaitlistPage() {
 
       <Card className="max-w-xl w-full border border-border shadow-2xl bg-card/90 backdrop-blur-sm relative z-10 overflow-hidden">
         <div className="h-2 bg-gradient-to-r from-primary via-accent to-primary animate-gradient-x w-full" />
-        
+
         <CardContent className="p-8 md:p-12">
           <div className="flex flex-col items-center text-center space-y-8">
             <div className="relative">
@@ -81,23 +91,29 @@ function WaitlistPage() {
                 {t('hero.title')}
               </h1>
               <p className="text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
-                {t('hero.desc_prefix')} <span className="text-primary font-bold">MLILA</span>. {t('hero.desc_main')} <span className="font-semibold text-foreground">{t('hero.moderation')}</span>.
+                {t('hero.desc_prefix')}{' '}
+                <span className="text-primary font-bold">MLILA</span>.{' '}
+                {t('hero.desc_main')}{' '}
+                <span className="font-semibold text-foreground">
+                  {t('hero.moderation')}
+                </span>
+                .
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full pt-4">
-              <StepInfo 
+              <StepInfo
                 icon={<ShieldCheck className="h-5 w-5 text-primary" />}
                 title={t('steps.reviewing.title')}
                 desc={t('steps.reviewing.desc')}
                 active
               />
-              <StepInfo 
+              <StepInfo
                 icon={<Mail className="h-5 w-5 text-muted-foreground" />}
                 title={t('steps.notification.title')}
                 desc={t('steps.notification.desc')}
               />
-              <StepInfo 
+              <StepInfo
                 icon={<ArrowLeft className="h-5 w-5 text-muted-foreground" />}
                 title={t('steps.access.title')}
                 desc={t('steps.access.desc')}
@@ -107,18 +123,20 @@ function WaitlistPage() {
             <div className="w-full h-px bg-border" />
 
             <div className="flex flex-col sm:flex-row gap-3 w-full justify-center pt-1">
-              <Button 
+              <Button
                 onClick={handleRefresh}
                 className="bg-primary hover:bg-primary/90 h-11 px-8 text-sm font-bold shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
               >
                 {t('buttons.check_status')}
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 asChild
                 className="h-11 px-8 border-2 font-bold hover:bg-accent"
               >
-                <a href="mailto:support@mlila.dz">{t('buttons.contact_support')}</a>
+                <a href="mailto:support@mlila.dz">
+                  {t('buttons.contact_support')}
+                </a>
               </Button>
             </div>
           </div>
@@ -130,23 +148,33 @@ function WaitlistPage() {
 
 function StepInfo({ icon, title, desc, active = false }: any) {
   return (
-    <div className={cn(
-      "p-4 rounded-2xl border-2 transition-all",
-      active 
-        ? "border-primary/20 bg-primary/5 shadow-sm" 
-        : "border-transparent bg-muted/40"
-    )}>
-      <div className={cn(
-        "h-10 w-10 rounded-xl flex items-center justify-center mb-3 mx-auto",
-        active ? "bg-card shadow-inner" : "bg-card/50"
-      )}>
+    <div
+      className={cn(
+        'p-4 rounded-2xl border-2 transition-all',
+        active
+          ? 'border-primary/20 bg-primary/5 shadow-sm'
+          : 'border-transparent bg-muted/40',
+      )}
+    >
+      <div
+        className={cn(
+          'h-10 w-10 rounded-xl flex items-center justify-center mb-3 mx-auto',
+          active ? 'bg-card shadow-inner' : 'bg-card/50',
+        )}
+      >
         {icon}
       </div>
-      <h3 className={cn(
-        "text-sm font-bold mb-1",
-        active ? "text-foreground" : "text-muted-foreground"
-      )}>{title}</h3>
-      <p className="text-[11px] text-muted-foreground/80 leading-tight">{desc}</p>
+      <h3
+        className={cn(
+          'text-sm font-bold mb-1',
+          active ? 'text-foreground' : 'text-muted-foreground',
+        )}
+      >
+        {title}
+      </h3>
+      <p className="text-[11px] text-muted-foreground/80 leading-tight">
+        {desc}
+      </p>
     </div>
   )
 }

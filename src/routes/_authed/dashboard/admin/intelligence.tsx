@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { AdminIntelligence } from '@/features/admin/components/admin-intelligence'
 import { Skeleton } from '@/components/ui/skeleton'
+import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
 
 function AdminIntelligenceSkeleton() {
   return (
@@ -38,13 +39,13 @@ export const Route = createFileRoute('/_authed/dashboard/admin/intelligence')({
   loader: async ({ context }) => {
     const { getMarketGapAnalysisServerFn } = await import('@/fn/admin')
     const { adminKeys } = await import('@/features/admin/hooks/use-admin')
-    const promise = getMarketGapAnalysisServerFn()
     await context.queryClient.ensureQueryData({
       queryKey: adminKeys.marketGap(),
-      queryFn: () => promise,
+      queryFn: () => getMarketGapAnalysisServerFn(),
       staleTime: 5 * 60 * 1000,
-    }).catch(() => {})
+    })
   },
   component: AdminIntelligence,
   pendingComponent: AdminIntelligenceSkeleton,
+  errorComponent: RouteErrorFallback,
 })

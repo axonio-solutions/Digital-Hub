@@ -18,7 +18,7 @@ export const Route = createFileRoute('/_authed')({
     const status = user.account_status
     const isWaitlisted = status === 'waitlisted'
     const isNew = !status || status === 'new'
-    
+
     // 1. If new, force onboarding
     if (isNew && location.pathname !== AUTH_ROUTES.COMPLETE_REGISTRATION) {
       throw redirect({

@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 import { TaxonomyHub } from '@/features/taxonomy/components/taxonomy-hub'
 import { taxonomyKeys } from '@/features/taxonomy/hooks/use-taxonomy'
 import { Skeleton } from '@/components/ui/skeleton'
+import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
 
 function TaxonomySkeleton() {
   return (
@@ -20,7 +21,9 @@ function TaxonomySkeleton() {
         </div>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-16 w-full rounded-2xl" />)}
+        {Array.from({ length: 2 }).map((_, i) => (
+          <Skeleton key={i} className="h-16 w-full rounded-2xl" />
+        ))}
       </div>
       <Skeleton className="h-12 w-full rounded-xl" />
       <Skeleton className="h-[500px] w-full rounded-2xl" />
@@ -38,10 +41,15 @@ export const Route = createFileRoute('/_authed/dashboard/admin/categories')({
     const { getTaxonomyServerFn } = await import('@/fn/admin')
     await context.queryClient.ensureQueryData({
       queryKey: taxonomyKeys.all,
-      queryFn: async () => { const res = await getTaxonomyServerFn() as any; if (!res.success) throw new Error(res.error); return res.data },
+      queryFn: async () => {
+        const res = (await getTaxonomyServerFn()) as any
+        if (!res.success) throw new Error(res.error)
+        return res.data
+      },
       staleTime: 10 * 60 * 1000,
-    }).catch(() => {})
+    })
   },
   component: TaxonomyHub,
   pendingComponent: TaxonomySkeleton,
+  errorComponent: RouteErrorFallback,
 })

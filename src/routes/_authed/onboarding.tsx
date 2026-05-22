@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
   Briefcase,
@@ -6,18 +6,18 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
-  User,
   MapPin,
   Phone,
   Store,
+  User,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageToggle } from '@/components/language-toggle'
 import { Badge } from '@/components/ui/badge'
-import { useTranslation } from 'react-i18next'
 import { tCategory } from '@/utils/category-utils'
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import {
@@ -39,7 +39,6 @@ import {
 import { cn } from '@/lib/utils'
 import { WILAYAS } from '@/lib/constants/wilayas'
 import { getTaxonomyServerFn } from '@/fn/admin'
-import { useQuery } from '@tanstack/react-query'
 import { completeOnboardingFn } from '@/fn/onboarding'
 import { authQueries } from '@/features/auth/queries/auth-queries'
 import { AvatarUpload } from '@/features/upload/components/avatar-upload'
@@ -59,7 +58,6 @@ export const Route = createFileRoute('/_authed/onboarding')({
   component: OnboardingFlow,
 })
 
-
 function OnboardingFlow() {
   const { t } = useTranslation('dashboard/onboarding')
   const { toast } = useToast('dashboard/onboarding')
@@ -71,11 +69,31 @@ function OnboardingFlow() {
   const { user } = Route.useRouteContext()
 
   const steps = [
-    { id: 1, title: t('steps.role.title'), description: t('steps.role.description') },
-    { id: 2, title: t('steps.profile.title'), description: t('steps.profile.description') },
-    { id: 3, title: t('steps.contact.title'), description: t('steps.contact.description') },
-    { id: 4, title: t('steps.location.title'), description: t('steps.location.description') },
-    { id: 5, title: t('steps.specialties.title'), description: t('steps.specialties.description') },
+    {
+      id: 1,
+      title: t('steps.role.title'),
+      description: t('steps.role.description'),
+    },
+    {
+      id: 2,
+      title: t('steps.profile.title'),
+      description: t('steps.profile.description'),
+    },
+    {
+      id: 3,
+      title: t('steps.contact.title'),
+      description: t('steps.contact.description'),
+    },
+    {
+      id: 4,
+      title: t('steps.location.title'),
+      description: t('steps.location.description'),
+    },
+    {
+      id: 5,
+      title: t('steps.specialties.title'),
+      description: t('steps.specialties.description'),
+    },
   ]
 
   const [formData, setFormData] = useState({
@@ -91,8 +109,8 @@ function OnboardingFlow() {
     companyAddress: user?.companyAddress || '',
     commercialRegister: user?.commercialRegister || '',
     image: user?.image || '',
-    brandIds: [] as string[],
-    categoryIds: [] as string[],
+    brandIds: [] as Array<string>,
+    categoryIds: [] as Array<string>,
   })
 
   const { mutateAsync: completeOnboarding, isPending } = useMutation({
@@ -107,7 +125,8 @@ function OnboardingFlow() {
     },
     onSuccess: (response) => {
       toast.success('toast.success')
-      const target = response?.account_status === 'waitlisted' ? '/waitlist' : '/dashboard'
+      const target =
+        response?.account_status === 'waitlisted' ? '/waitlist' : '/dashboard'
       setRedirectTarget(target)
       setIsSuccess(true)
     },
@@ -179,7 +198,7 @@ function OnboardingFlow() {
   const renderStepContent = () => {
     if (isSuccess) {
       return (
-          <div className="flex flex-col items-center justify-center space-y-6 py-12 text-center">
+        <div className="flex flex-col items-center justify-center space-y-6 py-12 text-center">
           <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
             <Check className="h-12 w-12 text-primary" />
           </div>
@@ -192,9 +211,11 @@ function OnboardingFlow() {
           <Button
             size="lg"
             className="mt-4 px-8"
-            onClick={() => window.location.href = redirectTarget}
+            onClick={() => (window.location.href = redirectTarget)}
           >
-            {redirectTarget === '/waitlist' ? t('complete.go_to_waitlist') : t('complete.go_to_dashboard')}
+            {redirectTarget === '/waitlist'
+              ? t('complete.go_to_waitlist')
+              : t('complete.go_to_dashboard')}
             <ChevronRight className="ml-2 h-4 w-4 rtl:mr-2 rtl:ml-0 rtl:rotate-180" />
           </Button>
         </div>
@@ -206,7 +227,9 @@ function OnboardingFlow() {
         return (
           <div className="space-y-4">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-xl font-bold">{t('role_step.title')}</CardTitle>
+              <CardTitle className="text-xl font-bold">
+                {t('role_step.title')}
+              </CardTitle>
               <CardDescription className="text-sm">
                 {t('role_step.desc')}
               </CardDescription>
@@ -235,7 +258,9 @@ function OnboardingFlow() {
         return (
           <div className="space-y-4">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-xl font-bold">{t('profile_step.title')}</CardTitle>
+              <CardTitle className="text-xl font-bold">
+                {t('profile_step.title')}
+              </CardTitle>
               <CardDescription className="text-sm">
                 {t('profile_step.desc')}
               </CardDescription>
@@ -261,7 +286,9 @@ function OnboardingFlow() {
         return (
           <div className="space-y-4">
             <CardHeader className="px-0 pt-0">
-              <CardTitle className="text-xl font-bold">{t('contact_step.title')}</CardTitle>
+              <CardTitle className="text-xl font-bold">
+                {t('contact_step.title')}
+              </CardTitle>
               <CardDescription className="text-sm">
                 {t('contact_step.desc')}
               </CardDescription>
@@ -299,17 +326,23 @@ function OnboardingFlow() {
                     className="ps-9 rtl:pe-9"
                     placeholder={t('contact_step.phone_placeholder')}
                     value={formData.phoneNumber}
-                    onChange={(e) => updateFormData('phoneNumber', e.target.value)}
+                    onChange={(e) =>
+                      updateFormData('phoneNumber', e.target.value)
+                    }
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="whatsappNumber">{t('contact_step.whatsapp')}</Label>
+                <Label htmlFor="whatsappNumber">
+                  {t('contact_step.whatsapp')}
+                </Label>
                 <Input
                   id="whatsappNumber"
                   placeholder="05xx xx xx xx"
                   value={formData.whatsappNumber}
-                  onChange={(e) => updateFormData('whatsappNumber', e.target.value)}
+                  onChange={(e) =>
+                    updateFormData('whatsappNumber', e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -321,7 +354,9 @@ function OnboardingFlow() {
           <div className="space-y-4">
             <CardHeader className="px-0 pt-0">
               <CardTitle className="text-xl font-bold">
-                {formData.role === 'buyer' ? t('location_step.buyer_title') : t('location_step.seller_title')}
+                {formData.role === 'buyer'
+                  ? t('location_step.buyer_title')
+                  : t('location_step.seller_title')}
               </CardTitle>
               <CardDescription className="text-sm">
                 {formData.role === 'buyer'
@@ -332,7 +367,9 @@ function OnboardingFlow() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {formData.role === 'seller' && (
                 <div className="space-y-2">
-                  <Label htmlFor="storeName">{t('location_step.store_name')}</Label>
+                  <Label htmlFor="storeName">
+                    {t('location_step.store_name')}
+                  </Label>
                   <div className="relative">
                     <Store className="absolute left-3 rtl:right-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -340,7 +377,9 @@ function OnboardingFlow() {
                       className="ps-9"
                       placeholder={t('location_step.store_placeholder')}
                       value={formData.storeName}
-                      onChange={(e) => updateFormData('storeName', e.target.value)}
+                      onChange={(e) =>
+                        updateFormData('storeName', e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -352,7 +391,9 @@ function OnboardingFlow() {
                   onValueChange={(v) => updateFormData('wilaya', v)}
                 >
                   <SelectTrigger id="wilaya">
-                    <SelectValue placeholder={t('location_step.wilaya_placeholder')} />
+                    <SelectValue
+                      placeholder={t('location_step.wilaya_placeholder')}
+                    />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
                     {WILAYAS.map((w) => (
@@ -386,12 +427,16 @@ function OnboardingFlow() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="companyAddress">{t('location_step.company_address')}</Label>
+                <Label htmlFor="companyAddress">
+                  {t('location_step.company_address')}
+                </Label>
                 <Input
                   id="companyAddress"
                   placeholder={t('location_step.company_placeholder')}
                   value={formData.companyAddress}
-                  onChange={(e) => updateFormData('companyAddress', e.target.value)}
+                  onChange={(e) =>
+                    updateFormData('companyAddress', e.target.value)
+                  }
                 />
               </div>
               {formData.role === 'seller' && (
@@ -401,7 +446,9 @@ function OnboardingFlow() {
                     id="rcNumber"
                     placeholder={t('location_step.rc_placeholder')}
                     value={formData.commercialRegister}
-                    onChange={(e) => updateFormData('commercialRegister', e.target.value)}
+                    onChange={(e) =>
+                      updateFormData('commercialRegister', e.target.value)
+                    }
                   />
                 </div>
               )}
@@ -427,9 +474,12 @@ function OnboardingFlow() {
         <CardHeader className="pb-4 border-b bg-card rounded-t-xl shrink-0">
           <div className="flex items-center justify-between px-4">
             {steps
-              .filter(s => s.id !== 5 || formData.role === 'seller')
+              .filter((s) => s.id !== 5 || formData.role === 'seller')
               .map((step, idx, arr) => (
-                <div key={step.id} className="relative flex flex-1 flex-col items-center">
+                <div
+                  key={step.id}
+                  className="relative flex flex-1 flex-col items-center"
+                >
                   <div
                     className={cn(
                       'flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 z-10',
@@ -440,19 +490,31 @@ function OnboardingFlow() {
                           : 'bg-muted text-muted-foreground',
                     )}
                   >
-                    {currentStep > step.id ? <Check className="h-6 w-6" /> : step.id}
+                    {currentStep > step.id ? (
+                      <Check className="h-6 w-6" />
+                    ) : (
+                      step.id
+                    )}
                   </div>
-                  <div className={cn(
-                    'mt-4 text-center text-[10px] md:text-xs font-bold uppercase tracking-widest',
-                    currentStep >= step.id ? 'text-primary' : 'text-muted-foreground'
-                  )}>
-                    {step.id === 4 && formData.role === 'buyer' ? t('location_step.buyer_title') : step.title}
+                  <div
+                    className={cn(
+                      'mt-4 text-center text-[10px] md:text-xs font-bold uppercase tracking-widest',
+                      currentStep >= step.id
+                        ? 'text-primary'
+                        : 'text-muted-foreground',
+                    )}
+                  >
+                    {step.id === 4 && formData.role === 'buyer'
+                      ? t('location_step.buyer_title')
+                      : step.title}
                   </div>
                   {idx < arr.length - 1 && (
-                    <div className={cn(
-                      'absolute top-6 left-[calc(50%+24px)] rtl:left-auto rtl:right-[calc(50%+24px)] h-1 w-[calc(100%-48px)] -translate-y-1/2 bg-muted transition-colors duration-500',
-                      currentStep > step.id && 'bg-primary/50'
-                    )} />
+                    <div
+                      className={cn(
+                        'absolute top-6 left-[calc(50%+24px)] rtl:left-auto rtl:right-[calc(50%+24px)] h-1 w-[calc(100%-48px)] -translate-y-1/2 bg-muted transition-colors duration-500',
+                        currentStep > step.id && 'bg-primary/50',
+                      )}
+                    />
                   )}
                 </div>
               ))}
@@ -547,7 +609,9 @@ function SpecialtiesStep({ formData, setFormData }: any) {
     return (
       <div className="flex flex-col items-center justify-center py-12 space-y-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground italic">{t('specialties_step.loading')}</p>
+        <p className="text-sm text-muted-foreground italic">
+          {t('specialties_step.loading')}
+        </p>
       </div>
     )
   }
@@ -555,7 +619,9 @@ function SpecialtiesStep({ formData, setFormData }: any) {
   return (
     <div className="space-y-6">
       <CardHeader className="px-0 pt-0">
-        <CardTitle className="text-xl font-bold font-heading uppercase tracking-tight">{t('specialties_step.title')}</CardTitle>
+        <CardTitle className="text-xl font-bold font-heading uppercase tracking-tight">
+          {t('specialties_step.title')}
+        </CardTitle>
         <CardDescription className="text-sm text-muted-foreground">
           {t('specialties_step.desc')}
         </CardDescription>
@@ -563,7 +629,9 @@ function SpecialtiesStep({ formData, setFormData }: any) {
 
       <div className="space-y-6">
         <div className="space-y-3">
-          <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{t('specialties_step.brands')}</Label>
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+            {t('specialties_step.brands')}
+          </Label>
           <div className="flex flex-wrap gap-2">
             {taxonomy?.data?.brands?.map((brand: any) => {
               const active = formData.brandIds?.includes(brand.id)
@@ -595,38 +663,40 @@ function SpecialtiesStep({ formData, setFormData }: any) {
           </div>
         </div>
 
-          <div className="space-y-3">
-            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{t('specialties_step.categories')}</Label>
-            <div className="flex flex-wrap gap-2">
-              {taxonomy?.data?.categories?.map((cat: any) => {
-                const active = formData.categoryIds?.includes(cat.id)
-                return (
-                  <Badge
-                    key={cat.id}
-                    variant={active ? 'default' : 'outline'}
-                    className={cn(
-                      'cursor-pointer h-10 px-4 border-2 transition-all flex items-center gap-2',
-                      active
-                        ? 'bg-primary border-primary text-primary-foreground shadow-md'
-                        : 'hover:border-primary/20 hover:bg-primary/5 text-muted-foreground bg-background',
-                    )}
-                    onClick={() => toggleCategory(cat.id)}
-                  >
-                    {cat.imageUrl && (
-                      <div className="h-6 w-6 rounded-sm bg-white flex items-center justify-center p-0.5 shrink-0 overflow-hidden">
-                        <img
-                          src={cat.imageUrl}
-                          alt={cat.name}
-                          className="h-full w-full object-contain"
-                        />
-                      </div>
-                    )}
-                    <span>{tCategory(cat.name, t)}</span>
-                  </Badge>
-                )
-              })}
-            </div>
+        <div className="space-y-3">
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+            {t('specialties_step.categories')}
+          </Label>
+          <div className="flex flex-wrap gap-2">
+            {taxonomy?.data?.categories?.map((cat: any) => {
+              const active = formData.categoryIds?.includes(cat.id)
+              return (
+                <Badge
+                  key={cat.id}
+                  variant={active ? 'default' : 'outline'}
+                  className={cn(
+                    'cursor-pointer h-10 px-4 border-2 transition-all flex items-center gap-2',
+                    active
+                      ? 'bg-primary border-primary text-primary-foreground shadow-md'
+                      : 'hover:border-primary/20 hover:bg-primary/5 text-muted-foreground bg-background',
+                  )}
+                  onClick={() => toggleCategory(cat.id)}
+                >
+                  {cat.imageUrl && (
+                    <div className="h-6 w-6 rounded-sm bg-white flex items-center justify-center p-0.5 shrink-0 overflow-hidden">
+                      <img
+                        src={cat.imageUrl}
+                        alt={cat.name}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  )}
+                  <span>{tCategory(cat.name, t)}</span>
+                </Badge>
+              )
+            })}
           </div>
+        </div>
       </div>
     </div>
   )
@@ -653,10 +723,12 @@ function AccountTypeCard({ selected, onClick, icon, title, description }: any) {
             {description}
           </p>
         </div>
-        <div className={cn(
-          "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
-          selected ? "border-primary bg-primary" : "border-border"
-        )}>
+        <div
+          className={cn(
+            'w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors',
+            selected ? 'border-primary bg-primary' : 'border-border',
+          )}
+        >
           {selected && <Check className="h-3 w-3 text-primary-foreground" />}
         </div>
       </CardContent>
