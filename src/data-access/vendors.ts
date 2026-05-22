@@ -1,6 +1,11 @@
-import { eq, and, sql } from 'drizzle-orm'
+import { and, eq, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { users, sellerBrands, sellerCategories, sparePartRequests } from '@/db/schema'
+import {
+  sellerBrands,
+  sellerCategories,
+  sparePartRequests,
+  users,
+} from '@/db/schema'
 
 /**
  * Axis Layer 1: Data Access for Seller/Vendor Management
@@ -11,43 +16,45 @@ export async function getMarketPriorityMap() {
   const demandData = await db
     .select({
       brandId: sparePartRequests.brandId,
-      count: sql<number>`count(*)`.mapWith(Number)
+      count: sql<number>`count(*)`.mapWith(Number),
     })
     .from(sparePartRequests)
     .where(eq(sparePartRequests.status, 'open'))
     .groupBy(sparePartRequests.brandId)
 
-  const demandMap = new Map(demandData.map(d => [d.brandId, d.count]))
+  const demandMap = new Map(demandData.map((d) => [d.brandId, d.count]))
 
   // 2. Calculate Supply (Active Sellers per Brand)
   const supplyData = await db
     .select({
       brandId: sellerBrands.brandId,
-      count: sql<number>`count(distinct ${sellerBrands.sellerId})`.mapWith(Number)
+      count: sql<number>`count(distinct ${sellerBrands.sellerId})`.mapWith(
+        Number,
+      ),
     })
     .from(sellerBrands)
     .innerJoin(users, eq(sellerBrands.sellerId, users.id))
     .where(and(eq(users.role, 'seller'), eq(users.account_status, 'active')))
     .groupBy(sellerBrands.brandId)
 
-  const supplyMap = new Map(supplyData.map(s => [s.brandId, s.count]))
+  const supplyMap = new Map(supplyData.map((s) => [s.brandId, s.count]))
 
   return { demandMap, supplyMap }
 }
 
 export function calculatePriorityScore(
-  sellerBrands: { brandId: string }[],
+  sellerBrands: Array<{ brandId: string }>,
   demandMap: Map<string | null, number>,
-  supplyMap: Map<string | null, number>
+  supplyMap: Map<string | null, number>,
 ) {
-  let priorityScore = 0;
-  sellerBrands.forEach(sb => {
-    const brandId = sb.brandId;
-    const demand = demandMap.get(brandId) || 0;
-    const supply = supplyMap.get(brandId) || 0;
-    priorityScore += demand / (supply + 1);
-  });
-  return priorityScore;
+  let priorityScore = 0
+  sellerBrands.forEach((sb) => {
+    const brandId = sb.brandId
+    const demand = demandMap.get(brandId) || 0
+    const supply = supplyMap.get(brandId) || 0
+    priorityScore += demand / (supply + 1)
+  })
+  return priorityScore
 }
 
 export async function fetchWaitlistedSellers() {
@@ -75,14 +82,25 @@ export async function fetchWaitlistedSellers() {
   const { demandMap, supplyMap } = await getMarketPriorityMap()
 
   const sellersWithPlus = result.map((row: any) => {
-    const rawUser = typeof row.user_data === 'string' ? JSON.parse(row.user_data) : row.user_data
-    const sb = typeof row.sellerBrands === 'string' ? JSON.parse(row.sellerBrands) : row.sellerBrands
-    const sc = typeof row.sellerCategories === 'string' ? JSON.parse(row.sellerCategories) : row.sellerCategories
+    const rawUser =
+      typeof row.user_data === 'string'
+        ? JSON.parse(row.user_data)
+        : row.user_data
+    const sb =
+      typeof row.sellerBrands === 'string'
+        ? JSON.parse(row.sellerBrands)
+        : row.sellerBrands
+    const sc =
+      typeof row.sellerCategories === 'string'
+        ? JSON.parse(row.sellerCategories)
+        : row.sellerCategories
 
     // Reconstruct the user object to match the frontend expected Typescript interface
     const seller = {
       ...rawUser,
-      createdAt: new Date(rawUser.created_at || rawUser.createdAt || new Date()),
+      createdAt: new Date(
+        rawUser.created_at || rawUser.createdAt || new Date(),
+      ),
       accountStatus: rawUser.account_status || rawUser.accountStatus,
       sellerBrands: sb,
       sellerCategories: sc,
@@ -104,26 +122,28 @@ export async function fetchWaitlistedSellers() {
 }
 
 export async function updateSellerSpecialties(
-  sellerId: string, 
-  brandIds: string[], 
-  categoryIds: string[]
+  sellerId: string,
+  brandIds: Array<string>,
+  categoryIds: Array<string>,
 ) {
   return await db.transaction(async (tx) => {
     // Clear old mappings
-    await tx.delete(sellerBrands).where(eq(sellerBrands.sellerId, sellerId));
-    await tx.delete(sellerCategories).where(eq(sellerCategories.sellerId, sellerId));
+    await tx.delete(sellerBrands).where(eq(sellerBrands.sellerId, sellerId))
+    await tx
+      .delete(sellerCategories)
+      .where(eq(sellerCategories.sellerId, sellerId))
 
     // Insert new mappings
     if (brandIds.length > 0) {
-      await tx.insert(sellerBrands).values(
-        brandIds.map(bid => ({ sellerId, brandId: bid }))
-      );
+      await tx
+        .insert(sellerBrands)
+        .values(brandIds.map((bid) => ({ sellerId, brandId: bid })))
     }
-    
+
     if (categoryIds.length > 0) {
-      await tx.insert(sellerCategories).values(
-        categoryIds.map(cid => ({ sellerId, categoryId: cid }))
-      );
+      await tx
+        .insert(sellerCategories)
+        .values(categoryIds.map((cid) => ({ sellerId, categoryId: cid })))
     }
-  });
+  })
 }

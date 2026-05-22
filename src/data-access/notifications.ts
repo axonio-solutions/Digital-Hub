@@ -1,27 +1,47 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, count, desc, eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { notifications } from '@/db/schema'
+import { notificationPreferences, notifications } from '@/db/schema'
 
 export async function insertNotification(data: any) {
   return await db.insert(notifications).values(data)
 }
 
-export async function fetchUnreadNotifications(userId: string) {
-  return await db.query.notifications.findMany({
-    where: and(
-      eq(notifications.userId, userId),
-      eq(notifications.isRead, false),
-    ),
-    orderBy: [desc(notifications.createdAt)],
-    limit: 10,
-  })
+export async function fetchUnreadNotifications(
+  userId: string,
+  limit = 10,
+  offset = 0,
+) {
+  const condition = and(
+    eq(notifications.userId, userId),
+    eq(notifications.isRead, false),
+  )
+
+  const [items, totalResult] = await Promise.all([
+    db.query.notifications.findMany({
+      where: condition,
+      orderBy: [desc(notifications.createdAt)],
+      limit,
+      offset,
+    }),
+    db.select({ total: count() }).from(notifications).where(condition),
+  ])
+
+  return { items, total: Number(totalResult[0]?.total ?? 0) }
 }
 
-export async function markNotificationRead(notificationId: string) {
+export async function markNotificationRead(
+  notificationId: string,
+  userId: string,
+) {
   await db
     .update(notifications)
     .set({ isRead: true })
-    .where(eq(notifications.id, notificationId))
+    .where(
+      and(
+        eq(notifications.id, notificationId),
+        eq(notifications.userId, userId),
+      ),
+    )
 }
 
 export async function markAllNotificationsRead(userId: string) {
@@ -32,8 +52,6 @@ export async function markAllNotificationsRead(userId: string) {
       and(eq(notifications.userId, userId), eq(notifications.isRead, false)),
     )
 }
-
-import { notificationPreferences } from '@/db/schema'
 
 export async function fetchNotificationPreferences(userId: string) {
   return await db.query.notificationPreferences.findFirst({

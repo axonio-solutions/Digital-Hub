@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
+import { auth } from '@/lib/auth'
 
 export async function findUserByEmail(email: string) {
   return await db.query.users.findFirst({
@@ -45,17 +46,27 @@ export async function fetchAllUsers(page = 1, pageSize = 50) {
     // @ts-ignore
     with: {
       sellerBrands: { columns: { brandId: true } },
-      sellerCategories: { columns: { categoryId: true } }
+      sellerCategories: { columns: { categoryId: true } },
     },
   })
 }
 
 export async function toggleUserBan(userId: string, isBanned: boolean) {
-  return await db.update(users).set({ banned: isBanned }).where(eq(users.id, userId))
+  const result = await db
+    .update(users)
+    .set({ banned: isBanned })
+    .where(eq(users.id, userId))
+  if (isBanned) {
+    await auth.api.banUser({ body: { userId } })
+  }
+  return result
 }
 
 export async function updateUserStatus(userId: string, status: string) {
-  return await db.update(users).set({ account_status: status as any }).where(eq(users.id, userId))
+  return await db
+    .update(users)
+    .set({ account_status: status as any })
+    .where(eq(users.id, userId))
 }
 
 export async function updateProfileQuery(
@@ -89,7 +100,9 @@ export async function fetchUserDetailsQuery(userId: string) {
         with: { request: { columns: { partName: true } } },
       },
       sellerBrands: { with: { brand: { columns: { id: true, brand: true } } } },
-      sellerCategories: { with: { category: { columns: { id: true, name: true } } } },
+      sellerCategories: {
+        with: { category: { columns: { id: true, name: true } } },
+      },
     },
   })
 }

@@ -1,13 +1,6 @@
-import { and, eq, isNull, ne } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { db } from '@/db'
 import { quotes, sparePartRequests } from '@/db/schema'
-
-export class StateConflictError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'StateConflictError'
-  }
-}
 
 export async function insertQuote(data: any, tx?: any) {
   const client = tx || db
@@ -24,74 +17,18 @@ export async function insertQuote(data: any, tx?: any) {
     .returning()
 }
 
-export async function acceptQuoteTransaction(
-  quoteId: string,
-  requestId: string,
-  tx?: any
-) {
+export async function acceptQuoteTransaction(quoteId: string, tx?: any) {
   const client = tx || db
-
-  // Guard: only accept pending quotes on open requests
-  const [quoteUpdate] = await client
+  const [updated] = await client
     .update(quotes)
     .set({ status: 'accepted', updatedAt: new Date() })
     .where(and(eq(quotes.id, quoteId), eq(quotes.status, 'pending')))
     .returning()
 
-  if (!quoteUpdate) {
-    throw new StateConflictError('Quote is not in pending state')
+  if (!updated) {
+    throw new Error('Quote is not in pending state')
   }
-
-  // Reject all other pending quotes for this request
-  await client
-    .update(quotes)
-    .set({ status: 'rejected', updatedAt: new Date() })
-    .where(and(eq(quotes.requestId, requestId), ne(quotes.id, quoteId), eq(quotes.status, 'pending')))
-
-  // Mark request as fulfilled (only if open)
-  const [requestUpdate] = await client
-    .update(sparePartRequests)
-    .set({ status: 'fulfilled', updatedAt: new Date() })
-    .where(and(eq(sparePartRequests.id, requestId), eq(sparePartRequests.status, 'open')))
-    .returning()
-
-  if (!requestUpdate) {
-    throw new StateConflictError('Request is not in open state')
-  }
-}
-
-export async function revokeAcceptedQuoteTransaction(
-  quoteId: string,
-  requestId: string,
-  tx?: any
-) {
-  const client = tx || db
-
-  const [quoteUpdate] = await client
-    .update(quotes)
-    .set({ status: 'pending', updatedAt: new Date() })
-    .where(and(eq(quotes.id, quoteId), eq(quotes.status, 'accepted')))
-    .returning()
-
-  if (!quoteUpdate) {
-    throw new StateConflictError('Quote is not in accepted state')
-  }
-
-  // Restore all other rejected quotes for this request back to pending
-  await client
-    .update(quotes)
-    .set({ status: 'pending', updatedAt: new Date() })
-    .where(and(eq(quotes.requestId, requestId), ne(quotes.id, quoteId), eq(quotes.status, 'rejected')))
-
-  const [requestUpdate] = await client
-    .update(sparePartRequests)
-    .set({ status: 'open', updatedAt: new Date() })
-    .where(and(eq(sparePartRequests.id, requestId), eq(sparePartRequests.status, 'fulfilled')))
-    .returning()
-
-  if (!requestUpdate) {
-    throw new StateConflictError('Request is not in fulfilled state')
-  }
+  return [updated]
 }
 
 export async function rejectQuoteTransaction(quoteId: string, tx?: any) {
@@ -103,7 +40,17 @@ export async function rejectQuoteTransaction(quoteId: string, tx?: any) {
     .returning()
 
   if (!updated) {
-    throw new StateConflictError('Quote is not in pending state')
+    // Try from accepted state (buyer ends discussion)
+    const [fromAccepted] = await client
+      .update(quotes)
+      .set({ status: 'rejected', updatedAt: new Date() })
+      .where(and(eq(quotes.id, quoteId), eq(quotes.status, 'accepted')))
+      .returning()
+
+    if (!fromAccepted) {
+      throw new Error('Quote must be in pending or accepted state to reject')
+    }
+    return [fromAccepted]
   }
   return [updated]
 }
@@ -117,32 +64,50 @@ export async function unrejectQuoteTransaction(quoteId: string, tx?: any) {
     .returning()
 
   if (!updated) {
-    throw new StateConflictError('Quote is not in rejected state')
+    throw new Error('Quote is not in rejected state')
   }
   return [updated]
 }
 
-export async function withdrawQuoteTransaction(quoteId: string, tx?: any) {
+export async function revokeQuoteTransaction(quoteId: string, tx?: any) {
   const client = tx || db
   const [updated] = await client
     .update(quotes)
-    .set({ status: 'withdrawn', updatedAt: new Date() })
-    .where(and(eq(quotes.id, quoteId), eq(quotes.status, 'pending')))
+    .set({ status: 'pending', updatedAt: new Date() })
+    .where(and(eq(quotes.id, quoteId), eq(quotes.status, 'accepted')))
     .returning()
 
   if (!updated) {
-    const [rejectedQuote] = await client
-      .update(quotes)
-      .set({ status: 'withdrawn', updatedAt: new Date() })
-      .where(and(eq(quotes.id, quoteId), eq(quotes.status, 'rejected')))
-      .returning()
-
-    if (!rejectedQuote) {
-      throw new StateConflictError('Quote must be in pending or rejected state to withdraw')
-    }
-    return [rejectedQuote]
+    throw new Error('Quote is not in accepted state')
   }
   return [updated]
+}
+
+export async function fulfillRequestTransaction(requestId: string, tx?: any) {
+  const client = tx || db
+
+  const [requestUpdate] = await client
+    .update(sparePartRequests)
+    .set({ status: 'fulfilled', updatedAt: new Date() })
+    .where(
+      and(
+        eq(sparePartRequests.id, requestId),
+        eq(sparePartRequests.status, 'open'),
+      ),
+    )
+    .returning()
+
+  if (!requestUpdate) {
+    throw new Error('Request is not in open state')
+  }
+
+  // Auto-reject all remaining pending quotes
+  await client
+    .update(quotes)
+    .set({ status: 'rejected', updatedAt: new Date() })
+    .where(and(eq(quotes.requestId, requestId), eq(quotes.status, 'pending')))
+
+  return requestUpdate
 }
 
 export async function fetchSellerQuotes(sellerId: string) {
@@ -178,4 +143,30 @@ export async function deleteQuote(id: string) {
     .set({ deletedAt: new Date() })
     .where(eq(quotes.id, id))
     .returning()
+}
+
+export async function fetchSellerQuoteForRequest(
+  requestId: string,
+  sellerId: string,
+) {
+  return await db.query.quotes.findFirst({
+    where: and(
+      eq(quotes.requestId, requestId),
+      eq(quotes.sellerId, sellerId),
+      isNull(quotes.deletedAt),
+    ),
+  })
+}
+
+export async function fetchAnonymousQuotesQuery(requestId: string) {
+  return await db.query.quotes.findMany({
+    where: and(eq(quotes.requestId, requestId), isNull(quotes.deletedAt)),
+    columns: {
+      id: true,
+      status: true,
+      condition: true,
+      warranty: true,
+      sellerId: true,
+    },
+  })
 }

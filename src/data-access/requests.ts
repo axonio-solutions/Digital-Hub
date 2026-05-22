@@ -1,11 +1,22 @@
 import { and, desc, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { partCategories, quotes, sparePartRequests, vehicleBrands } from '@/db/schema'
+import {
+  partCategories,
+  quotes,
+  sparePartRequests,
+  vehicleBrands,
+} from '@/db/schema'
 
-export async function fetchBuyerRequestsQuery(buyerId: string, options?: { limit?: number; offset?: number }) {
+export async function fetchBuyerRequestsQuery(
+  buyerId: string,
+  options?: { limit?: number; offset?: number },
+) {
   const { limit, offset } = options || {}
   return await db.query.sparePartRequests.findMany({
-    where: and(eq(sparePartRequests.buyerId, buyerId), isNull(sparePartRequests.deletedAt)),
+    where: and(
+      eq(sparePartRequests.buyerId, buyerId),
+      isNull(sparePartRequests.deletedAt),
+    ),
     orderBy: [desc(sparePartRequests.createdAt)],
     limit,
     offset,
@@ -23,7 +34,10 @@ export async function fetchBuyerRequestsQuery(buyerId: string, options?: { limit
 
 export async function fetchRequestDetailsQuery(requestId: string) {
   return await db.query.sparePartRequests.findFirst({
-    where: and(eq(sparePartRequests.id, requestId), isNull(sparePartRequests.deletedAt)),
+    where: and(
+      eq(sparePartRequests.id, requestId),
+      isNull(sparePartRequests.deletedAt),
+    ),
     with: {
       category: true,
       brand: true,
@@ -36,54 +50,71 @@ export async function fetchRequestDetailsQuery(requestId: string) {
   })
 }
 
-export async function fetchOpenRequestsQuery(options?: { 
-  limit?: number; 
-  offset?: number;
-  categoryId?: string;
-  brandIds?: string[];
-  search?: string;
+export async function fetchOpenRequestsQuery(options?: {
+  limit?: number
+  offset?: number
+  categoryId?: string
+  brandIds?: Array<string>
+  search?: string
   specialtyFilter?: {
-    brandIds: string[];
-    categoryIds: string[];
-  };
+    brandIds: Array<string>
+    categoryIds: Array<string>
+  }
 }) {
-  const { limit = 20, offset = 0 } = options || {};
-  
-  const conditions = [eq(sparePartRequests.status, 'open'), isNull(sparePartRequests.deletedAt)];
-  
+  const { limit = 20, offset = 0 } = options || {}
+
+  const conditions = [
+    eq(sparePartRequests.status, 'open'),
+    isNull(sparePartRequests.deletedAt),
+  ]
+
   if (options?.specialtyFilter) {
-    const specialtyConditions = [];
-    if (options.specialtyFilter.brandIds && options.specialtyFilter.brandIds.length > 0) {
-      specialtyConditions.push(inArray(sparePartRequests.brandId, options.specialtyFilter.brandIds));
+    const specialtyConditions = []
+    if (
+      options.specialtyFilter.brandIds &&
+      options.specialtyFilter.brandIds.length > 0
+    ) {
+      specialtyConditions.push(
+        inArray(sparePartRequests.brandId, options.specialtyFilter.brandIds),
+      )
     }
-    if (options.specialtyFilter.categoryIds && options.specialtyFilter.categoryIds.length > 0) {
-      specialtyConditions.push(inArray(sparePartRequests.categoryId, options.specialtyFilter.categoryIds));
+    if (
+      options.specialtyFilter.categoryIds &&
+      options.specialtyFilter.categoryIds.length > 0
+    ) {
+      specialtyConditions.push(
+        inArray(
+          sparePartRequests.categoryId,
+          options.specialtyFilter.categoryIds,
+        ),
+      )
     }
-    const specialtyCondition = specialtyConditions.length > 0 ? or(...specialtyConditions) : undefined;
+    const specialtyCondition =
+      specialtyConditions.length > 0 ? or(...specialtyConditions) : undefined
     if (specialtyCondition) {
-      conditions.push(specialtyCondition);
+      conditions.push(specialtyCondition)
     }
   }
-  
+
   if (options?.categoryId && options.categoryId !== 'all') {
-    conditions.push(eq(sparePartRequests.categoryId, options.categoryId));
+    conditions.push(eq(sparePartRequests.categoryId, options.categoryId))
   }
-  
+
   if (options?.brandIds && options.brandIds.length > 0) {
-    conditions.push(inArray(sparePartRequests.brandId, options.brandIds));
+    conditions.push(inArray(sparePartRequests.brandId, options.brandIds))
   }
-  
+
   if (options?.search) {
-    const query = `%${options.search}%`;
+    const query = `%${options.search}%`
     const searchCondition = or(
       ilike(sparePartRequests.partName, query),
       ilike(sparePartRequests.oemNumber, query),
-      ilike(sparePartRequests.vehicleBrand, query)
-    );
-    if (searchCondition) conditions.push(searchCondition);
+      ilike(sparePartRequests.vehicleBrand, query),
+    )
+    if (searchCondition) conditions.push(searchCondition)
   }
-  
-  const whereClause = conditions.length > 1 ? and(...conditions) : conditions[0]!;
+
+  const whereClause = conditions.length > 1 ? and(...conditions) : conditions[0]
 
   return await db
     .select({
@@ -107,12 +138,15 @@ export async function fetchOpenRequestsQuery(options?: {
       quotesCount: sql<number>`(SELECT COUNT(*)::int FROM ${quotes} WHERE ${quotes.requestId} = ${sparePartRequests.id} AND ${quotes.deletedAt} IS NULL)`,
     })
     .from(sparePartRequests)
-    .leftJoin(partCategories, eq(sparePartRequests.categoryId, partCategories.id))
+    .leftJoin(
+      partCategories,
+      eq(sparePartRequests.categoryId, partCategories.id),
+    )
     .leftJoin(vehicleBrands, eq(sparePartRequests.brandId, vehicleBrands.id))
     .where(whereClause)
     .orderBy(desc(sparePartRequests.createdAt))
     .limit(limit)
-    .offset(offset);
+    .offset(offset)
 }
 
 export async function fetchAllRequestsQuery(limit?: number) {
@@ -149,7 +183,27 @@ export async function insertNewRequest(data: any) {
   return newRequest[0]
 }
 
-export async function updateRequestStatusQuery(requestId: string, status: 'open' | 'fulfilled' | 'cancelled') {
+export async function fetchRequestStatusQuery(requestId: string) {
+  const result = await db
+    .select({
+      status: sparePartRequests.status,
+      buyerId: sparePartRequests.buyerId,
+    })
+    .from(sparePartRequests)
+    .where(
+      and(
+        eq(sparePartRequests.id, requestId),
+        isNull(sparePartRequests.deletedAt),
+      ),
+    )
+    .limit(1)
+  return result[0] ?? null
+}
+
+export async function updateRequestStatusQuery(
+  requestId: string,
+  status: 'open' | 'fulfilled' | 'cancelled',
+) {
   return await db
     .update(sparePartRequests)
     .set({ status })
@@ -177,7 +231,6 @@ export async function updateRequestFullQuery(requestId: string, data: any) {
       modelYear: data.modelYear,
       notes: data.notes,
       imageUrls: data.imageUrls || [],
-      status: data.status || 'open',
     })
     .where(eq(sparePartRequests.id, requestId))
     .returning()

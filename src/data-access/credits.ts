@@ -1,6 +1,11 @@
 import { and, count, desc, eq, gte, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { creditPackages, creditRequests, creditTransactions, users } from '@/db/schema'
+import {
+  creditPackages,
+  creditRequests,
+  creditTransactions,
+  users,
+} from '@/db/schema'
 
 export async function fetchSellersWithCredits() {
   return await db
@@ -57,7 +62,11 @@ export async function grantCredits(
   })
 }
 
-export async function deductCredits(sellerId: string, amount: number, referenceId?: string) {
+export async function deductCredits(
+  sellerId: string,
+  amount: number,
+  referenceId?: string,
+) {
   return await db.transaction(async (tx) => {
     const [user] = await tx
       .select({ credits: users.credits })
@@ -101,7 +110,9 @@ export async function fetchCreditTransactions(
     limit,
     offset,
     with: {
-      seller: { columns: { id: true, name: true, email: true, storeName: true } },
+      seller: {
+        columns: { id: true, name: true, email: true, storeName: true },
+      },
       admin: { columns: { id: true, name: true } },
     },
   })
@@ -164,7 +175,10 @@ export async function fetchRevenueMetrics() {
 
   const [totalRevenue] = await db
     .select({
-      total: sql<number>`COALESCE(SUM(${creditTransactions.amount}), 0)`.mapWith(Number),
+      total:
+        sql<number>`COALESCE(SUM(${creditTransactions.amount}), 0)`.mapWith(
+          Number,
+        ),
     })
     .from(creditTransactions)
     .where(
@@ -176,14 +190,20 @@ export async function fetchRevenueMetrics() {
 
   const [allTimeRevenue] = await db
     .select({
-      total: sql<number>`COALESCE(SUM(${creditTransactions.amount}), 0)`.mapWith(Number),
+      total:
+        sql<number>`COALESCE(SUM(${creditTransactions.amount}), 0)`.mapWith(
+          Number,
+        ),
     })
     .from(creditTransactions)
     .where(eq(creditTransactions.type, 'purchase'))
 
   const [totalSpent] = await db
     .select({
-      total: sql<number>`COALESCE(SUM(ABS(${creditTransactions.amount})), 0)`.mapWith(Number),
+      total:
+        sql<number>`COALESCE(SUM(ABS(${creditTransactions.amount})), 0)`.mapWith(
+          Number,
+        ),
     })
     .from(creditTransactions)
     .where(eq(creditTransactions.type, 'quote_spent'))
@@ -191,7 +211,13 @@ export async function fetchRevenueMetrics() {
   const [activeSellersWithCredits] = await db
     .select({ count: count() })
     .from(users)
-    .where(and(eq(users.role, 'seller'), eq(users.account_status, 'active'), sql`${users.credits} > 0`))
+    .where(
+      and(
+        eq(users.role, 'seller'),
+        eq(users.account_status, 'active'),
+        sql`${users.credits} > 0`,
+      ),
+    )
 
   const [totalSellers] = await db
     .select({ count: count() })
@@ -201,12 +227,7 @@ export async function fetchRevenueMetrics() {
   const [newSellers] = await db
     .select({ count: count() })
     .from(users)
-    .where(
-      and(
-        eq(users.role, 'seller'),
-        gte(users.createdAt, thirtyDaysAgo),
-      ),
-    )
+    .where(and(eq(users.role, 'seller'), gte(users.createdAt, thirtyDaysAgo)))
 
   const [totalPackages] = await db
     .select({ count: count() })
@@ -244,7 +265,9 @@ export async function fetchCreditRequests(status?: string) {
     where: conditions.length > 0 ? and(...conditions) : undefined,
     orderBy: desc(creditRequests.createdAt),
     with: {
-      seller: { columns: { id: true, name: true, email: true, storeName: true } },
+      seller: {
+        columns: { id: true, name: true, email: true, storeName: true },
+      },
       package: true,
       admin: { columns: { id: true, name: true } },
     },

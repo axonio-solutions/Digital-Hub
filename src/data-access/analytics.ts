@@ -1,6 +1,12 @@
-import { count, eq, gte, sql, desc } from 'drizzle-orm'
+import { count, desc, eq, gte, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { partCategories, quotes, sparePartRequests, users, vehicleBrands } from '@/db/schema'
+import {
+  partCategories,
+  quotes,
+  sparePartRequests,
+  users,
+  vehicleBrands,
+} from '@/db/schema'
 
 /**
  * Fetch geographical distribution of users by role.
@@ -38,8 +44,14 @@ export async function fetchBuyerMetrics() {
     responseTimeResult,
   ] = await Promise.all([
     db.select({ value: count() }).from(users).where(eq(users.role, 'buyer')),
-    db.select({ value: count() }).from(sparePartRequests).where(gte(sparePartRequests.createdAt, thirtyDaysAgo)),
-    db.select({ value: count() }).from(quotes).where(gte(quotes.createdAt, thirtyDaysAgo)),
+    db
+      .select({ value: count() })
+      .from(sparePartRequests)
+      .where(gte(sparePartRequests.createdAt, thirtyDaysAgo)),
+    db
+      .select({ value: count() })
+      .from(quotes)
+      .where(gte(quotes.createdAt, thirtyDaysAgo)),
     db.execute(sql`
       SELECT COUNT(DISTINCT ${quotes.requestId}) as count FROM ${quotes}
       WHERE ${quotes.createdAt} >= ${thirtyDaysAgo.toISOString()}
@@ -58,8 +70,12 @@ export async function fetchBuyerMetrics() {
   const totalQuotes = totalQuotesResult[0].value
   const requestsWithQuotes = (requestsWithQuotesResult[0] as any).count || 0
 
-  const avgOffersPerRequest = totalRequests > 0 ? (totalQuotes / totalRequests).toFixed(1) : '0'
-  const conversionRate = totalRequests > 0 ? ((requestsWithQuotes / totalRequests) * 100).toFixed(1) : '0'
+  const avgOffersPerRequest =
+    totalRequests > 0 ? (totalQuotes / totalRequests).toFixed(1) : '0'
+  const conversionRate =
+    totalRequests > 0
+      ? ((requestsWithQuotes / totalRequests) * 100).toFixed(1)
+      : '0'
   const avgResponseTime = (responseTimeResult[0] as any).avg_minutes || 14.2
 
   return {
@@ -81,7 +97,10 @@ export async function fetchDemandByCategory() {
       count: count(sparePartRequests.id),
     })
     .from(sparePartRequests)
-    .innerJoin(partCategories, eq(sparePartRequests.categoryId, partCategories.id))
+    .innerJoin(
+      partCategories,
+      eq(sparePartRequests.categoryId, partCategories.id),
+    )
     .groupBy(partCategories.name)
     .orderBy(desc(count(sparePartRequests.id)))
     .limit(10)
@@ -193,12 +212,16 @@ export async function fetchSellerMetrics() {
   ] = await Promise.all([
     db.select({ value: count() }).from(users).where(eq(users.role, 'seller')),
     db.select({ value: count() }).from(quotes),
-    db.select({ value: count() }).from(quotes).where(eq(quotes.status, 'accepted')),
-    db.select({
-      avgSpeed: sql<number>`AVG(EXTRACT(EPOCH FROM (${quotes.createdAt} - ${sparePartRequests.createdAt})))`
-    })
-    .from(quotes)
-    .innerJoin(sparePartRequests, eq(quotes.requestId, sparePartRequests.id)),
+    db
+      .select({ value: count() })
+      .from(quotes)
+      .where(eq(quotes.status, 'accepted')),
+    db
+      .select({
+        avgSpeed: sql<number>`AVG(EXTRACT(EPOCH FROM (${quotes.createdAt} - ${sparePartRequests.createdAt})))`,
+      })
+      .from(quotes)
+      .innerJoin(sparePartRequests, eq(quotes.requestId, sparePartRequests.id)),
     db.select({ value: count() }).from(sparePartRequests),
   ])
 
@@ -208,9 +231,10 @@ export async function fetchSellerMetrics() {
   const totalRequests = totalRequestsResult[0].value
   const avgSpeedSeconds = Number(avgSpeedResult[0].avgSpeed) || 0
 
-  const avgResponseTime = avgSpeedSeconds > 60
-    ? (avgSpeedSeconds / 60).toFixed(1) + 'm'
-    : avgSpeedSeconds.toFixed(0) + 's'
+  const avgResponseTime =
+    avgSpeedSeconds > 60
+      ? (avgSpeedSeconds / 60).toFixed(1) + 'm'
+      : avgSpeedSeconds.toFixed(0) + 's'
 
   const conversionRate =
     totalQuotes > 0 ? ((acceptedQuotes / totalQuotes) * 100).toFixed(1) : '0'
@@ -221,7 +245,10 @@ export async function fetchSellerMetrics() {
     acceptedQuotes,
     conversionRate: `${conversionRate}%`,
     avgResponseTime,
-    avgQuotesPerRequest: totalRequests > 0 ? parseFloat((totalQuotes / totalRequests).toFixed(1)) : 0,
+    avgQuotesPerRequest:
+      totalRequests > 0
+        ? parseFloat((totalQuotes / totalRequests).toFixed(1))
+        : 0,
   }
 }
 
@@ -254,18 +281,21 @@ export async function fetchSellerCategoryFocus() {
   const result = await db
     .select({
       label: partCategories.name,
-      count: count()
+      count: count(),
     })
     .from(quotes)
     .innerJoin(sparePartRequests, eq(quotes.requestId, sparePartRequests.id))
-    .innerJoin(partCategories, eq(sparePartRequests.categoryId, partCategories.id))
+    .innerJoin(
+      partCategories,
+      eq(sparePartRequests.categoryId, partCategories.id),
+    )
     .groupBy(partCategories.name)
     .orderBy(desc(count()))
     .limit(5)
 
-  return result.map(r => ({
+  return result.map((r) => ({
     label: r.label || 'Other',
-    count: Number(r.count)
+    count: Number(r.count),
   }))
 }
 
@@ -374,7 +404,9 @@ export async function fetchMarketHealth(days?: number) {
     ? new Date(Date.now() - days * 24 * 60 * 60 * 1000)
     : undefined
 
-  const reqCond = fromDate ? gte(sparePartRequests.createdAt, fromDate) : undefined
+  const reqCond = fromDate
+    ? gte(sparePartRequests.createdAt, fromDate)
+    : undefined
   const quoteCond = fromDate ? gte(quotes.createdAt, fromDate) : undefined
 
   const [totalRequestsResult, totalQuotesResult] = await Promise.all([
@@ -454,7 +486,7 @@ export async function fetchCategoryGapAnalysis() {
     LIMIT 10
   `)
 
-  return (result as any[]).map(r => ({
+  return (result as Array<any>).map((r) => ({
     category: r.category,
     demand: Number(r.demand),
     supplySellers: Number(r.supply_sellers),
@@ -488,7 +520,7 @@ export async function fetchBrandGapAnalysis() {
     LIMIT 10
   `)
 
-  return (result as any[]).map(r => ({
+  return (result as Array<any>).map((r) => ({
     brand: r.brand,
     demand: Number(r.demand),
     supplySellers: Number(r.supply_sellers),
@@ -522,7 +554,7 @@ export async function fetchRegionalGapAnalysis() {
     ORDER BY gap DESC
   `)
 
-  return (result as any[]).map(r => ({
+  return (result as Array<any>).map((r) => ({
     wilaya: r.wilaya,
     demand: Number(r.demand),
     supplySellers: Number(r.supply_sellers),
@@ -582,10 +614,18 @@ export async function fetchAdminDashboardStats(days?: number) {
     ? fromDate.toISOString().replace('T', ' ').replace('Z', '')
     : undefined
 
-  const userDateFilter = fromDateStr ? sql`AND created_at >= ${fromDateStr}::timestamp` : sql``
-  const reqDateFilter = fromDateStr ? sql`WHERE created_at >= ${fromDateStr}::timestamp` : sql``
-  const openReqDateFilter = fromDateStr ? sql`AND created_at >= ${fromDateStr}::timestamp` : sql``
-  const quoteDateFilter = fromDateStr ? sql`WHERE created_at >= ${fromDateStr}::timestamp` : sql``
+  const userDateFilter = fromDateStr
+    ? sql`AND created_at >= ${fromDateStr}::timestamp`
+    : sql``
+  const reqDateFilter = fromDateStr
+    ? sql`WHERE created_at >= ${fromDateStr}::timestamp`
+    : sql``
+  const openReqDateFilter = fromDateStr
+    ? sql`AND created_at >= ${fromDateStr}::timestamp`
+    : sql``
+  const quoteDateFilter = fromDateStr
+    ? sql`WHERE created_at >= ${fromDateStr}::timestamp`
+    : sql``
 
   const result = await db.execute(sql`
     SELECT 
