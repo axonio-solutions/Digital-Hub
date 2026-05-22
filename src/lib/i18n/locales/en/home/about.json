@@ -22,10 +22,26 @@
     ]
   },
   "values": [
-    { "title": "Trust", "description": "Every seller is verified. Every transaction is tracked. We build a marketplace you can rely on.", "icon": "Shield" },
-    { "title": "Speed", "description": "Get multiple quotes in hours, not days. Our platform accelerates the entire sourcing process.", "icon": "Zap" },
-    { "title": "Transparency", "description": "No hidden prices, no guesswork. Compare offers side by side and choose what fits your budget.", "icon": "Eye" },
-    { "title": "Community", "description": "We are building Algeria's largest auto parts network — connecting people who keep the country moving.", "icon": "Users" }
+    {
+      "title": "Trust",
+      "description": "Every seller is verified. Every transaction is tracked. We build a marketplace you can rely on.",
+      "icon": "Shield"
+    },
+    {
+      "title": "Speed",
+      "description": "Get multiple quotes in hours, not days. Our platform accelerates the entire sourcing process.",
+      "icon": "Zap"
+    },
+    {
+      "title": "Transparency",
+      "description": "No hidden prices, no guesswork. Compare offers side by side and choose what fits your budget.",
+      "icon": "Eye"
+    },
+    {
+      "title": "Community",
+      "description": "We are building Algeria's largest auto parts network — connecting people who keep the country moving.",
+      "icon": "Users"
+    }
   ],
   "stats": {
     "buyers": "5,000+",

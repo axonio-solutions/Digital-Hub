@@ -26,7 +26,11 @@
     "spam_flag": "Spam Alert",
     "abandoned_request": "Request Expired",
     "bottleneck_alert": "System Alert",
-    "account_approved": "Store Approved!"
+    "account_approved": "Store Approved!",
+    "new_seller_waitlist": "New Seller Application",
+    "credit_request": "New Credit Request",
+    "credit_approved": "Credits Approved!",
+    "credit_rejected": "Credit Request Declined"
   },
   "messages": {
     "new_offer": "A seller has submitted a new offer for your request.",
@@ -43,6 +47,10 @@
     "spam_flag": "A request has been flagged as spam and requires review.",
     "abandoned_request": "A request has expired due to inactivity.",
     "bottleneck_alert": "A system bottleneck has been detected.",
-    "account_approved": "Your seller account has been approved. You can now start selling!"
+    "account_approved": "Your seller account has been approved. You can now start selling!",
+    "new_seller_waitlist": "A new seller has registered and is waiting for your approval.",
+    "credit_request": "A seller has submitted a credit purchase request.",
+    "credit_approved": "Your credit request has been approved. Credits have been added to your account.",
+    "credit_rejected": "Your credit request was declined. Check your dashboard for details."
   }
 }

@@ -36,7 +36,7 @@
       "success": "تم منح {{amount}} رصيد إلى {{name}}",
       "error_amount": "يجب أن يكون المبلغ أكبر من 0",
       "error_failed": "فشل في منح الأرصدة",
-        "processing": "جاري المعالجة..."
+      "processing": "جاري المعالجة..."
     },
     "status": {
       "active": "نشط",

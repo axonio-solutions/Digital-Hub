@@ -1,11 +1,58 @@
 {
-  "columns": { "part": "Pièce", "vehicle": "Véhicule", "category": "Catégorie", "posted": "Publié le", "offers": "Offres", "status": "Statut" },
-  "empty": { "general": "N/D", "inquiry": "Demande Générale", "market_avg": "Moy. Marché", "title": "Aucune Demande", "desc": "Publiez votre première demande pour recevoir des offres." },
-  "actions": { "open_menu": "Ouvrir le menu", "title": "Actions", "view_details": "Voir Détails", "edit_request": "Modifier", "cancel_request": "Fermer", "reopen_request": "Réouvrir", "delete_permanently": "Supprimer", "close": "Fermer", "cancel": "Annuler" },
-  "dialogs": {
-    "cancel": { "title": "Fermer cette Demande ?", "description": "Les demandes fermées n'acceptent plus de nouvelles offres. Vous pouvez les réouvrir à tout moment.", "cancelling": "Fermeture...", "confirm": "Fermer la Demande" },
-    "delete": { "title": "Supprimer cette Demande ?", "description": "Cette action est irréversible. La demande sera retirée de votre historique.", "deleting": "Suppression...", "confirm": "Supprimer" },
-    "reopen": { "title": "Réouvrir cette Demande ?", "description": "Les vendeurs pourront à nouveau voir et soumettre des offres.", "reopening": "Réouverture...", "confirm": "Réouvrir" }
+  "columns": {
+    "part": "Pièce",
+    "vehicle": "Véhicule",
+    "category": "Catégorie",
+    "posted": "Publié le",
+    "offers": "Offres",
+    "status": "Statut"
   },
-  "filters": { "search_placeholder": "Rechercher des pièces...", "status": "Statut", "brand": "Marque", "statuses": { "open": "Ouvert", "fulfilled": "Traité", "cancelled": "Annulé" } }
+  "empty": {
+    "general": "N/D",
+    "inquiry": "Demande Générale",
+    "market_avg": "Moy. Marché",
+    "title": "Aucune Demande",
+    "desc": "Publiez votre première demande pour recevoir des offres."
+  },
+  "actions": {
+    "open_menu": "Ouvrir le menu",
+    "title": "Actions",
+    "view_details": "Voir Détails",
+    "edit_request": "Modifier",
+    "cancel_request": "Fermer",
+    "reopen_request": "Réouvrir",
+    "delete_permanently": "Supprimer",
+    "close": "Fermer",
+    "cancel": "Annuler"
+  },
+  "dialogs": {
+    "cancel": {
+      "title": "Fermer cette Demande ?",
+      "description": "Les demandes fermées n'acceptent plus de nouvelles offres. Vous pouvez les réouvrir à tout moment.",
+      "cancelling": "Fermeture...",
+      "confirm": "Fermer la Demande"
+    },
+    "delete": {
+      "title": "Supprimer cette Demande ?",
+      "description": "Cette action est irréversible. La demande sera retirée de votre historique.",
+      "deleting": "Suppression...",
+      "confirm": "Supprimer"
+    },
+    "reopen": {
+      "title": "Réouvrir cette Demande ?",
+      "description": "Les vendeurs pourront à nouveau voir et soumettre des offres.",
+      "reopening": "Réouverture...",
+      "confirm": "Réouvrir"
+    }
+  },
+  "filters": {
+    "search_placeholder": "Rechercher des pièces...",
+    "status": "Statut",
+    "brand": "Marque",
+    "statuses": {
+      "open": "Ouvert",
+      "fulfilled": "Traité",
+      "cancelled": "Annulé"
+    }
+  }
 }

@@ -2,10 +2,26 @@
   "welcome": "Bon retour, {{name}}",
   "subtitle": "Voici un aperçu de vos demandes de pièces et des offres reçues.",
   "stats": {
-    "active": { "label": "Demandes Actives", "sub": "Intérêt en Direct", "desc": "Actuellement ouvertes aux offres" },
-    "offers": { "label": "Offres Reçues", "sub": "Volume de Devis", "desc": "Total des propositions reçues" },
-    "fulfilled": { "label": "Satisfaites", "sub": "Taux de Réussite", "desc": "Demandes traitées avec succès" },
-    "total": { "label": "Volume Total", "sub": "Historique", "desc": "Activité sur la plateforme" }
+    "active": {
+      "label": "Demandes Actives",
+      "sub": "Intérêt en Direct",
+      "desc": "Actuellement ouvertes aux offres"
+    },
+    "offers": {
+      "label": "Offres Reçues",
+      "sub": "Volume de Devis",
+      "desc": "Total des propositions reçues"
+    },
+    "fulfilled": {
+      "label": "Satisfaites",
+      "sub": "Taux de Réussite",
+      "desc": "Demandes traitées avec succès"
+    },
+    "total": {
+      "label": "Volume Total",
+      "sub": "Historique",
+      "desc": "Activité sur la plateforme"
+    }
   },
   "recent": {
     "title": "Demandes Récentes",

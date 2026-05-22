@@ -2,10 +2,26 @@
   "welcome": "Welcome back, {{name}}",
   "subtitle": "Here's a snapshot of your parts requests and incoming offers.",
   "stats": {
-    "active": { "label": "Active Requests", "sub": "Live Interest", "desc": "Currently open and accepting offers" },
-    "offers": { "label": "Offers Received", "sub": "Quote Volume", "desc": "Total proposals across all requests" },
-    "fulfilled": { "label": "Fulfilled", "sub": "Success Rate", "desc": "Requests matched successfully" },
-    "total": { "label": "Total Volume", "sub": "History", "desc": "Lifetime marketplace activity" }
+    "active": {
+      "label": "Active Requests",
+      "sub": "Live Interest",
+      "desc": "Currently open and accepting offers"
+    },
+    "offers": {
+      "label": "Offers Received",
+      "sub": "Quote Volume",
+      "desc": "Total proposals across all requests"
+    },
+    "fulfilled": {
+      "label": "Fulfilled",
+      "sub": "Success Rate",
+      "desc": "Requests matched successfully"
+    },
+    "total": {
+      "label": "Total Volume",
+      "sub": "History",
+      "desc": "Lifetime marketplace activity"
+    }
   },
   "recent": {
     "title": "Recent Requests",

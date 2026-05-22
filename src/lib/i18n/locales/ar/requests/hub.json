@@ -1,7 +1,11 @@
 {
   "title": "طلباتي",
   "description": "أدر طلبات قطع الغيار الخاصة بك وراجع العروض الواردة من البائعين.",
-  "buttons": { "new_demand": "طلب جديد", "new_demand_short": "جديد", "refresh": "تحديث" },
+  "buttons": {
+    "new_demand": "طلب جديد",
+    "new_demand_short": "جديد",
+    "refresh": "تحديث"
+  },
   "dialog": {
     "title": "تقديم طلب قطعة",
     "description": "قدم تفاصيل حول قطعة الغيار التي تبحث عنها."
@@ -16,15 +20,29 @@
     "error": "فشل التحميل. يرجى المحاولة مرة أخرى.",
     "search_placeholder": "تصفية الطلبات...",
     "stats": {
-      "active": "نشط", "active_sub": "مفتوح حالياً",
-      "offers": "عروض", "offers_sub": "إجمالي المستلم",
-      "fulfilled": "منفذ", "fulfilled_sub": "مكتمل"
+      "active": "نشط",
+      "active_sub": "مفتوح حالياً",
+      "offers": "عروض",
+      "offers_sub": "إجمالي المستلم",
+      "fulfilled": "منفذ",
+      "fulfilled_sub": "مكتمل"
     },
     "filters": {
-      "status": "الحالة", "brand": "العلامة",
-      "open": "مفتوح", "fulfilled": "منفذ", "cancelled": "ملغي"
+      "status": "الحالة",
+      "brand": "العلامة",
+      "open": "مفتوح",
+      "fulfilled": "منفذ",
+      "cancelled": "ملغي"
     }
   },
-  "toasts": { "closed": "تم إغلاق الطلب", "reopened": "تم إعادة فتح الطلب", "deleted": "تم حذف الطلب", "error": "حدث خطأ ما" },
-  "empty": { "title": "لا توجد طلبات", "desc": "انشر طلبك الأول لاستقبال عروض من البائعين الموثوقين." }
+  "toasts": {
+    "closed": "تم إغلاق الطلب",
+    "reopened": "تم إعادة فتح الطلب",
+    "deleted": "تم حذف الطلب",
+    "error": "حدث خطأ ما"
+  },
+  "empty": {
+    "title": "لا توجد طلبات",
+    "desc": "انشر طلبك الأول لاستقبال عروض من البائعين الموثوقين."
+  }
 }

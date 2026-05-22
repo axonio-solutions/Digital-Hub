@@ -1,10 +1,19 @@
 {
   "steps": {
-    "role": { "title": "Rôle", "description": "Choisissez votre type de compte" },
+    "role": {
+      "title": "Rôle",
+      "description": "Choisissez votre type de compte"
+    },
     "profile": { "title": "Profil", "description": "Téléversez votre photo" },
     "contact": { "title": "Contact", "description": "Comment vous joindre ?" },
-    "location": { "title": "Localisation", "description": "Où êtes-vous basé ?" },
-    "specialties": { "title": "Spécialités", "description": "Que vendez-vous ?" }
+    "location": {
+      "title": "Localisation",
+      "description": "Où êtes-vous basé ?"
+    },
+    "specialties": {
+      "title": "Spécialités",
+      "description": "Que vendez-vous ?"
+    }
   },
   "role_step": {
     "title": "Choisissez votre parcours",

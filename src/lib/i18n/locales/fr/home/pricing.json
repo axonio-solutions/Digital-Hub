@@ -56,9 +56,18 @@
   "faq": {
     "title": "FAQ sur les Tarifs",
     "questions": [
-      { "q": "Y a-t-il des frais pour publier une demande ?", "a": "Non. Publier une demande est totalement gratuit." },
-      { "q": "Comment est calculée la commission vendeur ?", "a": "Les vendeurs paient un petit pourcentage de la valeur de la transaction." },
-      { "q": "Y a-t-il des frais d'abonnement mensuels ?", "a": "Non. Il n'y a pas de frais mensuels." }
+      {
+        "q": "Y a-t-il des frais pour publier une demande ?",
+        "a": "Non. Publier une demande est totalement gratuit."
+      },
+      {
+        "q": "Comment est calculée la commission vendeur ?",
+        "a": "Les vendeurs paient un petit pourcentage de la valeur de la transaction."
+      },
+      {
+        "q": "Y a-t-il des frais d'abonnement mensuels ?",
+        "a": "Non. Il n'y a pas de frais mensuels."
+      }
     ]
   },
   "cta": {

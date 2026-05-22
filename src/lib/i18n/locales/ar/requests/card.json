@@ -1,5 +1,9 @@
 {
-  "badges": { "offers_received": "تم تلقي عروض", "new": "جديد", "premium_grid": "مميز" },
+  "badges": {
+    "offers_received": "تم تلقي عروض",
+    "new": "جديد",
+    "premium_grid": "مميز"
+  },
   "labels": { "quotes": "العروض", "id_prefix": "معرف" },
   "actions": { "review": "مراجعة", "details": "تفاصيل" },
   "defaults": { "note": "طلب {{title}} لسيارة {{brand}} موديل {{modelYear}}." }

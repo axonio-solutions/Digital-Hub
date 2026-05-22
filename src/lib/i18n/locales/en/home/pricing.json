@@ -56,9 +56,18 @@
   "faq": {
     "title": "Pricing FAQs",
     "questions": [
-      { "q": "Is there a fee to post a request?", "a": "No. Posting a part request is completely free for all buyers." },
-      { "q": "How is the seller commission calculated?", "a": "Sellers pay a small percentage of the deal value upon successful sale. The exact rate is displayed during registration." },
-      { "q": "Are there any monthly subscription fees?", "a": "No. There are no monthly fees for buyers or sellers. You only pay when value is delivered." }
+      {
+        "q": "Is there a fee to post a request?",
+        "a": "No. Posting a part request is completely free for all buyers."
+      },
+      {
+        "q": "How is the seller commission calculated?",
+        "a": "Sellers pay a small percentage of the deal value upon successful sale. The exact rate is displayed during registration."
+      },
+      {
+        "q": "Are there any monthly subscription fees?",
+        "a": "No. There are no monthly fees for buyers or sellers. You only pay when value is delivered."
+      }
     ]
   },
   "cta": {

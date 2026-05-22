@@ -188,10 +188,25 @@
     "submit_title": "Soumettre Votre Devis",
     "submit_desc": "Configurez votre offre pour cette demande.",
     "details_tab": "Détails",
+    "offers_tab": "Offres",
     "offer_tab": "Votre Offre",
     "previous_image": "Image précédente",
     "next_image": "Image suivante",
-    "go_to_slide": "Aller au slide"
+    "go_to_slide": "Aller au slide",
+    "competing_offers": "Offres Concurrentes",
+    "offers_in_discussion": "En Discussion",
+    "offers_pending": "En Attente",
+    "offers_total": "Total",
+    "offers_new_part": "Pièce neuve",
+    "offers_used_part": "Pièce d'occasion",
+    "offers_no_offers": "Aucune offre — soyez le premier !",
+    "offers_warranty": "Garantie {{warranty}}",
+    "offers_no_warranty": "Sans garantie",
+    "offers_loading": "Chargement des offres…",
+    "my_offer_badge": "Mon Offre",
+    "my_current_offer": "Mon Offre Actuelle",
+    "adjust_title": "Ajuster Votre Offre",
+    "adjust_desc": "Mettez à jour votre prix, état ou garantie pour cette demande."
   },
   "pagination": {
     "page": "Page {{number}}"

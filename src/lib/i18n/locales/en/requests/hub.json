@@ -1,7 +1,11 @@
 {
   "title": "My Requests",
   "description": "Manage your part requests and review incoming offers from sellers.",
-  "buttons": { "new_demand": "New Demand", "new_demand_short": "New", "refresh": "Refresh" },
+  "buttons": {
+    "new_demand": "New Demand",
+    "new_demand_short": "New",
+    "refresh": "Refresh"
+  },
   "dialog": {
     "title": "Submit Part Request",
     "description": "Provide details about the spare part you're looking for."
@@ -16,15 +20,29 @@
     "error": "Failed to load requests. Please try again.",
     "search_placeholder": "Filter requests...",
     "stats": {
-      "active": "Active", "active_sub": "Currently open",
-      "offers": "Offers", "offers_sub": "Total received",
-      "fulfilled": "Fulfilled", "fulfilled_sub": "Completed"
+      "active": "Active",
+      "active_sub": "Currently open",
+      "offers": "Offers",
+      "offers_sub": "Total received",
+      "fulfilled": "Fulfilled",
+      "fulfilled_sub": "Completed"
     },
     "filters": {
-      "status": "Status", "brand": "Brand",
-      "open": "Open", "fulfilled": "Fulfilled", "cancelled": "Cancelled"
+      "status": "Status",
+      "brand": "Brand",
+      "open": "Open",
+      "fulfilled": "Fulfilled",
+      "cancelled": "Cancelled"
     }
   },
-  "toasts": { "closed": "Request closed", "reopened": "Request reopened", "deleted": "Request deleted", "error": "Something went wrong" },
-  "empty": { "title": "No Requests Yet", "desc": "Post your first part request to receive offers from trusted sellers." }
+  "toasts": {
+    "closed": "Request closed",
+    "reopened": "Request reopened",
+    "deleted": "Request deleted",
+    "error": "Something went wrong"
+  },
+  "empty": {
+    "title": "No Requests Yet",
+    "desc": "Post your first part request to receive offers from trusted sellers."
+  }
 }

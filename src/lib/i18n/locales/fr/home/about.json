@@ -22,10 +22,26 @@
     ]
   },
   "values": [
-    { "title": "Confiance", "description": "Chaque vendeur est vérifié. Chaque transaction est suivie.", "icon": "Shield" },
-    { "title": "Rapidité", "description": "Obtenez plusieurs devis en quelques heures.", "icon": "Zap" },
-    { "title": "Transparence", "description": "Comparez les offres et choisissez ce qui correspond à votre budget.", "icon": "Eye" },
-    { "title": "Communauté", "description": "Nous construisons le plus grand réseau de pièces auto en Algérie.", "icon": "Users" }
+    {
+      "title": "Confiance",
+      "description": "Chaque vendeur est vérifié. Chaque transaction est suivie.",
+      "icon": "Shield"
+    },
+    {
+      "title": "Rapidité",
+      "description": "Obtenez plusieurs devis en quelques heures.",
+      "icon": "Zap"
+    },
+    {
+      "title": "Transparence",
+      "description": "Comparez les offres et choisissez ce qui correspond à votre budget.",
+      "icon": "Eye"
+    },
+    {
+      "title": "Communauté",
+      "description": "Nous construisons le plus grand réseau de pièces auto en Algérie.",
+      "icon": "Users"
+    }
   ],
   "stats": {
     "buyers": "5 000+",

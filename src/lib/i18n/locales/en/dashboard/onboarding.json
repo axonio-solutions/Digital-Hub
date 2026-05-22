@@ -4,7 +4,10 @@
     "profile": { "title": "Profile", "description": "Upload your photo" },
     "contact": { "title": "Contact", "description": "How can we reach you?" },
     "location": { "title": "Location", "description": "Where are you based?" },
-    "specialties": { "title": "Specialties", "description": "What do you sell?" }
+    "specialties": {
+      "title": "Specialties",
+      "description": "What do you sell?"
+    }
   },
   "role_step": {
     "title": "Choose your journey",

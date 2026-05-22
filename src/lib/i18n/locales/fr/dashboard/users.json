@@ -6,9 +6,25 @@
     "add_user": "Ajouter un utilisateur"
   },
   "stats": {
-    "registered": { "label": "Utilisateurs inscrits", "desc": "Taille du réseau", "detail": "Total des comptes plateforme" },
-    "waitlisted": { "label": "Vendeurs en attente", "desc": "En attente d'approbation", "detail": "File d'attente des marchands potentiels" },
-    "active_sellers": { "label": "Vendeurs actifs", "desc": "Marchands vérifiés", "detail": "Partenaires actifs du côté de l'offre" },
-    "pending_email": { "label": "Email en attente", "desc": "Vérification d'identité", "detail": "Utilisateurs nécessitant confirmation" }
+    "registered": {
+      "label": "Utilisateurs inscrits",
+      "desc": "Taille du réseau",
+      "detail": "Total des comptes plateforme"
+    },
+    "waitlisted": {
+      "label": "Vendeurs en attente",
+      "desc": "En attente d'approbation",
+      "detail": "File d'attente des marchands potentiels"
+    },
+    "active_sellers": {
+      "label": "Vendeurs actifs",
+      "desc": "Marchands vérifiés",
+      "detail": "Partenaires actifs du côté de l'offre"
+    },
+    "pending_email": {
+      "label": "Email en attente",
+      "desc": "Vérification d'identité",
+      "detail": "Utilisateurs nécessitant confirmation"
+    }
   }
 }

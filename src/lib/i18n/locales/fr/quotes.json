@@ -88,13 +88,18 @@
       "update_title": "Modifier le Devis",
       "update_desc": "Ajustez les détails de votre proposition.",
       "update_btn": "Mettre à Jour",
+      "remind_btn": "Rappeler l'Acheteur",
+      "reminding": "Envoi...",
       "close": "Fermer"
     },
     "confirm": {
       "withdraw": "Retirer cette proposition définitivement ? Action irréversible."
     },
     "toasts": {
-      "withdrawn": "Proposition retirée avec succès"
+      "withdrawn": "Proposition retirée avec succès",
+      "removed": "Proposition supprimée avec succès",
+      "reminder_sent": "Rappel envoyé à l'acheteur",
+      "reminder_error": "Échec de l'envoi du rappel"
     }
   }
 }

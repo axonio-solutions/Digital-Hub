@@ -26,7 +26,11 @@
     "spam_flag": "Alerte spam",
     "abandoned_request": "Demande expiree",
     "bottleneck_alert": "Alerte systeme",
-    "account_approved": "Boutique approuvee !"
+    "account_approved": "Boutique approuvee !",
+    "new_seller_waitlist": "Nouvelle candidature vendeur",
+    "credit_request": "Nouvelle demande de credits",
+    "credit_approved": "Credits approuves !",
+    "credit_rejected": "Demande de credits refusee"
   },
   "messages": {
     "new_offer": "Un vendeur a soumis une nouvelle offre pour votre demande.",
@@ -43,6 +47,10 @@
     "spam_flag": "Une demande a ete signalee comme spam et necessite un examen.",
     "abandoned_request": "Une demande a expire en raison d'inactivite.",
     "bottleneck_alert": "Un goulot d'etranglement systeme a ete detecte.",
-    "account_approved": "Votre compte vendeur a ete approuve. Vous pouvez desormais vendre !"
+    "account_approved": "Votre compte vendeur a ete approuve. Vous pouvez desormais vendre !",
+    "new_seller_waitlist": "Un nouveau vendeur s'est inscrit et attend votre approbation.",
+    "credit_request": "Un vendeur a soumis une demande d'achat de credits.",
+    "credit_approved": "Votre demande de credits a ete approuvee. Les credits ont ete ajoutes a votre compte.",
+    "credit_rejected": "Votre demande de credits a ete refusee. Consultez votre tableau de bord pour plus de details."
   }
 }

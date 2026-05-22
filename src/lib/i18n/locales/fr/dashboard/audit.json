@@ -2,10 +2,26 @@
   "title": "Surveillance des Offres",
   "description": "Examinez les demandes en cours, validez les signaux de demande et détectez les spams potentiels sur le réseau.",
   "stats": {
-    "pending": { "label": "En attente de révision", "desc": "Validation en cours", "detail": "En attente d'approbation modérée" },
-    "flagged": { "label": "Signalé comme Spam", "desc": "Alertes de sécurité", "detail": "Signaux à haut risque détectés" },
-    "today": { "label": "Total Aujourd'hui", "desc": "Volume quotidien", "detail": "Nouvelles entrées sur le marché (24h)" },
-    "conversion": { "label": "Taux de Conversion", "desc": "Rendement du Marché", "detail": "Demandes matching l'exécution" }
+    "pending": {
+      "label": "En attente de révision",
+      "desc": "Validation en cours",
+      "detail": "En attente d'approbation modérée"
+    },
+    "flagged": {
+      "label": "Signalé comme Spam",
+      "desc": "Alertes de sécurité",
+      "detail": "Signaux à haut risque détectés"
+    },
+    "today": {
+      "label": "Total Aujourd'hui",
+      "desc": "Volume quotidien",
+      "detail": "Nouvelles entrées sur le marché (24h)"
+    },
+    "conversion": {
+      "label": "Taux de Conversion",
+      "desc": "Rendement du Marché",
+      "detail": "Demandes matching l'exécution"
+    }
   },
   "table": {
     "columns": {

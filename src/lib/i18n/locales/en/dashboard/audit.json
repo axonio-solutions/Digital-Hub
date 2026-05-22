@@ -2,10 +2,26 @@
   "title": "Offer Monitoring",
   "description": "Review current requests, validate demand signals, and detect potential spam across the network.",
   "stats": {
-    "pending": { "label": "Pending Review", "desc": "Pending Validation", "detail": "Awaiting moderate approval" },
-    "flagged": { "label": "Flagged Spam", "desc": "Security Alerts", "detail": "High-risk signals detected" },
-    "today": { "label": "Total Today", "desc": "Daily Volume", "detail": "New market entries (24h)" },
-    "conversion": { "label": "Conversion Rate", "desc": "Market Yield", "detail": "Fulfillment-matched inquiries" }
+    "pending": {
+      "label": "Pending Review",
+      "desc": "Pending Validation",
+      "detail": "Awaiting moderate approval"
+    },
+    "flagged": {
+      "label": "Flagged Spam",
+      "desc": "Security Alerts",
+      "detail": "High-risk signals detected"
+    },
+    "today": {
+      "label": "Total Today",
+      "desc": "Daily Volume",
+      "detail": "New market entries (24h)"
+    },
+    "conversion": {
+      "label": "Conversion Rate",
+      "desc": "Market Yield",
+      "detail": "Fulfillment-matched inquiries"
+    }
   },
   "table": {
     "columns": {

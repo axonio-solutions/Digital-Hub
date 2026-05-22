@@ -7,28 +7,64 @@
     "general": {
       "title": "Général",
       "questions": [
-        { "q": "Qu'est-ce que MLILA ?", "a": "MLILA est le premier reverse-marketplace algérien pour les pièces auto." },
-        { "q": "MLILA est-il gratuit ?", "a": "Créer un compte est totalement gratuit." },
-        { "q": "Quelles régions MLILA couvre-t-il ?", "a": "MLILA opère dans les 48 wilayas d'Algérie." },
-        { "q": "Quelles langues supporte MLILA ?", "a": "MLILA est disponible en anglais, français et arabe." }
+        {
+          "q": "Qu'est-ce que MLILA ?",
+          "a": "MLILA est le premier reverse-marketplace algérien pour les pièces auto."
+        },
+        {
+          "q": "MLILA est-il gratuit ?",
+          "a": "Créer un compte est totalement gratuit."
+        },
+        {
+          "q": "Quelles régions MLILA couvre-t-il ?",
+          "a": "MLILA opère dans les 48 wilayas d'Algérie."
+        },
+        {
+          "q": "Quelles langues supporte MLILA ?",
+          "a": "MLILA est disponible en anglais, français et arabe."
+        }
       ]
     },
     "buyers": {
       "title": "Pour les Acheteurs",
       "questions": [
-        { "q": "Comment demander une pièce ?", "a": "Créez un compte, décrivez la pièce dont vous avez besoin et publiez votre demande." },
-        { "q": "Comment choisir la meilleure offre ?", "a": "Comparez les prix, conditions, garanties et évaluations des vendeurs." },
-        { "q": "Puis-je négocier le prix ?", "a": "Les vendeurs soumettent leurs meilleures offres. Contactez-les pour plus de détails." },
-        { "q": "Que se passe-t-il après avoir accepté une offre ?", "a": "Vous recevez les coordonnées du vendeur pour organiser le paiement et la livraison." }
+        {
+          "q": "Comment demander une pièce ?",
+          "a": "Créez un compte, décrivez la pièce dont vous avez besoin et publiez votre demande."
+        },
+        {
+          "q": "Comment choisir la meilleure offre ?",
+          "a": "Comparez les prix, conditions, garanties et évaluations des vendeurs."
+        },
+        {
+          "q": "Puis-je négocier le prix ?",
+          "a": "Les vendeurs soumettent leurs meilleures offres. Contactez-les pour plus de détails."
+        },
+        {
+          "q": "Que se passe-t-il après avoir accepté une offre ?",
+          "a": "Vous recevez les coordonnées du vendeur pour organiser le paiement et la livraison."
+        }
       ]
     },
     "sellers": {
       "title": "Pour les Vendeurs",
       "questions": [
-        { "q": "Comment devenir vendeur ?", "a": "Inscrivez-vous, complétez votre profil et faites-vous certifier par notre équipe." },
-        { "q": "Combien ça coûte de vendre ?", "a": "L'inscription est gratuite. Une petite commission est appliquée lorsque vous remportez une affaire." },
-        { "q": "Comment avoir plus de visibilité ?", "a": "Complétez votre profil et répondez rapidement aux demandes." },
-        { "q": "Puis-je modifier mes offres ?", "a": "Oui, vous pouvez modifier ou retirer vos offres tant qu'elles n'ont pas été acceptées." }
+        {
+          "q": "Comment devenir vendeur ?",
+          "a": "Inscrivez-vous, complétez votre profil et faites-vous certifier par notre équipe."
+        },
+        {
+          "q": "Combien ça coûte de vendre ?",
+          "a": "L'inscription est gratuite. Une petite commission est appliquée lorsque vous remportez une affaire."
+        },
+        {
+          "q": "Comment avoir plus de visibilité ?",
+          "a": "Complétez votre profil et répondez rapidement aux demandes."
+        },
+        {
+          "q": "Puis-je modifier mes offres ?",
+          "a": "Oui, vous pouvez modifier ou retirer vos offres tant qu'elles n'ont pas été acceptées."
+        }
       ]
     }
   },

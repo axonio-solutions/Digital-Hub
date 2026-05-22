@@ -1,7 +1,11 @@
 {
   "title": "Mes Demandes",
   "description": "Gérez vos demandes de pièces et consultez les offres reçues.",
-  "buttons": { "new_demand": "Nouvelle Demande", "new_demand_short": "Nouveau", "refresh": "Rafraîchir" },
+  "buttons": {
+    "new_demand": "Nouvelle Demande",
+    "new_demand_short": "Nouveau",
+    "refresh": "Rafraîchir"
+  },
   "dialog": {
     "title": "Soumettre une Demande",
     "description": "Fournissez des détails sur la pièce détachée que vous recherchez."
@@ -16,15 +20,29 @@
     "error": "Échec du chargement. Veuillez réessayer.",
     "search_placeholder": "Filtrer les demandes...",
     "stats": {
-      "active": "Actives", "active_sub": "Ouvertes actuellement",
-      "offers": "Offres", "offers_sub": "Total reçu",
-      "fulfilled": "Traitées", "fulfilled_sub": "Terminées"
+      "active": "Actives",
+      "active_sub": "Ouvertes actuellement",
+      "offers": "Offres",
+      "offers_sub": "Total reçu",
+      "fulfilled": "Traitées",
+      "fulfilled_sub": "Terminées"
     },
     "filters": {
-      "status": "Statut", "brand": "Marque",
-      "open": "Ouvert", "fulfilled": "Traité", "cancelled": "Annulé"
+      "status": "Statut",
+      "brand": "Marque",
+      "open": "Ouvert",
+      "fulfilled": "Traité",
+      "cancelled": "Annulé"
     }
   },
-  "toasts": { "closed": "Demande fermée", "reopened": "Demande réouverte", "deleted": "Demande supprimée", "error": "Une erreur s'est produite" },
-  "empty": { "title": "Aucune Demande", "desc": "Publiez votre première demande pour recevoir des offres de vendeurs de confiance." }
+  "toasts": {
+    "closed": "Demande fermée",
+    "reopened": "Demande réouverte",
+    "deleted": "Demande supprimée",
+    "error": "Une erreur s'est produite"
+  },
+  "empty": {
+    "title": "Aucune Demande",
+    "desc": "Publiez votre première demande pour recevoir des offres de vendeurs de confiance."
+  }
 }

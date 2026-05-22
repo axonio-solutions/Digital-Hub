@@ -10,15 +10,40 @@
     "browse_requests_desc": "Discover live requests from buyers"
   },
   "stats": {
-    "won": { "label": "Won Deals", "sub": "Deal Success", "desc": "Confirmed marketplace acquisitions" },
-    "active": { "label": "Active Bids", "sub": "Open Negotiations", "desc": "Offers currently awaiting review" },
-    "win_rate": { "label": "Win Rate", "sub": "Conversion Yield", "desc": "Efficiency of quote-to-deal transition" },
-    "earnings": { "label": "Earnings", "sub": "Market Revenue", "desc": "Cumulative earnings (DZD)" }
+    "won": {
+      "label": "Won Deals",
+      "sub": "Deal Success",
+      "desc": "Confirmed marketplace acquisitions"
+    },
+    "active": {
+      "label": "Active Bids",
+      "sub": "Open Negotiations",
+      "desc": "Offers currently awaiting review"
+    },
+    "win_rate": {
+      "label": "Win Rate",
+      "sub": "Conversion Yield",
+      "desc": "Efficiency of quote-to-deal transition"
+    },
+    "earnings": {
+      "label": "Earnings",
+      "sub": "Market Revenue",
+      "desc": "Cumulative earnings (DZD)"
+    }
   },
   "charts": {
-    "revenue_velocity": { "title": "Revenue Velocity", "desc": "Earnings trajectory over the last 7 days." },
-    "offer_distribution": { "title": "Offer Distribution", "desc": "Performance breakdown of your quotes." },
-    "performance_summary": { "title": "Performance Summary", "desc": "At-a-glance metrics and conversion health." },
+    "revenue_velocity": {
+      "title": "Revenue Velocity",
+      "desc": "Earnings trajectory over the last 7 days."
+    },
+    "offer_distribution": {
+      "title": "Offer Distribution",
+      "desc": "Performance breakdown of your quotes."
+    },
+    "performance_summary": {
+      "title": "Performance Summary",
+      "desc": "At-a-glance metrics and conversion health."
+    },
     "no_data": "No revenue data yet"
   },
   "summary": {

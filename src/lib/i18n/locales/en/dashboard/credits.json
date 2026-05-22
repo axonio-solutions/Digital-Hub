@@ -36,7 +36,7 @@
       "success": "{{amount}} credits granted to {{name}}",
       "error_amount": "Amount must be greater than 0",
       "error_failed": "Failed to grant credits",
-        "processing": "Processing..."
+      "processing": "Processing..."
     },
     "status": {
       "active": "Active",
@@ -98,7 +98,17 @@
     "request_no_packages": "No credit packages available yet",
     "request_success": "Credit request submitted for review",
     "request_error_submit": "Failed to submit request",
-    "request_submitting": "Submitting..."
+    "request_submitting": "Submitting...",
+    "balance_trend": "Last 14 days",
+    "net_change": "Net change",
+    "low_balance_title": "Running low on credits",
+    "low_balance_desc": "You have fewer than {{count}} credits left. Top up to keep submitting quotes.",
+    "filters": {
+      "all": "All",
+      "income": "Income",
+      "spending": "Spending"
+    },
+    "no_filtered_results": "No transactions match this filter"
   },
   "revenue": {
     "title": "Revenue & Analytics",

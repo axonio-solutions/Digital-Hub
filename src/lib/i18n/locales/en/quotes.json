@@ -88,13 +88,18 @@
       "update_title": "Update Quote",
       "update_desc": "Adjust your proposal details.",
       "update_btn": "Update Offer",
+      "remind_btn": "Remind Buyer",
+      "reminding": "Sending...",
       "close": "Close"
     },
     "confirm": {
       "withdraw": "Withdraw this proposal permanently? This cannot be undone."
     },
     "toasts": {
-      "withdrawn": "Proposal withdrawn successfully"
+      "withdrawn": "Proposal withdrawn successfully",
+      "removed": "Proposal removed successfully",
+      "reminder_sent": "Reminder sent to buyer",
+      "reminder_error": "Failed to send reminder"
     }
   }
 }

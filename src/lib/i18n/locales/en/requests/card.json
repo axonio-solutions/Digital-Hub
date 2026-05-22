@@ -1,5 +1,9 @@
 {
-  "badges": { "offers_received": "Offers Received", "new": "New", "premium_grid": "Premium" },
+  "badges": {
+    "offers_received": "Offers Received",
+    "new": "New",
+    "premium_grid": "Premium"
+  },
   "labels": { "quotes": "Offers", "id_prefix": "ID" },
   "actions": { "review": "Review", "details": "Details" },
   "defaults": { "note": "Requesting {{title}} for {{brand}} {{modelYear}}." }

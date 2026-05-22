@@ -222,10 +222,25 @@
     "submit_title": "Submit Your Quote",
     "submit_desc": "Configure your offer for this procurement request.",
     "details_tab": "Details",
+    "offers_tab": "Offers",
     "offer_tab": "Your Offer",
     "previous_image": "Previous image",
     "next_image": "Next image",
-    "go_to_slide": "Go to slide"
+    "go_to_slide": "Go to slide",
+    "competing_offers": "Competing Offers",
+    "offers_in_discussion": "In Discussion",
+    "offers_pending": "Pending",
+    "offers_total": "Total",
+    "offers_new_part": "New part",
+    "offers_used_part": "Used part",
+    "offers_no_offers": "No offers yet — be first!",
+    "offers_warranty": "{{warranty}} warranty",
+    "offers_no_warranty": "No warranty",
+    "offers_loading": "Loading offers…",
+    "my_offer_badge": "My Offer",
+    "my_current_offer": "My Current Offer",
+    "adjust_title": "Adjust Your Offer",
+    "adjust_desc": "Update your pricing, condition, or warranty for this request."
   },
   "pagination": {
     "page": "Page {{number}}"

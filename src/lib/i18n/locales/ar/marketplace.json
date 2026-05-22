@@ -216,10 +216,25 @@
     "submit_title": "تقديم عرض السعر",
     "submit_desc": "قم بتكوين عرضك لهذا الطلب.",
     "details_tab": "التفاصيل",
+    "offers_tab": "العروض",
     "offer_tab": "عرضك",
     "previous_image": "الصورة السابقة",
     "next_image": "الصورة التالية",
-    "go_to_slide": "الانتقال إلى الشريحة"
+    "go_to_slide": "الانتقال إلى الشريحة",
+    "competing_offers": "العروض المنافسة",
+    "offers_in_discussion": "قيد النقاش",
+    "offers_pending": "معلّق",
+    "offers_total": "الإجمالي",
+    "offers_new_part": "قطعة جديدة",
+    "offers_used_part": "قطعة مستعملة",
+    "offers_no_offers": "لا توجد عروض بعد — كن الأول!",
+    "offers_warranty": "ضمان {{warranty}}",
+    "offers_no_warranty": "بدون ضمان",
+    "offers_loading": "جارٍ تحميل العروض…",
+    "my_offer_badge": "عرضي",
+    "my_current_offer": "عرضي الحالي",
+    "adjust_title": "تعديل عرضك",
+    "adjust_desc": "قم بتحديث سعرك أو حالة القطعة أو الضمان لهذا الطلب."
   },
   "pagination": {
     "page": "صفحة {{number}}"

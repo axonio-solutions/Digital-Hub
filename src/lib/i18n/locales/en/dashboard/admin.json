@@ -45,8 +45,17 @@
     "category_focus": "Category Focus",
     "quote_velocity": "Quote Velocity",
     "market_throughput": "30-Day Market Throughout",
-    "request_volume": { "title": "Request Volume", "desc": "Market demand over the last 10 nodes", "insufficient": "Insufficient data for volume projection..." },
-    "market_analytics": { "title": "Market Analytics", "desc": "Avg offers per marketplace request", "label": "Offers/Req", "health": "Market Health" }
+    "request_volume": {
+      "title": "Request Volume",
+      "desc": "Market demand over the last 10 nodes",
+      "insufficient": "Insufficient data for volume projection..."
+    },
+    "market_analytics": {
+      "title": "Market Analytics",
+      "desc": "Avg offers per marketplace request",
+      "label": "Offers/Req",
+      "health": "Market Health"
+    }
   },
   "distribution": {
     "buyer_title": "Buyer Network Distribution",
@@ -54,10 +63,26 @@
     "regional_concentration": "Regional concentration mapped across Wilayas"
   },
   "stats": {
-    "buyers": { "label": "Active Buyers", "sub": "Vetted participants", "desc": "Total registered platform buyers" },
-    "sellers": { "label": "Live Sellers", "sub": "Verified merchants", "desc": "Active supply side partners" },
-    "demands": { "label": "Open Demands", "sub": "Marketplace activity", "desc": "Total currently open requests" },
-    "supply": { "label": "Market Supply", "sub": "Quotes & Offers", "desc": "Total availability across network" }
+    "buyers": {
+      "label": "Active Buyers",
+      "sub": "Vetted participants",
+      "desc": "Total registered platform buyers"
+    },
+    "sellers": {
+      "label": "Live Sellers",
+      "sub": "Verified merchants",
+      "desc": "Active supply side partners"
+    },
+    "demands": {
+      "label": "Open Demands",
+      "sub": "Marketplace activity",
+      "desc": "Total currently open requests"
+    },
+    "supply": {
+      "label": "Market Supply",
+      "sub": "Quotes & Offers",
+      "desc": "Total availability across network"
+    }
   },
   "table": {
     "intelligence": "Marketplace Intelligence",

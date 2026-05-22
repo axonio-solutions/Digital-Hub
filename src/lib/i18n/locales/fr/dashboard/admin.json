@@ -45,8 +45,17 @@
     "category_focus": "Focus Catégorie",
     "quote_velocity": "Vélocité des Devis",
     "market_throughput": "Débit du Marché sur 30 Jours",
-    "request_volume": { "title": "Volume de Demandes", "desc": "Demande du marché sur les 10 derniers nœuds", "insufficient": "Données insuffisantes pour la projection du volume..." },
-    "market_analytics": { "title": "Analytique du Marché", "desc": "Moyenne des offres par demande de marché", "label": "Offres/Dem", "health": "Santé du Marché" }
+    "request_volume": {
+      "title": "Volume de Demandes",
+      "desc": "Demande du marché sur les 10 derniers nœuds",
+      "insufficient": "Données insuffisantes pour la projection du volume..."
+    },
+    "market_analytics": {
+      "title": "Analytique du Marché",
+      "desc": "Moyenne des offres par demande de marché",
+      "label": "Offres/Dem",
+      "health": "Santé du Marché"
+    }
   },
   "distribution": {
     "buyer_title": "Distribution du Réseau Acheteur",
@@ -54,10 +63,26 @@
     "regional_concentration": "Concentration régionale cartographiée par Wilaya"
   },
   "stats": {
-    "buyers": { "label": "Acheteurs Actifs", "sub": "Participants vérifiés", "desc": "Total des acheteurs inscrits sur la plateforme" },
-    "sellers": { "label": "Vendeurs en Direct", "sub": "Marchands vérifiés", "desc": "Partenaires actifs du côté de l'offre" },
-    "demands": { "label": "Demandes Ouvertes", "sub": "Activité du marché", "desc": "Total des demandes actuellement ouvertes" },
-    "supply": { "label": "Offre du Marché", "sub": "Devis & Offres", "desc": "Disponibilité totale sur le réseau" }
+    "buyers": {
+      "label": "Acheteurs Actifs",
+      "sub": "Participants vérifiés",
+      "desc": "Total des acheteurs inscrits sur la plateforme"
+    },
+    "sellers": {
+      "label": "Vendeurs en Direct",
+      "sub": "Marchands vérifiés",
+      "desc": "Partenaires actifs du côté de l'offre"
+    },
+    "demands": {
+      "label": "Demandes Ouvertes",
+      "sub": "Activité du marché",
+      "desc": "Total des demandes actuellement ouvertes"
+    },
+    "supply": {
+      "label": "Offre du Marché",
+      "sub": "Devis & Offres",
+      "desc": "Disponibilité totale sur le réseau"
+    }
   },
   "table": {
     "intelligence": "Intelligence du Marché",

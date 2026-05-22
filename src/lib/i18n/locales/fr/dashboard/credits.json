@@ -36,7 +36,7 @@
       "success": "{{amount}} crédits octroyés à {{name}}",
       "error_amount": "Le montant doit être supérieur à 0",
       "error_failed": "Échec de l'octroi de crédits",
-        "processing": "Traitement..."
+      "processing": "Traitement..."
     },
     "status": {
       "active": "Actif",
