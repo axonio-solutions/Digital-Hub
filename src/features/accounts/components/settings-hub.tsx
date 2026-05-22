@@ -1,29 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Bell,
-  Menu,
-  Shield,
-  User,
-  X,
-} from 'lucide-react'
+import { Bell, Menu, Shield, User, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { GeneralInfoForm } from './general-info-form'
-import { SellerSettings } from '@/features/seller'
 import { AccountManagement } from './account-management'
+import { NotificationPreferences } from './notification-preferences'
+import { SellerSettings } from '@/features/seller'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { AvatarUpload } from '@/features/upload/components/avatar-upload'
 import { SpecialtyManager } from '@/features/vendors/components/specialty-manager'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 // Sub-components
-
 
 export function SettingsHub() {
   const { t } = useTranslation('dashboard/settings')
@@ -118,7 +109,9 @@ function ProfileSection({ user }: { user: any }) {
       <div className="px-1">
         <div className="flex items-center gap-3 mb-2">
           <User className="size-6 text-primary" />
-          <h2 className="text-2xl font-bold tracking-tight">{t('profile.section_title')}</h2>
+          <h2 className="text-2xl font-bold tracking-tight">
+            {t('profile.section_title')}
+          </h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
           {t('profile.section_desc')}
@@ -145,8 +138,12 @@ function ProfileSection({ user }: { user: any }) {
 
       <div className="space-y-6">
         <div className="px-1">
-          <h3 className="text-lg font-bold tracking-tight mb-1">{t('profile.personal_title')}</h3>
-          <p className="text-xs text-muted-foreground">{t('profile.personal_desc')}</p>
+          <h3 className="text-lg font-bold tracking-tight mb-1">
+            {t('profile.personal_title')}
+          </h3>
+          <p className="text-xs text-muted-foreground">
+            {t('profile.personal_desc')}
+          </p>
         </div>
         <GeneralInfoForm />
       </div>
@@ -181,7 +178,9 @@ function SecuritySection() {
       <div className="px-1">
         <div className="flex items-center gap-3 mb-2">
           <Shield className="size-6 text-primary" />
-          <h2 className="text-2xl font-bold tracking-tight">{t('security.title')}</h2>
+          <h2 className="text-2xl font-bold tracking-tight">
+            {t('security.title')}
+          </h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
           {t('security.desc')}
@@ -192,8 +191,6 @@ function SecuritySection() {
   )
 }
 
-import { NotificationPreferences } from './notification-preferences'
-
 function NotificationsSection({ user }: { user: any }) {
   const { t } = useTranslation('dashboard/settings')
   return (
@@ -201,7 +198,9 @@ function NotificationsSection({ user }: { user: any }) {
       <div className="px-1">
         <div className="flex items-center gap-3 mb-2">
           <Bell className="size-6 text-primary" />
-          <h2 className="text-2xl font-bold tracking-tight">{t('notifications.title')}</h2>
+          <h2 className="text-2xl font-bold tracking-tight">
+            {t('notifications.title')}
+          </h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
           {t('notifications.desc')}

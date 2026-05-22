@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { z } from 'zod'
-import { useToast } from '@/hooks/use-toast'
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 import { authClient } from '@/lib/auth-client'
 
 import { Button } from '@/components/ui/button'
@@ -63,7 +63,9 @@ export function LoginForm() {
           signInError.code === 'USER_NOT_FOUND' ||
           signInError.code === 'INVALID_EMAIL_OR_PASSWORD'
         ) {
-          console.log('[LoginForm] User not found or invalid credentials, attempting signUp.email...')
+          console.log(
+            '[LoginForm] User not found or invalid credentials, attempting signUp.email...',
+          )
           const { data: signUpData, error: signUpError } =
             await authClient.signUp.email({
               email: values.email,
@@ -81,11 +83,15 @@ export function LoginForm() {
 
             // If sign up fails because user exists, it means the original sign in was a wrong password
             if (signUpError.code === 'USER_ALREADY_EXISTS') {
-              console.log('[LoginForm] User already exists, must be a wrong password.')
+              console.log(
+                '[LoginForm] User already exists, must be a wrong password.',
+              )
               throw new Error(t('login.errors.user_exists'))
             }
 
-            throw new Error(signUpError.message || t('login.errors.failed_to_join'))
+            throw new Error(
+              signUpError.message || t('login.errors.failed_to_join'),
+            )
           }
 
           console.log('[LoginForm] signUp.email successful')
@@ -109,10 +115,10 @@ export function LoginForm() {
       // We do not need to manually refetch queries or invalidate the router here
       // because we are doing a hard redirect. This guarantees a clean application
       // state (auth context, hooks, router guards) for the authenticated session.
-      
+
       const search = router.state.location.search as { redirect?: string }
       const redirectUrl = search?.redirect || '/dashboard'
-      
+
       // Perform a hard redirect to bypass stale TanStack Router context caches
       window.location.href = redirectUrl
     },
@@ -150,7 +156,11 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>{t('login.password_label')}</FormLabel>
               <FormControl>
-                <Input type="password" placeholder={t('login.password_placeholder')} {...field} />
+                <Input
+                  type="password"
+                  placeholder={t('login.password_placeholder')}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

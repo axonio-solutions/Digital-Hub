@@ -1,15 +1,15 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useRef, useState } from 'react'
+import { Camera, Loader2, Trash2, User } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, Camera, User, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase-client'
 import { updateProfileServerFn } from '@/fn/users'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { useQueryClient } from '@tanstack/react-query'
-import { useTranslation } from 'react-i18next'
 
 interface AvatarUploadProps {
   userId: string
@@ -31,7 +31,9 @@ export function AvatarUpload({
   const { toast } = useToast('dashboard/settings')
   const queryClient = useQueryClient()
   const [isUploading, setIsUploading] = useState(false)
-  const [displayImage, setDisplayImage] = useState<string | null>(currentImage || null)
+  const [displayImage, setDisplayImage] = useState<string | null>(
+    currentImage || null,
+  )
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const sizeClasses = {
@@ -54,33 +56,33 @@ export function AvatarUpload({
       setIsUploading(true)
       const fileExt = file.name.split('.').pop()
       const fileName = `${userId}/avatar-${Date.now()}.${fileExt}`
-      
+
       const { error: uploadError } = await supabase.storage
         .from('profiles')
-        .upload(fileName, file, { 
+        .upload(fileName, file, {
           upsert: true,
-          cacheControl: '3600'
+          cacheControl: '3600',
         })
 
       if (uploadError) throw uploadError
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('profiles')
-        .getPublicUrl(fileName)
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('profiles').getPublicUrl(fileName)
 
       await updateProfileServerFn({
         data: {
           userId,
-          image: publicUrl
-        }
+          image: publicUrl,
+        },
       })
 
       setDisplayImage(publicUrl)
       onUploadComplete?.(publicUrl)
-      
+
       // Force sync navigation bar and other auth-dependent UIs
       await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
-      
+
       toast.success('avatar.upload_success')
     } catch (error: any) {
       console.error(error)
@@ -96,14 +98,14 @@ export function AvatarUpload({
       await updateProfileServerFn({
         data: {
           userId,
-          updates: { image: null }
-        }
+          updates: { image: null },
+        },
       })
       setDisplayImage(null)
-      
+
       // Force sync navigation bar
       await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
-      
+
       toast.success('avatar.remove_success')
     } catch (error: any) {
       toast.error('avatar.remove_failed')
@@ -113,18 +115,21 @@ export function AvatarUpload({
   }
 
   return (
-    <div className={cn("inline-flex flex-col items-center", className)}>
+    <div className={cn('inline-flex flex-col items-center', className)}>
       <div className="relative group">
-        <div 
+        <div
           className={cn(
-            "relative rounded-full border-4 border-background shadow-xl overflow-hidden transition-all duration-300 ring-1 ring-primary/5",
+            'relative rounded-full border-4 border-background shadow-xl overflow-hidden transition-all duration-300 ring-1 ring-primary/5',
             sizeClasses,
-            isUploading ? "opacity-50" : "hover:ring-primary/20 cursor-pointer"
+            isUploading ? 'opacity-50' : 'hover:ring-primary/20 cursor-pointer',
           )}
           onClick={() => !isUploading && fileInputRef.current?.click()}
         >
           <Avatar className="h-full w-full rounded-none">
-            <AvatarImage src={displayImage || undefined} className="object-cover" />
+            <AvatarImage
+              src={displayImage || undefined}
+              className="object-cover"
+            />
             <AvatarFallback className="bg-muted text-muted-foreground border-none">
               <User className="size-1/2 opacity-20" />
             </AvatarFallback>
@@ -154,19 +159,19 @@ export function AvatarUpload({
         )}
       </div>
 
-      <input 
-        type="file" 
-        ref={fileInputRef} 
-        className="hidden" 
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
         accept="image/*"
         onChange={handleUpload}
       />
 
       {displayImage && !isUploading && (
         <div className="mt-4">
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleRemove}
             className="h-7 px-3 text-[10px] text-muted-foreground hover:text-destructive hover:bg-destructive/5 font-bold uppercase tracking-tighter"
           >

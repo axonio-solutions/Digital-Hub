@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Upload, Trash2 } from 'lucide-react'
+import { Loader2, Trash2, Upload } from 'lucide-react'
+import { useCreateBrand, useUpdateBrand } from '../hooks/use-taxonomy'
+import type { BrandInput } from '@/features/taxonomy/validations/taxonomy'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -10,7 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -18,20 +20,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { supabase } from '@/lib/supabase-client'
 import { useToast } from '@/hooks/use-toast'
-import { brandSchema, type BrandInput } from '@/features/taxonomy/validations/taxonomy'
-import { useCreateBrand, useUpdateBrand } from '../hooks/use-taxonomy'
+import { brandSchema } from '@/features/taxonomy/validations/taxonomy'
 
 interface Brand {
   id: string
@@ -45,10 +46,10 @@ interface Brand {
 export function BrandDialog({
   open,
   onOpenChange,
-  editingItem
+  editingItem,
 }: {
-  open: boolean,
-  onOpenChange: (open: boolean) => void,
+  open: boolean
+  onOpenChange: (open: boolean) => void
   editingItem?: Brand | null
 }) {
   const { toast } = useToast('dashboard/taxonomy')
@@ -63,8 +64,8 @@ export function BrandDialog({
       clusterOrigin: '',
       clusterRegion: '',
       imageUrl: '',
-      status: 'active'
-    }
+      status: 'active',
+    },
   })
 
   useEffect(() => {
@@ -74,11 +75,17 @@ export function BrandDialog({
         clusterOrigin: editingItem.clusterOrigin,
         clusterRegion: editingItem.clusterRegion,
         imageUrl: editingItem.imageUrl || '',
-        status: editingItem.status as any
+        status: editingItem.status as any,
       })
       setPreviewImage(editingItem.imageUrl || null)
     } else {
-      form.reset({ brand: '', clusterOrigin: '', clusterRegion: '', imageUrl: '', status: 'active' })
+      form.reset({
+        brand: '',
+        clusterOrigin: '',
+        clusterRegion: '',
+        imageUrl: '',
+        status: 'active',
+      })
       setPreviewImage(null)
     }
   }, [editingItem, form, open])
@@ -89,7 +96,10 @@ export function BrandDialog({
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (!file.type.startsWith('image/')) { toast.error('dialog.toast_upload_error'); return }
+    if (!file.type.startsWith('image/')) {
+      toast.error('dialog.toast_upload_error')
+      return
+    }
 
     try {
       setIsUploading(true)
@@ -102,7 +112,9 @@ export function BrandDialog({
 
       if (uploadError) throw uploadError
 
-      const { data: { publicUrl } } = supabase.storage.from('taxonomy').getPublicUrl(fileName)
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('taxonomy').getPublicUrl(fileName)
       form.setValue('imageUrl', publicUrl)
       setPreviewImage(publicUrl)
       toast.success('dialog.toast_upload_success')
@@ -131,16 +143,26 @@ export function BrandDialog({
             {editingItem ? 'Edit Brand' : 'Create Brand Cluster'}
           </DialogTitle>
           <DialogDescription className="text-[11px] font-medium leading-relaxed">
-            Define vehicle clusters and manufacturer specifications. This influences AI-driven demand forecasting.
+            Define vehicle clusters and manufacturer specifications. This
+            influences AI-driven demand forecasting.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 pt-4"
+          >
             {/* Image Upload */}
             <div className="flex items-center gap-4">
-              <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+              <div
+                className="relative group cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
                 <Avatar className="size-16 rounded-xl border-2 border-slate-200 dark:border-slate-800">
-                  <AvatarImage src={previewImage || undefined} className="object-cover" />
+                  <AvatarImage
+                    src={previewImage || undefined}
+                    className="object-cover"
+                  />
                   <AvatarFallback className="bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300 rounded-xl text-lg font-black">
                     {form.watch('brand')?.substring(0, 2).toUpperCase() || '?'}
                   </AvatarFallback>
@@ -152,18 +174,35 @@ export function BrandDialog({
                 )}
               </div>
               <div className="flex-1 space-y-1.5">
-                <Button type="button" variant="outline" size="sm" className="w-full h-9 text-[10px] font-bold uppercase tracking-wider rounded-lg"
-                  onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full h-9 text-[10px] font-bold uppercase tracking-wider rounded-lg"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                >
                   <Upload className="size-3.5 me-1.5" /> Upload Logo
                 </Button>
                 {previewImage && (
-                  <Button type="button" variant="ghost" size="sm" className="w-full h-7 text-[10px] text-muted-foreground hover:text-destructive rounded-lg"
-                    onClick={handleRemoveImage}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="w-full h-7 text-[10px] text-muted-foreground hover:text-destructive rounded-lg"
+                    onClick={handleRemoveImage}
+                  >
                     <Trash2 className="size-3 me-1" /> Remove
                   </Button>
                 )}
               </div>
-              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
             </div>
 
             <FormField
@@ -171,9 +210,15 @@ export function BrandDialog({
               name="brand"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">Manufacturer Name</FormLabel>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    Manufacturer Name
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Hyundai" {...field} className="h-11 font-bold text-xs rounded-xl" />
+                    <Input
+                      placeholder="e.g., Hyundai"
+                      {...field}
+                      className="h-11 font-bold text-xs rounded-xl"
+                    />
                   </FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
@@ -184,9 +229,15 @@ export function BrandDialog({
               name="clusterOrigin"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">Cluster Origin</FormLabel>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    Cluster Origin
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., South Korea, Japan, Germany..." {...field} className="h-11 font-bold text-xs rounded-xl" />
+                    <Input
+                      placeholder="e.g., South Korea, Japan, Germany..."
+                      {...field}
+                      className="h-11 font-bold text-xs rounded-xl"
+                    />
                   </FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
@@ -197,9 +248,15 @@ export function BrandDialog({
               name="clusterRegion"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">Cluster Region</FormLabel>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    Cluster Region
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Asian, European, Mercosur..." {...field} className="h-11 font-bold text-xs rounded-xl" />
+                    <Input
+                      placeholder="e.g., Asian, European, Mercosur..."
+                      {...field}
+                      className="h-11 font-bold text-xs rounded-xl"
+                    />
                   </FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
@@ -210,13 +267,32 @@ export function BrandDialog({
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">Taxonomy Status</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                    <FormControl><SelectTrigger className="h-11 font-bold text-xs rounded-xl"><SelectValue placeholder="Select status" /></SelectTrigger></FormControl>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    Taxonomy Status
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="h-11 font-bold text-xs rounded-xl">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                    </FormControl>
                     <SelectContent>
-                      <SelectItem value="active" className="text-xs font-bold">Active</SelectItem>
-                      <SelectItem value="draft" className="text-xs font-bold">Draft</SelectItem>
-                      <SelectItem value="archived" className="text-xs font-bold">Archived</SelectItem>
+                      <SelectItem value="active" className="text-xs font-bold">
+                        Active
+                      </SelectItem>
+                      <SelectItem value="draft" className="text-xs font-bold">
+                        Draft
+                      </SelectItem>
+                      <SelectItem
+                        value="archived"
+                        className="text-xs font-bold"
+                      >
+                        Archived
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className="text-[10px]" />
@@ -224,8 +300,18 @@ export function BrandDialog({
               )}
             />
             <DialogFooter className="pt-4">
-              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending || isUploading} className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
-                {(createMutation.isPending || updateMutation.isPending) ? <Loader2 className="animate-spin me-2" size={16} /> : null}
+              <Button
+                type="submit"
+                disabled={
+                  createMutation.isPending ||
+                  updateMutation.isPending ||
+                  isUploading
+                }
+                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95"
+              >
+                {createMutation.isPending || updateMutation.isPending ? (
+                  <Loader2 className="animate-spin me-2" size={16} />
+                ) : null}
                 {editingItem ? 'Update Cluster' : 'Deploy Cluster'}
               </Button>
             </DialogFooter>

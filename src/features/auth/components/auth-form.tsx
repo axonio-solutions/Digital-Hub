@@ -26,9 +26,7 @@ export function AuthForm({ className, ...props }: React.ComponentProps<'div'>) {
         </div>
         <CardHeader className="text-center pb-2">
           <CardTitle className="text-2xl">{t('login.title')}</CardTitle>
-          <CardDescription>
-            {t('login.subtitle')}
-          </CardDescription>
+          <CardDescription>{t('login.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4 pt-4">

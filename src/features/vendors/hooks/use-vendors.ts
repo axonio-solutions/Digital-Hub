@@ -17,8 +17,10 @@ export function useUpdateSellerSpecialties() {
   const queryClient = useQueryClient()
   const { toast } = useToast('vendors')
   return useMutation({
-    mutationFn: (data: { brandIds: string[], categoryIds: string[] }) =>
-      updateSellerSpecialtiesServerFn({ data }),
+    mutationFn: (data: {
+      brandIds: Array<string>
+      categoryIds: Array<string>
+    }) => updateSellerSpecialtiesServerFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['seller-specialties'] })
       queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })

@@ -1,15 +1,9 @@
 import { useMutation } from '@tanstack/react-query'
+import { AlertTriangle, EyeOff, Loader2, Lock, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/use-toast'
-import {
-  AlertTriangle,
-  EyeOff,
-  Loader2,
-  Lock,
-  Trash2,
-} from 'lucide-react'
 import { deactivateAccountServerFn, deleteAccountServerFn } from '@/fn/users'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -79,12 +73,16 @@ export function AccountManagement() {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Lock className="size-5 text-primary" />
-          <h2 className="text-xl font-bold">{t('security_section.password')}</h2>
+          <h2 className="text-xl font-bold">
+            {t('security_section.password')}
+          </h2>
         </div>
         <Card className="border shadow-sm bg-card">
           <CardContent className="pt-6 space-y-4">
             <div className="grid gap-2">
-              <Label htmlFor="current-password">{t('security_section.current_password')}</Label>
+              <Label htmlFor="current-password">
+                {t('security_section.current_password')}
+              </Label>
               <Input
                 id="current-password"
                 type="password"
@@ -92,11 +90,15 @@ export function AccountManagement() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="new-password">{t('security_section.new_password')}</Label>
+              <Label htmlFor="new-password">
+                {t('security_section.new_password')}
+              </Label>
               <Input id="new-password" type="password" placeholder="••••••••" />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="confirm-password">{t('security_section.confirm_password')}</Label>
+              <Label htmlFor="confirm-password">
+                {t('security_section.confirm_password')}
+              </Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -112,18 +114,20 @@ export function AccountManagement() {
         </Card>
       </div>
 
-
       {/* Destructive Actions */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <AlertTriangle className="size-5 text-destructive" />
-          <h2 className="text-xl font-bold text-destructive">{t('security_section.danger_zone')}</h2>
+          <h2 className="text-xl font-bold text-destructive">
+            {t('security_section.danger_zone')}
+          </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="border-orange-500/20 bg-orange-500/5 shadow-none dark:bg-orange-500/10">
             <CardHeader className="pb-4">
               <CardTitle className="text-base text-orange-900 dark:text-orange-400 flex items-center gap-2">
-                <EyeOff className="size-4" /> {t('security_section.deactivation')}
+                <EyeOff className="size-4" />{' '}
+                {t('security_section.deactivation')}
               </CardTitle>
               <CardDescription className="text-xs text-orange-700/70 dark:text-orange-400/70">
                 {t('security_section.deactivation_desc')}

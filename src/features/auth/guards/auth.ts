@@ -1,6 +1,7 @@
 import { createMiddleware } from '@tanstack/react-start'
 import { getRequest, setResponseStatus } from '@tanstack/react-start/server'
 import { eq } from 'drizzle-orm'
+import type { User } from '@/lib/auth'
 import { auth } from '@/lib/auth'
 import { db } from '@/db'
 import { users } from '@/db/schema/auth'
@@ -23,6 +24,11 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
     .select()
     .from(users)
     .where(eq(users.id, session.user.id))
+
+  if (freshUser?.banned) {
+    setResponseStatus(403)
+    throw new Error('Account suspended')
+  }
 
   return next({
     context: {
@@ -48,7 +54,6 @@ export const optionalAuthMiddleware = createMiddleware().server(
     })
   },
 )
-import { type User } from '@/lib/auth'
 
 export const adminMiddleware = createMiddleware()
   .middleware([authMiddleware])

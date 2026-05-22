@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Link } from '@tanstack/react-router'
-import { type Icon } from '@tabler/icons-react'
+import type { Icon } from '@tabler/icons-react'
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -24,7 +24,7 @@ export function NavMain({
   items,
   label = 'Platform',
 }: {
-  items: NavItem[]
+  items: Array<NavItem>
   label?: string
 }) {
   const { isMobile, setOpenMobile } = useSidebar()
@@ -50,7 +50,8 @@ export function NavMain({
                   onClick={() => isMobile && setOpenMobile(false)}
                   className="flex items-center gap-3 font-medium text-sm px-3"
                   activeProps={{
-                    className: 'bg-primary/10 text-primary !font-bold border-e-2 border-primary shadow-sm shadow-primary/5',
+                    className:
+                      'bg-primary/10 text-primary !font-bold border-e-2 border-primary shadow-sm shadow-primary/5',
                   }}
                 >
                   <item.icon className="size-4 shrink-0" />

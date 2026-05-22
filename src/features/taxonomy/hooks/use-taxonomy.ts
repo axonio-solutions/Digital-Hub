@@ -1,15 +1,20 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  getTaxonomyServerFn,
-  createCategoryServerFn,
-  updateCategoryServerFn,
-  deleteCategoryServerFn,
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
+import type { BrandInput, CategoryInput } from '../validations/taxonomy'
+import {
   createBrandServerFn,
+  createCategoryServerFn,
+  deleteBrandServerFn,
+  deleteCategoryServerFn,
+  getTaxonomyServerFn,
   updateBrandServerFn,
-  deleteBrandServerFn
+  updateCategoryServerFn,
 } from '@/fn/admin'
 import { useToast } from '@/hooks/use-toast'
-import type { CategoryInput, BrandInput } from '../validations/taxonomy'
 
 export const taxonomyKeys = {
   all: ['admin-taxonomy'] as const,
@@ -19,7 +24,7 @@ export function useTaxonomy() {
   return useQuery({
     queryKey: taxonomyKeys.all,
     queryFn: async () => {
-      const res = await getTaxonomyServerFn() as any
+      const res = (await getTaxonomyServerFn()) as any
       if (!res.success) throw new Error(res.error || 'Failed to fetch taxonomy')
       return res.data
     },
@@ -35,8 +40,9 @@ export function useCreateCategory() {
   const { toast } = useToast('dashboard/taxonomy')
   return useMutation({
     mutationFn: async (values: CategoryInput) => {
-      const res = await createCategoryServerFn({ data: values }) as any
-      if (!res.success) throw new Error(res.error || 'Failed to create category')
+      const res = (await createCategoryServerFn({ data: values })) as any
+      if (!res.success)
+        throw new Error(res.error || 'Failed to create category')
       return res.data
     },
     onSuccess: () => {
@@ -45,7 +51,7 @@ export function useCreateCategory() {
     },
     onError: () => {
       toast.error('toasts.category_create_error')
-    }
+    },
   })
 }
 
@@ -53,9 +59,16 @@ export function useUpdateCategory() {
   const queryClient = useQueryClient()
   const { toast } = useToast('dashboard/taxonomy')
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<CategoryInput> }) => {
-      const res = await updateCategoryServerFn({ data: { id, data } }) as any
-      if (!res.success) throw new Error(res.error || 'Failed to update category')
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string
+      data: Partial<CategoryInput>
+    }) => {
+      const res = (await updateCategoryServerFn({ data: { id, data } })) as any
+      if (!res.success)
+        throw new Error(res.error || 'Failed to update category')
       return res.data
     },
     onSuccess: () => {
@@ -64,7 +77,7 @@ export function useUpdateCategory() {
     },
     onError: () => {
       toast.error('toasts.category_update_error')
-    }
+    },
   })
 }
 
@@ -73,8 +86,9 @@ export function useDeleteCategory() {
   const { toast } = useToast('dashboard/taxonomy')
   return useMutation({
     mutationFn: async (id: string) => {
-      const res = await deleteCategoryServerFn({ data: id }) as any
-      if (!res.success) throw new Error(res.error || 'Failed to delete category')
+      const res = (await deleteCategoryServerFn({ data: id })) as any
+      if (!res.success)
+        throw new Error(res.error || 'Failed to delete category')
       return res.data
     },
     onSuccess: () => {
@@ -83,7 +97,7 @@ export function useDeleteCategory() {
     },
     onError: () => {
       toast.error('toasts.category_delete_error')
-    }
+    },
   })
 }
 
@@ -92,8 +106,9 @@ export function useCreateBrand() {
   const { toast } = useToast('dashboard/taxonomy')
   return useMutation({
     mutationFn: async (values: BrandInput) => {
-      const res = await createBrandServerFn({ data: values }) as any
-      if (!res.success) throw new Error(res.error || 'Failed to create brand cluster')
+      const res = (await createBrandServerFn({ data: values })) as any
+      if (!res.success)
+        throw new Error(res.error || 'Failed to create brand cluster')
       return res.data
     },
     onSuccess: () => {
@@ -102,7 +117,7 @@ export function useCreateBrand() {
     },
     onError: () => {
       toast.error('toasts.brand_create_error')
-    }
+    },
   })
 }
 
@@ -110,9 +125,16 @@ export function useUpdateBrand() {
   const queryClient = useQueryClient()
   const { toast } = useToast('dashboard/taxonomy')
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<BrandInput> }) => {
-      const res = await updateBrandServerFn({ data: { id, data } }) as any
-      if (!res.success) throw new Error(res.error || 'Failed to update brand cluster')
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string
+      data: Partial<BrandInput>
+    }) => {
+      const res = (await updateBrandServerFn({ data: { id, data } })) as any
+      if (!res.success)
+        throw new Error(res.error || 'Failed to update brand cluster')
       return res.data
     },
     onSuccess: () => {
@@ -121,7 +143,7 @@ export function useUpdateBrand() {
     },
     onError: () => {
       toast.error('toasts.brand_update_error')
-    }
+    },
   })
 }
 
@@ -130,7 +152,7 @@ export function useDeleteBrand() {
   const { toast } = useToast('dashboard/taxonomy')
   return useMutation({
     mutationFn: async (id: string) => {
-      const res = await deleteBrandServerFn({ data: id }) as any
+      const res = (await deleteBrandServerFn({ data: id })) as any
       if (!res.success) throw new Error(res.error || 'Failed to delete brand')
       return res.data
     },
@@ -140,6 +162,6 @@ export function useDeleteBrand() {
     },
     onError: () => {
       toast.error('toasts.brand_delete_error')
-    }
+    },
   })
 }

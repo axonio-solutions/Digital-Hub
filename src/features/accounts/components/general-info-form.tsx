@@ -1,18 +1,15 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useToast } from '@/hooks/use-toast'
 import { useEffect } from 'react'
 import { Loader2, MapPin, User as UserIcon } from 'lucide-react'
-import {
-  updateProfileSchema
-} from '@/types/account-schemas'
-import type {
-  UpdateProfileInput} from '@/types/account-schemas';
+import { useTranslation } from 'react-i18next'
+import type { UpdateProfileInput } from '@/types/account-schemas'
+import { useToast } from '@/hooks/use-toast'
+import { updateProfileSchema } from '@/types/account-schemas'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { updateProfileServerFn } from '@/fn/users'
 import { WILAYAS } from '@/lib/constants/wilayas'
-import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -97,15 +94,14 @@ export function GeneralInfoForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Personal Information Card */}
         <Card className="border shadow-sm bg-card">
-  
           <CardHeader>
             <div className="flex items-center gap-2">
               <UserIcon className="size-5 text-primary" />
-              <CardTitle className="text-xl font-bold">{t('form.basic_identity')}</CardTitle>
+              <CardTitle className="text-xl font-bold">
+                {t('form.basic_identity')}
+              </CardTitle>
             </div>
-            <CardDescription>
-              {t('form.identity_desc')}
-            </CardDescription>
+            <CardDescription>{t('form.identity_desc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center gap-6 pb-2 invisible h-0 overflow-hidden">
@@ -162,7 +158,10 @@ export function GeneralInfoForm() {
                   <FormItem>
                     <FormLabel>{t('form.whatsapp')}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('form.whatsapp_placeholder')} {...field} />
+                      <Input
+                        placeholder={t('form.whatsapp_placeholder')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -174,15 +173,14 @@ export function GeneralInfoForm() {
 
         {/* Address Information Card */}
         <Card className="border shadow-sm bg-card">
-  
           <CardHeader>
             <div className="flex items-center gap-2">
               <MapPin className="size-5 text-primary" />
-              <CardTitle className="text-xl font-bold">{t('form.physical_address')}</CardTitle>
+              <CardTitle className="text-xl font-bold">
+                {t('form.physical_address')}
+              </CardTitle>
             </div>
-            <CardDescription>
-              {t('form.address_desc')}
-            </CardDescription>
+            <CardDescription>{t('form.address_desc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField
@@ -192,7 +190,10 @@ export function GeneralInfoForm() {
                 <FormItem>
                   <FormLabel>{t('form.street')}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('form.street_placeholder')} {...field} />
+                    <Input
+                      placeholder={t('form.street_placeholder')}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -207,7 +208,10 @@ export function GeneralInfoForm() {
                   <FormItem>
                     <FormLabel>{t('form.city')}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('form.city_placeholder')} {...field} />
+                      <Input
+                        placeholder={t('form.city_placeholder')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -225,16 +229,18 @@ export function GeneralInfoForm() {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder={t('form.wilaya_placeholder')} />
+                          <SelectValue
+                            placeholder={t('form.wilaya_placeholder')}
+                          />
                         </SelectTrigger>
                       </FormControl>
-                        <SelectContent className="max-h-[300px]">
-                          {WILAYAS.map((w) => (
-                            <SelectItem key={w.id} value={w.name}>
-                              {w.id} - {tw(w.id)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
+                      <SelectContent className="max-h-[300px]">
+                        {WILAYAS.map((w) => (
+                          <SelectItem key={w.id} value={w.name}>
+                            {w.id} - {tw(w.id)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
@@ -260,4 +266,3 @@ export function GeneralInfoForm() {
     </Form>
   )
 }
-

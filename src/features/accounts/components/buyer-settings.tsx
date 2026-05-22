@@ -1,15 +1,12 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useToast } from '@/hooks/use-toast'
 import { useEffect } from 'react'
 import { Loader2, MapPin } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import {
-  updateProfileSchema
-} from '@/types/account-schemas'
-import type {
-  UpdateProfileInput} from '@/types/account-schemas';
+import type { UpdateProfileInput } from '@/types/account-schemas'
+import { updateProfileSchema } from '@/types/account-schemas'
+import { useToast } from '@/hooks/use-toast'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { updateProfileServerFn } from '@/fn/users'
 
@@ -144,9 +141,7 @@ export function BuyerSettings() {
           <MapPin className="h-5 w-5 text-primary" />
           {t('delivery.title')}
         </CardTitle>
-        <CardDescription>
-          {t('delivery.desc')}
-        </CardDescription>
+        <CardDescription>{t('delivery.desc')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -167,7 +162,9 @@ export function BuyerSettings() {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder={t('delivery.wilaya_placeholder')} />
+                          <SelectValue
+                            placeholder={t('delivery.wilaya_placeholder')}
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -189,7 +186,10 @@ export function BuyerSettings() {
                   <FormItem>
                     <FormLabel>{t('delivery.city')}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('delivery.city_placeholder')} {...field} />
+                      <Input
+                        placeholder={t('delivery.city_placeholder')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -204,7 +204,10 @@ export function BuyerSettings() {
                 <FormItem>
                   <FormLabel>{t('delivery.address')}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('delivery.address_placeholder')} {...field} />
+                    <Input
+                      placeholder={t('delivery.address_placeholder')}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -218,7 +221,10 @@ export function BuyerSettings() {
                 <FormItem>
                   <FormLabel>{t('delivery.whatsapp')}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('delivery.whatsapp_placeholder')} {...field} />
+                    <Input
+                      placeholder={t('delivery.whatsapp_placeholder')}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -235,4 +241,3 @@ export function BuyerSettings() {
     </Card>
   )
 }
-

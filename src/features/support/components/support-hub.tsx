@@ -107,7 +107,10 @@ export function SupportHub() {
               </h3>
               <Button
                 variant="outline"
-                onClick={() => { setIsSuccess(false); form.reset() }}
+                onClick={() => {
+                  setIsSuccess(false)
+                  form.reset()
+                }}
                 className="mt-4"
               >
                 {t('support.form.submit')}
@@ -156,7 +159,9 @@ export function SupportHub() {
                           <FormControl>
                             <SelectTrigger className="h-11">
                               <SelectValue
-                                placeholder={t('support.form.category_placeholder')}
+                                placeholder={t(
+                                  'support.form.category_placeholder',
+                                )}
                               />
                             </SelectTrigger>
                           </FormControl>

@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Upload, Trash2 } from 'lucide-react'
+import { Loader2, Trash2, Upload } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useCreateCategory, useUpdateCategory } from '../hooks/use-taxonomy'
+import type { CategoryInput } from '@/features/taxonomy/validations/taxonomy'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -11,7 +13,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -19,20 +21,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { supabase } from '@/lib/supabase-client'
 import { useToast } from '@/hooks/use-toast'
-import { categorySchema, type CategoryInput } from '@/features/taxonomy/validations/taxonomy'
-import { useCreateCategory, useUpdateCategory } from '../hooks/use-taxonomy'
+import { categorySchema } from '@/features/taxonomy/validations/taxonomy'
 
 interface Category {
   id: string
@@ -64,8 +65,8 @@ export function CategoryDialog({
       name: '',
       description: '',
       imageUrl: '',
-      status: 'active'
-    }
+      status: 'active',
+    },
   })
 
   useEffect(() => {
@@ -74,7 +75,7 @@ export function CategoryDialog({
         name: editingItem.name,
         description: editingItem.description || '',
         imageUrl: editingItem.imageUrl || '',
-        status: editingItem.status as any
+        status: editingItem.status as any,
       })
       setPreviewImage(editingItem.imageUrl || null)
     } else {
@@ -89,7 +90,10 @@ export function CategoryDialog({
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (!file.type.startsWith('image/')) { toast.error('dialog.toast_upload_error'); return }
+    if (!file.type.startsWith('image/')) {
+      toast.error('dialog.toast_upload_error')
+      return
+    }
 
     try {
       setIsUploading(true)
@@ -102,7 +106,9 @@ export function CategoryDialog({
 
       if (uploadError) throw uploadError
 
-      const { data: { publicUrl } } = supabase.storage.from('taxonomy').getPublicUrl(fileName)
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('taxonomy').getPublicUrl(fileName)
       form.setValue('imageUrl', publicUrl)
       setPreviewImage(publicUrl)
       toast.success('dialog.toast_upload_success')
@@ -135,12 +141,21 @@ export function CategoryDialog({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 pt-4"
+          >
             {/* Image Upload */}
             <div className="flex items-center gap-4">
-              <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+              <div
+                className="relative group cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
                 <Avatar className="size-16 rounded-xl border-2 border-slate-200 dark:border-slate-800">
-                  <AvatarImage src={previewImage || undefined} className="object-cover" />
+                  <AvatarImage
+                    src={previewImage || undefined}
+                    className="object-cover"
+                  />
                   <AvatarFallback className="bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 rounded-xl text-lg font-black">
                     {form.watch('name')?.substring(0, 2).toUpperCase() || '?'}
                   </AvatarFallback>
@@ -152,18 +167,37 @@ export function CategoryDialog({
                 )}
               </div>
               <div className="flex-1 space-y-1.5">
-                <Button type="button" variant="outline" size="sm" className="w-full h-9 text-[10px] font-bold uppercase tracking-wider rounded-lg"
-                  onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                  <Upload className="size-3.5 me-1.5" /> {t('dialog.upload_icon')}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full h-9 text-[10px] font-bold uppercase tracking-wider rounded-lg"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                >
+                  <Upload className="size-3.5 me-1.5" />{' '}
+                  {t('dialog.upload_icon')}
                 </Button>
                 {previewImage && (
-                  <Button type="button" variant="ghost" size="sm" className="w-full h-7 text-[10px] text-muted-foreground hover:text-destructive rounded-lg"
-                    onClick={handleRemoveImage}>
-                    <Trash2 className="size-3 me-1" /> {t('dialog.remove_image')}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="w-full h-7 text-[10px] text-muted-foreground hover:text-destructive rounded-lg"
+                    onClick={handleRemoveImage}
+                  >
+                    <Trash2 className="size-3 me-1" />{' '}
+                    {t('dialog.remove_image')}
                   </Button>
                 )}
               </div>
-              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
             </div>
 
             <FormField
@@ -171,9 +205,15 @@ export function CategoryDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('dialog.name_label')}</FormLabel>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    {t('dialog.name_label')}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder={t('dialog.name_placeholder')} {...field} className="h-11 font-bold text-xs rounded-xl" />
+                    <Input
+                      placeholder={t('dialog.name_placeholder')}
+                      {...field}
+                      className="h-11 font-bold text-xs rounded-xl"
+                    />
                   </FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
@@ -184,9 +224,16 @@ export function CategoryDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('dialog.description_label')}</FormLabel>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    {t('dialog.description_label')}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder={t('dialog.description_placeholder')} {...field} value={field.value || ''} className="h-11 font-bold text-xs rounded-xl" />
+                    <Input
+                      placeholder={t('dialog.description_placeholder')}
+                      {...field}
+                      value={field.value || ''}
+                      className="h-11 font-bold text-xs rounded-xl"
+                    />
                   </FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
@@ -197,13 +244,34 @@ export function CategoryDialog({
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('dialog.status_label')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                    <FormControl><SelectTrigger className="h-11 font-bold text-xs rounded-xl"><SelectValue placeholder={t('dialog.status_placeholder')} /></SelectTrigger></FormControl>
+                  <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    {t('dialog.status_label')}
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="h-11 font-bold text-xs rounded-xl">
+                        <SelectValue
+                          placeholder={t('dialog.status_placeholder')}
+                        />
+                      </SelectTrigger>
+                    </FormControl>
                     <SelectContent>
-                      <SelectItem value="active" className="text-xs font-bold">{t('dialog.status_active')}</SelectItem>
-                      <SelectItem value="draft" className="text-xs font-bold">{t('dialog.status_draft')}</SelectItem>
-                      <SelectItem value="archived" className="text-xs font-bold">{t('dialog.status_archived')}</SelectItem>
+                      <SelectItem value="active" className="text-xs font-bold">
+                        {t('dialog.status_active')}
+                      </SelectItem>
+                      <SelectItem value="draft" className="text-xs font-bold">
+                        {t('dialog.status_draft')}
+                      </SelectItem>
+                      <SelectItem
+                        value="archived"
+                        className="text-xs font-bold"
+                      >
+                        {t('dialog.status_archived')}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className="text-[10px]" />
@@ -211,9 +279,21 @@ export function CategoryDialog({
               )}
             />
             <DialogFooter className="pt-4">
-              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending || isUploading} className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
-                {(createMutation.isPending || updateMutation.isPending) ? <Loader2 className="animate-spin me-2" size={16} /> : null}
-                {editingItem ? t('dialog.submit_edit') : t('dialog.submit_create')}
+              <Button
+                type="submit"
+                disabled={
+                  createMutation.isPending ||
+                  updateMutation.isPending ||
+                  isUploading
+                }
+                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95"
+              >
+                {createMutation.isPending || updateMutation.isPending ? (
+                  <Loader2 className="animate-spin me-2" size={16} />
+                ) : null}
+                {editingItem
+                  ? t('dialog.submit_edit')
+                  : t('dialog.submit_create')}
               </Button>
             </DialogFooter>
           </form>

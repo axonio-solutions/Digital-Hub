@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { Link } from '@tanstack/react-router'
-import { type Icon } from '@tabler/icons-react'
+import type { Icon } from '@tabler/icons-react'
 
 import {
   SidebarGroup,
@@ -17,11 +17,11 @@ export function NavSecondary({
   items,
   ...props
 }: {
-  items: {
+  items: Array<{
     title: string
     url: string
     icon: Icon
-  }[]
+  }>
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   const { isMobile, setOpenMobile } = useSidebar()
 
@@ -31,12 +31,12 @@ export function NavSecondary({
         <SidebarMenu className="gap-1 px-2">
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton 
-                asChild 
+              <SidebarMenuButton
+                asChild
                 size="sm"
                 className="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50"
               >
-                <Link 
+                <Link
                   to={item.url}
                   onClick={() => isMobile && setOpenMobile(false)}
                   className="flex items-center gap-3 py-2 px-3"

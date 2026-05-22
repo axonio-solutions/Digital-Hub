@@ -1,11 +1,11 @@
 import { Settings, Shield, User, Warehouse } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { GeneralInfoForm } from './general-info-form'
 import { BuyerSettings } from './buyer-settings'
-import { SellerSettings } from '@/features/seller'
 import { AccountManagement } from './account-management'
+import { SellerSettings } from '@/features/seller'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import { useTranslation } from 'react-i18next'
 
 export function ProfileTabs() {
   const { t } = useTranslation('dashboard/settings')
@@ -16,9 +16,7 @@ export function ProfileTabs() {
     <div className="flex flex-col space-y-8">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">{t('tabs.title')}</h2>
-        <p className="text-muted-foreground">
-          {t('tabs.desc')}
-        </p>
+        <p className="text-muted-foreground">{t('tabs.desc')}</p>
       </div>
 
       <Tabs defaultValue="general" className="w-full">
