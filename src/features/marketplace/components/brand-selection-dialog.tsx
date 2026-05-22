@@ -39,7 +39,8 @@ export function BrandSelectionDialog({
 }: BrandSelectionDialogProps) {
   const { t } = useTranslation(['marketplace', 'home/explore'])
   const [searchQuery, setSearchQuery] = React.useState('')
-  const [pendingBrands, setPendingBrands] = React.useState<string[]>(selectedBrands)
+  const [pendingBrands, setPendingBrands] =
+    React.useState<Array<string>>(selectedBrands)
 
   React.useEffect(() => {
     if (isOpen) setPendingBrands(selectedBrands)
@@ -50,9 +51,10 @@ export function BrandSelectionDialog({
       .filter((b) => b.brand.toLowerCase().includes(searchQuery.toLowerCase()))
       .sort((a, b) => a.brand.localeCompare(b.brand))
 
-    const popular = brands.filter((b) =>
-      POPULAR_BRAND_NAMES.includes(b.brand) &&
-      b.brand.toLowerCase().includes(searchQuery.toLowerCase())
+    const popular = brands.filter(
+      (b) =>
+        POPULAR_BRAND_NAMES.includes(b.brand) &&
+        b.brand.toLowerCase().includes(searchQuery.toLowerCase()),
     )
 
     return {
@@ -61,17 +63,17 @@ export function BrandSelectionDialog({
     }
   }, [brands, searchQuery])
 
-  const toggleBrand = React.useCallback(
-    (id: string) => {
-      setPendingBrands((prev) =>
-        prev.includes(id) ? prev.filter((b) => b !== id) : [...prev, id]
-      )
-    },
-    []
-  )
+  const toggleBrand = React.useCallback((id: string) => {
+    setPendingBrands((prev) =>
+      prev.includes(id) ? prev.filter((b) => b !== id) : [...prev, id],
+    )
+  }, [])
 
   const getBrandLogo = (brand: Brand) => {
-    return brand.imageUrl || `https://ui-avatars.com/api/?name=${brand.brand}&background=random&size=64`
+    return (
+      brand.imageUrl ||
+      `https://ui-avatars.com/api/?name=${brand.brand}&background=random&size=64`
+    )
   }
 
   return (
@@ -87,7 +89,10 @@ export function BrandSelectionDialog({
             </DialogHeader>
             <div className="flex items-center gap-2">
               {pendingBrands.length > 0 && (
-                <Badge variant="secondary" className="bg-primary/10 text-primary border-none font-bold text-[10px] px-2.5 py-1 uppercase tracking-wider">
+                <Badge
+                  variant="secondary"
+                  className="bg-primary/10 text-primary border-none font-bold text-[10px] px-2.5 py-1 uppercase tracking-wider"
+                >
                   {t('brand_dialog.selected', { count: pendingBrands.length })}
                 </Badge>
               )}
@@ -129,7 +134,8 @@ export function BrandSelectionDialog({
             {popularBrands.length > 0 && searchQuery.length === 0 && (
               <section className="space-y-3">
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  <Star className="size-3 fill-amber-400 text-amber-400" /> {t('brand_dialog.popular')}
+                  <Star className="size-3 fill-amber-400 text-amber-400" />{' '}
+                  {t('brand_dialog.popular')}
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {popularBrands.map((brand) => {
@@ -139,10 +145,10 @@ export function BrandSelectionDialog({
                         key={brand.id}
                         onClick={() => toggleBrand(brand.id)}
                         className={cn(
-                          "group relative flex flex-col items-center justify-center p-4 rounded-xl border transition-all duration-200",
+                          'group relative flex flex-col items-center justify-center p-4 rounded-xl border transition-all duration-200',
                           isSelected
-                            ? "bg-primary/5 border-primary ring-1 ring-primary/20"
-                            : "bg-card border-border hover:border-primary/30 hover:shadow-sm"
+                            ? 'bg-primary/5 border-primary ring-1 ring-primary/20'
+                            : 'bg-card border-border hover:border-primary/30 hover:shadow-sm',
                         )}
                       >
                         <div className="size-12 rounded-lg bg-muted mb-3 p-2 flex items-center justify-center">
@@ -150,15 +156,18 @@ export function BrandSelectionDialog({
                             src={getBrandLogo(brand)}
                             alt={brand.brand}
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${brand.brand}&background=random`
+                              ;(e.target as HTMLImageElement).src =
+                                `https://ui-avatars.com/api/?name=${brand.brand}&background=random`
                             }}
                             className="w-full h-full object-contain"
                           />
                         </div>
-                        <span className={cn(
-                          "text-[11px] font-bold uppercase tracking-wide text-center",
-                          isSelected ? "text-primary" : "text-foreground"
-                        )}>
+                        <span
+                          className={cn(
+                            'text-[11px] font-bold uppercase tracking-wide text-center',
+                            isSelected ? 'text-primary' : 'text-foreground',
+                          )}
+                        >
                           {brand.brand}
                         </span>
                         {isSelected && (
@@ -187,10 +196,10 @@ export function BrandSelectionDialog({
                         key={brand.id}
                         onClick={() => toggleBrand(brand.id)}
                         className={cn(
-                          "flex items-center gap-3 p-3 rounded-xl border text-start transition-all duration-200",
+                          'flex items-center gap-3 p-3 rounded-xl border text-start transition-all duration-200',
                           isSelected
-                            ? "bg-primary/5 border-primary ring-1 ring-primary/20"
-                            : "bg-card border-border hover:border-primary/30 hover:bg-muted/50"
+                            ? 'bg-primary/5 border-primary ring-1 ring-primary/20'
+                            : 'bg-card border-border hover:border-primary/30 hover:bg-muted/50',
                         )}
                       >
                         <div className="size-9 rounded-lg bg-muted flex-shrink-0 flex items-center justify-center p-1.5">
@@ -200,10 +209,12 @@ export function BrandSelectionDialog({
                             className="w-full h-full object-contain"
                           />
                         </div>
-                        <span className={cn(
-                          "text-sm font-semibold flex-1 truncate",
-                          isSelected ? "text-primary" : "text-foreground"
-                        )}>
+                        <span
+                          className={cn(
+                            'text-sm font-semibold flex-1 truncate',
+                            isSelected ? 'text-primary' : 'text-foreground',
+                          )}
+                        >
                           {brand.brand}
                         </span>
                         {isSelected && (
@@ -220,7 +231,9 @@ export function BrandSelectionDialog({
                   <div className="size-14 rounded-full bg-muted flex items-center justify-center mb-4 text-muted-foreground">
                     <Search className="size-6" />
                   </div>
-                  <h3 className="text-base font-bold text-foreground">{t('brand_dialog.no_results')}</h3>
+                  <h3 className="text-base font-bold text-foreground">
+                    {t('brand_dialog.no_results')}
+                  </h3>
                   <p className="text-sm text-muted-foreground mt-1">
                     {t('brand_dialog.no_results_desc', { query: searchQuery })}
                   </p>

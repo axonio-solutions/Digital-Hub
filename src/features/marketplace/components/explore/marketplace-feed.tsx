@@ -1,14 +1,14 @@
 'use client'
 
 import { Search } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PartCard } from '@/components/ui/part-card'
-import { useTranslation } from 'react-i18next'
 
 interface MarketplaceFeedProps {
-  requests: any[] | undefined
+  requests: Array<any> | undefined
   isLoading: boolean
   onQuote?: (request: any) => void
   onClearFilters: () => void
@@ -55,7 +55,9 @@ export function MarketplaceFeed({
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Array.from({ length: 6 }).map((_, i) => <RequestSkeleton key={i} />)}
+        {Array.from({ length: 6 }).map((_, i) => (
+          <RequestSkeleton key={i} />
+        ))}
       </div>
     )
   }
@@ -90,8 +92,14 @@ export function MarketplaceFeed({
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {requests.map((req) => {
         const isOwner = req.buyerId === userId
-        const sellerActionLabel = isSeller && !isOwner ? t('feed.quote_now') : isOwner ? t('feed.my_request') : undefined
-        const sellerOnClick = isSeller && !isOwner && onQuote ? () => onQuote(req) : undefined
+        const sellerActionLabel =
+          isSeller && !isOwner
+            ? t('feed.quote_now')
+            : isOwner
+              ? t('feed.my_request')
+              : undefined
+        const sellerOnClick =
+          isSeller && !isOwner && onQuote ? () => onQuote(req) : undefined
 
         return (
           <PartCard
@@ -99,11 +107,11 @@ export function MarketplaceFeed({
             id={req.id}
             title={req.partName || ''}
             brand={req.vehicleBrand || ''}
-            brandImageUrl={(req as any).brand?.imageUrl}
+            brandImageUrl={req.brand?.imageUrl}
             modelYear={req.modelYear || ''}
             partNumber={req.partNumber || ''}
             category={req.category?.name || req.category || ''}
-            categoryImageUrl={(req as any).category?.imageUrl}
+            categoryImageUrl={req.category?.imageUrl}
             notes={req.notes || req.description || ''}
             region={req.location || ''}
             imageUrls={req.imageUrls || []}

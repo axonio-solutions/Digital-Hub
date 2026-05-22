@@ -15,9 +15,7 @@ import {
 import { formatDistanceToNow } from 'date-fns'
 import { arDZ, enUS, fr } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
-import type {
-  ColumnDef,
-} from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -42,17 +40,20 @@ const dateLocaleMap: Record<string, any> = {
 
 interface MarketplaceDataTableProps {
   data: Array<any>
-  onAction?: (action: { type: 'view_request' | 'view_offer' | 'update' | 'delete' | 'send_offer', item: any }) => void
+  onAction?: (action: {
+    type: 'view_request' | 'view_offer' | 'update' | 'delete' | 'send_offer'
+    item: any
+  }) => void
   type: 'opportunity' | 'active'
 }
 
 const ActionCell = ({
   item,
   onAction,
-  type
+  type,
 }: {
-  item: any,
-  onAction?: (action: any) => void,
+  item: any
+  onAction?: (action: any) => void
   type: 'opportunity' | 'active'
 }) => {
   const { t } = useTranslation('marketplace')
@@ -86,12 +87,14 @@ const ActionCell = ({
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'view_offer', item })}
             >
-              <FileText className="me-2 h-4 w-4" /> {t('table.actions.view_offer')}
+              <FileText className="me-2 h-4 w-4" />{' '}
+              {t('table.actions.view_offer')}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onAction?.({ type: 'update', item })}
             >
-              <Pencil className="me-2 h-4 w-4" /> {t('table.actions.edit_quote')}
+              <Pencil className="me-2 h-4 w-4" />{' '}
+              {t('table.actions.edit_quote')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -165,19 +168,28 @@ export function MarketplaceDataTable({
                   />
                 ) : (
                   <div className="size-full flex items-center justify-center text-[10px] text-muted-foreground font-bold">
-                    {row.original.partName?.substring(0, 2).toUpperCase() || 'P'}
+                    {row.original.partName?.substring(0, 2).toUpperCase() ||
+                      'P'}
                   </div>
                 )}
               </div>
-              <div className={cn(
-                "flex flex-col w-full",
-                i18n.dir() === 'rtl' ? "items-start text-right" : "items-start text-left"
-              )}>
+              <div
+                className={cn(
+                  'flex flex-col w-full',
+                  i18n.dir() === 'rtl'
+                    ? 'items-start text-right'
+                    : 'items-start text-left',
+                )}
+              >
                 <span className="font-medium text-sm w-fit" dir="auto">
                   {row.original.partName}
                 </span>
-                <span className="text-[10px] text-muted-foreground uppercase w-fit" dir="auto">
-                  {t('table.defaults.id_prefix')} {row.original.id.substring(0, 8)}
+                <span
+                  className="text-[10px] text-muted-foreground uppercase w-fit"
+                  dir="auto"
+                >
+                  {t('table.defaults.id_prefix')}{' '}
+                  {row.original.id.substring(0, 8)}
                 </span>
               </div>
             </div>
@@ -191,10 +203,18 @@ export function MarketplaceDataTable({
           return (
             <div className="flex items-center gap-2">
               <div className="size-7 rounded-md bg-muted flex items-center justify-center shrink-0 border border-border">
-                {(row.original as any).brand?.imageUrl ? (
-                  <img src={(row.original as any).brand.imageUrl} alt="" className="size-4 object-contain" />
+                {row.original.brand?.imageUrl ? (
+                  <img
+                    src={row.original.brand.imageUrl}
+                    alt=""
+                    className="size-4 object-contain"
+                  />
                 ) : (
-                  <span className="text-[9px] font-bold text-muted-foreground">{(row.original.vehicleBrand || '?').substring(0, 2).toUpperCase()}</span>
+                  <span className="text-[9px] font-bold text-muted-foreground">
+                    {(row.original.vehicleBrand || '?')
+                      .substring(0, 2)
+                      .toUpperCase()}
+                  </span>
                 )}
               </div>
               <div className="flex flex-col">
@@ -207,20 +227,24 @@ export function MarketplaceDataTable({
               </div>
             </div>
           )
-        }
+        },
       },
       {
         accessorKey: 'category',
         header: t('table.headers.category'),
         cell: ({ row }) => {
-          const category = row.original.category?.name || row.original.category 
+          const category = row.original.category?.name || row.original.category
           return (
             <Badge variant="secondary" className="gap-1">
-              <CategoryDisplay category={category} showName={false} iconClassName="size-3" />
+              <CategoryDisplay
+                category={category}
+                showName={false}
+                iconClassName="size-3"
+              />
               {tCategory(category, t)}
             </Badge>
           )
-        }
+        },
       },
       {
         accessorKey: 'createdAt',
@@ -229,54 +253,62 @@ export function MarketplaceDataTable({
           <div className="flex items-center gap-2 text-muted-foreground">
             <Clock className="size-3" />
             <span className="text-xs">
-              {formatDistanceToNow(new Date(row.original.createdAt), { 
+              {formatDistanceToNow(new Date(row.original.createdAt), {
                 addSuffix: true,
-                locale: currentLocale 
+                locale: currentLocale,
               })}
             </span>
           </div>
-        )
+        ),
       },
-      ...(type === 'active' ? [
-        {
-          accessorKey: 'quoteStatus',
-          header: t('table.headers.my_offer'),
-          cell: ({ row }: { row: any }) => (
-            <div className={cn(
-              "flex flex-col gap-1 w-full",
-              i18n.dir() === 'rtl' ? "items-start text-right" : "items-start text-left"
-            )}>
-              <span className="text-sm font-bold w-fit">
-                {new Intl.NumberFormat(i18n.language).format(row.original.quotePrice)}{' '}
-                <span className="text-[10px] font-normal uppercase">
-                  {t('table.defaults.currency')}
-                </span>
-              </span>
-              <Badge
-                variant={row.original.quoteStatus === 'accepted' ? 'default' : 'outline'}
-                className="w-fit text-[10px]"
-              >
-                {t(`statuses.${row.original.quoteStatus}`)}
-              </Badge>
-            </div>
-          )
-        }
-      ] : []),
+      ...(type === 'active'
+        ? [
+            {
+              accessorKey: 'quoteStatus',
+              header: t('table.headers.my_offer'),
+              cell: ({ row }: { row: any }) => (
+                <div
+                  className={cn(
+                    'flex flex-col gap-1 w-full',
+                    i18n.dir() === 'rtl'
+                      ? 'items-start text-right'
+                      : 'items-start text-left',
+                  )}
+                >
+                  <span className="text-sm font-bold w-fit">
+                    {new Intl.NumberFormat(i18n.language).format(
+                      row.original.quotePrice,
+                    )}{' '}
+                    <span className="text-[10px] font-normal uppercase">
+                      {t('table.defaults.currency')}
+                    </span>
+                  </span>
+                  <Badge
+                    variant={
+                      row.original.quoteStatus === 'accepted'
+                        ? 'default'
+                        : 'outline'
+                    }
+                    className="w-fit text-[10px]"
+                  >
+                    {t(`statuses.${row.original.quoteStatus}`)}
+                  </Badge>
+                </div>
+              ),
+            },
+          ]
+        : []),
       {
         id: 'actions',
         header: '',
         cell: ({ row }: { row: any }) => (
           <div className="flex justify-end rtl:justify-start">
-            <ActionCell
-              item={row.original}
-              onAction={onAction}
-              type={type}
-            />
+            <ActionCell item={row.original} onAction={onAction} type={type} />
           </div>
-        )
-      }
+        ),
+      },
     ],
-    [type, onAction, t, i18n.language, currentLocale]
+    [type, onAction, t, i18n.language, currentLocale],
   )
 
   return (

@@ -71,7 +71,7 @@ export function QuoteList({
                 'px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors',
                 sortBy === 'recent'
                   ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground hover:text-foreground',
               )}
             >
               {t('quotes.sort_recent', 'Recent')}
@@ -82,7 +82,7 @@ export function QuoteList({
                 'px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors',
                 sortBy === 'price'
                   ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground hover:text-foreground',
               )}
             >
               {t('quotes.sort_price', 'Price')}
@@ -119,7 +119,10 @@ export function QuoteList({
               {t('quotes.empty_title', 'No offers yet')}
             </h3>
             <p className="text-xs text-muted-foreground mt-1.5 text-center max-w-xs">
-              {t('quotes.empty_desc', 'Sellers will respond soon. Check back later or share this request.')}
+              {t(
+                'quotes.empty_desc',
+                'Sellers will respond soon. Check back later or share this request.',
+              )}
             </p>
           </div>
         )}

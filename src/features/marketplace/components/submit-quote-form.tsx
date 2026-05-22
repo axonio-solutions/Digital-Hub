@@ -9,14 +9,21 @@ import { useNavigate } from '@tanstack/react-router'
 import type { QuoteInput } from '@/types/quote-schemas'
 import { quoteSchema } from '@/types/quote-schemas'
 import { useToast } from '@/hooks/use-toast'
-import { useSubmitQuote, useUpdateQuote } from '@/features/marketplace/hooks/use-marketplace'
+import {
+  useSubmitQuote,
+  useUpdateQuote,
+} from '@/features/marketplace/hooks/use-marketplace'
 import { tCategory } from '@/utils/category-utils'
 import { CategoryDisplay } from '@/components/ui/category-display'
 
 import { Button } from '@/components/ui/button'
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog'
 import {
   Form,
@@ -95,7 +102,7 @@ export function SubmitQuoteForm({
               toast.error('toasts.update_error', { error: err.message })
             }
           },
-        }
+        },
       )
     } else {
       submitQuote(values, {
@@ -117,198 +124,242 @@ export function SubmitQuoteForm({
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className={cn('flex flex-col h-full', isCompact ? 'gap-4' : 'gap-4 sm:gap-6')}>
-        {showContext && vehicleInfo && (
-          <div className="flex flex-wrap items-center gap-4 justify-between pb-4 border-b border-border">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                <Zap className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-foreground">
-                  {vehicleInfo.brand} {vehicleInfo.model}
-                </p>
-                <p className="text-xs text-muted-foreground">{t('offer_dialog.year')} {vehicleInfo.year}</p>
-              </div>
-            </div>
-            {category && (
-              <span className="px-3 py-1.5 rounded-lg bg-muted border border-border text-xs font-bold text-foreground inline-flex items-center gap-1.5">
-                <CategoryDisplay category={category} showName={false} iconClassName="size-3" />
-                {tCategory(category, t)}
-              </span>
-            )}
-          </div>
-        )}
-
-        <div className={cn(
-          "flex-1 flex flex-col",
-          !isCompact ? "bg-muted/30 rounded-xl p-4 sm:p-6 border border-border justify-evenly gap-3 sm:gap-4" : "gap-4"
-        )}>
-          {/* Price */}
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs font-bold text-foreground flex items-center gap-2">
-                  {t('form.price_label')}
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/15 font-bold">
-                    DZD
-                  </span>
-                </FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
-                      className={cn(
-                        'pl-4 font-mono font-bold rounded-xl border-2 border-border bg-card focus:border-primary transition-all',
-                        isCompact ? 'h-11 text-lg' : 'h-12 sm:h-14 text-xl sm:text-2xl',
-                      )}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Warranty */}
-          <FormField
-            control={form.control}
-            name="warranty"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs font-bold text-foreground flex items-center gap-2">
-                  <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-                  {t('form.warranty_label')}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={t('form.warranty_placeholder')}
-                    {...field}
-                    className={cn(
-                      'rounded-xl border-2 border-border bg-card focus:border-primary transition-all font-medium',
-                      isCompact ? 'h-10' : 'h-11 sm:h-12',
-                    )}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Condition */}
-          <FormField
-            control={form.control}
-            name="condition"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs font-bold text-foreground">
-                  {t('form.condition_label')}
-                </FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="grid grid-cols-2 gap-3"
-                  >
-                    <label
-                      htmlFor="cond-new"
-                      className={cn(
-                        'cursor-pointer rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all',
-                        isCompact ? 'h-12' : 'h-14 sm:h-16',
-                        field.value === 'new'
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border bg-card hover:border-primary/30',
-                      )}
-                    >
-                      <RadioGroupItem value="new" id="cond-new" className="sr-only" />
-                      <span className={cn(
-                        'font-bold uppercase tracking-wide',
-                        isCompact ? 'text-[10px]' : 'text-[11px] sm:text-sm',
-                        field.value === 'new' ? 'text-primary' : 'text-muted-foreground',
-                      )}>
-                        {t('form.condition_new')}
-                      </span>
-                    </label>
-
-                    <label
-                      htmlFor="cond-used"
-                      className={cn(
-                        'cursor-pointer rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all',
-                        isCompact ? 'h-12' : 'h-14 sm:h-16',
-                        field.value === 'used'
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border bg-card hover:border-primary/30',
-                      )}
-                    >
-                      <RadioGroupItem value="used" id="cond-used" className="sr-only" />
-                      <span className={cn(
-                        'font-bold uppercase tracking-wide',
-                        isCompact ? 'text-[10px]' : 'text-[11px] sm:text-sm',
-                        field.value === 'used' ? 'text-primary' : 'text-muted-foreground',
-                      )}>
-                        {t('form.condition_used')}
-                      </span>
-                    </label>
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        {/* Submit button */}
-        <Button
-          type="submit"
-          disabled={isPending}
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
           className={cn(
-            'w-full rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-primary/20 shrink-0 mt-auto',
-            isCompact ? 'h-11' : 'h-12 sm:h-14',
+            'flex flex-col h-full',
+            isCompact ? 'gap-4' : 'gap-4 sm:gap-6',
           )}
         >
-          {isPending ? (
-            <Loader2 className="w-5 h-5 me-2 animate-spin" />
-          ) : (
-            <Send className="w-4 h-4 me-2" />
+          {showContext && vehicleInfo && (
+            <div className="flex flex-wrap items-center gap-4 justify-between pb-4 border-b border-border">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground">
+                    {vehicleInfo.brand} {vehicleInfo.model}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t('offer_dialog.year')} {vehicleInfo.year}
+                  </p>
+                </div>
+              </div>
+              {category && (
+                <span className="px-3 py-1.5 rounded-lg bg-muted border border-border text-xs font-bold text-foreground inline-flex items-center gap-1.5">
+                  <CategoryDisplay
+                    category={category}
+                    showName={false}
+                    iconClassName="size-3"
+                  />
+                  {tCategory(category, t)}
+                </span>
+              )}
+            </div>
           )}
-          {isEditing ? t('form.update_btn') : t('form.submit_btn')}
-        </Button>
-      </form>
-    </Form>
 
-    <Dialog open={creditDialogOpen} onOpenChange={setCreditDialogOpen}>
-      <DialogContent className="sm:max-w-sm">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Coins className="size-5 text-amber-500" />
-            {t('credit_dialog.title')}
-          </DialogTitle>
-          <DialogDescription className="pt-2">
-            {t('credit_dialog.description')}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setCreditDialogOpen(false)} className="rounded-xl text-xs font-bold">
-            {t('credit_dialog.cancel')}
-          </Button>
-          <Button
-            onClick={() => {
-              setCreditDialogOpen(false)
-              navigate({ to: '/dashboard/billing' as any })
-            }}
-            className="rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white"
+          <div
+            className={cn(
+              'flex-1 flex flex-col',
+              !isCompact
+                ? 'bg-muted/30 rounded-xl p-4 sm:p-6 border border-border justify-evenly gap-3 sm:gap-4'
+                : 'gap-4',
+            )}
           >
-            <Coins className="size-3.5 mr-1.5" />
-            {t('credit_dialog.request')}
+            {/* Price */}
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs font-bold text-foreground flex items-center gap-2">
+                    {t('form.price_label')}
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/15 font-bold">
+                      DZD
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type="number"
+                        placeholder="0.00"
+                        {...field}
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value, 10) || 0)
+                        }
+                        className={cn(
+                          'pl-4 font-mono font-bold rounded-xl border-2 border-border bg-card focus:border-primary transition-all',
+                          isCompact
+                            ? 'h-11 text-lg'
+                            : 'h-12 sm:h-14 text-xl sm:text-2xl',
+                        )}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Warranty */}
+            <FormField
+              control={form.control}
+              name="warranty"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs font-bold text-foreground flex items-center gap-2">
+                    <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+                    {t('form.warranty_label')}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={t('form.warranty_placeholder')}
+                      {...field}
+                      className={cn(
+                        'rounded-xl border-2 border-border bg-card focus:border-primary transition-all font-medium',
+                        isCompact ? 'h-10' : 'h-11 sm:h-12',
+                      )}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Condition */}
+            <FormField
+              control={form.control}
+              name="condition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs font-bold text-foreground">
+                    {t('form.condition_label')}
+                  </FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="grid grid-cols-2 gap-3"
+                    >
+                      <label
+                        htmlFor="cond-new"
+                        className={cn(
+                          'cursor-pointer rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all',
+                          isCompact ? 'h-12' : 'h-14 sm:h-16',
+                          field.value === 'new'
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border bg-card hover:border-primary/30',
+                        )}
+                      >
+                        <RadioGroupItem
+                          value="new"
+                          id="cond-new"
+                          className="sr-only"
+                        />
+                        <span
+                          className={cn(
+                            'font-bold uppercase tracking-wide',
+                            isCompact
+                              ? 'text-[10px]'
+                              : 'text-[11px] sm:text-sm',
+                            field.value === 'new'
+                              ? 'text-primary'
+                              : 'text-muted-foreground',
+                          )}
+                        >
+                          {t('form.condition_new')}
+                        </span>
+                      </label>
+
+                      <label
+                        htmlFor="cond-used"
+                        className={cn(
+                          'cursor-pointer rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all',
+                          isCompact ? 'h-12' : 'h-14 sm:h-16',
+                          field.value === 'used'
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border bg-card hover:border-primary/30',
+                        )}
+                      >
+                        <RadioGroupItem
+                          value="used"
+                          id="cond-used"
+                          className="sr-only"
+                        />
+                        <span
+                          className={cn(
+                            'font-bold uppercase tracking-wide',
+                            isCompact
+                              ? 'text-[10px]'
+                              : 'text-[11px] sm:text-sm',
+                            field.value === 'used'
+                              ? 'text-primary'
+                              : 'text-muted-foreground',
+                          )}
+                        >
+                          {t('form.condition_used')}
+                        </span>
+                      </label>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Submit button */}
+          <Button
+            type="submit"
+            disabled={isPending}
+            className={cn(
+              'w-full rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-primary/20 shrink-0 mt-auto',
+              isCompact ? 'h-11' : 'h-12 sm:h-14',
+            )}
+          >
+            {isPending ? (
+              <Loader2 className="w-5 h-5 me-2 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4 me-2" />
+            )}
+            {isEditing ? t('form.update_btn') : t('form.submit_btn')}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  </>
+        </form>
+      </Form>
+
+      <Dialog open={creditDialogOpen} onOpenChange={setCreditDialogOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Coins className="size-5 text-amber-500" />
+              {t('credit_dialog.title')}
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              {t('credit_dialog.description')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setCreditDialogOpen(false)}
+              className="rounded-xl text-xs font-bold"
+            >
+              {t('credit_dialog.cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                setCreditDialogOpen(false)
+                navigate({ to: '/dashboard/billing' as any })
+              }}
+              className="rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white"
+            >
+              <Coins className="size-3.5 mr-1.5" />
+              {t('credit_dialog.request')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }

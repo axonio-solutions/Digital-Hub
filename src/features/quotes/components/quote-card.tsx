@@ -53,17 +53,23 @@ export function QuoteCard({
   const { t } = useTranslation('quotes')
   const isAccepted = quote.status === 'accepted'
   const isRejected = quote.status === 'rejected'
-  const isWithdrawn = quote.status === 'withdrawn'
   const isPending = !quote.status || quote.status === 'pending'
 
-  const sellerName = quote.seller?.storeName || quote.seller?.name || t('card.authorized_seller')
+  const sellerName =
+    quote.seller?.storeName || quote.seller?.name || t('card.authorized_seller')
   const initials = getInitials(sellerName)
 
   const conditionLabel = quote.condition
-    ? t(`columns.conditions.${quote.condition}`, { defaultValue: quote.condition })
+    ? t(`columns.conditions.${quote.condition}`, {
+        defaultValue: quote.condition,
+      })
     : t('columns.conditions.used')
 
-  const locationLabel = quote.seller?.wilaya || quote.seller?.city || quote.seller?.address || t('card.default_location')
+  const locationLabel =
+    quote.seller?.wilaya ||
+    quote.seller?.city ||
+    quote.seller?.address ||
+    t('card.default_location')
   const warrantyLabel = quote.warranty || t('card.no_warranty')
 
   return (
@@ -72,7 +78,6 @@ export function QuoteCard({
         'rounded-2xl border bg-card overflow-hidden transition-all duration-300 ease-in-out',
         isAccepted && 'border-primary/30 ring-1 ring-primary/10',
         isRejected && 'border-muted bg-muted/10',
-        isWithdrawn && 'opacity-50 border-muted bg-muted/5',
         isPending && 'hover:border-primary/20 hover:shadow-sm',
       )}
     >
@@ -91,8 +96,12 @@ export function QuoteCard({
               {initials}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-foreground truncate">{sellerName}</p>
-              <p className="text-[11px] text-muted-foreground">{t('card.authorized_seller')}</p>
+              <p className="text-sm font-bold text-foreground truncate">
+                {sellerName}
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                {t('card.authorized_seller')}
+              </p>
             </div>
           </div>
 
@@ -106,11 +115,6 @@ export function QuoteCard({
             <span className="inline-flex items-center gap-1.5 text-xs font-bold text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-900/40 px-3 py-1.5 rounded-full shrink-0 shadow-sm">
               <XCircle className="size-3.5" />
               {t('card.rejected')}
-            </span>
-          )}
-          {isWithdrawn && (
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full shrink-0 shadow-sm">
-              {t('card.withdrawn')}
             </span>
           )}
           {isPending && isRequestOpen && (
@@ -135,7 +139,9 @@ export function QuoteCard({
               >
                 {quote.price.toLocaleString()}
               </span>
-              <span className="text-sm font-bold text-muted-foreground ms-1.5">{t('columns.currency')}</span>
+              <span className="text-sm font-bold text-muted-foreground ms-1.5">
+                {t('columns.currency')}
+              </span>
             </div>
           </div>
         </div>
@@ -147,32 +153,39 @@ export function QuoteCard({
               <Tag className="size-3" />
               {t('card.condition_label')}
             </p>
-            <p className="text-sm font-bold text-foreground mt-0.5">{conditionLabel}</p>
+            <p className="text-sm font-bold text-foreground mt-0.5">
+              {conditionLabel}
+            </p>
           </div>
           <div className="bg-card px-3.5 py-2.5">
             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
               <MapPin className="size-3" />
               {t('card.location_label')}
             </p>
-            <p className="text-sm font-bold text-foreground mt-0.5 truncate">{locationLabel}</p>
+            <p className="text-sm font-bold text-foreground mt-0.5 truncate">
+              {locationLabel}
+            </p>
           </div>
           <div className="bg-card px-3.5 py-2.5">
             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
               <Shield className="size-3" />
               {t('card.warranty_label')}
             </p>
-            <p className="text-sm font-bold text-foreground mt-0.5">{warrantyLabel}</p>
+            <p className="text-sm font-bold text-foreground mt-0.5">
+              {warrantyLabel}
+            </p>
           </div>
           <div className="bg-card px-3.5 py-2.5">
             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
               <Clock className="size-3" />
               {t('card.submitted_label')}
             </p>
-            <p className="text-sm font-bold text-foreground mt-0.5">{formatRelativeTime(quote.createdAt)}</p>
+            <p className="text-sm font-bold text-foreground mt-0.5">
+              {formatRelativeTime(quote.createdAt)}
+            </p>
           </div>
         </div>
 
-        {/* Actions */}
         <div className="mt-4 flex flex-row items-center gap-2">
           {isAccepted ? (
             <>
@@ -184,36 +197,82 @@ export function QuoteCard({
                 <Phone className="size-4" />
                 {t('card.actions.contact')}
               </Button>
+              {isRequestOpen && (
+                <Button
+                  onClick={() => onReject(quote.id)}
+                  disabled={isRejecting}
+                  variant="outline"
+                  className={cn(
+                    'flex-1 h-10 rounded-lg gap-1.5 text-sm font-medium transition-all duration-200',
+                    isRejecting && 'animate-pulse',
+                  )}
+                >
+                  <span className="inline-flex items-center gap-2 transition-all duration-300">
+                    {isRejecting ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <XCircle className="size-4" />
+                    )}
+                    <span>
+                      {isRejecting
+                        ? t('card.actions.rejecting')
+                        : t('card.actions.reject')}
+                    </span>
+                  </span>
+                </Button>
+              )}
+              {isRequestOpen && (
+                <Button
+                  onClick={() => onRevoke(quote.id)}
+                  disabled={isRevoking}
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    'h-10 w-10 rounded-lg text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950 transition-all duration-200',
+                    isRevoking && 'animate-pulse',
+                  )}
+                >
+                  {isRevoking ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Undo2 className="size-4" />
+                  )}
+                </Button>
+              )}
+            </>
+          ) : isRejected ? (
+            isRequestOpen ? (
               <Button
-                onClick={() => onRevoke(quote.id)}
-                disabled={isRevoking}
+                onClick={() => onUnreject(quote.id)}
+                disabled={isUnrejecting}
                 variant="outline"
                 className={cn(
-                  'flex-1 h-10 rounded-lg gap-1.5 text-sm font-medium border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950 transition-all duration-200',
-                  isRevoking && 'animate-pulse',
+                  'flex-1 h-10 rounded-lg gap-1.5 text-sm font-medium border-primary/30 text-primary hover:bg-primary/5 transition-all duration-200',
+                  isUnrejecting && 'animate-pulse',
                 )}
               >
                 <span className="inline-flex items-center gap-2 transition-all duration-300">
-                  {isRevoking ? <Loader2 className="size-4 animate-spin" /> : <Undo2 className="size-4" />}
-                  <span>{isRevoking ? t('card.actions.revoking') : t('card.actions.revoke')}</span>
+                  {isUnrejecting ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <RotateCcw className="size-4" />
+                  )}
+                  <span>
+                    {isUnrejecting
+                      ? t('card.actions.unrejecting')
+                      : t('card.actions.unreject')}
+                  </span>
                 </span>
               </Button>
-            </>
-          ) : isRejected ? (
-            <Button
-              onClick={() => onUnreject(quote.id)}
-              disabled={isUnrejecting}
-              variant="outline"
-              className={cn(
-                'flex-1 h-10 rounded-lg gap-1.5 text-sm font-medium border-primary/30 text-primary hover:bg-primary/5 transition-all duration-200',
-                isUnrejecting && 'animate-pulse',
-              )}
-            >
-              <span className="inline-flex items-center gap-2 transition-all duration-300">
-                {isUnrejecting ? <Loader2 className="size-4 animate-spin" /> : <RotateCcw className="size-4" />}
-                <span>{isUnrejecting ? t('card.actions.unrejecting') : t('card.actions.unreject')}</span>
-              </span>
-            </Button>
+            ) : (
+              <Button
+                disabled
+                variant="ghost"
+                className="flex-1 h-10 rounded-lg text-sm font-medium opacity-50"
+              >
+                {t('card.rejected')}
+              </Button>
+            )
           ) : isPending && isRequestOpen ? (
             <>
               <Button
@@ -226,8 +285,16 @@ export function QuoteCard({
                 )}
               >
                 <span className="inline-flex items-center gap-2 transition-all duration-300">
-                  {isAccepting ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4" />}
-                  <span>{isAccepting ? t('card.actions.accepting') : t('card.actions.accept')}</span>
+                  {isAccepting ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="size-4" />
+                  )}
+                  <span>
+                    {isAccepting
+                      ? t('card.actions.accepting')
+                      : t('card.actions.accept')}
+                  </span>
                 </span>
               </Button>
               <Button
@@ -240,20 +307,28 @@ export function QuoteCard({
                 )}
               >
                 <span className="inline-flex items-center gap-2 transition-all duration-300">
-                  {isRejecting ? <Loader2 className="size-4 animate-spin" /> : <XCircle className="size-4" />}
-                  <span>{isRejecting ? t('card.actions.rejecting') : t('card.actions.reject')}</span>
+                  {isRejecting ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <XCircle className="size-4" />
+                  )}
+                  <span>
+                    {isRejecting
+                      ? t('card.actions.rejecting')
+                      : t('card.actions.reject')}
+                  </span>
                 </span>
               </Button>
             </>
-          ) : isPending && !isRequestOpen ? (
-            <Button disabled variant="ghost" className="flex-1 h-10 rounded-lg text-sm font-medium opacity-50">
+          ) : (
+            <Button
+              disabled
+              variant="ghost"
+              className="flex-1 h-10 rounded-lg text-sm font-medium opacity-50"
+            >
               {t('card.actions.closed')}
             </Button>
-          ) : isWithdrawn ? (
-            <Button disabled variant="ghost" className="flex-1 h-10 rounded-lg text-sm font-medium opacity-50">
-              {t('card.withdrawn')}
-            </Button>
-          ) : null}
+          )}
         </div>
       </div>
     </div>

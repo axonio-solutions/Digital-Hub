@@ -12,8 +12,8 @@ export function RequestDetailsCompact({ request }: RequestDetailsCompactProps) {
   const { t } = useTranslation('marketplace')
   if (!request) return null
 
-  const timeAgo = request.createdAt 
-    ? formatDistanceToNow(new Date(request.createdAt), { addSuffix: true }) 
+  const timeAgo = request.createdAt
+    ? formatDistanceToNow(new Date(request.createdAt), { addSuffix: true })
     : ''
 
   return (
@@ -28,9 +28,17 @@ export function RequestDetailsCompact({ request }: RequestDetailsCompactProps) {
             <div className="flex items-center gap-2 font-black text-slate-900 dark:text-white text-sm whitespace-nowrap">
               <div className="size-5 rounded bg-muted flex items-center justify-center shrink-0 border border-border/50">
                 {request.brand?.imageUrl ? (
-                  <img src={request.brand.imageUrl} alt="" className="size-3.5 object-contain" />
+                  <img
+                    src={request.brand.imageUrl}
+                    alt=""
+                    className="size-3.5 object-contain"
+                  />
                 ) : (
-                  <span className="text-[8px] font-bold text-muted-foreground">{(request.vehicleBrand || '?').substring(0, 2).toUpperCase()}</span>
+                  <span className="text-[8px] font-bold text-muted-foreground">
+                    {(request.vehicleBrand || '?')
+                      .substring(0, 2)
+                      .toUpperCase()}
+                  </span>
                 )}
               </div>
               {request.vehicleBrand}
@@ -42,15 +50,26 @@ export function RequestDetailsCompact({ request }: RequestDetailsCompactProps) {
 
         {/* Part Name & Category */}
         <div className="flex-1 min-w-[180px]">
-          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 leading-none mb-1.5">Demand Signal</span>
+          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 leading-none mb-1.5">
+            Demand Signal
+          </span>
           <div className="flex flex-col">
             <h3 className="text-base font-black uppercase italic tracking-tight text-primary leading-tight mb-1">
               {request.partName}
             </h3>
             <div className="flex items-center gap-2">
               <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1">
-                <CategoryDisplay category={request.category} showName={false} iconClassName="size-3" />
-                {tCategory(request.category?.name || request.category || request.categoryId, t)}
+                <CategoryDisplay
+                  category={request.category}
+                  showName={false}
+                  iconClassName="size-3"
+                />
+                {tCategory(
+                  request.category?.name ||
+                    request.category ||
+                    request.categoryId,
+                  t,
+                )}
               </span>
               {request.oemNumber && (
                 <span className="text-[10px] font-mono font-bold text-slate-400">

@@ -1,13 +1,25 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Search, X, Zap } from 'lucide-react'
-import { CategoryDisplay } from '@/components/ui/category-display'
-import { BrandSelectionDialog } from '../brand-selection-dialog'
+import {
+  CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  X,
+  Zap,
+} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { BrandSelectionDialog } from '../brand-selection-dialog'
+import { CategoryDisplay } from '@/components/ui/category-display'
 import { tCategory } from '@/utils/category-utils'
 import { cn } from '@/lib/utils'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
 
 interface CategoryBarProps {
@@ -32,8 +44,8 @@ export function CategoryBar({
   const { t, i18n } = useTranslation('marketplace')
   const isRtl = i18n.dir() === 'rtl'
   const scrollRef = useRef<HTMLDivElement>(null)
-  
-  const [showLeft, setShowLeft] = useState(isRtl) 
+
+  const [showLeft, setShowLeft] = useState(isRtl)
   const [showRight, setShowRight] = useState(!isRtl)
   const [isBrandDialogOpen, setIsBrandDialogOpen] = useState(false)
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
@@ -42,7 +54,7 @@ export function CategoryBar({
   const checkScroll = () => {
     if (!scrollRef.current) return
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
-    
+
     const absScrollLeft = Math.abs(scrollLeft)
     const maxScroll = scrollWidth - clientWidth
 
@@ -70,28 +82,38 @@ export function CategoryBar({
   }, [categories, isRtl])
 
   const nudge = (dir: 'left' | 'right') => {
-    scrollRef.current?.scrollBy({ left: dir === 'left' ? -360 : 360, behavior: 'smooth' })
+    scrollRef.current?.scrollBy({
+      left: dir === 'left' ? -360 : 360,
+      behavior: 'smooth',
+    })
   }
 
   const activeFilterCount =
-    (selectedCategory !== 'all' ? 1 : 0) +
-    (selectedBrands.length > 0 ? 1 : 0)
+    (selectedCategory !== 'all' ? 1 : 0) + (selectedBrands.length > 0 ? 1 : 0)
 
   const allCategories = [
     { id: 'all', name: t('category_bar.all_parts') },
     ...categories.map((c: any) => ({ ...c, id: c.id, name: c.name })),
   ]
 
-  const selectedCategoryName = allCategories.find((c) => c.id === selectedCategory)?.name || ''
-  const selectedBrandNames = brands.filter((b: any) => selectedBrands.includes(b.id)).map((b: any) => b.brand || b.name)
+  const selectedCategoryName =
+    allCategories.find((c) => c.id === selectedCategory)?.name || ''
+  const selectedBrandNames = brands
+    .filter((b: any) => selectedBrands.includes(b.id))
+    .map((b: any) => b.brand || b.name)
 
-  const displayCategoryName = selectedCategory !== 'all' ? tCategory(selectedCategoryName, t) : ''
-  const filterLabel = [
-    selectedCategory !== 'all' ? displayCategoryName : '',
-    ...selectedBrandNames.slice(0, 2),
-  ].filter(Boolean).join(' · ') || t('category_bar.all_parts')
+  const displayCategoryName =
+    selectedCategory !== 'all' ? tCategory(selectedCategoryName, t) : ''
+  const filterLabel =
+    [
+      selectedCategory !== 'all' ? displayCategoryName : '',
+      ...selectedBrandNames.slice(0, 2),
+    ]
+      .filter(Boolean)
+      .join(' · ') || t('category_bar.all_parts')
 
-  const moreCount = selectedBrandNames.length > 2 ? selectedBrandNames.length - 2 : 0
+  const moreCount =
+    selectedBrandNames.length > 2 ? selectedBrandNames.length - 2 : 0
 
   const filteredCategories = allCategories.filter((c) =>
     c.name.toLowerCase().includes(mobileSearch.toLowerCase()),
@@ -134,11 +156,16 @@ export function CategoryBar({
                 >
                   <span className="truncate">{filterLabel}</span>
                   {moreCount > 0 && (
-                    <span className="text-[9px] opacity-60 shrink-0">+{moreCount}</span>
+                    <span className="text-[9px] opacity-60 shrink-0">
+                      +{moreCount}
+                    </span>
                   )}
                   {activeFilterCount > 0 && (
                     <span className="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[9px] font-bold leading-none shrink-0 px-1">
-                      {activeFilterCount + (selectedBrands.length > 1 ? selectedBrands.length - 1 : 0)}
+                      {activeFilterCount +
+                        (selectedBrands.length > 1
+                          ? selectedBrands.length - 1
+                          : 0)}
                     </span>
                   )}
                   <ChevronDown className="w-3 h-3 shrink-0" />
@@ -177,22 +204,35 @@ export function CategoryBar({
                           : 'hover:bg-muted text-foreground',
                       )}
                     >
-                      <CategoryDisplay category={cat} showName={false} iconClassName="size-3.5" />
-                      <span className="truncate">{cat.id === 'all' ? cat.name : tCategory(cat.name, t)}</span>
+                      <CategoryDisplay
+                        category={cat}
+                        showName={false}
+                        iconClassName="size-3.5"
+                      />
+                      <span className="truncate">
+                        {cat.id === 'all' ? cat.name : tCategory(cat.name, t)}
+                      </span>
 
-                      {selectedCategory === cat.id && <CheckCircle2 className="w-3.5 h-3.5 ml-auto shrink-0" />}
+                      {selectedCategory === cat.id && (
+                        <CheckCircle2 className="w-3.5 h-3.5 ml-auto shrink-0" />
+                      )}
                     </button>
                   ))}
-                  {filteredCategories.length === 0 && filteredBrands.length === 0 && (
-                    <p className="text-xs text-muted-foreground text-center py-4">{t('category_bar.no_results')}</p>
-                  )}
+                  {filteredCategories.length === 0 &&
+                    filteredBrands.length === 0 && (
+                      <p className="text-xs text-muted-foreground text-center py-4">
+                        {t('category_bar.no_results')}
+                      </p>
+                    )}
                 </div>
 
                 {/* Brands section */}
                 {brands.length > 0 && (
                   <>
                     <div className="border-t border-border px-3 pt-2 pb-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">{t('category_bar.brands')}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
+                        {t('category_bar.brands')}
+                      </p>
                     </div>
                     <div className="max-h-[30vh] overflow-y-auto p-1.5">
                       {filteredBrands.map((brand: any) => {
@@ -203,16 +243,24 @@ export function CategoryBar({
                             onClick={() => toggleBrand(brand.id)}
                             className={cn(
                               'flex items-center w-full gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all',
-                              isSelected ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-foreground',
+                              isSelected
+                                ? 'bg-primary/10 text-primary'
+                                : 'hover:bg-muted text-foreground',
                             )}
                           >
-                            <span className="truncate">{brand.brand || brand.name}</span>
-                            {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-primary ml-auto shrink-0" />}
+                            <span className="truncate">
+                              {brand.brand || brand.name}
+                            </span>
+                            {isSelected && (
+                              <CheckCircle2 className="w-3.5 h-3.5 text-primary ml-auto shrink-0" />
+                            )}
                           </button>
                         )
                       })}
                       {filteredBrands.length === 0 && (
-                        <p className="text-xs text-muted-foreground text-center py-4">{t('category_bar.no_brands')}</p>
+                        <p className="text-xs text-muted-foreground text-center py-4">
+                          {t('category_bar.no_brands')}
+                        </p>
                       )}
                     </div>
                   </>
@@ -222,10 +270,14 @@ export function CategoryBar({
                 <div className="border-t border-border p-2 flex items-center gap-2">
                   {activeFilterCount > 0 && (
                     <button
-                      onClick={() => { onReset(); setMobileFilterOpen(false) }}
+                      onClick={() => {
+                        onReset()
+                        setMobileFilterOpen(false)
+                      }}
                       className="flex items-center gap-1 h-8 px-3 rounded-lg text-[10px] font-bold uppercase bg-destructive/10 text-destructive w-full justify-center"
                     >
-                      {t('category_bar.clear_all')}{activeFilterCount > 1 ? ` (${activeFilterCount})` : ''}
+                      {t('category_bar.clear_all')}
+                      {activeFilterCount > 1 ? ` (${activeFilterCount})` : ''}
                     </button>
                   )}
                 </div>
@@ -236,7 +288,6 @@ export function CategoryBar({
           {/* Desktop: horizontal scroll */}
           <div className="hidden md:flex items-center h-13 gap-0">
             <div className="relative flex-1 flex items-center min-w-0">
-              
               {/* LEFT Edge Button */}
               <div
                 className={cn(
@@ -280,7 +331,11 @@ export function CategoryBar({
                       {cat.id === 'all' ? (
                         <Zap className="w-3 h-3" />
                       ) : (
-                        <CategoryDisplay category={cat} showName={false} iconClassName="size-3" />
+                        <CategoryDisplay
+                          category={cat}
+                          showName={false}
+                          iconClassName="size-3"
+                        />
                       )}
                       {cat.id === 'all' ? cat.name : tCategory(cat.name, t)}
                     </button>
@@ -343,7 +398,8 @@ export function CategoryBar({
                 )}
               >
                 <X className="w-3 h-3 flex-shrink-0" />
-                {t('category_bar.clear')}{activeFilterCount > 1 ? ` (${activeFilterCount})` : ''}
+                {t('category_bar.clear')}
+                {activeFilterCount > 1 ? ` (${activeFilterCount})` : ''}
               </button>
             </div>
           </div>

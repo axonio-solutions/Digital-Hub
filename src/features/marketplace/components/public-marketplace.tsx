@@ -1,15 +1,24 @@
 'use client'
 
 import React, { useState } from 'react'
-import { ArrowRight, ChevronLeft, ChevronRight, Search, Sparkles } from 'lucide-react'
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Sparkles,
+} from 'lucide-react'
 import { Link, getRouteApi, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
-import { useToast } from '@/hooks/use-toast'
 import { SendOfferDialog } from './send-offer-dialog'
 import { CategoryBar } from './explore/category-bar'
 import { MarketplaceFeed } from './explore/marketplace-feed'
-import { usePublicOpenRequests, usePublicTaxonomy } from '@/features/requests/hooks/use-requests'
+import { useToast } from '@/hooks/use-toast'
+import {
+  usePublicOpenRequests,
+  usePublicTaxonomy,
+} from '@/features/requests/hooks/use-requests'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 
 import { Button } from '@/components/ui/button'
@@ -42,16 +51,15 @@ export function PublicMarketplace() {
     (user as any)?.role
 
   const { data: taxonomyData } = usePublicTaxonomy()
-  const {
-    data: allRequests,
-    isLoading: isLoadingReqs,
-  } = usePublicOpenRequests({
-    categoryId: selectedCategory,
-    brandIds: selectedBrands,
-    search: searchQuery,
-    limit,
-    offset: page * limit,
-  })
+  const { data: allRequests, isLoading: isLoadingReqs } = usePublicOpenRequests(
+    {
+      categoryId: selectedCategory,
+      brandIds: selectedBrands,
+      search: searchQuery,
+      limit,
+      offset: page * limit,
+    },
+  )
 
   const handleResetFilters = () => {
     setSelectedCategory('all')
@@ -67,7 +75,10 @@ export function PublicMarketplace() {
   const sortedRequests = React.useMemo(() => {
     if (!allRequests) return []
     const result = [...allRequests]
-    result.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    result.sort(
+      (a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
     return result
   }, [allRequests])
 
@@ -92,10 +103,16 @@ export function PublicMarketplace() {
       <CategoryBar
         categories={taxonomyData?.categories || []}
         selectedCategory={selectedCategory}
-        setSelectedCategory={(id) => { setSelectedCategory(id); setPage(0) }}
+        setSelectedCategory={(id) => {
+          setSelectedCategory(id)
+          setPage(0)
+        }}
         brands={taxonomyData?.brands || []}
         selectedBrands={selectedBrands}
-        setSelectedBrands={(brands) => { setSelectedBrands(brands); setPage(0) }}
+        setSelectedBrands={(brands) => {
+          setSelectedBrands(brands)
+          setPage(0)
+        }}
         onReset={handleResetFilters}
       />
 
@@ -104,10 +121,10 @@ export function PublicMarketplace() {
         <div className="max-w-[1700px] mx-auto px-4 lg:px-8 py-2.5">
           <form onSubmit={handleSearchSubmit} className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
-              <Input
-                type="search"
-                placeholder={t('search.placeholder')}
-                value={searchInput}
+            <Input
+              type="search"
+              placeholder={t('search.placeholder')}
+              value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="h-10 pl-10 pr-4 rounded-xl border-border bg-muted/40 text-sm placeholder:text-muted-foreground/40"
             />
@@ -115,19 +132,23 @@ export function PublicMarketplace() {
         </div>
       </div>
 
-
-
       <main className="flex-1 w-full max-w-[1700px] mx-auto px-4 lg:px-8 py-6">
         {/* Header */}
         <div className="flex items-end justify-between gap-4 mb-6">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground">
-                {t('header.title')} <span className="text-primary">{t('header.title_highlight')}</span>
+                {t('header.title')}{' '}
+                <span className="text-primary">
+                  {t('header.title_highlight')}
+                </span>
               </h1>
               {!isLoadingReqs && (
                 <span className="inline-flex items-center h-6 px-2 rounded-md bg-muted text-muted-foreground text-xs font-semibold tabular-nums">
-                  {totalCount} {totalCount === 1 ? t('header.requests') : t('header.requests_plural')}
+                  {totalCount}{' '}
+                  {totalCount === 1
+                    ? t('header.requests')
+                    : t('header.requests_plural')}
                 </span>
               )}
             </div>
@@ -145,12 +166,19 @@ export function PublicMarketplace() {
                 <Sparkles className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">{t('banners.unauthenticated.title')}</p>
-                <p className="text-xs text-muted-foreground">{t('banners.unauthenticated.desc')}</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {t('banners.unauthenticated.title')}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {t('banners.unauthenticated.desc')}
+                </p>
               </div>
             </div>
             <Link to="/login">
-              <Button size="sm" className="h-9 px-5 rounded-lg text-xs font-bold bg-primary text-primary-foreground hover:brightness-110">
+              <Button
+                size="sm"
+                className="h-9 px-5 rounded-lg text-xs font-bold bg-primary text-primary-foreground hover:brightness-110"
+              >
                 {t('banners.unauthenticated.cta')}
                 <ArrowRight className="ms-1.5 w-3.5 h-3.5" />
               </Button>
@@ -159,25 +187,35 @@ export function PublicMarketplace() {
         )}
 
         {/* Auth banner — logged-in buyers */}
-        {isAuthenticated && userRole !== 'seller' && !isLoadingReqs && sortedRequests.length > 0 && (
-          <div className="mb-6 p-4 rounded-xl bg-muted/50 border border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-primary" />
+        {isAuthenticated &&
+          userRole !== 'seller' &&
+          !isLoadingReqs &&
+          sortedRequests.length > 0 && (
+            <div className="mb-6 p-4 rounded-xl bg-muted/50 border border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {t('banners.buyer.title')}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t('banners.buyer.desc')}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">{t('banners.buyer.title')}</p>
-                <p className="text-xs text-muted-foreground">{t('banners.buyer.desc')}</p>
-              </div>
+              <Link to="/dashboard/requests">
+                <Button
+                  size="sm"
+                  className="h-9 px-5 rounded-lg text-xs font-bold bg-primary text-primary-foreground hover:brightness-110"
+                >
+                  {t('banners.buyer.cta')}
+                  <ArrowRight className="ms-1.5 w-3.5 h-3.5" />
+                </Button>
+              </Link>
             </div>
-            <Link to="/dashboard/requests">
-              <Button size="sm" className="h-9 px-5 rounded-lg text-xs font-bold bg-primary text-primary-foreground hover:brightness-110">
-                {t('banners.buyer.cta')}
-                <ArrowRight className="ms-1.5 w-3.5 h-3.5" />
-              </Button>
-            </Link>
-          </div>
-        )}
+          )}
 
         {/* Feed */}
         <MarketplaceFeed
@@ -199,7 +237,11 @@ export function PublicMarketplace() {
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
             >
-               {isRtl ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+              {isRtl ? (
+                <ChevronRight className="w-4 h-4" />
+              ) : (
+                <ChevronLeft className="w-4 h-4" />
+              )}
             </Button>
             <span className="text-sm font-semibold text-muted-foreground tabular-nums min-w-[4rem] text-center">
               {t('pagination.page', { number: page + 1 })}
@@ -211,7 +253,11 @@ export function PublicMarketplace() {
               onClick={() => setPage((p) => p + 1)}
               disabled={!isMorePages}
             >
-              {isRtl ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              {isRtl ? (
+                <ChevronLeft className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
             </Button>
           </div>
         )}
@@ -230,8 +276,12 @@ export function PublicMarketplace() {
             {t('footer.brand')}
           </span>
           <div className="flex items-center gap-6 text-[11px] font-semibold text-muted-foreground/60">
-            <a href="#" className="hover:text-foreground transition-colors">{t('footer.terms')}</a>
-            <a href="#" className="hover:text-foreground transition-colors">{t('footer.privacy')}</a>
+            <a href="#" className="hover:text-foreground transition-colors">
+              {t('footer.terms')}
+            </a>
+            <a href="#" className="hover:text-foreground transition-colors">
+              {t('footer.privacy')}
+            </a>
             <span>&copy; {new Date().getFullYear()}</span>
           </div>
         </div>

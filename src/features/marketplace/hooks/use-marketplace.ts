@@ -1,16 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   createQuoteServerFn,
-  withdrawQuoteServerFn,
   fetchSellerStatsServerFn,
+  getAnonymousQuotesServerFn,
+  getMyQuoteForRequestServerFn,
   getSellerQuotesServerFn,
+  retractQuoteServerFn,
   updateQuoteServerFn,
 } from '@/fn/quotes'
 
 export const sellerKeys = {
   all: ['seller'] as const,
-  quotes: (sellerId: string) => [...sellerKeys.all, 'quotes', sellerId] as const,
-  dashboard: (sellerId: string) => [...sellerKeys.all, 'dashboard', sellerId] as const,
+  quotes: (sellerId: string) =>
+    [...sellerKeys.all, 'quotes', sellerId] as const,
+  dashboard: (sellerId: string) =>
+    [...sellerKeys.all, 'dashboard', sellerId] as const,
   marketplace: ['marketplace'] as const,
 }
 
@@ -58,7 +62,7 @@ export function useDeleteQuote() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (id: string) => {
-      const res = await withdrawQuoteServerFn({ data: { id } })
+      const res = await retractQuoteServerFn({ data: { id } })
       if (!res.success) throw new Error(res.error)
       return res.data
     },
@@ -79,5 +83,33 @@ export function useUpdateQuote() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: sellerKeys.all })
     },
+  })
+}
+
+export function useAnonymousQuotes(requestId: string | undefined) {
+  return useQuery({
+    queryKey: [...sellerKeys.marketplace, 'anonymous-quotes', requestId],
+    queryFn: async () => {
+      const res = await getAnonymousQuotesServerFn({
+        data: { requestId: requestId! },
+      })
+      return res.data
+    },
+    enabled: !!requestId,
+    staleTime: 60 * 1000,
+  })
+}
+
+export function useMyQuoteForRequest(requestId: string | undefined) {
+  return useQuery({
+    queryKey: [...sellerKeys.marketplace, 'my-quote', requestId],
+    queryFn: async () => {
+      const res = await getMyQuoteForRequestServerFn({
+        data: { requestId: requestId! },
+      })
+      return res.data
+    },
+    enabled: !!requestId,
+    staleTime: 30 * 1000,
   })
 }
