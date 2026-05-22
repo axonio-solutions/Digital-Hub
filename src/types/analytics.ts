@@ -32,14 +32,14 @@ export interface SellerMetrics {
 
 export interface BuyerAnalyticsData {
   metrics: BuyerMetrics
-  distribution: DistributionItem[]
-  demandByOrigin: LabeledCount[]
-  requestVolume: VolumeItem[]
+  distribution: Array<DistributionItem>
+  demandByOrigin: Array<LabeledCount>
+  requestVolume: Array<VolumeItem>
 }
 
 export interface SellerAnalyticsData {
   metrics: SellerMetrics
-  distribution: DistributionItem[]
-  demandByCategory: LabeledCount[]
-  requestVolume: VolumeItem[]
+  distribution: Array<DistributionItem>
+  demandByCategory: Array<LabeledCount>
+  requestVolume: Array<VolumeItem>
 }

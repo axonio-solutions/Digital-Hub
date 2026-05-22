@@ -33,11 +33,11 @@ export function tCategory(category: any, t: (key: string) => string): string {
 
   // Extract name from object if necessary
   const name = typeof category === 'string' ? category : category.name
-  
+
   if (!name) return t('categories:general')
 
   const key = CATEGORY_MAP[name]
-  
+
   if (key) {
     // We use the 'categories' namespace
     return t(`categories:${key}`)
@@ -74,7 +74,10 @@ const CATEGORY_DESCRIPTION_MAP: Record<string, string> = {
  * Translates a category description using the provided i18next instance.
  * Returns null if no translation key is found, so the caller can fall back to the DB description.
  */
-export function tCategoryDescription(category: any, t: (key: string) => string): string | null {
+export function tCategoryDescription(
+  category: any,
+  t: (key: string) => string,
+): string | null {
   if (!category) return null
   const name = typeof category === 'string' ? category : category.name
   if (!name) return null

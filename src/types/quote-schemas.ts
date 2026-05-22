@@ -9,10 +9,3 @@ export const quoteSchema = z.object({
 })
 
 export type QuoteInput = z.infer<typeof quoteSchema>
-
-export const acceptQuoteSchema = z.object({
-  quoteId: z.string(),
-  requestId: z.string(),
-})
-
-export type AcceptQuoteInput = z.infer<typeof acceptQuoteSchema>

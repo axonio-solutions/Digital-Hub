@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "vite dev --port 5173",
     "build": "vite build",
+    "build:vps": "BUILD_TARGET=vps vite build",
     "start": "vite preview",
+    "start:vps": "node .output/server/index.mjs",
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier",

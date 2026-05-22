@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import "@fontsource-variable/noto-sans-arabic";
+@import '@fontsource-variable/noto-sans-arabic';
 
 /* Tell Tailwind where to find class names */
 @source "./**/*.{ts,tsx,js,jsx}";
@@ -41,9 +41,17 @@
   --sidebar-border: oklch(0.89 0.005 280);
   --sidebar-ring: oklch(50% 0.14 260);
 
-  --font-sans: "Noto Sans Arabic Variable", 'Geist', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  --font-serif: "Geist", "Geist Fallback", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans:
+    'Noto Sans Arabic Variable', 'Geist', 'Geist Fallback', ui-sans-serif,
+    system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-serif:
+    'Geist', 'Geist Fallback', ui-serif, Georgia, Cambria, 'Times New Roman',
+    Times, serif;
+  --font-mono:
+    'Geist Mono', 'Geist Mono Fallback', ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 
   --radius: 0.625rem;
 
@@ -76,6 +84,46 @@
   --chart-ring-background: oklch(0.88 0.01 75 / 0.25);
 
   --chart-label: oklch(0.42 0.01 280);
+
+  /* Hallmark design-system tokens — modern-minimal · brand blue hue 260°
+   * P5 H4 E4 S4 R5 V4 · date: 2026-05-21
+   * Maps to existing shadcn variables; add only what's new.
+   */
+  --color-paper: oklch(100% 0 0);
+  --color-paper-2: oklch(97% 0.005 260);
+  --color-ink: oklch(12% 0.01 280);
+  --color-ink-2: oklch(40% 0.01 280);
+  --color-rule: oklch(89% 0.005 280);
+  --color-accent: oklch(50% 0.14 260);
+  --color-accent-ink: oklch(100% 0 0);
+  --color-focus: oklch(64% 0.13 260);
+
+  --font-display: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Noto Sans Arabic Variable', 'Geist', ui-sans-serif, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 9rem;
+
+  --text-display: clamp(2.5rem, 4.5vw + 0.5rem, 4.25rem);
+  --text-display-s: clamp(1.75rem, 3vw + 0.25rem, 2.75rem);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-short: 220ms;
+  --dur-med: 360ms;
+
+  --rule-hair: 1px;
+  --radius-card: 12px;
+  --radius-pill: 9999px;
+  --radius-input: 8px;
 }
 
 .dark {
@@ -120,6 +168,14 @@
   --chart-marker-foreground: oklch(0.9 0 0);
   --chart-ring-background: oklch(0.33 0.01 280 / 0.25);
   --chart-label: oklch(0.72 0.01 280);
+
+  /* Hallmark dark-mode token overrides */
+  --color-paper: oklch(12% 0.01 280);
+  --color-paper-2: oklch(15% 0.01 280);
+  --color-ink: oklch(95% 0.005 280);
+  --color-ink-2: oklch(65% 0.005 280);
+  --color-rule: oklch(100% 0 0 / 8%);
+  --color-accent: oklch(64% 0.13 260);
 }
 
 @theme inline {
@@ -182,7 +238,9 @@
   --animate-shimmer: shimmer 2s infinite;
 
   @keyframes shimmer {
-    100% { transform: translateX(100%); }
+    100% {
+      transform: translateX(100%);
+    }
   }
 }
 
@@ -275,32 +333,36 @@
 /* Toast base */
 [data-sonner-toast] {
   border: 1px solid var(--normal-border, var(--border));
-  box-shadow: 0 4px 16px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.05);
+  box-shadow:
+    0 4px 16px oklch(0 0 0 / 0.08),
+    0 1px 2px oklch(0 0 0 / 0.05);
   font-family: var(--font-sans);
 }
 
 .dark [data-sonner-toast] {
-  box-shadow: 0 4px 24px oklch(0 0 0 / 0.3), 0 1px 4px oklch(0 0 0 / 0.2);
+  box-shadow:
+    0 4px 24px oklch(0 0 0 / 0.3),
+    0 1px 4px oklch(0 0 0 / 0.2);
   backdrop-filter: blur(8px);
 }
 
 /* Per-type backgrounds & borders */
-[data-sonner-toast][data-type="success"] {
+[data-sonner-toast][data-type='success'] {
   background: var(--success-bg, var(--success));
   border-color: var(--success-border);
   color: var(--success-text);
 }
-[data-sonner-toast][data-type="error"] {
+[data-sonner-toast][data-type='error'] {
   background: var(--error-bg, var(--destructive));
   border-color: var(--error-border, var(--destructive-border));
   color: var(--error-text, var(--destructive-foreground));
 }
-[data-sonner-toast][data-type="info"] {
+[data-sonner-toast][data-type='info'] {
   background: var(--info-bg, var(--info));
   border-color: var(--info-border);
   color: var(--info-text);
 }
-[data-sonner-toast][data-type="warning"] {
+[data-sonner-toast][data-type='warning'] {
   background: var(--warning-bg, var(--warning));
   border-color: var(--warning-border);
   color: var(--warning-text);
@@ -340,14 +402,14 @@
 }
 
 /* RTL support */
-[dir="rtl"] [data-sonner-toast] {
+[dir='rtl'] [data-sonner-toast] {
   text-align: right;
 }
-[dir="rtl"] [data-sonner-toast] [data-content] {
+[dir='rtl'] [data-sonner-toast] [data-content] {
   flex-direction: row-reverse;
 }
 
 /* Expandable / rich toast */
-[data-sonner-toast][data-rich-color="true"] {
+[data-sonner-toast][data-rich-color='true'] {
   border-left-width: 4px;
 }
