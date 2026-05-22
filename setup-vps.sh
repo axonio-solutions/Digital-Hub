@@ -24,6 +24,19 @@ if ! command -v apt-get &>/dev/null; then
   err "This script requires a Debian/Ubuntu system (apt-get not found)."
 fi
 
+# ─── Swap (needed for build on 2GB RAM machines) ──────────────────────────────
+if [ ! -f /swapfile ]; then
+  info "Creating 2GB swap file (required for the build step)..."
+  sudo fallocate -l 2G /swapfile
+  sudo chmod 600 /swapfile
+  sudo mkswap /swapfile
+  sudo swapon /swapfile
+  echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab > /dev/null
+  log "Swap created and enabled (persists across reboots)."
+else
+  log "Swap already exists, skipping."
+fi
+
 # ─── Architecture ─────────────────────────────────────────────────────────────
 ARCH=$(dpkg --print-architecture)   # amd64 or arm64
 
