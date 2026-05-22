@@ -1,20 +1,24 @@
 import { createServerFn } from '@tanstack/react-start'
-import { adminMiddleware, authMiddleware } from '@/features/auth/guards/auth'
 import {
-  getSellersWithCreditsUseCase,
-  grantCreditsUseCase,
-  getCreditTransactionsUseCase,
-  getCreditPackagesUseCase,
+  adminMiddleware,
+  authMiddleware,
+  sellerMiddleware,
+} from '@/features/auth/guards/auth'
+import {
+  approveCreditRequestUseCase,
   createCreditPackageUseCase,
-  updateCreditPackageUseCase,
-  toggleCreditPackageStatusUseCase,
+  getCreditPackagesUseCase,
+  getCreditRequestsUseCase,
+  getCreditTransactionsUseCase,
+  getPendingCreditRequestsCountUseCase,
   getRevenueMetricsUseCase,
   getSellerCreditsUseCase,
-  requestCreditsUseCase,
-  getCreditRequestsUseCase,
-  approveCreditRequestUseCase,
+  getSellersWithCreditsUseCase,
+  grantCreditsUseCase,
   rejectCreditRequestUseCase,
-  getPendingCreditRequestsCountUseCase,
+  requestCreditsUseCase,
+  toggleCreditPackageStatusUseCase,
+  updateCreditPackageUseCase,
 } from '@/use-cases/credits/index'
 
 export const getSellersWithCreditsServerFn = createServerFn({ method: 'GET' })
@@ -25,16 +29,14 @@ export const getSellersWithCreditsServerFn = createServerFn({ method: 'GET' })
 
 export const grantCreditsServerFn = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
-  .inputValidator((data: {
-    sellerId: string
-    amount: number
-    description?: string
-  }) => data)
+  .inputValidator(
+    (data: { sellerId: string; amount: number; description?: string }) => data,
+  )
   .handler(async ({ data, context }) => {
     return await grantCreditsUseCase(
       data.sellerId,
       data.amount,
-      context.user!.id,
+      context.user.id,
       data.description,
     )
   })
@@ -60,32 +62,38 @@ export const getActiveCreditPackagesServerFn = createServerFn({ method: 'GET' })
 
 export const createCreditPackageServerFn = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
-  .inputValidator((data: {
-    name: string
-    credits: number
-    price: number
-    description?: string
-  }) => data)
+  .inputValidator(
+    (data: {
+      name: string
+      credits: number
+      price: number
+      description?: string
+    }) => data,
+  )
   .handler(async ({ data }) => {
     return await createCreditPackageUseCase(data)
   })
 
 export const updateCreditPackageServerFn = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
-  .inputValidator((data: {
-    id: string
-    name?: string
-    credits?: number
-    price?: number
-    description?: string
-    isActive?: boolean
-  }) => data)
+  .inputValidator(
+    (data: {
+      id: string
+      name?: string
+      credits?: number
+      price?: number
+      description?: string
+      isActive?: boolean
+    }) => data,
+  )
   .handler(async ({ data }) => {
     const { id, ...updateData } = data
     return await updateCreditPackageUseCase(id, updateData)
   })
 
-export const toggleCreditPackageStatusServerFn = createServerFn({ method: 'POST' })
+export const toggleCreditPackageStatusServerFn = createServerFn({
+  method: 'POST',
+})
   .middleware([adminMiddleware])
   .inputValidator((data: { id: string; isActive: boolean }) => data)
   .handler(async ({ data }) => {
@@ -109,10 +117,14 @@ export const getMyCreditBalanceServerFn = createServerFn({ method: 'GET' })
 // --- Credit Requests (Seller) ---
 
 export const requestCreditsServerFn = createServerFn({ method: 'POST' })
-  .middleware([authMiddleware])
+  .middleware([sellerMiddleware])
   .inputValidator((data: { credits: number; packageId?: string }) => data)
   .handler(async ({ data, context }) => {
-    return await requestCreditsUseCase(context.user.id, data.credits, data.packageId)
+    return await requestCreditsUseCase(
+      context.user.id,
+      data.credits,
+      data.packageId,
+    )
   })
 
 // --- Credit Requests (Admin) ---
@@ -128,17 +140,23 @@ export const approveCreditRequestServerFn = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
   .inputValidator((data: { id: string }) => data)
   .handler(async ({ data, context }) => {
-    return await approveCreditRequestUseCase(data.id, context.user!.id)
+    return await approveCreditRequestUseCase(data.id, context.user.id)
   })
 
 export const rejectCreditRequestServerFn = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
   .inputValidator((data: { id: string; adminNote?: string }) => data)
   .handler(async ({ data, context }) => {
-    return await rejectCreditRequestUseCase(data.id, context.user!.id, data.adminNote)
+    return await rejectCreditRequestUseCase(
+      data.id,
+      context.user.id,
+      data.adminNote,
+    )
   })
 
-export const getPendingCreditRequestsCountServerFn = createServerFn({ method: 'GET' })
+export const getPendingCreditRequestsCountServerFn = createServerFn({
+  method: 'GET',
+})
   .middleware([adminMiddleware])
   .handler(async () => {
     return await getPendingCreditRequestsCountUseCase()

@@ -1,9 +1,30 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import type {User} from '@/lib/auth';
-import { createRequestSchema, requestIdSchema, updateRequestSchema } from '@/types/request-schemas'
-import { adminMiddleware, authMiddleware, buyerMiddleware, sellerMiddleware } from '@/features/auth/guards/auth'
-import { cancelRequestUseCase, createRequestUseCase, deleteRequestUseCase, flagAsSpamUseCase, getAllRequestsUseCase, getBuyerRequestsUseCase, getOpenRequestsUseCase, getRequestDetailsUseCase, reopenRequestUseCase, updateRequestUseCase } from '@/use-cases/requests/index'
+import type { User } from '@/lib/auth'
+import {
+  createRequestSchema,
+  requestIdSchema,
+  updateRequestSchema,
+} from '@/types/request-schemas'
+import {
+  adminMiddleware,
+  authMiddleware,
+  buyerMiddleware,
+  sellerMiddleware,
+} from '@/features/auth/guards/auth'
+import {
+  cancelRequestUseCase,
+  createRequestUseCase,
+  deleteRequestUseCase,
+  flagAsSpamUseCase,
+  fulfillRequestUseCase,
+  getAllRequestsUseCase,
+  getBuyerRequestsUseCase,
+  getOpenRequestsUseCase,
+  getRequestDetailsUseCase,
+  reopenRequestUseCase,
+  updateRequestUseCase,
+} from '@/use-cases/requests/index'
 import { getTaxonomyUseCase } from '@/use-cases/admin/index'
 
 /**
@@ -13,8 +34,8 @@ import { getTaxonomyUseCase } from '@/use-cases/admin/index'
 export const createRequestServerFn = createServerFn({ method: 'POST' })
   .inputValidator(createRequestSchema)
   .middleware([buyerMiddleware])
-  .handler(async ({ data }) => {
-    return await createRequestUseCase(data)
+  .handler(async ({ data, context }) => {
+    return await createRequestUseCase({ ...data, buyerId: context.user.id })
   })
 
 export const fetchBuyerRequestsServerFn = createServerFn({ method: 'GET' })
@@ -27,17 +48,21 @@ export const fetchBuyerRequestsServerFn = createServerFn({ method: 'GET' })
     return await getBuyerRequestsUseCase(userId)
   })
 
-const openRequestFiltersSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
-  categoryId: z.string().optional(),
-  brandIds: z.array(z.string()).optional(),
-  search: z.string().optional(),
-  specialtyFilter: z.object({
-    brandIds: z.array(z.string()),
-    categoryIds: z.array(z.string()),
-  }).optional(),
-}).optional()
+const openRequestFiltersSchema = z
+  .object({
+    limit: z.number().optional(),
+    offset: z.number().optional(),
+    categoryId: z.string().optional(),
+    brandIds: z.array(z.string()).optional(),
+    search: z.string().optional(),
+    specialtyFilter: z
+      .object({
+        brandIds: z.array(z.string()),
+        categoryIds: z.array(z.string()),
+      })
+      .optional(),
+  })
+  .optional()
 
 export const fetchOpenRequestsServerFn = createServerFn({ method: 'GET' })
   .inputValidator(openRequestFiltersSchema)
@@ -46,13 +71,15 @@ export const fetchOpenRequestsServerFn = createServerFn({ method: 'GET' })
     return await getOpenRequestsUseCase(data)
   })
 
-const publicRequestFiltersSchema = z.object({
-  limit: z.number().optional(),
-  offset: z.number().optional(),
-  categoryId: z.string().optional(),
-  brandIds: z.array(z.string()).optional(),
-  search: z.string().optional(),
-}).optional()
+const publicRequestFiltersSchema = z
+  .object({
+    limit: z.number().optional(),
+    offset: z.number().optional(),
+    categoryId: z.string().optional(),
+    brandIds: z.array(z.string()).optional(),
+    search: z.string().optional(),
+  })
+  .optional()
 
 export const fetchPublicOpenRequestsServerFn = createServerFn({ method: 'GET' })
   .inputValidator(publicRequestFiltersSchema)
@@ -60,11 +87,12 @@ export const fetchPublicOpenRequestsServerFn = createServerFn({ method: 'GET' })
     return await getOpenRequestsUseCase(data)
   })
 
-export const getPublicTaxonomyServerFn = createServerFn({ method: 'GET' })
-  .handler(async () => {
-    const res = await getTaxonomyUseCase()
-    return { success: true, data: res }
-  })
+export const getPublicTaxonomyServerFn = createServerFn({
+  method: 'GET',
+}).handler(async () => {
+  const res = await getTaxonomyUseCase()
+  return { success: true, data: res }
+})
 
 export const fetchAllRequestsServerFn = createServerFn({ method: 'GET' })
   .middleware([adminMiddleware])
@@ -81,32 +109,26 @@ export const fetchRequestDetailsServerFn = createServerFn({ method: 'GET' })
 
 export const cancelRequestServerFn = createServerFn({ method: 'POST' })
   .inputValidator(requestIdSchema)
-  .middleware([authMiddleware])
+  .middleware([buyerMiddleware])
   .handler(async ({ data: requestId, context }) => {
     const user = context.user as User
-    const details = await getRequestDetailsUseCase(requestId, user)
-    if ('error' in details) throw new Error(details.error)
-    return await cancelRequestUseCase(requestId)
+    return await cancelRequestUseCase(requestId, user.id, user.role)
   })
 
 export const reopenRequestServerFn = createServerFn({ method: 'POST' })
   .inputValidator(requestIdSchema)
-  .middleware([authMiddleware])
+  .middleware([buyerMiddleware])
   .handler(async ({ data: requestId, context }) => {
     const user = context.user as User
-    const details = await getRequestDetailsUseCase(requestId, user)
-    if ('error' in details) throw new Error(details.error)
-    return await reopenRequestUseCase(requestId)
+    return await reopenRequestUseCase(requestId, user.id, user.role)
   })
 
 export const deleteRequestServerFn = createServerFn({ method: 'POST' })
   .inputValidator(requestIdSchema)
-  .middleware([authMiddleware])
+  .middleware([buyerMiddleware])
   .handler(async ({ data: requestId, context }) => {
     const user = context.user as User
-    const details = await getRequestDetailsUseCase(requestId, user)
-    if ('error' in details) throw new Error(details.error)
-    return await deleteRequestUseCase(requestId)
+    return await deleteRequestUseCase(requestId, user.id, user.role)
   })
 
 export const updateRequestServerFn = createServerFn({ method: 'POST' })
@@ -124,4 +146,12 @@ export const flagAsSpamServerFn = createServerFn({ method: 'POST' })
   .middleware([adminMiddleware])
   .handler(async ({ data: requestId }) => {
     return await flagAsSpamUseCase(requestId)
+  })
+
+export const fulfillRequestServerFn = createServerFn({ method: 'POST' })
+  .inputValidator(requestIdSchema)
+  .middleware([buyerMiddleware])
+  .handler(async ({ data: requestId, context }) => {
+    const user = context.user as User
+    return await fulfillRequestUseCase(requestId, user.id, user.role)
   })

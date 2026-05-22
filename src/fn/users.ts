@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
+import type { User } from '@/lib/auth'
 import { authMiddleware } from '@/features/auth/guards/auth'
-import { type User } from '@/lib/auth'
 
 /**
  * Axis Layer 3: User/Account Actions

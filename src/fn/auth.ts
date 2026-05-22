@@ -104,7 +104,18 @@ export const registerSellerFn = createServerFn({ method: 'POST' })
     })
 
     // 3. Persist Market Specialties (Junction Tables)
-    await updateSellerSpecialties(user.id, data.brandIds || [], data.categoryIds || [])
+    await updateSellerSpecialties(
+      user.id,
+      data.brandIds || [],
+      data.categoryIds || [],
+    )
+
+    // 4. Notify admins of new seller application (fire-and-forget)
+    import('@/services/notification-triggers')
+      .then(({ NotificationTriggers }) =>
+        NotificationTriggers.onNewSellerWaitlist(user.id, data.name),
+      )
+      .catch(console.error)
 
     return { success: true, userId: user.id }
   })

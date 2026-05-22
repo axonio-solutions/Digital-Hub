@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { auth } from '@/lib/auth'
 import { db } from '@/db'
-import { users, sessions } from '@/db/schema/auth'
+import { sessions, users } from '@/db/schema/auth'
 
 const onboardingSchema = z.object({
   name: z.string().min(2),
@@ -70,17 +70,18 @@ export const completeOnboardingFn = createServerFn({ method: 'POST' })
 
       // Handle seller specialties
       if (validated.role === 'seller') {
-        const { updateSellerSpecialties } = await import('@/data-access/vendors')
+        const { updateSellerSpecialties } =
+          await import('@/data-access/vendors')
         await updateSellerSpecialties(
           userId,
           validated.brandIds || [],
-          validated.categoryIds || []
+          validated.categoryIds || [],
         )
       }
 
-      return { 
+      return {
         success: true,
-        account_status: newStatus
+        account_status: newStatus,
       }
     } catch (err: any) {
       console.error('[completeOnboardingFn] Error:', err)
