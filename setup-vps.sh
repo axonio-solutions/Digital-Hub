@@ -135,7 +135,7 @@ log ".env file found."
 
 # ─── 8. Install dependencies ──────────────────────────────────────────────────
 info "Installing dependencies..."
-pnpm install --frozen-lockfile
+pnpm install --no-frozen-lockfile
 log "Dependencies installed."
 
 # ─── 9. Build for VPS ─────────────────────────────────────────────────────────
