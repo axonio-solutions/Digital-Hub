@@ -1,8 +1,7 @@
-import { updateCafeInformationFn } from "@/fn/cafe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { CafeCategoriesSelector } from "../cafe-categories-selector/cafe-categories-selector";
 import { cafeCategoriesQueries } from "../cafe-categories-selector/cafe-categories.queries";
@@ -15,12 +14,14 @@ import {
 	transformCafeToFormValues,
 } from "./information.helpers";
 import { cafesQueries } from "./informations.queries";
+import { cafeInformationFormSchema } from "./informations.validation";
+import { PictureUploader } from "./picture-uploader";
+import type {SubmitHandler} from "react-hook-form";
 import type {
 	CafeInformationFormValues,
 	CafeSelectWithCategories,
 } from "./informations.types";
-import { cafeInformationFormSchema } from "./informations.validation";
-import { PictureUploader } from "./picture-uploader";
+import { updateCafeInformationFn } from "@/fn/cafe";
 import Section from "@/features/spaces/components/section";
 import regionsData from "@/data/regions_lite.json";
 import citiesLite from "@/data/cities_lite.json";

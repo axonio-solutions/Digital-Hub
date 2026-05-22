@@ -37,6 +37,7 @@ import { PackageDetailsModal } from "./modals/package-details";
 import { PackageTableContent } from "./packages-table-content";
 import type {ColumnDef, ColumnFiltersState, SortingState, VisibilityState} from "@tanstack/react-table";
 
+import type { PackageWithItems } from "../packages.types";
 import { Icons } from "@/components/icons";
 import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
 import {
@@ -77,7 +78,6 @@ import {
 } from "@/components/ui/table";
 import { deleteMultiplePackagesFn } from "@/fn/packages";
 import { cn } from "@/lib/utils";
-import type { PackageWithItems } from "../packages.types";
 
 export function PackageTable() {
 	const [data, setData] = useState<Array<PackageWithItems>>([]);

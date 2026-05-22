@@ -12,6 +12,11 @@ import { createPackageUseCase } from "../../packages.use-cases";
 import { packageFormSchema } from "../../packages.validation";
 import type {SubmitHandler} from "react-hook-form";
 
+import type {
+	PackageFormValues,
+	PackageItem,
+	PackageWithItems,
+} from "../../packages.types";
 import { Icons } from "@/components/icons";
 import NumberInputWithMinsPlusButtons from "@/components/inputs/number-input-with-mins-plus-buttons";
 import { SaudiRiyalSymbol } from "@/components/saudi_riyal_symbol";
@@ -36,11 +41,6 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { auth } from "@/lib/auth";
-import type {
-	PackageFormValues,
-	PackageItem,
-	PackageWithItems,
-} from "../../packages.types";
 
 export const createPackageFn = createServerFn({
 	method: "POST",
