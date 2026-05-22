@@ -7,7 +7,7 @@
     "build": "vite build",
     "build:vps": "NODE_OPTIONS='--max-old-space-size=1536' BUILD_TARGET=vps vite build",
     "start": "vite preview",
-    "start:vps": "node .output/server/index.mjs",
+    "start:vps": "node dist/server/server.js",
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier",

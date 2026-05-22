@@ -140,7 +140,7 @@ log "Dependencies installed."
 
 # ─── 9. Build for VPS ─────────────────────────────────────────────────────────
 info "Building app for VPS (this may take a minute)..."
-pnpm build:vps
+NODE_OPTIONS='--max-old-space-size=1536' pnpm build:vps
 log "Build complete — output at .output/"
 
 # ─── 10. Start app via PM2 ────────────────────────────────────────────────────
