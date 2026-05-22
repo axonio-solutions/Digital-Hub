@@ -16,16 +16,12 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
     syncDirection(i18n.language)
     i18n.on('languageChanged', syncDirection)
-    
+
     return () => {
       i18n.off('languageChanged', syncDirection)
     }
   }, [])
 
   // During SSR or before hydration is stable, we just render
-  return (
-    <I18nextProvider i18n={i18n}>
-      {children}
-    </I18nextProvider>
-  )
+  return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
 }

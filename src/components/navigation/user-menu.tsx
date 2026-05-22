@@ -35,7 +35,11 @@ interface UserMenuProps {
   align?: 'start' | 'center' | 'end'
 }
 
-export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps) {
+export function UserMenu({
+  user,
+  role = 'buyer',
+  align = 'end',
+}: UserMenuProps) {
   const { t, i18n } = useTranslation('dashboard/layout')
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -46,16 +50,37 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
   const email = user?.email || ''
   const image = user?.image || ''
   const initials = name.substring(0, 2).toUpperCase()
-  const toolsLabel = role === 'admin' ? t('user_dropdown.tools_admin') : role === 'seller' ? t('user_dropdown.tools_seller') : t('user_dropdown.tools_buyer')
+  const toolsLabel =
+    role === 'admin'
+      ? t('user_dropdown.tools_admin')
+      : role === 'seller'
+        ? t('user_dropdown.tools_seller')
+        : t('user_dropdown.tools_buyer')
 
   const roleLinks = useMemo(() => {
     if (role === 'admin') {
       return [
         { to: '/dashboard', label: t('nav.global_metrics'), icon: Activity },
-        { to: '/dashboard/admin/users', label: t('nav.user_moderation'), icon: Users },
-        { to: '/dashboard/admin/categories', label: t('nav.categories'), icon: Layers },
-        { to: '/dashboard/admin/audit', label: t('nav.request_audit'), icon: Archive },
-        { to: '/dashboard/admin/settings', label: t('nav.admin_settings'), icon: Settings },
+        {
+          to: '/dashboard/admin/users',
+          label: t('nav.user_moderation'),
+          icon: Users,
+        },
+        {
+          to: '/dashboard/admin/categories',
+          label: t('nav.categories'),
+          icon: Layers,
+        },
+        {
+          to: '/dashboard/admin/audit',
+          label: t('nav.request_audit'),
+          icon: Archive,
+        },
+        {
+          to: '/dashboard/admin/settings',
+          label: t('nav.admin_settings'),
+          icon: Settings,
+        },
       ]
     }
     if (role === 'seller') {
@@ -65,7 +90,11 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
       ]
     }
     return [
-      { to: '/dashboard/requests', label: t('user_dropdown.my_requests'), icon: ClipboardList },
+      {
+        to: '/dashboard/requests',
+        label: t('user_dropdown.my_requests'),
+        icon: ClipboardList,
+      },
     ]
   }, [role, t])
 
@@ -80,7 +109,8 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
     }
   }
 
-  const itemClass = "flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors hover:bg-muted group/item [dir=rtl]:justify-end"
+  const itemClass =
+    'flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors hover:bg-muted group/item [dir=rtl]:justify-end'
 
   return (
     <DropdownMenu>
@@ -114,18 +144,28 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-foreground truncate leading-tight">{name}</p>
-            <p className="text-[11px] text-muted-foreground truncate mt-0.5">{email}</p>
+            <p className="text-sm font-bold text-foreground truncate leading-tight">
+              {name}
+            </p>
+            <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+              {email}
+            </p>
             <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-              <span className={cn(
-                "inline-flex items-center h-5 px-2 rounded-md text-[9px] font-black uppercase tracking-widest",
-                role === 'seller'
-                  ? "bg-primary/10 text-primary border border-primary/20"
-                  : role === 'admin'
-                    ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
-                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-              )}>
-                {role === 'admin' ? t('roles.admin', { ns: 'common' }) : role === 'seller' ? t('roles.seller', { ns: 'common' }) : t('roles.buyer', { ns: 'common' })}
+              <span
+                className={cn(
+                  'inline-flex items-center h-5 px-2 rounded-md text-[9px] font-black uppercase tracking-widest',
+                  role === 'seller'
+                    ? 'bg-primary/10 text-primary border border-primary/20'
+                    : role === 'admin'
+                      ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
+                      : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
+                )}
+              >
+                {role === 'admin'
+                  ? t('roles.admin', { ns: 'common' })
+                  : role === 'seller'
+                    ? t('roles.seller', { ns: 'common' })
+                    : t('roles.buyer', { ns: 'common' })}
               </span>
               {role === 'seller' && (
                 <span className="inline-flex items-center gap-1 h-5 px-2 rounded-md text-[9px] font-black tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/30">
@@ -146,7 +186,7 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
             <DropdownMenuItem
               key={link.to}
               onClick={() => navigate({ to: link.to as any })}
-              className={cn(itemClass, "mx-2")}
+              className={cn(itemClass, 'mx-2')}
             >
               <link.icon className="w-4 h-4 text-muted-foreground group-hover/item:text-primary transition-colors" />
               <span className="flex-1 text-foreground">{link.label}</span>
@@ -160,10 +200,12 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
         <DropdownMenuGroup>
           <DropdownMenuItem
             onClick={() => navigate({ to: '/dashboard/profile' as any })}
-            className={cn(itemClass, "mx-2")}
+            className={cn(itemClass, 'mx-2')}
           >
             <CircleUserRound className="w-4 h-4 text-muted-foreground group-hover/item:text-primary transition-colors" />
-            <span className="flex-1 text-foreground">{t('user_dropdown.account_settings')}</span>
+            <span className="flex-1 text-foreground">
+              {t('user_dropdown.account_settings')}
+            </span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
@@ -174,7 +216,10 @@ export function UserMenu({ user, role = 'buyer', align = 'end' }: UserMenuProps)
           <DropdownMenuItem
             disabled={isLoggingOut}
             onClick={handleLogout}
-            className={cn(itemClass, "rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive")}
+            className={cn(
+              itemClass,
+              'rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive',
+            )}
           >
             {isLoggingOut ? (
               <Loader2 className="w-4 h-4 animate-spin" />

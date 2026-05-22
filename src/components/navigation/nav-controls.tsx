@@ -6,7 +6,10 @@ interface NavControlsProps {
   showTheme?: boolean
 }
 
-export function NavControls({ showLanguage = true, showTheme = true }: NavControlsProps) {
+export function NavControls({
+  showLanguage = true,
+  showTheme = true,
+}: NavControlsProps) {
   return (
     <>
       {showLanguage && <LanguageToggle />}

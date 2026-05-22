@@ -1,3 +1,5 @@
+import { Check, Languages } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,9 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { useLocalization } from '@/hooks/use-localization'
-import { Languages, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useTranslation } from 'react-i18next'
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },

@@ -1,93 +1,105 @@
+/* Hallmark · genre: modern-minimal · macrostructure: Workbench · Ft1 mast-headed footer
+ * sellers: H2 split-diptych, marketplace: C3 typographic-link CTA
+ * design-system: design.md
+ */
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, Zap, Check } from 'lucide-react'
+import { ArrowRight, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function CtaSection() {
   const { t: tMarketing } = useTranslation('home/marketing')
-  const { t: tHero } = useTranslation('home/hero')
 
   return (
     <>
-      {/* For Sellers Section */}
-      <section id="benefits" className="w-full py-24 bg-card overflow-hidden relative">
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-14 md:gap-20 items-center relative z-10">
+      {/* For Sellers — split diptych */}
+      <section
+        id="benefits"
+        className="w-full py-24 sm:py-32 border-t border-border"
+      >
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-14 md:gap-20 items-center">
           {/* Text column */}
-          <div className="space-y-7">
-            <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/[0.06] px-3.5 py-1 text-xs font-bold text-primary uppercase tracking-wider">
+          <div className="space-y-6">
+            <p className="text-sm font-medium text-primary tracking-wide">
               {tMarketing('sellers.badge')}
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground leading-tight">
+            </p>
+            <h2 className="text-3xl sm:text-[2.5rem] font-semibold tracking-[-0.02em] text-foreground leading-[1.1]">
               {tMarketing('sellers.title')}
             </h2>
-            <p className="text-base text-muted-foreground leading-relaxed">
+            <p className="text-[1.0625rem] text-muted-foreground leading-relaxed">
               {tMarketing('sellers.description')}
             </p>
-
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center mt-0.5">
-                  <Check className="w-3.5 h-3.5 text-emerald-500" />
-                </div>
-                <span className="text-foreground font-medium">{tMarketing('sellers.feature1')}</span>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3 text-sm text-foreground">
+                <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <span>{tMarketing('sellers.feature1')}</span>
               </li>
-              <li className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
-                  <Check className="w-3.5 h-3.5 text-primary" />
-                </div>
-                <span className="text-foreground font-medium">{tMarketing('sellers.feature2')}</span>
+              <li className="flex items-start gap-3 text-sm text-foreground">
+                <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <span>{tMarketing('sellers.feature2')}</span>
               </li>
             </ul>
-
             <Link to="/login" className="inline-block">
               <Button
                 size="lg"
-                className="h-13 px-8 text-base font-bold bg-primary text-primary-foreground hover:brightness-110 active:scale-[0.98] transition-all duration-150 rounded-xl shadow-lg shadow-primary/20"
+                className="h-11 px-6 text-[0.9375rem] font-semibold bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.97] transition-all duration-150 rounded-full"
               >
                 {tMarketing('sellers.btn')}
               </Button>
             </Link>
           </div>
 
-          {/* Dashboard mockup */}
-          <div className="relative order-first md:order-last">
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-accent/20 rounded-2xl blur-2xl -z-10" />
-            <div className="bg-background border border-border rounded-2xl shadow-lg overflow-hidden">
-              <div className="h-10 border-b border-border flex items-center px-4 gap-2 bg-muted/50">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+          {/* Visual — honest request list, no fake browser chrome */}
+          <div className="order-first md:order-last">
+            <div className="rounded-2xl border border-border bg-card overflow-hidden">
+              <div className="px-5 py-3 border-b border-border bg-muted/30">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Seller Dashboard — Requests
+                </p>
               </div>
-              <div className="p-5 space-y-3">
+              <div className="p-4 space-y-2">
                 {[
-                  { name: 'Clio 4 Alternator', id: 'REQ-006', quotes: 4, urgent: true },
-                  { name: 'Golf 7 Bumper', id: 'REQ-001', quotes: 2 },
-                  { name: 'Symbol Brake Pads', id: 'REQ-011', quotes: 6 },
-                ].map((item, i) => (
+                  {
+                    name: 'Clio 4 · Alternateur',
+                    id: 'REQ-006',
+                    quotes: 4,
+                    urgent: true,
+                  },
+                  {
+                    name: 'Golf 7 · Pare-choc',
+                    id: 'REQ-001',
+                    quotes: 2,
+                    urgent: false,
+                  },
+                  {
+                    name: 'Symbol · Plaquettes',
+                    id: 'REQ-011',
+                    quotes: 6,
+                    urgent: false,
+                  },
+                ].map((item) => (
                   <div
-                    key={i}
-                    className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border/60"
+                    key={item.id}
+                    className="flex items-center justify-between px-4 py-3 rounded-xl bg-background border border-border/60"
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-foreground">{item.name}</span>
+                        <span className="text-sm font-medium text-foreground">
+                          {item.name}
+                        </span>
                         {item.urgent && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary">
+                          <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                             Urgent
                           </span>
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {item.id} · {item.quotes} quotes
+                        {item.id} · {item.quotes} devis
                       </p>
                     </div>
-                    <Button
-                      size="sm"
-                      className="h-8 text-xs font-bold bg-primary text-primary-foreground hover:brightness-110 rounded-lg"
-                    >
-                      Quote
-                    </Button>
+                    <button className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+                      Répondre →
+                    </button>
                   </div>
                 ))}
               </div>
@@ -96,149 +108,102 @@ export function CtaSection() {
         </div>
       </section>
 
-      {/* Live Marketplace Section */}
-      <section className="w-full py-24 bg-primary/[0.04] dark:bg-primary/[0.06] relative overflow-hidden border-t border-border">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/[0.03] -skew-x-12 translate-x-1/4 pointer-events-none" />
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-14 md:gap-20">
-          <div className="flex-1 space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary px-3.5 py-1.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-foreground opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-foreground" />
-              </span>
-              <span className="text-xs font-bold text-primary-foreground uppercase tracking-wider">
-                {tMarketing('marketplace.badge')}
-              </span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground leading-tight">
-              {tMarketing('marketplace.title')}
-            </h2>
-            <p className="text-base text-muted-foreground leading-relaxed max-w-md">
-              {tMarketing('marketplace.description')}
-            </p>
-            <Link to="/explore">
-              <Button
-                size="lg"
-                className="h-13 px-8 text-base font-bold bg-primary text-primary-foreground hover:brightness-110 active:scale-[0.98] transition-all duration-150 rounded-xl shadow-lg shadow-primary/20"
-              >
-                {tMarketing('marketplace.btn')}
-                <ArrowRight className="ms-2 h-5 w-5" />
-              </Button>
-            </Link>
-          </div>
+      {/* Marketplace CTA — typographic link style */}
+      <section className="w-full py-24 sm:py-32 bg-muted/30 border-t border-border">
+        <div className="max-w-3xl mx-auto px-6">
+          <p className="text-sm font-medium text-primary tracking-wide mb-5">
+            {tMarketing('marketplace.badge')}
+          </p>
+          <h2 className="text-3xl sm:text-[2.5rem] font-semibold tracking-[-0.02em] text-foreground leading-[1.1] mb-5">
+            {tMarketing('marketplace.title')}
+          </h2>
+          <p className="text-[1.0625rem] text-muted-foreground leading-relaxed max-w-lg mb-8">
+            {tMarketing('marketplace.description')}
+          </p>
+          <Link to="/explore" search={{ q: '' }}>
+            <Button
+              size="lg"
+              className="h-11 px-6 text-[0.9375rem] font-semibold bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.97] transition-all duration-150 rounded-full"
+            >
+              {tMarketing('marketplace.btn')}
+              <ArrowRight className="ms-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+      </section>
 
-          {/* Preview card */}
-          <div className="flex-1 relative">
-            <div className="bg-card rounded-2xl shadow-xl border border-border p-6 transform -rotate-1 hover:rotate-0 transition-transform duration-500">
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Zap className="w-5 h-5 text-primary" />
-                  </div>
-                  <span className="font-bold text-foreground">
-                    {tMarketing('marketplace.active_signals')}
+      {/* Footer — Ft1 Mast-headed */}
+      <footer className="border-t border-border py-10 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+            {/* Wordmark + tagline */}
+            <div className="space-y-1.5">
+              <Link
+                to="/"
+                className="flex items-center gap-2 group"
+                aria-label="MLILA Home"
+              >
+                <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center">
+                  <span className="text-primary-foreground font-bold text-[10px] leading-none">
+                    M
                   </span>
                 </div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  {tHero('live')}
+                <span className="text-[15px] font-semibold tracking-tight text-foreground">
+                  MLILA
                 </span>
-              </div>
-              <div className="space-y-3">
-                {[
-                  'Alternator · Peugeot 208',
-                  'Headlight · Dacia Logan',
-                  'Fuel Pump · Hyundai i10',
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border/40"
-                  >
-                    <span className="text-sm font-medium text-foreground/80">{item}</span>
-                    <span className="text-xs text-muted-foreground tabular-nums">
-                      {Math.floor(Math.random() * 5) + 1} quotes
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-background border-t border-border py-16 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {/* Brand */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
-                  <span className="text-primary-foreground font-black text-[11px] leading-none">M</span>
-                </div>
-                <span className="font-black text-lg tracking-tight text-foreground">MLILA</span>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-                {tMarketing('sellers.description')}
+              </Link>
+              <p className="text-xs text-muted-foreground ps-8">
+                {tMarketing('footer.tagline')}
               </p>
             </div>
 
-            {/* Quick Links */}
-            <div>
-              <h4 className="text-sm font-bold text-foreground mb-4 uppercase tracking-wider">Quick Links</h4>
-              <ul className="space-y-3">
-                <li>
-                  <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    How It Works
-                  </a>
-                </li>
-                <li>
-                  <Link to="/explore" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    Explore Marketplace
-                  </Link>
-                </li>
-                <li>
-                  <a href="#benefits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    For Sellers
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Account */}
-            <div>
-              <h4 className="text-sm font-bold text-foreground mb-4 uppercase tracking-wider">Account</h4>
-              <ul className="space-y-3">
-                <li>
-                  <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    Sign In
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/register" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    Create Account
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/dashboard/requests/new" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    Post a Request
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            {/* Inline links */}
+            <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+              <Link
+                to="/explore"
+                search={{ q: '' }}
+                className="hover:text-foreground transition-colors"
+              >
+                Explore
+              </Link>
+              <Link
+                to="/pricing"
+                className="hover:text-foreground transition-colors"
+              >
+                Pricing
+              </Link>
+              <Link
+                to="/about"
+                className="hover:text-foreground transition-colors"
+              >
+                About
+              </Link>
+              <Link
+                to="/contact"
+                className="hover:text-foreground transition-colors"
+              >
+                Contact
+              </Link>
+              <span className="w-px h-3.5 bg-border hidden sm:block" />
+              <Link
+                to="/login"
+                className="hover:text-foreground transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                to={'/register' as any}
+                className="hover:text-foreground transition-colors font-medium text-foreground"
+              >
+                Get Started
+              </Link>
+            </nav>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Copyright */}
+          <div className="mt-8 pt-6 border-t border-border">
             <p className="text-xs text-muted-foreground">
               &copy; {new Date().getFullYear()} {tMarketing('footer.copyright')}
-            </p>
-            <p className="text-xs text-muted-foreground/60">
-              {tMarketing('footer.tagline')}
             </p>
           </div>
         </div>

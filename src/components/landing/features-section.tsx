@@ -1,13 +1,16 @@
-import { useRef, useState, useEffect } from 'react'
+/* Hallmark · genre: modern-minimal · component: T4 numbered stat strip
+ * knobs: 3-up, number=tabular display, qualifier=under
+ * design-system: design.md
+ */
+import { useEffect, useRef, useState } from 'react'
 import { Await, getRouteApi } from '@tanstack/react-router'
-import { MessageSquare, Package, Users } from 'lucide-react'
 
 const routeApi = getRouteApi('/_public/')
 
 const stats = [
-  { key: 'activeSellers', label: 'Active Sellers', icon: Users, suffix: '+' },
-  { key: 'partsSourced', label: 'Parts Sourced', icon: Package, suffix: '+' },
-  { key: 'totalQuotes', label: 'Quotes Sent', icon: MessageSquare, suffix: '+' },
+  { key: 'activeSellers', label: 'Active Sellers', suffix: '+' },
+  { key: 'partsSourced', label: 'Parts Sourced', suffix: '+' },
+  { key: 'totalQuotes', label: 'Quotes Sent', suffix: '+' },
 ]
 
 function formatNumber(num: number): string {
@@ -46,7 +49,7 @@ function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
           observer.unobserve(el)
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     )
 
     observer.observe(el)
@@ -54,7 +57,7 @@ function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
   }, [value])
 
   return (
-    <span ref={ref}>
+    <span ref={ref} className="tabular-nums">
       {formatNumber(displayValue)}
       <span className="text-primary">{suffix}</span>
     </span>
@@ -65,42 +68,40 @@ export function StatsStrip() {
   const { landingStats } = routeApi.useLoaderData()
 
   return (
-    <section className="w-full border-y border-border bg-muted/30">
-      <div className="max-w-5xl mx-auto px-6 py-10">
+    <section className="w-full border-y border-border">
+      <div className="max-w-4xl mx-auto px-6 py-12">
         <Await
           promise={landingStats}
           fallback={
-            <div className="grid grid-cols-3 divide-x divide-border">
+            <div className="grid grid-cols-3">
               {stats.map((stat) => (
-                <div key={stat.key} className="flex flex-col items-center justify-center gap-2 px-6">
-                  <stat.icon className="w-5 h-5 text-primary/60" />
-                  <div className="text-3xl md:text-4xl font-black text-foreground tracking-tight tabular-nums">
-                    <span className="inline-block w-12 h-8 bg-muted animate-pulse rounded" />
-                  </div>
-                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    {stat.label}
-                  </div>
+                <div
+                  key={stat.key}
+                  className="flex flex-col items-center gap-2 px-6 [&:not(:last-child)]:border-e border-border"
+                >
+                  <div className="h-9 w-20 bg-muted animate-pulse rounded" />
+                  <p className="text-xs text-muted-foreground">{stat.label}</p>
                 </div>
               ))}
             </div>
           }
         >
           {(statsData) => (
-            <div className="grid grid-cols-3 divide-x divide-border">
+            <div className="grid grid-cols-3">
               {stats.map((stat) => {
-                const value = statsData?.[stat.key as keyof typeof statsData] ?? 0
+                const value =
+                  statsData?.[stat.key as keyof typeof statsData] ?? 0
                 return (
                   <div
                     key={stat.key}
-                    className="flex flex-col items-center justify-center gap-2 px-6"
+                    className="flex flex-col items-center gap-1.5 px-6 [&:not(:last-child)]:border-e border-border"
                   >
-                    <stat.icon className="w-5 h-5 text-primary/60" />
-                    <div className="text-3xl md:text-4xl font-black text-foreground tracking-tight tabular-nums">
+                    <p className="text-3xl md:text-4xl font-semibold tracking-[-0.02em] text-foreground">
                       <AnimatedCounter value={value} suffix={stat.suffix} />
-                    </div>
-                    <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    </p>
+                    <p className="text-sm text-muted-foreground">
                       {stat.label}
-                    </div>
+                    </p>
                   </div>
                 )
               })}
