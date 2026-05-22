@@ -17,10 +17,12 @@ export function ViewToggles({
   const { t } = useTranslation('common')
 
   return (
-    <div className={cn(
-      "flex items-center gap-1 bg-white/50 dark:bg-slate-900/50 p-1 rounded-xl border border-slate-200 dark:border-slate-800 backdrop-blur-sm shadow-sm",
-      className
-    )}>
+    <div
+      className={cn(
+        'flex items-center gap-1 bg-white/50 dark:bg-slate-900/50 p-1 rounded-xl border border-slate-200 dark:border-slate-800 backdrop-blur-sm shadow-sm',
+        className,
+      )}
+    >
       <Button
         variant={view === 'grid' ? 'secondary' : 'ghost'}
         size="sm"

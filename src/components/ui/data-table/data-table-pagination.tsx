@@ -36,13 +36,10 @@ export function DataTablePagination<TData>({
 
   return (
     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between w-full">
-
       {/* Row selection count — hidden on mobile */}
       <div className="hidden md:block text-muted-foreground text-sm flex-1">
-        {table.getFilteredSelectedRowModel().rows.length}{' '}
-        {t('pagination.of')}{' '}
-        {table.getFilteredRowModel().rows.length}{' '}
-        {t('pagination.selected')}
+        {table.getFilteredSelectedRowModel().rows.length} {t('pagination.of')}{' '}
+        {table.getFilteredRowModel().rows.length} {t('pagination.selected')}
       </div>
 
       {/* Info row: rows selector + page indicator */}
@@ -70,13 +67,14 @@ export function DataTablePagination<TData>({
 
         <div className="text-sm font-medium text-muted-foreground tabular-nums whitespace-nowrap">
           {t('pagination.page')} {pageIndex + 1}{' '}
-          <span className="text-muted-foreground/60">{t('pagination.of')} {pageCount}</span>
+          <span className="text-muted-foreground/60">
+            {t('pagination.of')} {pageCount}
+          </span>
         </div>
       </div>
 
       {/* Navigation buttons — centered, no overflow */}
       <div className="flex items-center gap-1.5 w-full md:w-auto max-w-full overflow-hidden">
-
         {/* First page — desktop only */}
         <Button
           variant="outline"
@@ -86,7 +84,11 @@ export function DataTablePagination<TData>({
           disabled={!canPrev}
         >
           <span className="sr-only">{t('pagination.first')}</span>
-          {isRtl ? <ChevronsRight className="size-4" /> : <ChevronsLeft className="size-4" />}
+          {isRtl ? (
+            <ChevronsRight className="size-4" />
+          ) : (
+            <ChevronsLeft className="size-4" />
+          )}
         </Button>
 
         {/* Previous */}
@@ -96,7 +98,11 @@ export function DataTablePagination<TData>({
           onClick={() => table.previousPage()}
           disabled={!canPrev}
         >
-          {isRtl ? <ChevronRight className="size-4 shrink-0" /> : <ChevronLeft className="size-4 shrink-0" />}
+          {isRtl ? (
+            <ChevronRight className="size-4 shrink-0" />
+          ) : (
+            <ChevronLeft className="size-4 shrink-0" />
+          )}
           <span className="md:hidden truncate">{t('pagination.previous')}</span>
         </Button>
 
@@ -108,7 +114,11 @@ export function DataTablePagination<TData>({
           disabled={!canNext}
         >
           <span className="md:hidden truncate">{t('pagination.next')}</span>
-          {isRtl ? <ChevronLeft className="size-4 shrink-0" /> : <ChevronRight className="size-4 shrink-0" />}
+          {isRtl ? (
+            <ChevronLeft className="size-4 shrink-0" />
+          ) : (
+            <ChevronRight className="size-4 shrink-0" />
+          )}
         </Button>
 
         {/* Last page — desktop only */}
@@ -120,7 +130,11 @@ export function DataTablePagination<TData>({
           disabled={!canNext}
         >
           <span className="sr-only">{t('pagination.last')}</span>
-          {isRtl ? <ChevronsLeft className="size-4" /> : <ChevronsRight className="size-4" />}
+          {isRtl ? (
+            <ChevronsLeft className="size-4" />
+          ) : (
+            <ChevronsRight className="size-4" />
+          )}
         </Button>
       </div>
     </div>

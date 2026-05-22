@@ -1,9 +1,9 @@
 import { Slot } from '@radix-ui/react-slot'
 import { DirectionProvider, useDirection } from '@radix-ui/react-direction'
-import {  cva } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
 import { PanelLeftIcon } from 'lucide-react'
 import * as React from 'react'
-import type {VariantProps} from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -237,7 +237,7 @@ function Sidebar({
             ? 'start-0 group-data-[collapsible=offcanvas]:-start-(--sidebar-width)'
             : 'end-0 group-data-[collapsible=offcanvas]:-end-(--sidebar-width)',
           // Adjust the padding for floating and inset variants.
-            variant === 'floating' || variant === 'inset'
+          variant === 'floating' || variant === 'inset'
             ? 'p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
             : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-e group-data-[side=right]:border-s',
           className,

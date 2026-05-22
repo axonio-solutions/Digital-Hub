@@ -1,15 +1,15 @@
 'use client'
 
 import * as React from 'react'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
 interface ImageSliderProps {
-  images: (string | File)[]
+  images: Array<string | File>
   onRemove?: (index: number) => void
   isEditable?: boolean
   className?: string
@@ -21,7 +21,7 @@ export function ImageSlider({
   onRemove,
   isEditable = false,
   className,
-  aspectRatio = '4/3'
+  aspectRatio = '4/3',
 }: ImageSliderProps) {
   const { t, i18n } = useTranslation('common')
   const isRtl = i18n.dir() === 'rtl'
@@ -37,15 +37,21 @@ export function ImageSlider({
 
   if (!images || images.length === 0) {
     return (
-      <div className={cn(
-        "flex flex-col items-center justify-center bg-muted/30 rounded-2xl border-2 border-dashed border-border text-muted-foreground transition-all duration-300",
-        aspectRatio === '4/3' && "aspect-[4/3]",
-        aspectRatio === 'video' && "aspect-video",
-        aspectRatio === 'square' && "aspect-square",
-        className
-      )}>
-        <span className="material-symbols-outlined text-4xl opacity-20">image</span>
-        <p className="text-[10px] font-black uppercase tracking-widest mt-2 opacity-40">{t('image_slider.no_images')}</p>
+      <div
+        className={cn(
+          'flex flex-col items-center justify-center bg-muted/30 rounded-2xl border-2 border-dashed border-border text-muted-foreground transition-all duration-300',
+          aspectRatio === '4/3' && 'aspect-[4/3]',
+          aspectRatio === 'video' && 'aspect-video',
+          aspectRatio === 'square' && 'aspect-square',
+          className,
+        )}
+      >
+        <span className="material-symbols-outlined text-4xl opacity-20">
+          image
+        </span>
+        <p className="text-[10px] font-black uppercase tracking-widest mt-2 opacity-40">
+          {t('image_slider.no_images')}
+        </p>
       </div>
     )
   }
@@ -54,20 +60,20 @@ export function ImageSlider({
     enter: (direction: number) => ({
       x: (isRtl ? -1 : 1) * (direction > 0 ? 300 : -300),
       opacity: 0,
-      scale: 0.95
+      scale: 0.95,
     }),
     center: {
       zIndex: 1,
       x: 0,
       opacity: 1,
-      scale: 1
+      scale: 1,
     },
     exit: (direction: number) => ({
       zIndex: 0,
       x: (isRtl ? -1 : 1) * (direction < 0 ? 300 : -300),
       opacity: 0,
-      scale: 1.05
-    })
+      scale: 1.05,
+    }),
   }
 
   const swipeConfidenceThreshold = 10000
@@ -86,17 +92,17 @@ export function ImageSlider({
   }
 
   // Memoize cleanup URLs to avoid memory leaks
-  const [previewUrls, setPreviewUrls] = React.useState<string[]>([])
+  const [previewUrls, setPreviewUrls] = React.useState<Array<string>>([])
 
   React.useEffect(() => {
-    const urls = images.map(img => {
+    const urls = images.map((img) => {
       if (typeof img === 'string') return img
       return URL.createObjectURL(img)
     })
     setPreviewUrls(urls)
-    
+
     return () => {
-      urls.forEach(url => {
+      urls.forEach((url) => {
         if (url.startsWith('blob:')) URL.revokeObjectURL(url)
       })
     }
@@ -105,13 +111,15 @@ export function ImageSlider({
   const currentUrl = previewUrls[currentIndex]
 
   return (
-    <div className={cn(
-      "relative group overflow-hidden rounded-2xl bg-black/5 dark:bg-white/5 border border-border/50 shadow-sm",
-      aspectRatio === '4/3' && "aspect-[4/3]",
-      aspectRatio === 'video' && "aspect-video",
-      aspectRatio === 'square' && "aspect-square",
-      className
-    )}>
+    <div
+      className={cn(
+        'relative group overflow-hidden rounded-2xl bg-black/5 dark:bg-white/5 border border-border/50 shadow-sm',
+        aspectRatio === '4/3' && 'aspect-[4/3]',
+        aspectRatio === 'video' && 'aspect-video',
+        aspectRatio === 'square' && 'aspect-square',
+        className,
+      )}
+    >
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={currentIndex}
@@ -121,9 +129,9 @@ export function ImageSlider({
           animate="center"
           exit="exit"
           transition={{
-            x: { type: "spring", stiffness: 300, damping: 30 },
+            x: { type: 'spring', stiffness: 300, damping: 30 },
             opacity: { duration: 0.2 },
-            scale: { duration: 0.3 }
+            scale: { duration: 0.3 },
           }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
@@ -154,14 +162,20 @@ export function ImageSlider({
           <button
             type="button"
             className="absolute left-3 top-1/2 -translate-y-1/2 z-10 size-10 flex items-center justify-center rounded-xl bg-white/90 dark:bg-black/80 text-foreground shadow-xl backdrop-blur-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 border border-border/50"
-            onClick={(e) => { e.stopPropagation(); paginate(-1); }}
+            onClick={(e) => {
+              e.stopPropagation()
+              paginate(-1)
+            }}
           >
             <ChevronLeft className="size-5" />
           </button>
           <button
             type="button"
             className="absolute right-3 top-1/2 -translate-y-1/2 z-10 size-10 flex items-center justify-center rounded-xl bg-white/90 dark:bg-black/80 text-foreground shadow-xl backdrop-blur-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 border border-border/50"
-            onClick={(e) => { e.stopPropagation(); paginate(1); }}
+            onClick={(e) => {
+              e.stopPropagation()
+              paginate(1)
+            }}
           >
             <ChevronRight className="size-5" />
           </button>
@@ -193,8 +207,8 @@ export function ImageSlider({
             <div
               key={i}
               className={cn(
-                "h-1 rounded-full transition-all duration-300",
-                i === currentIndex ? "w-5 bg-primary" : "w-1.5 bg-white/40"
+                'h-1 rounded-full transition-all duration-300',
+                i === currentIndex ? 'w-5 bg-primary' : 'w-1.5 bg-white/40',
               )}
             />
           ))}

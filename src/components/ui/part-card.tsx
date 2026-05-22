@@ -47,7 +47,10 @@ interface PartCardProps {
   isProcessing?: boolean
 }
 
-function timeAgo(dateStr: string, t: (key: string, options?: any) => string): string {
+function timeAgo(
+  dateStr: string,
+  t: (key: string, options?: any) => string,
+): string {
   const diff = Date.now() - new Date(dateStr).getTime()
   const mins = Math.floor(diff / 60000)
   if (mins < 60) return t('part_card.minutes_ago', { count: mins })
@@ -55,7 +58,10 @@ function timeAgo(dateStr: string, t: (key: string, options?: any) => string): st
   if (hours < 24) return t('part_card.hours_ago', { count: hours })
   const days = Math.floor(hours / 24)
   if (days < 7) return t('part_card.days_ago', { count: days })
-  return new Date(dateStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+  return new Date(dateStr).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+  })
 }
 
 function getBrandInitials(brand?: string): string {
@@ -126,7 +132,8 @@ export const PartCard = React.memo(function PartCard({
       )}
       onClick={(e) => {
         const target = e.target as HTMLElement
-        if (target.closest('[data-no-navigate]') || target.closest('button')) return
+        if (target.closest('[data-no-navigate]') || target.closest('button'))
+          return
         onClick?.()
       }}
     >
@@ -150,7 +157,11 @@ export const PartCard = React.memo(function PartCard({
         {brand && (
           <Badge className="absolute top-4 left-4 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border border-border shadow-sm gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold text-foreground rtl:flex-row-reverse">
             {brandImageUrl ? (
-              <img src={brandImageUrl} alt={brand} className="size-5 object-contain shrink-0" />
+              <img
+                src={brandImageUrl}
+                alt={brand}
+                className="size-5 object-contain shrink-0"
+              />
             ) : (
               <span className="size-5 rounded flex items-center justify-center bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 text-[9px] font-bold shrink-0">
                 {brandInitials}
@@ -163,11 +174,17 @@ export const PartCard = React.memo(function PartCard({
         {category && (
           <Badge className="absolute top-4 right-4 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border border-border shadow-sm gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-foreground group transition-all duration-300">
             <CategoryDisplay
-              category={categoryImageUrl ? { name: category, imageUrl: categoryImageUrl } : category}
+              category={
+                categoryImageUrl
+                  ? { name: category, imageUrl: categoryImageUrl }
+                  : category
+              }
               showName={false}
               iconClassName="size-5"
             />
-            <span className="truncate max-w-[100px] group-hover:max-w-[250px] transition-[max-width] duration-300 ease-in-out">{tCategory(category, t)}</span>
+            <span className="truncate max-w-[100px] group-hover:max-w-[250px] transition-[max-width] duration-300 ease-in-out">
+              {tCategory(category, t)}
+            </span>
           </Badge>
         )}
       </div>
@@ -186,11 +203,16 @@ export const PartCard = React.memo(function PartCard({
                   cfg.border,
                 )}
               >
-                <span className={cn('size-1.5 rounded-full shrink-0', cfg.dot)} />
+                <span
+                  className={cn('size-1.5 rounded-full shrink-0', cfg.dot)}
+                />
                 {cfg.label}
               </span>
               {quotesCount > 0 && (
-                <span className="text-xs font-medium text-muted-foreground inline-flex items-center gap-1" dir="ltr">
+                <span
+                  className="text-xs font-medium text-muted-foreground inline-flex items-center gap-1"
+                  dir="ltr"
+                >
                   <MessageSquare className="size-3" />
                   {quotesCount}
                 </span>
@@ -207,7 +229,10 @@ export const PartCard = React.memo(function PartCard({
 
         {/* Title + Brand + Notes block */}
         <div className="space-y-1">
-          <h3 className="text-lg font-bold text-foreground leading-tight break-words line-clamp-2" title={title}>
+          <h3
+            className="text-lg font-bold text-foreground leading-tight break-words line-clamp-2"
+            title={title}
+          >
             {title}
           </h3>
           <div className="flex items-center gap-1.5 text-sm font-medium text-primary min-w-0">
@@ -216,7 +241,9 @@ export const PartCard = React.memo(function PartCard({
           </div>
           <p className="text-sm text-muted-foreground font-medium pt-1 leading-relaxed flex items-start gap-1.5">
             <FileText className="size-4 mt-0.5 shrink-0 text-muted-foreground/50" />
-            <span className="line-clamp-2">{notes || t('part_card.no_description')}</span>
+            <span className="line-clamp-2">
+              {notes || t('part_card.no_description')}
+            </span>
           </p>
         </div>
 
@@ -224,12 +251,51 @@ export const PartCard = React.memo(function PartCard({
         <div className="mt-auto pt-5">
           <Separator className="mb-5" />
           <div className="flex items-center gap-3">
-          {onEdit && onClose && (
-            <div className="flex items-center gap-2 flex-1 min-w-0">
+            {onEdit && onClose && (
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <Button
+                  disabled={isProcessing}
+                  data-no-navigate
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onEdit()
+                  }}
+                  className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium"
+                >
+                  {isProcessing ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Pencil className="size-4" />
+                  )}
+                  {t('part_card.edit')}
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={isProcessing}
+                  data-no-navigate
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onClose()
+                  }}
+                  className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-orange-200 text-orange-600 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-400 dark:hover:bg-orange-950"
+                >
+                  {isProcessing ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <XCircle className="size-4" />
+                  )}
+                  {t('part_card.close')}
+                </Button>
+              </div>
+            )}
+            {onEdit && !onClose && (
               <Button
                 disabled={isProcessing}
                 data-no-navigate
-                onClick={(e) => { e.stopPropagation(); onEdit() }}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onEdit()
+                }}
                 className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium"
               >
                 {isProcessing ? (
@@ -239,11 +305,16 @@ export const PartCard = React.memo(function PartCard({
                 )}
                 {t('part_card.edit')}
               </Button>
+            )}
+            {onClose && !onEdit && (
               <Button
                 variant="outline"
                 disabled={isProcessing}
                 data-no-navigate
-                onClick={(e) => { e.stopPropagation(); onClose() }}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onClose()
+                }}
                 className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-orange-200 text-orange-600 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-400 dark:hover:bg-orange-950"
               >
                 {isProcessing ? (
@@ -253,52 +324,23 @@ export const PartCard = React.memo(function PartCard({
                 )}
                 {t('part_card.close')}
               </Button>
-            </div>
-          )}
-          {onEdit && !onClose && (
-            <Button
-              disabled={isProcessing}
-              data-no-navigate
-              onClick={(e) => { e.stopPropagation(); onEdit() }}
-              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium"
-            >
-              {isProcessing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Pencil className="size-4" />
-              )}
-              {t('part_card.edit')}
-            </Button>
-          )}
-          {onClose && !onEdit && (
-            <Button
-              variant="outline"
-              disabled={isProcessing}
-              data-no-navigate
-              onClick={(e) => { e.stopPropagation(); onClose() }}
-              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-orange-200 text-orange-600 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-400 dark:hover:bg-orange-950"
-            >
-              {isProcessing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <XCircle className="size-4" />
-              )}
-              {t('part_card.close')}
-            </Button>
-          )}
-          {onReopen && (
-            <Button
-              variant="outline"
-              disabled={isProcessing}
-              data-no-navigate
-              onClick={(e) => { e.stopPropagation(); onReopen() }}
-              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950"
-            >
-              {isProcessing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <RefreshCcw className="size-4" />
-              )}
+            )}
+            {onReopen && (
+              <Button
+                variant="outline"
+                disabled={isProcessing}
+                data-no-navigate
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onReopen()
+                }}
+                className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950"
+              >
+                {isProcessing ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <RefreshCcw className="size-4" />
+                )}
                 {t('part_card.reopen')}
               </Button>
             )}
@@ -306,7 +348,10 @@ export const PartCard = React.memo(function PartCard({
               <Button
                 size="default"
                 data-no-navigate
-                onClick={(e) => { e.stopPropagation(); onClick() }}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onClick()
+                }}
                 className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium"
               >
                 {actionLabel === 'Quote Now' ? (
@@ -314,26 +359,31 @@ export const PartCard = React.memo(function PartCard({
                 ) : (
                   <ArrowUpRight className="size-4" />
                 )}
-                {actionLabel === 'Quote Now' ? t('part_card.quote_now') : actionLabel}
-            </Button>
-          )}
-          {onDelete && (
-            <Button
-              variant="outline"
-              size="icon"
-              disabled={isProcessing}
-              data-no-navigate
-              onClick={(e) => { e.stopPropagation(); onDelete() }}
-              className="size-10 shrink-0 rounded-lg border-red-100 bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 dark:border-red-900 dark:bg-red-950/50 dark:text-red-400 dark:hover:bg-red-950"
-            >
-              {isProcessing ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Trash2 className="size-4" />
-              )}
-            </Button>
-          )}
-        </div>
+                {actionLabel === 'Quote Now'
+                  ? t('part_card.quote_now')
+                  : actionLabel}
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={isProcessing}
+                data-no-navigate
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onDelete()
+                }}
+                className="size-10 shrink-0 rounded-lg border-red-100 bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 dark:border-red-900 dark:bg-red-950/50 dark:text-red-400 dark:hover:bg-red-950"
+              >
+                {isProcessing ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Trash2 className="size-4" />
+                )}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

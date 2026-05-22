@@ -13,14 +13,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 
-
 import { DataTablePagination } from './data-table-pagination'
 import type {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
-  VisibilityState
-} from '@tanstack/react-table';
+  VisibilityState,
+} from '@tanstack/react-table'
 import {
   Table,
   TableBody,
@@ -88,7 +87,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div dir={i18n.dir()} className={cn("flex flex-col gap-4", className)}>
+    <div dir={i18n.dir()} className={cn('flex flex-col gap-4', className)}>
       {/* Search & Filters */}
       {typeof toolbar === 'function' ? toolbar(table) : toolbar}
 
@@ -118,14 +117,16 @@ export function DataTable<TData, TValue>({
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => {
                   const RowComponent = components?.row || TableRow
-                  const rowContent = row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))
+                  const rowContent = row
+                    .getVisibleCells()
+                    .map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))
 
                   return (
                     <RowComponent
@@ -133,8 +134,8 @@ export function DataTable<TData, TValue>({
                       row={row}
                       data-state={row.getIsSelected() && 'selected'}
                       className={cn(
-                        onRowClick && "cursor-pointer",
-                        rowClassName
+                        onRowClick && 'cursor-pointer',
+                        rowClassName,
                       )}
                       onClick={() => onRowClick?.(row.original)}
                     >
@@ -156,10 +157,9 @@ export function DataTable<TData, TValue>({
           </Table>
         </div>
       </div>
-      
+
       {/* Pagination Footer */}
       {pagination && <DataTablePagination table={table} />}
     </div>
   )
 }
-

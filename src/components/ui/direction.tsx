@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import * as DirectionPrimitive from "@radix-ui/react-direction"
+import * as React from 'react'
+import * as DirectionPrimitive from '@radix-ui/react-direction'
 
 const DirectionProvider = DirectionPrimitive.Provider
 

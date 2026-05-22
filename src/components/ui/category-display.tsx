@@ -33,14 +33,19 @@ export function CategoryDisplay({
         <img
           src={imageUrl}
           alt={name}
-          className={cn('size-4 rounded object-contain shrink-0', iconClassName)}
+          className={cn(
+            'size-4 rounded object-contain shrink-0',
+            iconClassName,
+          )}
         />
       ) : (
-        <span className={cn(
-          'size-4 rounded flex items-center justify-center text-[7px] font-bold shrink-0',
-          'bg-primary/10 text-primary',
-          iconClassName,
-        )}>
+        <span
+          className={cn(
+            'size-4 rounded flex items-center justify-center text-[7px] font-bold shrink-0',
+            'bg-primary/10 text-primary',
+            iconClassName,
+          )}
+        >
           {initials}
         </span>
       )}
