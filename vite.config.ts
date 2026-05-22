@@ -38,17 +38,11 @@ const config = defineConfig(({ mode }) => ({
           if (id.includes('node_modules/@visx')) {
             return 'vendor-charts'
           }
-          if (id.includes('node_modules/@radix-ui')) {
-            return 'vendor-radix'
-          }
           if (
             id.includes('node_modules/framer-motion') ||
             id.includes('node_modules/motion')
           ) {
             return 'vendor-motion'
-          }
-          if (id.includes('node_modules/@tanstack')) {
-            return 'vendor-tanstack'
           }
         },
       },
