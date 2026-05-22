@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "vite dev --port 5173",
     "build": "vite build",
-    "build:vps": "NODE_OPTIONS='--max-old-space-size=1536' BUILD_TARGET=vps vite build",
+    "build:vps": "NODE_OPTIONS='--max-old-space-size=1536' NITRO_PRESET=node-server BUILD_TARGET=vps vite build",
     "start": "vite preview",
-    "start:vps": "node dist/server/server.js",
+    "start:vps": "node .output/server/index.mjs",
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier",
