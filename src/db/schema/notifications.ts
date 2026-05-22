@@ -1,4 +1,13 @@
-import { boolean, pgEnum, pgTable, text, timestamp, uuid, jsonb, index } from 'drizzle-orm/pg-core'
+import {
+  boolean,
+  index,
+  jsonb,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core'
 import { users } from './auth'
 
 export const alertFrequencyEnum = pgEnum('alert_frequency', [
@@ -23,10 +32,13 @@ export const notificationTypeEnum = pgEnum('notification_type', [
   'DAILY_DIGEST',
   'ACCOUNT_APPROVED',
   'QUOTE_WON',
+  'CREDIT_APPROVED',
+  'CREDIT_REJECTED',
   // Admin
   'BOTTLENECK_ALERT',
   'NEW_SELLER_WAITLIST',
   'SPAM_FLAG',
+  'CREDIT_REQUEST',
   // System
   'SYSTEM',
 ])
@@ -37,45 +49,54 @@ export const notificationPreferences = pgTable('notification_preferences', {
     .notNull()
     .unique()
     .references(() => users.id, { onDelete: 'cascade' }),
-  
+
   emailEnabled: boolean('email_enabled').default(true).notNull(),
   inAppEnabled: boolean('in_app_enabled').default(true).notNull(),
-  
+
   sellerAlertFrequency: alertFrequencyEnum('seller_alert_frequency')
     .default('IMMEDIATE')
     .notNull(),
   sellerBrandScope: brandScopeEnum('seller_brand_scope')
     .default('SPECIALTY_ONLY')
     .notNull(),
-  
+
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const notifications = pgTable('notifications', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
+export const notifications = pgTable(
+  'notifications',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
 
-  type: notificationTypeEnum('type').notNull(),
-  title: text('title').notNull(),
-  message: text('message').notNull(),
-  
-  // Link to the specific object (request_id, quote_id, etc.)
-  referenceId: text('reference_id'),
-  linkUrl: text('link_url'),
+    type: notificationTypeEnum('type').notNull(),
+    title: text('title').notNull(),
+    message: text('message').notNull(),
 
-  // For real-time UI updates (e.g., { requestId: '...', status: 'open', quotesCount: 5 })
-  metadata: jsonb('metadata').$type<{
-    requestId?: string
-    status?: string
-    quotesCount?: number
-  }>(),
+    // Link to the specific object (request_id, quote_id, etc.)
+    referenceId: text('reference_id'),
+    linkUrl: text('link_url'),
 
-  isRead: boolean('is_read').default(false).notNull(),
-  isPriority: boolean('is_priority').default(false).notNull(),
+    // For real-time UI updates (e.g., { requestId: '...', status: 'open', quotesCount: 5 })
+    metadata: jsonb('metadata').$type<{
+      requestId?: string
+      status?: string
+      quotesCount?: number
+    }>(),
 
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => [
-  index('idx_notifications_user_id').on(table.userId),
-])
+    isRead: boolean('is_read').default(false).notNull(),
+    isPriority: boolean('is_priority').default(false).notNull(),
+
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('idx_notifications_user_id').on(table.userId),
+    index('idx_notifications_user_unread').on(
+      table.userId,
+      table.isRead,
+      table.createdAt,
+    ),
+  ],
+)

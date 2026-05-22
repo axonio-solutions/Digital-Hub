@@ -5,6 +5,8 @@ import { partCategories, vehicleBrands } from './taxonomy'
 import { sellerBrands, sellerCategories } from './vendors'
 import { creditPackages, creditRequests, creditTransactions } from './credits'
 
+import { notificationPreferences, notifications } from './notifications'
+
 export const usersRelations = relations(users, ({ one, many }) => ({
   requests: many(sparePartRequests),
   quotes: many(quotes),
@@ -14,7 +16,9 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   sellerCategories: many(sellerCategories),
   creditTransactions: many(creditTransactions),
   creditRequests: many(creditRequests),
-  grantedTransactions: many(creditTransactions, { relationName: 'adminTransactions' }),
+  grantedTransactions: many(creditTransactions, {
+    relationName: 'adminTransactions',
+  }),
   notificationPreference: one(notificationPreferences, {
     fields: [users.id],
     references: [notificationPreferences.userId],
@@ -55,10 +59,13 @@ export const sparePartRequestsRelations = relations(
   }),
 )
 
-export const partCategoriesRelations = relations(partCategories, ({ many }) => ({
-  requests: many(sparePartRequests),
-  sellerCategories: many(sellerCategories),
-}))
+export const partCategoriesRelations = relations(
+  partCategories,
+  ({ many }) => ({
+    requests: many(sparePartRequests),
+    sellerCategories: many(sellerCategories),
+  }),
+)
 
 export const vehicleBrandsRelations = relations(vehicleBrands, ({ many }) => ({
   requests: many(sparePartRequests),
@@ -86,16 +93,19 @@ export const sellerBrandsRelations = relations(sellerBrands, ({ one }) => ({
   }),
 }))
 
-export const sellerCategoriesRelations = relations(sellerCategories, ({ one }) => ({
-  seller: one(users, {
-    fields: [sellerCategories.sellerId],
-    references: [users.id],
+export const sellerCategoriesRelations = relations(
+  sellerCategories,
+  ({ one }) => ({
+    seller: one(users, {
+      fields: [sellerCategories.sellerId],
+      references: [users.id],
+    }),
+    category: one(partCategories, {
+      fields: [sellerCategories.categoryId],
+      references: [partCategories.id],
+    }),
   }),
-  category: one(partCategories, {
-    fields: [sellerCategories.categoryId],
-    references: [partCategories.id],
-  }),
-}))
+)
 
 export const creditRequestsRelations = relations(creditRequests, ({ one }) => ({
   seller: one(users, {
@@ -112,14 +122,15 @@ export const creditRequestsRelations = relations(creditRequests, ({ one }) => ({
   }),
 }))
 
-import { notifications, notificationPreferences } from './notifications'
-
-export const notificationPreferencesRelations = relations(notificationPreferences, ({ one }) => ({
-  user: one(users, {
-    fields: [notificationPreferences.userId],
-    references: [users.id],
+export const notificationPreferencesRelations = relations(
+  notificationPreferences,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [notificationPreferences.userId],
+      references: [users.id],
+    }),
   }),
-}))
+)
 
 export const notificationsRelations = relations(notifications, ({ one }) => ({
   user: one(users, {
@@ -128,23 +139,28 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
   }),
 }))
 
-export const creditTransactionsRelations = relations(creditTransactions, ({ one }) => ({
-  seller: one(users, {
-    fields: [creditTransactions.sellerId],
-    references: [users.id],
+export const creditTransactionsRelations = relations(
+  creditTransactions,
+  ({ one }) => ({
+    seller: one(users, {
+      fields: [creditTransactions.sellerId],
+      references: [users.id],
+    }),
+    admin: one(users, {
+      fields: [creditTransactions.adminId],
+      references: [users.id],
+      relationName: 'adminTransactions',
+    }),
+    package: one(creditPackages, {
+      fields: [creditTransactions.packageId],
+      references: [creditPackages.id],
+    }),
   }),
-  admin: one(users, {
-    fields: [creditTransactions.adminId],
-    references: [users.id],
-    relationName: 'adminTransactions',
-  }),
-  package: one(creditPackages, {
-    fields: [creditTransactions.packageId],
-    references: [creditPackages.id],
-  }),
-}))
+)
 
-export const creditPackagesRelations = relations(creditPackages, ({ many }) => ({
-  transactions: many(creditTransactions),
-}))
-
+export const creditPackagesRelations = relations(
+  creditPackages,
+  ({ many }) => ({
+    transactions: many(creditTransactions),
+  }),
+)

@@ -1,6 +1,10 @@
 import { pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
-export const taxonomyStatusEnum = pgEnum('taxonomy_status', ['active', 'draft', 'archived'])
+export const taxonomyStatusEnum = pgEnum('taxonomy_status', [
+  'active',
+  'draft',
+  'archived',
+])
 
 export const partCategories = pgTable('part_categories', {
   id: uuid('id').primaryKey().defaultRandom(),

@@ -1,13 +1,13 @@
-import { config } from 'dotenv';
-import { defineConfig } from 'drizzle-kit';
+import { config } from 'dotenv'
+import { defineConfig } from 'drizzle-kit'
 
-config({ path: '.env' });
+config({ path: '.env' })
 
 export default defineConfig({
   schema: './src/db/schema/index.ts',
   out: './drizzle',
   dialect: 'postgresql',
-  casing: "snake_case",
+  casing: 'snake_case',
   breakpoints: true,
   verbose: true,
   strict: true,
@@ -16,7 +16,7 @@ export default defineConfig({
   },
   entities: {
     roles: {
-      provider: "supabase",
-    }
-  }
-});
+      provider: 'supabase',
+    },
+  },
+})

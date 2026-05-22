@@ -110,12 +110,8 @@
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -208,12 +204,8 @@
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -223,9 +215,7 @@
         "sessions_token_unique": {
           "name": "sessions_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -375,9 +365,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -522,12 +510,8 @@
           "name": "quotes_request_id_spare_part_requests_id_fk",
           "tableFrom": "quotes",
           "tableTo": "spare_part_requests",
-          "columnsFrom": [
-            "request_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["request_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -535,12 +519,8 @@
           "name": "quotes_seller_id_users_id_fk",
           "tableFrom": "quotes",
           "tableTo": "users",
-          "columnsFrom": [
-            "seller_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["seller_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -659,12 +639,8 @@
           "name": "spare_part_requests_buyer_id_users_id_fk",
           "tableFrom": "spare_part_requests",
           "tableTo": "users",
-          "columnsFrom": [
-            "buyer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["buyer_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -672,12 +648,8 @@
           "name": "spare_part_requests_category_id_part_categories_id_fk",
           "tableFrom": "spare_part_requests",
           "tableTo": "part_categories",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["category_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -685,12 +657,8 @@
           "name": "spare_part_requests_brand_id_vehicle_brands_id_fk",
           "tableFrom": "spare_part_requests",
           "tableTo": "vehicle_brands",
-          "columnsFrom": [
-            "brand_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["brand_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -775,12 +743,8 @@
           "name": "vehicles_user_id_users_id_fk",
           "tableFrom": "vehicles",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -853,12 +817,8 @@
           "name": "notifications_user_id_users_id_fk",
           "tableFrom": "notifications",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -922,9 +882,7 @@
         "part_categories_name_unique": {
           "name": "part_categories_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -992,9 +950,7 @@
         "vehicle_brands_brand_unique": {
           "name": "vehicle_brands_brand_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "brand"
-          ]
+          "columns": ["brand"]
         }
       },
       "policies": {},
@@ -1031,12 +987,8 @@
           "name": "seller_brands_seller_id_users_id_fk",
           "tableFrom": "seller_brands",
           "tableTo": "users",
-          "columnsFrom": [
-            "seller_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["seller_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1044,12 +996,8 @@
           "name": "seller_brands_brand_id_vehicle_brands_id_fk",
           "tableFrom": "seller_brands",
           "tableTo": "vehicle_brands",
-          "columnsFrom": [
-            "brand_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["brand_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1057,10 +1005,7 @@
       "compositePrimaryKeys": {
         "seller_brands_seller_id_brand_id_pk": {
           "name": "seller_brands_seller_id_brand_id_pk",
-          "columns": [
-            "seller_id",
-            "brand_id"
-          ]
+          "columns": ["seller_id", "brand_id"]
         }
       },
       "uniqueConstraints": {},
@@ -1098,12 +1043,8 @@
           "name": "seller_categories_seller_id_users_id_fk",
           "tableFrom": "seller_categories",
           "tableTo": "users",
-          "columnsFrom": [
-            "seller_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["seller_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1111,12 +1052,8 @@
           "name": "seller_categories_category_id_part_categories_id_fk",
           "tableFrom": "seller_categories",
           "tableTo": "part_categories",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["category_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1124,10 +1061,7 @@
       "compositePrimaryKeys": {
         "seller_categories_seller_id_category_id_pk": {
           "name": "seller_categories_seller_id_category_id_pk",
-          "columns": [
-            "seller_id",
-            "category_id"
-          ]
+          "columns": ["seller_id", "category_id"]
         }
       },
       "uniqueConstraints": {},
@@ -1140,38 +1074,22 @@
     "public.part_condition": {
       "name": "part_condition",
       "schema": "public",
-      "values": [
-        "new",
-        "used"
-      ]
+      "values": ["new", "used"]
     },
     "public.quote_status": {
       "name": "quote_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "accepted",
-        "rejected"
-      ]
+      "values": ["pending", "accepted", "rejected"]
     },
     "public.request_status": {
       "name": "request_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "open",
-        "fulfilled",
-        "cancelled"
-      ]
+      "values": ["draft", "open", "fulfilled", "cancelled"]
     },
     "public.taxonomy_status": {
       "name": "taxonomy_status",
       "schema": "public",
-      "values": [
-        "active",
-        "draft",
-        "archived"
-      ]
+      "values": ["active", "draft", "archived"]
     }
   },
   "schemas": {},

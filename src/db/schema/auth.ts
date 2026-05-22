@@ -1,36 +1,49 @@
-import { boolean, index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import {
+  boolean,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core'
 
-export const users = pgTable('users', {
-  id: text('id').primaryKey(),
-  name: text('name'),
-  email: text('email').unique(),
-  emailVerified: boolean('email_verified').default(false).notNull(),
-  image: text('image'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at')
-    .defaultNow()
-    .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull(),
-  role: text('role'),
-  banned: boolean('banned').default(false),
-  banReason: text('ban_reason'),
-  banExpires: timestamp('ban_expires'),
-  account_status: text('account_status'),
-  phoneNumber: text('phone_number'),
-  phoneNumberVerified: boolean('phone_number_verified').default(false).notNull(),
-  storeName: text('store_name'),
-  wilaya: text('wilaya'),
-  whatsappNumber: text('whatsapp_number'),
-  address: text('address'),
-  city: text('city'),
-  companyAddress: text('company_address'),
-  commercialRegister: text('commercial_register'),
-  credits: integer('credits').default(0).notNull(),
-}, (table) => [
-  index('idx_users_role').on(table.role),
-  index('idx_users_account_status').on(table.account_status),
-  index('idx_users_created_at').on(table.createdAt),
-])
+export const users = pgTable(
+  'users',
+  {
+    id: text('id').primaryKey(),
+    name: text('name'),
+    email: text('email').unique(),
+    emailVerified: boolean('email_verified').default(false).notNull(),
+    image: text('image'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    role: text('role'),
+    banned: boolean('banned').default(false),
+    banReason: text('ban_reason'),
+    banExpires: timestamp('ban_expires'),
+    account_status: text('account_status'),
+    phoneNumber: text('phone_number'),
+    phoneNumberVerified: boolean('phone_number_verified')
+      .default(false)
+      .notNull(),
+    storeName: text('store_name'),
+    wilaya: text('wilaya'),
+    whatsappNumber: text('whatsapp_number'),
+    address: text('address'),
+    city: text('city'),
+    companyAddress: text('company_address'),
+    commercialRegister: text('commercial_register'),
+    credits: integer('credits').default(0).notNull(),
+  },
+  (table) => [
+    index('idx_users_role').on(table.role),
+    index('idx_users_account_status').on(table.account_status),
+    index('idx_users_created_at').on(table.createdAt),
+  ],
+)
 
 export const sessions = pgTable(
   'sessions',
@@ -91,5 +104,3 @@ export const verifications = pgTable(
   },
   (table) => [index('verifications_identifier_idx').on(table.identifier)],
 )
-
-

@@ -1,12 +1,12 @@
 import {
   boolean,
+  index,
   integer,
   pgEnum,
   pgTable,
   text,
   timestamp,
   uuid,
-  index,
 } from 'drizzle-orm/pg-core'
 import { sql } from 'drizzle-orm'
 import { users } from './auth'
@@ -21,7 +21,6 @@ export const quoteStatusEnum = pgEnum('quote_status', [
   'pending',
   'accepted',
   'rejected',
-  'withdrawn',
 ])
 export const partConditionEnum = pgEnum('part_condition', ['new', 'used'])
 
@@ -55,41 +54,56 @@ export const sparePartRequests = pgTable(
     return {
       idx_requests_active: index('idx_requests_active').on(
         table.status,
-        table.createdAt.desc()
+        table.createdAt.desc(),
       ),
       idx_requests_filter: index('idx_requests_filter').on(
         table.brandId,
-        table.categoryId
+        table.categoryId,
       ),
       idx_requests_buyer: index('idx_requests_buyer_id').on(table.buyerId),
-      idx_requests_buyer_status: index('idx_requests_buyer_status').on(table.buyerId, table.status),
-      idx_requests_category_status: index('idx_requests_category_status').on(table.categoryId, table.status),
-      idx_requests_brand_status: index('idx_requests_brand_status').on(table.brandId, table.status),
-      idx_requests_created: index('idx_requests_created_at').on(table.createdAt),
+      idx_requests_buyer_status: index('idx_requests_buyer_status').on(
+        table.buyerId,
+        table.status,
+      ),
+      idx_requests_category_status: index('idx_requests_category_status').on(
+        table.categoryId,
+        table.status,
+      ),
+      idx_requests_brand_status: index('idx_requests_brand_status').on(
+        table.brandId,
+        table.status,
+      ),
+      idx_requests_created: index('idx_requests_created_at').on(
+        table.createdAt,
+      ),
       gin_idx_part_search: index('gin_idx_part_search').using(
         'gin',
-        sql`${table.partName} gin_trgm_ops`
+        sql`${table.partName} gin_trgm_ops`,
       ),
     }
-  }
+  },
 )
 
-export const quotes = pgTable('quotes', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  requestId: uuid('request_id')
-    .notNull()
-    .references(() => sparePartRequests.id),
-  sellerId: text('seller_id')
-    .notNull()
-    .references(() => users.id),
-  price: integer('price').notNull(), // stored in DZD
-  condition: partConditionEnum('condition').notNull(),
-  warranty: text('warranty'),
-  status: quoteStatusEnum('status').default('pending').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  deletedAt: timestamp('deleted_at'),
-}, (table) => [
-  index('idx_quotes_seller_id').on(table.sellerId),
-  index('idx_quotes_request_id').on(table.requestId),
-])
+export const quotes = pgTable(
+  'quotes',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    requestId: uuid('request_id')
+      .notNull()
+      .references(() => sparePartRequests.id),
+    sellerId: text('seller_id')
+      .notNull()
+      .references(() => users.id),
+    price: integer('price').notNull(), // stored in DZD
+    condition: partConditionEnum('condition').notNull(),
+    warranty: text('warranty'),
+    status: quoteStatusEnum('status').default('pending').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    deletedAt: timestamp('deleted_at'),
+  },
+  (table) => [
+    index('idx_quotes_seller_id').on(table.sellerId),
+    index('idx_quotes_request_id').on(table.requestId),
+  ],
+)

@@ -1,7 +1,18 @@
-import { boolean, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import {
+  boolean,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core'
 import { users } from './auth'
 
-export const creditRequestStatusEnum = ['pending', 'approved', 'rejected'] as const
+export const creditRequestStatusEnum = [
+  'pending',
+  'approved',
+  'rejected',
+] as const
 
 export const creditRequests = pgTable('credit_requests', {
   id: uuid('id').primaryKey().defaultRandom(),
