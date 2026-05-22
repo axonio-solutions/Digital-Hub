@@ -15,7 +15,12 @@ const ACCENT_COLOR = '#10b981' // Emerald 500
 const BG_COLOR = '#f8fafc' // Slate 50
 const TEXT_COLOR = '#334155' // Slate 700
 
-export function renderBaseLayout({ title, content, ctaText, ctaUrl }: BaseLayoutProps) {
+export function renderBaseLayout({
+  title,
+  content,
+  ctaText,
+  ctaUrl,
+}: BaseLayoutProps) {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -114,11 +119,15 @@ export function renderBaseLayout({ title, content, ctaText, ctaUrl }: BaseLayout
     <div class="content">
       <div class="title">${title}</div>
       <div class="message">${content}</div>
-      ${ctaText && ctaUrl ? `
+      ${
+        ctaText && ctaUrl
+          ? `
       <div class="button-container">
         <a href="${ctaUrl}" class="button">${ctaText}</a>
       </div>
-      ` : ''}
+      `
+          : ''
+      }
     </div>
     <div class="footer">
       <p>&copy; ${new Date().getFullYear()} Digital Hub Marketplace. All rights reserved.</p>

@@ -1,17 +1,13 @@
-import { 
-  sparePartRequests, 
-  users, 
-} from '@/db/schema'
-import { eq, and, lt, sql } from 'drizzle-orm'
-import { db } from '@/db'
+import { and, eq, lt, sql } from 'drizzle-orm'
 import { NotificationService } from './notification-service'
+import { notifications, sparePartRequests, users } from '@/db/schema'
+import { db } from '@/db'
 import { resend } from '@/lib/resend'
 
 /**
  * Logic for background/recurring tasks (Cron Jobs)
  */
 export class BackgroundJobs {
-  
   /**
    * 1. DAILY_DIGEST: Send a single email to sellers with "DAILY_DIGEST" preference
    * including all new leads from the last 24 hours.
@@ -23,12 +19,15 @@ export class BackgroundJobs {
     const digestSellers = await db.query.users.findMany({
       where: eq(users.role, 'seller'),
       with: {
-        notificationPreference: true
-      }
+        notificationPreference: true,
+      },
     })
 
     for (const seller of digestSellers) {
-      if (seller.notificationPreference?.sellerAlertFrequency !== 'DAILY_DIGEST') continue
+      if (
+        seller.notificationPreference?.sellerAlertFrequency !== 'DAILY_DIGEST'
+      )
+        continue
 
       // Find new leads for this seller
       // (Simplified: showing all new leads, in real app, we'd filter by specialty)
@@ -36,8 +35,8 @@ export class BackgroundJobs {
         where: and(
           eq(sparePartRequests.status, 'open'),
           lt(sparePartRequests.createdAt, new Date()), // Created in last 24h
-          sql`${sparePartRequests.createdAt} > ${twentyFourHoursAgo}`
-        )
+          sql`${sparePartRequests.createdAt} > ${twentyFourHoursAgo}`,
+        ),
       })
 
       if (newLeads.length > 0) {
@@ -48,10 +47,10 @@ export class BackgroundJobs {
           html: `
             <h2>New Leads Available</h2>
             <ul>
-              ${newLeads.map(l => `<li>${l.partName} for ${l.vehicleBrand}</li>`).join('')}
+              ${newLeads.map((l) => `<li>${l.partName} for ${l.vehicleBrand}</li>`).join('')}
             </ul>
             <p><a href="${process.env.VITE_APP_URL}/dashboard/marketplace">View all leads</a></p>
-          `
+          `,
         })
       }
     }
@@ -68,27 +67,37 @@ export class BackgroundJobs {
     const oldRequests = await db.query.sparePartRequests.findMany({
       where: and(
         eq(sparePartRequests.status, 'open'),
-        lt(sparePartRequests.createdAt, fortyEightHoursAgo)
+        lt(sparePartRequests.createdAt, fortyEightHoursAgo),
       ),
       with: {
-        quotes: true
-      }
+        quotes: true,
+      },
     })
 
     for (const request of oldRequests) {
-      // If there's no accepted quote yet
-      const hasAccepted = request.quotes.some(q => q.status === 'accepted')
-      if (!hasAccepted) {
-        await NotificationService.send({
-          userId: request.buyerId,
-          type: 'ABANDONED_REQUEST',
-          title: 'Still looking for parts?',
-          message: `Your request for ${request.partName} has been open for 48h. Check available quotes or close it if fulfilled.`,
-          referenceId: request.id,
-          linkUrl: `/dashboard/requests/${request.id}`,
-          isPriority: true,
-        })
-      }
+      const hasNoBids =
+        request.quotes.filter((q: any) => !q.deletedAt).length === 0
+      if (!hasNoBids) continue
+
+      const alreadyNotified = await db.query.notifications.findFirst({
+        where: and(
+          eq(notifications.userId, request.buyerId),
+          eq(notifications.type, 'ABANDONED_REQUEST'),
+          sql`(${notifications.metadata}->>'requestId') = ${request.id}`,
+        ),
+      })
+      if (alreadyNotified) continue
+
+      await NotificationService.send({
+        userId: request.buyerId,
+        type: 'ABANDONED_REQUEST',
+        title: 'No Offers Yet on Your Request',
+        message: `Your request for ${request.partName} has been open for over 48 hours with no offers. Consider updating the details or closing it if you no longer need it.`,
+        referenceId: request.id,
+        linkUrl: `/dashboard/requests/${request.id}`,
+        isPriority: true,
+        metadata: { requestId: request.id },
+      })
     }
   }
 }

@@ -1,12 +1,12 @@
-import { db } from '@/db'
-import { notifications, notificationPreferences, users } from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { db } from '@/db'
+import { notificationPreferences, notifications, users } from '@/db/schema'
 import { resend } from '@/lib/resend'
 import { notificationEvents } from '@/lib/events'
 
 export type NotificationTrigger = {
   userId: string
-  type: typeof notifications.$inferSelect['type']
+  type: (typeof notifications.$inferSelect)['type']
   title: string
   message: string
   referenceId?: string
@@ -28,7 +28,16 @@ export class NotificationService {
    */
   static async send(payload: NotificationTrigger, tx?: any) {
     const client = tx || db
-    const { userId, type, title, message, referenceId, linkUrl, isPriority, metadata } = payload
+    const {
+      userId,
+      type,
+      title,
+      message,
+      referenceId,
+      linkUrl,
+      isPriority,
+      metadata,
+    } = payload
 
     // 1. Get user preferences
     let prefs = await client.query.notificationPreferences.findFirst({
@@ -37,25 +46,31 @@ export class NotificationService {
 
     // Create default prefs if not exists
     if (!prefs) {
-      const [newPrefs] = await client.insert(notificationPreferences).values({
-        userId,
-      }).returning()
+      const [newPrefs] = await client
+        .insert(notificationPreferences)
+        .values({
+          userId,
+        })
+        .returning()
       prefs = newPrefs
     }
 
     // 2. Save In-App Notification
     if (prefs.inAppEnabled) {
-      const [newNotification] = await client.insert(notifications).values({
-        userId,
-        type,
-        title,
-        message,
-        referenceId,
-        linkUrl,
-        metadata,
-        isPriority: isPriority ?? false,
-      }).returning()
-      
+      const [newNotification] = await client
+        .insert(notifications)
+        .values({
+          userId,
+          type,
+          title,
+          message,
+          referenceId,
+          linkUrl,
+          metadata,
+          isPriority: isPriority ?? false,
+        })
+        .returning()
+
       // Emit event for SSE
       notificationEvents.emit('notification', newNotification)
     }
@@ -110,8 +125,12 @@ export class NotificationService {
   /**
    * Update preferences for a user
    */
-  static async updatePreferences(userId: string, data: Partial<typeof notificationPreferences.$inferSelect>) {
-    return await db.update(notificationPreferences)
+  static async updatePreferences(
+    userId: string,
+    data: Partial<typeof notificationPreferences.$inferSelect>,
+  ) {
+    return await db
+      .update(notificationPreferences)
       .set({ ...data, updatedAt: new Date() })
       .where(eq(notificationPreferences.userId, userId))
   }
