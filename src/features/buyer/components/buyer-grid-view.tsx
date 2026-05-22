@@ -9,7 +9,11 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { IconCircleCheckFilled, IconCircleXFilled, IconLoader } from '@tabler/icons-react'
+import {
+  IconCircleCheckFilled,
+  IconCircleXFilled,
+  IconLoader,
+} from '@tabler/icons-react'
 import { useBuyerColumns } from './buyer-columns'
 import { PartCard } from '@/components/ui/part-card'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
@@ -17,7 +21,7 @@ import { DataTablePagination } from '@/components/ui/data-table/data-table-pagin
 
 interface RequestsGridViewProps {
   data: Array<any>
-  onAction?: (action: { type: string, item: any }) => void
+  onAction?: (action: { type: string; item: any }) => void
   pendingActionId?: string | null
 }
 
@@ -28,20 +32,41 @@ function useBrandOptions(data: Array<any>) {
       const brandName = r.vehicleBrand || r.brand?.brand
       if (brandName) brands.add(brandName)
     })
-    return Array.from(brands).sort().map((brand) => ({ label: brand, value: brand }))
+    return Array.from(brands)
+      .sort()
+      .map((brand) => ({ label: brand, value: brand }))
   }, [data])
 }
 
-const GridCard = memo(function GridCard({ req, onAction, isProcessing }: {
+const GridCard = memo(function GridCard({
+  req,
+  onAction,
+  isProcessing,
+}: {
   req: any
-  onAction?: (action: { type: string, item: any }) => void
+  onAction?: (action: { type: string; item: any }) => void
   isProcessing?: boolean
 }) {
-  const handleView = useCallback(() => onAction?.({ type: 'view_request', item: req }), [onAction, req.id])
-  const handleEdit = useCallback(() => onAction?.({ type: 'edit_request', item: req }), [onAction, req.id])
-  const handleClose = useCallback(() => onAction?.({ type: 'close_request', item: req }), [onAction, req.id])
-  const handleReopen = useCallback(() => onAction?.({ type: 'reopen_request', item: req }), [onAction, req.id])
-  const handleDelete = useCallback(() => onAction?.({ type: 'delete_request', item: req }), [onAction, req.id])
+  const handleView = useCallback(
+    () => onAction?.({ type: 'view_request', item: req }),
+    [onAction, req.id],
+  )
+  const handleEdit = useCallback(
+    () => onAction?.({ type: 'edit_request', item: req }),
+    [onAction, req.id],
+  )
+  const handleClose = useCallback(
+    () => onAction?.({ type: 'close_request', item: req }),
+    [onAction, req.id],
+  )
+  const handleReopen = useCallback(
+    () => onAction?.({ type: 'reopen_request', item: req }),
+    [onAction, req.id],
+  )
+  const handleDelete = useCallback(
+    () => onAction?.({ type: 'delete_request', item: req }),
+    [onAction, req.id],
+  )
 
   return (
     <PartCard
@@ -61,7 +86,7 @@ const GridCard = memo(function GridCard({ req, onAction, isProcessing }: {
       onClick={handleView}
       onEdit={req.status === 'open' ? handleEdit : undefined}
       onClose={req.status === 'open' ? handleClose : undefined}
-      onReopen={req.status !== 'open' ? handleReopen : undefined}
+      onReopen={req.status === 'cancelled' ? handleReopen : undefined}
       onDelete={req.status !== 'fulfilled' ? handleDelete : undefined}
       isProcessing={isProcessing}
       className="w-full"
@@ -69,7 +94,11 @@ const GridCard = memo(function GridCard({ req, onAction, isProcessing }: {
   )
 })
 
-export function BuyerGridView({ data, onAction, pendingActionId }: RequestsGridViewProps) {
+export function BuyerGridView({
+  data,
+  onAction,
+  pendingActionId,
+}: RequestsGridViewProps) {
   const { t } = useTranslation('requests/list')
   const columns = useBuyerColumns(onAction, undefined, t)
   const brandOptions = useBrandOptions(data)
@@ -95,9 +124,14 @@ export function BuyerGridView({ data, onAction, pendingActionId }: RequestsGridV
           <Car className="size-10 text-primary/50" strokeWidth={1.5} />
         </div>
         <div className="text-center space-y-2">
-          <h3 className="text-lg font-black tracking-tight">{t('empty.title', 'No Demands Yet')}</h3>
+          <h3 className="text-lg font-black tracking-tight">
+            {t('empty.title', 'No Demands Yet')}
+          </h3>
           <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-            {t('empty.desc', 'Start posting your part requests to get offers from sellers')}
+            {t(
+              'empty.desc',
+              'Start posting your part requests to get offers from sellers',
+            )}
           </p>
         </div>
       </div>
@@ -113,29 +147,49 @@ export function BuyerGridView({ data, onAction, pendingActionId }: RequestsGridV
         hideViewOptions
         facetedFilters={[
           {
-            column: "status",
+            column: 'status',
             title: t('filters.status'),
             options: [
-              { label: t('filters.statuses.open'), value: "open", icon: IconLoader },
-              { label: t('filters.statuses.fulfilled'), value: "fulfilled", icon: IconCircleCheckFilled },
-              { label: t('filters.statuses.cancelled'), value: "cancelled", icon: IconCircleXFilled },
-            ]
+              {
+                label: t('filters.statuses.open'),
+                value: 'open',
+                icon: IconLoader,
+              },
+              {
+                label: t('filters.statuses.fulfilled'),
+                value: 'fulfilled',
+                icon: IconCircleCheckFilled,
+              },
+              {
+                label: t('filters.statuses.cancelled'),
+                value: 'cancelled',
+                icon: IconCircleXFilled,
+              },
+            ],
           },
           {
-            column: "vehicleBrand",
+            column: 'vehicleBrand',
             title: t('filters.brand'),
             options: brandOptions,
-          }
+          },
         ]}
       />
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {rows.map((req: any) => (
-          <GridCard key={req.id} req={req} onAction={onAction} isProcessing={pendingActionId === req.id} />
+          <GridCard
+            key={req.id}
+            req={req}
+            onAction={onAction}
+            isProcessing={pendingActionId === req.id}
+          />
         ))}
       </div>
 
-      <DataTablePagination table={table} pageSizeOptions={[9, 18, 27, 36, 45, 54]} />
+      <DataTablePagination
+        table={table}
+        pageSizeOptions={[9, 18, 27, 36, 45, 54]}
+      />
     </div>
   )
 }

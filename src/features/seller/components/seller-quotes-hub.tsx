@@ -2,14 +2,33 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ArrowUpDown, Banknote, Calendar, CheckCircle2, Clock, TrendingDown, TrendingUp, XCircle } from 'lucide-react'
+import {
+  ArrowUpDown,
+  Banknote,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  TrendingDown,
+  TrendingUp,
+  XCircle,
+} from 'lucide-react'
 import { isAfter, isToday, startOfDay, subDays } from 'date-fns'
-import { useToast } from '@/hooks/use-toast'
 import { SellerQuotesTable } from './seller-quotes-table'
+import { useToast } from '@/hooks/use-toast'
 import { SubmitQuoteForm } from '@/features/marketplace'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import { useDeleteQuote, useSellerQuotes } from '@/features/marketplace/hooks/use-marketplace'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  useDeleteQuote,
+  useSellerQuotes,
+} from '@/features/marketplace/hooks/use-marketplace'
+import { useSendReminder } from '@/features/quotes/hooks/use-quotes'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { RequestDetailsDialog } from '@/features/requests/components/request-details-dialog'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -45,6 +64,8 @@ export function SellerQuotesHub() {
   const { data: myQuotes = [], isLoading } = useSellerQuotes(sellerId)
   const { data: taxonomy } = useTaxonomy()
   const deleteQuote = useDeleteQuote()
+  const { mutate: sendReminder, isPending: isSendingReminder } =
+    useSendReminder()
 
   const brandLogos = useMemo(() => {
     if (!taxonomy?.brands) return undefined
@@ -69,7 +90,7 @@ export function SellerQuotesHub() {
       case 'delete':
         if (confirm(t('hub.confirm.withdraw'))) {
           deleteQuote.mutate(action.item.id, {
-            onSuccess: () => toast.success('hub.toasts.withdrawn'),
+            onSuccess: () => toast.success('hub.toasts.removed'),
           })
         }
         break
@@ -88,7 +109,6 @@ export function SellerQuotesHub() {
     const lost = timeFiltered.filter(
       (q: any) =>
         q.status === 'rejected' ||
-        q.status === 'withdrawn' ||
         (q.request?.status === 'fulfilled' && q.status !== 'accepted'),
     )
     return { wonQuotes: won, pendingQuotes: pending, lostQuotes: lost }
@@ -100,7 +120,8 @@ export function SellerQuotesHub() {
   }, [timeFiltered, wonQuotes])
 
   const pipelineValue = useMemo(
-    () => pendingQuotes.reduce((sum: number, q: any) => sum + (q.price || 0), 0),
+    () =>
+      pendingQuotes.reduce((sum: number, q: any) => sum + (q.price || 0), 0),
     [pendingQuotes],
   )
   const wonRevenue = useMemo(
@@ -113,37 +134,151 @@ export function SellerQuotesHub() {
   )
 
   const tabs = [
-    { key: 'pending', label: t('hub.tabs.active'), count: pendingQuotes.length },
+    {
+      key: 'pending',
+      label: t('hub.tabs.active'),
+      count: pendingQuotes.length,
+    },
     { key: 'won', label: t('hub.tabs.won'), count: wonQuotes.length },
     { key: 'lost', label: t('hub.tabs.lost'), count: lostQuotes.length },
   ]
 
-  const activeData = activeTab === 'pending' ? pendingQuotes : activeTab === 'won' ? wonQuotes : lostQuotes
+  const activeData =
+    activeTab === 'pending'
+      ? pendingQuotes
+      : activeTab === 'won'
+        ? wonQuotes
+        : lostQuotes
 
   const tabStats = useMemo(() => {
     if (activeTab === 'pending') {
       return [
-        { key: 'count', icon: Clock, value: pendingQuotes.length.toString(), label: t('hub.tabs.active'), color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50' },
-        { key: 'pipeline', icon: Banknote, value: `${pipelineValue.toLocaleString(i18n.language)} DZD`, label: t('hub.stats.pipeline'), color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50' },
-        { key: 'avg', icon: TrendingUp, value: pendingQuotes.length > 0 ? `${Math.round(pipelineValue / pendingQuotes.length).toLocaleString(i18n.language)} DZD` : '—', label: t('hub.stats.avg_price'), color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50' },
-        { key: 'today', icon: Calendar, value: pendingQuotes.length > 0 ? pendingQuotes.filter((q: any) => isToday(new Date(q.createdAt))).length.toString() : '0', label: t('hub.stats.today_active'), color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50' },
+        {
+          key: 'count',
+          icon: Clock,
+          value: pendingQuotes.length.toString(),
+          label: t('hub.tabs.active'),
+          color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50',
+        },
+        {
+          key: 'pipeline',
+          icon: Banknote,
+          value: `${pipelineValue.toLocaleString(i18n.language)} DZD`,
+          label: t('hub.stats.pipeline'),
+          color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50',
+        },
+        {
+          key: 'avg',
+          icon: TrendingUp,
+          value:
+            pendingQuotes.length > 0
+              ? `${Math.round(pipelineValue / pendingQuotes.length).toLocaleString(i18n.language)} DZD`
+              : '—',
+          label: t('hub.stats.avg_price'),
+          color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50',
+        },
+        {
+          key: 'today',
+          icon: Calendar,
+          value:
+            pendingQuotes.length > 0
+              ? pendingQuotes
+                  .filter((q: any) => isToday(new Date(q.createdAt)))
+                  .length.toString()
+              : '0',
+          label: t('hub.stats.today_active'),
+          color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50',
+        },
       ]
     }
     if (activeTab === 'won') {
       return [
-        { key: 'count', icon: CheckCircle2, value: wonQuotes.length.toString(), label: t('hub.tabs.won'), color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50' },
-        { key: 'revenue', icon: Banknote, value: `${wonRevenue.toLocaleString(i18n.language)} DZD`, label: t('hub.stats.total_revenue'), color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50' },
-        { key: 'rate', icon: TrendingUp, value: `${successRate}%`, label: t('hub.stats.success_rate'), color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50' },
-        { key: 'avg', icon: ArrowUpDown, value: wonQuotes.length > 0 ? `${Math.round(wonRevenue / wonQuotes.length).toLocaleString(i18n.language)} DZD` : '—', label: t('hub.stats.avg_deal'), color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50' },
+        {
+          key: 'count',
+          icon: CheckCircle2,
+          value: wonQuotes.length.toString(),
+          label: t('hub.tabs.won'),
+          color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50',
+        },
+        {
+          key: 'revenue',
+          icon: Banknote,
+          value: `${wonRevenue.toLocaleString(i18n.language)} DZD`,
+          label: t('hub.stats.total_revenue'),
+          color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50',
+        },
+        {
+          key: 'rate',
+          icon: TrendingUp,
+          value: `${successRate}%`,
+          label: t('hub.stats.success_rate'),
+          color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50',
+        },
+        {
+          key: 'avg',
+          icon: ArrowUpDown,
+          value:
+            wonQuotes.length > 0
+              ? `${Math.round(wonRevenue / wonQuotes.length).toLocaleString(i18n.language)} DZD`
+              : '—',
+          label: t('hub.stats.avg_deal'),
+          color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50',
+        },
       ]
     }
     return [
-      { key: 'count', icon: XCircle, value: lostQuotes.length.toString(), label: t('hub.tabs.lost'), color: 'text-slate-500 bg-slate-50 dark:text-slate-400 dark:bg-slate-900/50' },
-      { key: 'lostValue', icon: TrendingDown, value: `${lostValue.toLocaleString(i18n.language)} DZD`, label: t('hub.stats.missed_value'), color: 'text-slate-500 bg-slate-50 dark:text-slate-400 dark:bg-slate-900/50' },
-      { key: 'rate', icon: TrendingDown, value: timeFiltered.length > 0 ? `${Math.round((lostQuotes.length / timeFiltered.length) * 100)}%` : '0%', label: t('hub.stats.loss_rate'), color: 'text-slate-500 bg-slate-50 dark:text-slate-400 dark:bg-slate-900/50' },
-      { key: 'avg', icon: ArrowUpDown, value: lostQuotes.length > 0 ? `${Math.round(lostValue / lostQuotes.length).toLocaleString(i18n.language)} DZD` : '—', label: t('hub.stats.avg_missed'), color: 'text-slate-500 bg-slate-50 dark:text-slate-400 dark:bg-slate-900/50' },
+      {
+        key: 'count',
+        icon: XCircle,
+        value: lostQuotes.length.toString(),
+        label: t('hub.tabs.lost'),
+        color:
+          'text-slate-500 bg-slate-50 dark:text-slate-400 dark:bg-slate-900/50',
+      },
+      {
+        key: 'lostValue',
+        icon: TrendingDown,
+        value: `${lostValue.toLocaleString(i18n.language)} DZD`,
+        label: t('hub.stats.missed_value'),
+        color:
+          'text-slate-500 bg-slate-50 dark:text-slate-400 dark:bg-slate-900/50',
+      },
+      {
+        key: 'rate',
+        icon: TrendingDown,
+        value:
+          timeFiltered.length > 0
+            ? `${Math.round((lostQuotes.length / timeFiltered.length) * 100)}%`
+            : '0%',
+        label: t('hub.stats.loss_rate'),
+        color:
+          'text-slate-500 bg-slate-50 dark:text-slate-400 dark:bg-slate-900/50',
+      },
+      {
+        key: 'avg',
+        icon: ArrowUpDown,
+        value:
+          lostQuotes.length > 0
+            ? `${Math.round(lostValue / lostQuotes.length).toLocaleString(i18n.language)} DZD`
+            : '—',
+        label: t('hub.stats.avg_missed'),
+        color:
+          'text-slate-500 bg-slate-50 dark:text-slate-400 dark:bg-slate-900/50',
+      },
     ]
-  }, [activeTab, pendingQuotes, wonQuotes, lostQuotes, pipelineValue, wonRevenue, lostValue, successRate, timeFiltered, i18n.language, t])
+  }, [
+    activeTab,
+    pendingQuotes,
+    wonQuotes,
+    lostQuotes,
+    pipelineValue,
+    wonRevenue,
+    lostValue,
+    successRate,
+    timeFiltered,
+    i18n.language,
+    t,
+  ])
 
   if (isLoading) {
     return <QuotesHubSkeleton />
@@ -162,7 +297,9 @@ export function SellerQuotesHub() {
               <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
                 {t('hub.title')}
               </h2>
-              <p className="text-xs text-muted-foreground font-medium">{t('hub.desc')}</p>
+              <p className="text-xs text-muted-foreground font-medium">
+                {t('hub.desc')}
+              </p>
             </div>
           </div>
         </div>
@@ -171,12 +308,22 @@ export function SellerQuotesHub() {
       {/* Dynamic Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {tabStats.map((stat) => (
-          <div key={stat.key} className={cn('flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all', stat.color)}>
+          <div
+            key={stat.key}
+            className={cn(
+              'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
+              stat.color,
+            )}
+          >
             <div className="flex items-center gap-1.5">
               <stat.icon className="size-4" />
-              <span className="text-xl font-black tabular-nums leading-none">{stat.value}</span>
+              <span className="text-xl font-black tabular-nums leading-none">
+                {stat.value}
+              </span>
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">{stat.label}</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
+              {stat.label}
+            </span>
           </div>
         ))}
       </div>
@@ -196,14 +343,26 @@ export function SellerQuotesHub() {
             )}
           >
             <span className="truncate">{tab.label}</span>
-            <Badge variant="secondary" className="h-4.5 min-w-4.5 px-1 text-[9px] font-black rounded tabular-nums">{tab.count}</Badge>
+            <Badge
+              variant="secondary"
+              className="h-4.5 min-w-4.5 px-1 text-[9px] font-black rounded tabular-nums"
+            >
+              {tab.count}
+            </Badge>
           </button>
         ))}
       </div>
 
       {/* Time window + Table */}
       <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-900 self-start">
-        {(Object.keys({ all: 'all', today: 'today', week: 'week', month: 'month' }) as Array<TimeWindow>).map((tw) => (
+        {(
+          Object.keys({
+            all: 'all',
+            today: 'today',
+            week: 'week',
+            month: 'month',
+          }) as Array<TimeWindow>
+        ).map((tw) => (
           <button
             key={tw}
             type="button"
@@ -220,15 +379,23 @@ export function SellerQuotesHub() {
         ))}
       </div>
 
-      <SellerQuotesTable data={activeData} onAction={handleAction} brandLogos={brandLogos} />
+      <SellerQuotesTable
+        data={activeData}
+        onAction={handleAction}
+        brandLogos={brandLogos}
+      />
 
       {/* Update Quote Dialog */}
       <Dialog open={isQuoteModalOpen} onOpenChange={setIsQuoteModalOpen}>
         <DialogContent className="w-[95vw] max-w-[480px] max-h-[92vh] overflow-y-auto rounded-2xl p-0 gap-0 border-0">
           <div className="p-4 sm:p-5">
             <DialogHeader className="pb-3">
-              <DialogTitle className="text-base font-black uppercase tracking-tight">{t('hub.dialog.update_title')}</DialogTitle>
-              <DialogDescription className="text-[10px] font-bold uppercase text-muted-foreground mt-1">{t('hub.dialog.update_desc')}</DialogDescription>
+              <DialogTitle className="text-base font-black uppercase tracking-tight">
+                {t('hub.dialog.update_title')}
+              </DialogTitle>
+              <DialogDescription className="text-[10px] font-bold uppercase text-muted-foreground mt-1">
+                {t('hub.dialog.update_desc')}
+              </DialogDescription>
             </DialogHeader>
             {selectedQuote && user && (
               <SubmitQuoteForm
@@ -240,7 +407,10 @@ export function SellerQuotesHub() {
                   model: selectedQuote.request?.vehicleModel || 'Unknown',
                   year: selectedQuote.request?.modelYear || 'Unknown',
                 }}
-                category={selectedQuote.request?.category?.name || selectedQuote.request?.category}
+                category={
+                  selectedQuote.request?.category?.name ||
+                  selectedQuote.request?.category
+                }
                 initialData={{
                   price: selectedQuote.price,
                   condition: selectedQuote.condition,
@@ -263,7 +433,7 @@ export function SellerQuotesHub() {
         quote={selectedQuote}
         footer={
           <div className="pt-6 flex gap-4 w-full">
-            {selectedQuote?.status !== 'accepted' && (
+            {selectedQuote?.status === 'pending' && (
               <Button
                 className="flex-1 h-12 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-primary/20"
                 onClick={() => {
@@ -272,6 +442,23 @@ export function SellerQuotesHub() {
                 }}
               >
                 {t('hub.dialog.update_btn')}
+              </Button>
+            )}
+            {selectedQuote?.status === 'accepted' && (
+              <Button
+                variant="outline"
+                disabled={isSendingReminder}
+                className="flex-1 h-12 rounded-xl font-black uppercase tracking-widest"
+                onClick={() => {
+                  sendReminder(selectedQuote.id, {
+                    onSuccess: () => toast.success('hub.toasts.reminder_sent'),
+                    onError: () => toast.error('hub.toasts.reminder_error'),
+                  })
+                }}
+              >
+                {isSendingReminder
+                  ? t('hub.dialog.reminding')
+                  : t('hub.dialog.remind_btn')}
               </Button>
             )}
             <Button

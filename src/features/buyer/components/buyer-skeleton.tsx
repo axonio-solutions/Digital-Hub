@@ -1,6 +1,6 @@
 'use client'
 
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function BuyerSkeleton() {
   return (
@@ -42,7 +42,10 @@ export function BuyerSkeleton() {
         <div className="space-y-3">
           <Skeleton className="h-12 w-full rounded-xl opacity-50" />
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="flex gap-3 items-center h-14 border-b border-border/40 pb-3">
+            <div
+              key={i}
+              className="flex gap-3 items-center h-14 border-b border-border/40 pb-3"
+            >
               <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
               <Skeleton className="h-5 w-40 rounded-md" />
               <Skeleton className="h-5 w-20 rounded-md ms-auto" />

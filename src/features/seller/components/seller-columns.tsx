@@ -95,7 +95,10 @@ const BRAND_COLORS: Record<string, string> = {
 
 function getBrandColor(brand?: string): string {
   if (!brand) return '#888'
-  return BRAND_COLORS[brand] || `hsl(${brand.length * 47 + brand.charCodeAt(0) * 13 % 360}, 55%, 45%)`
+  return (
+    BRAND_COLORS[brand] ||
+    `hsl(${brand.length * 47 + ((brand.charCodeAt(0) * 13) % 360)}, 55%, 45%)`
+  )
 }
 
 export const useSellerColumns = (
@@ -116,15 +119,23 @@ export const useSellerColumns = (
             <div className="flex items-center gap-3">
               <div className="size-8 rounded bg-muted overflow-hidden border shrink-0 flex items-center justify-center">
                 {partImages.length > 0 ? (
-                  <img src={partImages[0]} alt="" className="size-full object-cover" />
+                  <img
+                    src={partImages[0]}
+                    alt=""
+                    className="size-full object-cover"
+                  />
                 ) : (
                   <span className="text-[10px] text-muted-foreground font-bold">
-                    {quote.request?.partName?.substring(0, 2).toUpperCase() || 'P'}
+                    {quote.request?.partName?.substring(0, 2).toUpperCase() ||
+                      'P'}
                   </span>
                 )}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="font-medium text-sm truncate max-w-[180px]" title={quote.request?.partName}>
+                <span
+                  className="font-medium text-sm truncate max-w-[180px]"
+                  title={quote.request?.partName}
+                >
                   {quote.request?.partName}
                 </span>
                 <span className="text-[10px] text-muted-foreground font-mono">
@@ -148,7 +159,11 @@ export const useSellerColumns = (
             <div className="flex items-center gap-2">
               <div className="size-7 rounded-md bg-muted flex items-center justify-center shrink-0 border border-border">
                 {logoUrl ? (
-                  <img src={logoUrl} alt={brand} className="size-4 object-contain" />
+                  <img
+                    src={logoUrl}
+                    alt={brand}
+                    className="size-4 object-contain"
+                  />
                 ) : (
                   <span className="text-[9px] font-bold text-muted-foreground">
                     {(brand || '?').substring(0, 2).toUpperCase()}
@@ -156,8 +171,12 @@ export const useSellerColumns = (
                 )}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-sm font-medium">{brand} {model}</span>
-                {year && <span className="text-xs text-muted-foreground">{year}</span>}
+                <span className="text-sm font-medium">
+                  {brand} {model}
+                </span>
+                {year && (
+                  <span className="text-xs text-muted-foreground">{year}</span>
+                )}
               </div>
             </div>
           )
@@ -173,14 +192,20 @@ export const useSellerColumns = (
             <div className="flex items-center gap-2">
               <div className="size-7 rounded-md bg-muted flex items-center justify-center shrink-0 border border-border">
                 {cat?.imageUrl ? (
-                  <img src={cat.imageUrl} alt="" className="size-4 object-contain" />
+                  <img
+                    src={cat.imageUrl}
+                    alt=""
+                    className="size-4 object-contain"
+                  />
                 ) : (
                   <span className="text-[9px] font-bold text-muted-foreground">
                     {(catName || '?').substring(0, 2).toUpperCase()}
                   </span>
                 )}
               </div>
-              <span className="text-sm font-medium">{tCategory(catName, t)}</span>
+              <span className="text-sm font-medium">
+                {tCategory(catName, t)}
+              </span>
             </div>
           )
         },
@@ -194,11 +219,17 @@ export const useSellerColumns = (
           return (
             <div className="flex flex-col">
               <div className="flex items-center gap-1 font-semibold">
-                <span className="text-sm">{price.toLocaleString(i18n.language)}</span>
-                <span className="text-[10px] text-muted-foreground uppercase">DZD</span>
+                <span className="text-sm">
+                  {price.toLocaleString(i18n.language)}
+                </span>
+                <span className="text-[10px] text-muted-foreground uppercase">
+                  DZD
+                </span>
               </div>
               <span className="text-[10px] text-muted-foreground">
-                {t(`columns.conditions.${condition}`, { defaultValue: condition })}
+                {t(`columns.conditions.${condition}`, {
+                  defaultValue: condition,
+                })}
               </span>
             </div>
           )
@@ -214,7 +245,7 @@ export const useSellerColumns = (
               variant={
                 status === 'accepted'
                   ? 'success'
-                  : status === 'rejected' || status === 'withdrawn'
+                  : status === 'rejected'
                     ? 'neutral'
                     : 'info'
               }
@@ -231,7 +262,9 @@ export const useSellerColumns = (
         cell: ({ row }) => (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-3 w-3" />
-            <span className="text-xs">{formatRelativeTime(row.original.createdAt)}</span>
+            <span className="text-xs">
+              {formatRelativeTime(row.original.createdAt)}
+            </span>
           </div>
         ),
       },
@@ -243,29 +276,44 @@ export const useSellerColumns = (
             <div className="flex justify-end">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    variant="ghost"
+                    className="h-8 w-8 p-0"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <span className="sr-only">{t('table.actions_menu')}</span>
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{t('table.actions_menu')}</DropdownMenuLabel>
+                  <DropdownMenuLabel>
+                    {t('table.actions_menu')}
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onAction({ type: 'view_request', item: quote })}>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      onAction({ type: 'view_request', item: quote })
+                    }
+                  >
                     <Eye className="me-2 h-4 w-4" />
                     {t('table.view_request')}
                   </DropdownMenuItem>
                   {quote.status === 'pending' && (
-                    <DropdownMenuItem onClick={() => onAction({ type: 'update', item: quote })}>
+                    <DropdownMenuItem
+                      onClick={() => onAction({ type: 'update', item: quote })}
+                    >
                       <Settings2 className="me-2 h-4 w-4" />
                       {t('table.edit_offer')}
                     </DropdownMenuItem>
                   )}
-                  {(quote.status === 'pending' || quote.status === 'rejected') && (
+                  {(quote.status === 'pending' ||
+                    quote.status === 'rejected') && (
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => onAction({ type: 'delete', item: quote })}
+                        onClick={() =>
+                          onAction({ type: 'delete', item: quote })
+                        }
                         className="text-rose-600 focus:text-rose-600"
                       >
                         <Trash2 className="me-2 h-4 w-4" />

@@ -55,10 +55,17 @@ export function ActionConfirmDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!loading) onOpenChange(v) }}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!loading) onOpenChange(v)
+      }}
+    >
       <DialogContent className="rounded-2xl max-w-sm">
         <DialogHeader>
-          <DialogTitle className={variant === 'destructive' ? 'text-destructive' : ''}>
+          <DialogTitle
+            className={variant === 'destructive' ? 'text-destructive' : ''}
+          >
             {title}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">

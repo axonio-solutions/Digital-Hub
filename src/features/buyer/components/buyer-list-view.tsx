@@ -5,22 +5,26 @@ import { useTranslation } from 'react-i18next'
 import {
   IconCircleCheckFilled,
   IconCircleXFilled,
-  IconLoader
+  IconLoader,
 } from '@tabler/icons-react'
-import { useBuyerColumns } from './buyer-columns'
-import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
-import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination'
-import { useCancelRequest, useDeleteRequest, useReopenRequest } from '@/features/requests/hooks/use-requests'
 import {
-  useReactTable,
+  flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  flexRender,
+  useReactTable,
 } from '@tanstack/react-table'
+import { useBuyerColumns } from './buyer-columns'
+import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
+import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination'
+import {
+  useCancelRequest,
+  useDeleteRequest,
+  useReopenRequest,
+} from '@/features/requests/hooks/use-requests'
 import {
   Table,
   TableBody,
@@ -33,7 +37,7 @@ import { cn } from '@/lib/utils'
 
 interface RequestsListViewProps {
   data: Array<any>
-  onAction?: (action: { type: string, item: any }) => void
+  onAction?: (action: { type: string; item: any }) => void
 }
 
 function useBrandOptions(data: Array<any>) {
@@ -43,7 +47,9 @@ function useBrandOptions(data: Array<any>) {
       const brandName = r.vehicleBrand || r.brand?.brand
       if (brandName) brands.add(brandName)
     })
-    return Array.from(brands).sort().map((brand) => ({ label: brand, value: brand }))
+    return Array.from(brands)
+      .sort()
+      .map((brand) => ({ label: brand, value: brand }))
   }, [data])
 }
 
@@ -55,7 +61,14 @@ export function BuyerListView({ data, onAction }: RequestsListViewProps) {
 
   const columns = useBuyerColumns(
     onAction,
-    { cancelRequest, deleteRequest, reopenRequest, isCancelling, isDeleting, isReopening },
+    {
+      cancelRequest,
+      deleteRequest,
+      reopenRequest,
+      isCancelling,
+      isDeleting,
+      isReopening,
+    },
     t,
   )
 
@@ -92,9 +105,21 @@ export function BuyerListView({ data, onAction }: RequestsListViewProps) {
             column: 'status',
             title: t('filters.status'),
             options: [
-              { label: t('filters.statuses.open'), value: 'open', icon: IconLoader },
-              { label: t('filters.statuses.fulfilled'), value: 'fulfilled', icon: IconCircleCheckFilled },
-              { label: t('filters.statuses.cancelled'), value: 'cancelled', icon: IconCircleXFilled },
+              {
+                label: t('filters.statuses.open'),
+                value: 'open',
+                icon: IconLoader,
+              },
+              {
+                label: t('filters.statuses.fulfilled'),
+                value: 'fulfilled',
+                icon: IconCircleCheckFilled,
+              },
+              {
+                label: t('filters.statuses.cancelled'),
+                value: 'cancelled',
+                icon: IconCircleXFilled,
+              },
             ],
           },
           {
@@ -115,7 +140,10 @@ export function BuyerListView({ data, onAction }: RequestsListViewProps) {
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -127,18 +155,26 @@ export function BuyerListView({ data, onAction }: RequestsListViewProps) {
                   <TableRow
                     key={row.id}
                     className={cn('cursor-pointer')}
-                    onClick={() => onAction?.({ type: 'view_request', item: row.original })}
+                    onClick={() =>
+                      onAction?.({ type: 'view_request', item: row.original })
+                    }
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t('empty.title', 'No demands found')}
                   </TableCell>
                 </TableRow>

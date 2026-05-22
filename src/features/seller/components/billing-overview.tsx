@@ -2,7 +2,23 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import {
+  ArrowDownRight,
+  ArrowRight,
+  ArrowUpRight,
+  Coins,
+  Send,
+  ShoppingBag,
+  TrendingUp,
+} from 'lucide-react'
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
 import { useSellerCreditBalance } from '../hooks/use-billing'
+import type { ColumnDef } from '@tanstack/react-table'
 import { DirectionProvider } from '@/components/ui/direction'
 import { Skeleton } from '@/components/ui/skeleton'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
@@ -10,17 +26,13 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { RequestCreditsDialog } from '@/features/credits/components/request-credits-dialog'
 import {
-  Coins,
-  Send,
-  TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight,
-  ShoppingBag,
-  ArrowRight,
-} from 'lucide-react'
-import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table'
-import type { ColumnDef } from '@tanstack/react-table'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination'
 
 const DATE_LOCALE: Record<string, string> = {
@@ -41,7 +53,9 @@ export function BillingOverview() {
   const transactions = data?.transactions ?? []
 
   const { totalSpent, totalPurchased, quoteCount } = useMemo(() => {
-    let spent = 0, purchased = 0, quotes = 0
+    let spent = 0,
+      purchased = 0,
+      quotes = 0
     for (const txn of transactions) {
       if (txn.amount < 0) spent += Math.abs(txn.amount)
       else purchased += txn.amount
@@ -53,73 +67,94 @@ export function BillingOverview() {
   const columns: Array<ColumnDef<any>> = useMemo(() => {
     const tc = (key: string) => t(`dashboard/credits:${key}`)
     return [
-    {
-      id: 'transaction',
-      header: tc('revenue.columns.transaction'),
-      cell: ({ row }) => {
-        const txn = row.original
-        const isCredit = txn.amount > 0
-        return (
-          <div className="flex items-center gap-3">
-            <div className={cn(
-              'p-1.5 rounded-lg shrink-0',
-              isCredit ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-red-100 dark:bg-red-900/30',
-            )}>
-              {isCredit
-                ? <ArrowUpRight className="size-4 text-emerald-600 dark:text-emerald-400" />
-                : <ArrowDownRight className="size-4 text-red-600 dark:text-red-400" />
-              }
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-xs truncate">
-                  {tc(`revenue.transaction_types.${txn.type}`)}
-                </span>
-                <GlowingBadge
-                  variant={txn.type === 'quote_spent' ? 'error' : txn.type === 'bonus' ? 'warning' : isCredit ? 'success' : 'default'}
-                  className="text-[9px] uppercase"
-                >
-                  {tc(`revenue.transaction_types.${txn.type}`)}
-                </GlowingBadge>
+      {
+        id: 'transaction',
+        header: tc('revenue.columns.transaction'),
+        cell: ({ row }) => {
+          const txn = row.original
+          const isCredit = txn.amount > 0
+          return (
+            <div className="flex items-center gap-3">
+              <div
+                className={cn(
+                  'p-1.5 rounded-lg shrink-0',
+                  isCredit
+                    ? 'bg-emerald-100 dark:bg-emerald-900/30'
+                    : 'bg-red-100 dark:bg-red-900/30',
+                )}
+              >
+                {isCredit ? (
+                  <ArrowUpRight className="size-4 text-emerald-600 dark:text-emerald-400" />
+                ) : (
+                  <ArrowDownRight className="size-4 text-red-600 dark:text-red-400" />
+                )}
               </div>
-              {txn.description && (
-                <p className="text-[10px] text-muted-foreground truncate mt-0.5">
-                  {txn.description}
-                </p>
-              )}
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-xs truncate">
+                    {tc(`revenue.transaction_types.${txn.type}`)}
+                  </span>
+                  <GlowingBadge
+                    variant={
+                      txn.type === 'quote_spent'
+                        ? 'error'
+                        : txn.type === 'bonus'
+                          ? 'warning'
+                          : isCredit
+                            ? 'success'
+                            : 'default'
+                    }
+                    className="text-[9px] uppercase"
+                  >
+                    {tc(`revenue.transaction_types.${txn.type}`)}
+                  </GlowingBadge>
+                </div>
+                {txn.description && (
+                  <p className="text-[10px] text-muted-foreground truncate mt-0.5">
+                    {txn.description}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        )
+          )
+        },
       },
-    },
-    {
-      id: 'date',
-      header: tc('revenue.columns.date'),
-      cell: ({ row }) => {
-        const txn = row.original
-        return (
-          <span className="text-xs text-muted-foreground">
-            {txn.createdAt && new Date(txn.createdAt).toLocaleDateString(locale)}
-          </span>
-        )
+      {
+        id: 'date',
+        header: tc('revenue.columns.date'),
+        cell: ({ row }) => {
+          const txn = row.original
+          return (
+            <span className="text-xs text-muted-foreground">
+              {txn.createdAt &&
+                new Date(txn.createdAt).toLocaleDateString(locale)}
+            </span>
+          )
+        },
       },
-    },
-    {
-      id: 'amount',
-      header: () => <span className="text-end block">{tc('revenue.columns.amount')}</span>,
-      cell: ({ row }) => {
-        const txn = row.original
-        const isCredit = txn.amount > 0
-        return (
-          <span className={cn(
-            'text-end block text-sm font-black tabular-nums',
-            isCredit ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400',
-          )}>
-            {isCredit ? '+' : ''}{txn.amount}
-          </span>
-        )
+      {
+        id: 'amount',
+        header: () => (
+          <span className="text-end block">{tc('revenue.columns.amount')}</span>
+        ),
+        cell: ({ row }) => {
+          const txn = row.original
+          const isCredit = txn.amount > 0
+          return (
+            <span
+              className={cn(
+                'text-end block text-sm font-black tabular-nums',
+                isCredit
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : 'text-red-600 dark:text-red-400',
+              )}
+            >
+              {isCredit ? '+' : ''}
+              {txn.amount}
+            </span>
+          )
+        },
       },
-    },
     ]
   }, [t, locale])
 
@@ -191,7 +226,8 @@ export function BillingOverview() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="flex flex-col gap-1 px-4 py-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30">
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-              <ArrowUpRight className="size-3 text-emerald-500" /> {tc('billing.total_purchased')}
+              <ArrowUpRight className="size-3 text-emerald-500" />{' '}
+              {tc('billing.total_purchased')}
             </span>
             <span className="text-xl font-black tabular-nums text-emerald-700 dark:text-emerald-300">
               {totalPurchased.toLocaleString()}
@@ -199,7 +235,8 @@ export function BillingOverview() {
           </div>
           <div className="flex flex-col gap-1 px-4 py-3.5 rounded-2xl bg-red-50 dark:bg-red-950/30">
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-              <ArrowDownRight className="size-3 text-red-500" /> {tc('billing.total_spent')}
+              <ArrowDownRight className="size-3 text-red-500" />{' '}
+              {tc('billing.total_spent')}
             </span>
             <span className="text-xl font-black tabular-nums text-red-700 dark:text-red-300">
               {totalSpent.toLocaleString()}
@@ -207,7 +244,8 @@ export function BillingOverview() {
           </div>
           <div className="flex flex-col gap-1 px-4 py-3.5 rounded-2xl bg-blue-50 dark:bg-blue-950/30">
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-              <TrendingUp className="size-3 text-blue-500" /> {tc('billing.quote_count')}
+              <TrendingUp className="size-3 text-blue-500" />{' '}
+              {tc('billing.quote_count')}
             </span>
             <span className="text-xl font-black tabular-nums text-blue-700 dark:text-blue-300">
               {quoteCount.toLocaleString()}
@@ -229,7 +267,8 @@ export function BillingOverview() {
               </p>
               <Button asChild className="rounded-xl text-xs font-bold">
                 <a href="/explore">
-                  {t('dashboard/seller:actions.browse_requests')} <ArrowRight className="size-3.5 ms-1.5" />
+                  {t('dashboard/seller:actions.browse_requests')}{' '}
+                  <ArrowRight className="size-3.5 ms-1.5" />
                 </a>
               </Button>
             </div>
@@ -241,10 +280,16 @@ export function BillingOverview() {
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
-                          <TableHead key={header.id} className="text-xs font-bold">
+                          <TableHead
+                            key={header.id}
+                            className="text-xs font-bold"
+                          >
                             {header.isPlaceholder
                               ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
                           </TableHead>
                         ))}
                       </TableRow>
@@ -255,7 +300,10 @@ export function BillingOverview() {
                       <TableRow key={row.id}>
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
                           </TableCell>
                         ))}
                       </TableRow>
@@ -271,7 +319,10 @@ export function BillingOverview() {
         </div>
       </div>
 
-      <RequestCreditsDialog open={requestDialogOpen} onOpenChange={setRequestDialogOpen} />
+      <RequestCreditsDialog
+        open={requestDialogOpen}
+        onOpenChange={setRequestDialogOpen}
+      />
     </DirectionProvider>
   )
 }

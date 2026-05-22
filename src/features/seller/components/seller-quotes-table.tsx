@@ -11,7 +11,12 @@ interface SellerQuotesTableProps {
   toolbarExtras?: React.ReactNode
 }
 
-export function SellerQuotesTable({ data, onAction, brandLogos, toolbarExtras }: SellerQuotesTableProps) {
+export function SellerQuotesTable({
+  data,
+  onAction,
+  brandLogos,
+  toolbarExtras,
+}: SellerQuotesTableProps) {
   const { t } = useTranslation('quotes')
   const columns = useSellerColumns(onAction, brandLogos)
 

@@ -49,5 +49,7 @@ export function BuyerLayout({ children }: { children: React.ReactNode }) {
     </>
   )
 
-  return <DashboardShell sidebarContent={sidebarContent}>{children}</DashboardShell>
+  return (
+    <DashboardShell sidebarContent={sidebarContent}>{children}</DashboardShell>
+  )
 }

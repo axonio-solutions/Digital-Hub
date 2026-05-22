@@ -3,8 +3,10 @@ import { fetchBuyerRequestsServerFn } from '@/fn/requests'
 
 export const buyerKeys = {
   all: ['buyer'] as const,
-  requests: (buyerId: string) => [...buyerKeys.all, 'requests', buyerId] as const,
-  analytics: (buyerId: string) => [...buyerKeys.all, 'analytics', buyerId] as const,
+  requests: (buyerId: string) =>
+    [...buyerKeys.all, 'requests', buyerId] as const,
+  analytics: (buyerId: string) =>
+    [...buyerKeys.all, 'analytics', buyerId] as const,
 }
 
 export function useBuyerRequests(buyerId: string) {

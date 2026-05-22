@@ -2,7 +2,14 @@
 
 import { useCallback, useMemo, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { ArrowRight, Car, CheckCircle2, MessageSquare, Plus, Zap } from 'lucide-react'
+import {
+  ArrowRight,
+  Car,
+  CheckCircle2,
+  MessageSquare,
+  Plus,
+  Zap,
+} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
@@ -12,7 +19,11 @@ import { RequestWizard } from '@/features/requests/components/request-wizard-new
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useBuyerRequests } from '@/features/buyer/hooks/use-buyer'
-import { useCancelRequest, useDeleteRequest, useReopenRequest } from '@/features/requests/hooks/use-requests'
+import {
+  useCancelRequest,
+  useDeleteRequest,
+  useReopenRequest,
+} from '@/features/requests/hooks/use-requests'
 import { cn } from '@/lib/utils'
 
 export function BuyerOverview() {
@@ -22,7 +33,10 @@ export function BuyerOverview() {
   const buyerId = user?.id || ''
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
   const [editRequestData, setEditRequestData] = useState<any>(null)
-  const [pendingAction, setPendingAction] = useState<{ type: string; id: string } | null>(null)
+  const [pendingAction, setPendingAction] = useState<{
+    type: string
+    id: string
+  } | null>(null)
   const navigate = useNavigate()
 
   const { data: requests = [], isLoading } = useBuyerRequests(buyerId)
@@ -32,47 +46,95 @@ export function BuyerOverview() {
 
   const clearPending = useCallback(() => setPendingAction(null), [])
 
-  const handleAction = useCallback((action: { type: string; item: any }) => {
-    switch (action.type) {
-      case 'view_request':
-        navigate({ to: '/dashboard/requests/$requestId', params: { requestId: action.item.id } })
-        break
-      case 'edit_request':
-        setEditRequestData(action.item)
-        break
-      case 'close_request':
-        setPendingAction({ type: 'close_request', id: action.item.id })
-        cancelRequest(action.item.id, { onSuccess: () => toast.success('toasts.request_closed'), onError: (err: any) => toast.error('toasts.error', { error: err.message }), onSettled: clearPending })
-        break
-      case 'reopen_request':
-        setPendingAction({ type: 'reopen_request', id: action.item.id })
-        reopenRequest(action.item.id, { onSuccess: () => toast.success('toasts.request_reopened'), onError: (err: any) => toast.error('toasts.error', { error: err.message }), onSettled: clearPending })
-        break
-      case 'delete_request':
-        setPendingAction({ type: 'delete_request', id: action.item.id })
-        deleteRequest(action.item.id, { onSuccess: () => toast.success('toasts.request_deleted'), onError: (err: any) => toast.error('toasts.error', { error: err.message }), onSettled: clearPending })
-        break
-    }
-  }, [navigate, cancelRequest, deleteRequest, reopenRequest, clearPending])
+  const handleAction = useCallback(
+    (action: { type: string; item: any }) => {
+      switch (action.type) {
+        case 'view_request':
+          navigate({
+            to: '/dashboard/requests/$requestId',
+            params: { requestId: action.item.id },
+          })
+          break
+        case 'edit_request':
+          setEditRequestData(action.item)
+          break
+        case 'close_request':
+          setPendingAction({ type: 'close_request', id: action.item.id })
+          cancelRequest(action.item.id, {
+            onSuccess: () => toast.success('toasts.request_closed'),
+            onError: (err: any) =>
+              toast.error('toasts.error', { error: err.message }),
+            onSettled: clearPending,
+          })
+          break
+        case 'reopen_request':
+          setPendingAction({ type: 'reopen_request', id: action.item.id })
+          reopenRequest(action.item.id, {
+            onSuccess: () => toast.success('toasts.request_reopened'),
+            onError: (err: any) =>
+              toast.error('toasts.error', { error: err.message }),
+            onSettled: clearPending,
+          })
+          break
+        case 'delete_request':
+          setPendingAction({ type: 'delete_request', id: action.item.id })
+          deleteRequest(action.item.id, {
+            onSuccess: () => toast.success('toasts.request_deleted'),
+            onError: (err: any) =>
+              toast.error('toasts.error', { error: err.message }),
+            onSettled: clearPending,
+          })
+          break
+      }
+    },
+    [navigate, cancelRequest, deleteRequest, reopenRequest, clearPending],
+  )
 
-  const { activeRequests, fulfilledRequests, totalQuotes, recentDemands } = useMemo(() => {
-    const active = requests.filter((r: any) => r.status === 'open')
-    const fulfilled = requests.filter((r: any) => r.status === 'fulfilled')
-    const quotes = requests.reduce((acc: number, curr: any) => acc + (curr.quotes?.length || 0), 0)
-    const recent = [...requests]
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 3)
-    return { activeRequests: active, fulfilledRequests: fulfilled, totalQuotes: quotes, recentDemands: recent }
-  }, [requests])
+  const { activeRequests, fulfilledRequests, totalQuotes, recentDemands } =
+    useMemo(() => {
+      const active = requests.filter((r: any) => r.status === 'open')
+      const fulfilled = requests.filter((r: any) => r.status === 'fulfilled')
+      const quotes = requests.reduce(
+        (acc: number, curr: any) => acc + (curr.quotes?.length || 0),
+        0,
+      )
+      const recent = [...requests]
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        )
+        .slice(0, 3)
+      return {
+        activeRequests: active,
+        fulfilledRequests: fulfilled,
+        totalQuotes: quotes,
+        recentDemands: recent,
+      }
+    }, [requests])
 
   if (isLoading && buyerId) {
     return <BuyerOverviewSkeleton />
   }
 
   const metrics = [
-    { label: t('stats.active.label'), value: activeRequests.length, icon: Zap, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50' },
-    { label: t('stats.offers.label'), value: totalQuotes, icon: MessageSquare, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50' },
-    { label: t('stats.fulfilled.label'), value: fulfilledRequests.length, icon: CheckCircle2, color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/50' },
+    {
+      label: t('stats.active.label'),
+      value: activeRequests.length,
+      icon: Zap,
+      color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50',
+    },
+    {
+      label: t('stats.offers.label'),
+      value: totalQuotes,
+      icon: MessageSquare,
+      color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50',
+    },
+    {
+      label: t('stats.fulfilled.label'),
+      value: fulfilledRequests.length,
+      icon: CheckCircle2,
+      color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/50',
+    },
   ]
 
   return (
@@ -94,7 +156,10 @@ export function BuyerOverview() {
           </div>
         </div>
 
-        <Button onClick={() => setIsNewRequestOpen(true)} className="hidden sm:inline-flex font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full sm:w-auto">
+        <Button
+          onClick={() => setIsNewRequestOpen(true)}
+          className="hidden sm:inline-flex font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full sm:w-auto"
+        >
           <Plus className="size-4 me-2" />
           {t('new_demand', 'New Demand')}
         </Button>
@@ -107,12 +172,14 @@ export function BuyerOverview() {
               key={m.label}
               className={cn(
                 'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
-                m.color
+                m.color,
               )}
             >
               <div className="flex items-center gap-1.5">
                 <m.icon className="size-4" />
-                <span className="text-xl font-black tabular-nums leading-none">{m.value}</span>
+                <span className="text-xl font-black tabular-nums leading-none">
+                  {m.value}
+                </span>
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
                 {m.label}
@@ -122,26 +189,35 @@ export function BuyerOverview() {
         </div>
       )}
 
-      <Button onClick={() => setIsNewRequestOpen(true)} className="sm:hidden font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full">
+      <Button
+        onClick={() => setIsNewRequestOpen(true)}
+        className="sm:hidden font-black uppercase text-xs tracking-widest h-11 px-6 shadow-lg shadow-primary/20 rounded-2xl w-full"
+      >
         <Plus className="size-4 me-2" />
         {t('new_demand', 'New Demand')}
       </Button>
 
       {requests.length > 0 ? (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
-                {t('recent.title')}
-              </p>
-              <Button asChild variant="ghost" size="sm" className="h-auto py-1 px-2 text-xs font-bold gap-1">
-                <Link to="/dashboard/requests">
-                  {t('recent.view_all')} <ArrowRight className="size-3 rtl:rotate-180" />
-                </Link>
-              </Button>
-            </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
+              {t('recent.title')}
+            </p>
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="h-auto py-1 px-2 text-xs font-bold gap-1"
+            >
+              <Link to="/dashboard/requests">
+                {t('recent.view_all')}{' '}
+                <ArrowRight className="size-3 rtl:rotate-180" />
+              </Link>
+            </Button>
+          </div>
 
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-              {recentDemands.map((req: any) => (
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+            {recentDemands.map((req: any) => (
               <PartCard
                 key={req.id}
                 id={req.id}
@@ -149,39 +225,59 @@ export function BuyerOverview() {
                 brand={req.vehicleBrand || req.brand?.brand}
                 brandImageUrl={req.brand?.imageUrl}
                 modelYear={req.modelYear}
-                  category={req.category?.name}
-                  categoryImageUrl={req.category?.imageUrl}
-                  region={req.brand?.clusterRegion}
-                  imageUrls={req.imageUrls}
-                  quotesCount={req.quotes?.length}
-                  status={req.status}
-                  createdAt={req.createdAt}
-                  notes={req.notes}
-                  onClick={() => handleAction({ type: 'view_request', item: req })}
-                  onEdit={req.status === 'open' ? () => handleAction({ type: 'edit_request', item: req }) : undefined}
-                  onClose={req.status === 'open' ? () => handleAction({ type: 'close_request', item: req }) : undefined}
-                  onReopen={req.status !== 'open' ? () => handleAction({ type: 'reopen_request', item: req }) : undefined}
-                  onDelete={req.status !== 'fulfilled' ? () => handleAction({ type: 'delete_request', item: req }) : undefined}
-                  isProcessing={pendingAction?.id === req.id}
-                  className="w-full"
-                />
-              ))}
-            </div>
+                category={req.category?.name}
+                categoryImageUrl={req.category?.imageUrl}
+                region={req.brand?.clusterRegion}
+                imageUrls={req.imageUrls}
+                quotesCount={req.quotes?.length}
+                status={req.status}
+                createdAt={req.createdAt}
+                notes={req.notes}
+                onClick={() =>
+                  handleAction({ type: 'view_request', item: req })
+                }
+                onEdit={
+                  req.status === 'open'
+                    ? () => handleAction({ type: 'edit_request', item: req })
+                    : undefined
+                }
+                onClose={
+                  req.status === 'open'
+                    ? () => handleAction({ type: 'close_request', item: req })
+                    : undefined
+                }
+                onReopen={
+                  req.status === 'cancelled'
+                    ? () => handleAction({ type: 'reopen_request', item: req })
+                    : undefined
+                }
+                onDelete={
+                  req.status !== 'fulfilled'
+                    ? () => handleAction({ type: 'delete_request', item: req })
+                    : undefined
+                }
+                isProcessing={pendingAction?.id === req.id}
+                className="w-full"
+              />
+            ))}
           </div>
+        </div>
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center gap-6 py-16 px-4">
           <div className="size-20 rounded-[2rem] bg-primary/10 flex items-center justify-center shadow-inner">
             <Car className="size-10 text-primary/50" strokeWidth={1.5} />
           </div>
           <div className="text-center space-y-2">
-            <h3 className="text-lg font-black tracking-tight">{t('empty.title')}</h3>
+            <h3 className="text-lg font-black tracking-tight">
+              {t('empty.title')}
+            </h3>
             <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
               {t('empty.desc')}
             </p>
           </div>
-          <Button 
-            onClick={() => setIsNewRequestOpen(true)} 
-            size="lg" 
+          <Button
+            onClick={() => setIsNewRequestOpen(true)}
+            size="lg"
             className="font-black uppercase text-xs tracking-widest h-12 px-8 rounded-2xl shadow-lg shadow-primary/20"
           >
             <Plus className="size-4 me-2" />
@@ -201,7 +297,10 @@ export function BuyerOverview() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!editRequestData} onOpenChange={(open) => !open && setEditRequestData(null)}>
+      <Dialog
+        open={!!editRequestData}
+        onOpenChange={(open) => !open && setEditRequestData(null)}
+      >
         <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
           <div className="h-dvh max-h-[85dvh]">
             <RequestWizard

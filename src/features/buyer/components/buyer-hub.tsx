@@ -2,36 +2,58 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { Plus, Zap, MessageSquare, CheckCircle2, RefreshCcw } from 'lucide-react'
+import {
+  CheckCircle2,
+  MessageSquare,
+  Plus,
+  RefreshCcw,
+  Zap,
+} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from '@tanstack/react-router'
-import { useToast } from '@/hooks/use-toast'
 import { useBuyerRequests } from '../hooks/use-buyer'
 import { BuyerListView } from './buyer-list-view'
 import { BuyerGridView } from './buyer-grid-view'
 import { BuyerSkeleton } from './buyer-skeleton'
+import { useToast } from '@/hooks/use-toast'
 import { RequestWizard } from '@/features/requests/components/request-wizard-new'
 import { Button } from '@/components/ui/button'
 import { ViewToggles } from '@/components/ui/view-toggles'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import { useCancelRequest, useDeleteRequest, useReopenRequest } from '@/features/requests/hooks/use-requests'
+import {
+  useCancelRequest,
+  useDeleteRequest,
+  useReopenRequest,
+} from '@/features/requests/hooks/use-requests'
 import { taxonomyKeys } from '@/features/taxonomy/hooks/use-taxonomy'
 import { cn } from '@/lib/utils'
 
 export function BuyerHub() {
-  const { t } = useTranslation(['requests/hub', 'requests/list', 'dashboard/buyer'])
+  const { t } = useTranslation([
+    'requests/hub',
+    'requests/list',
+    'dashboard/buyer',
+  ])
   const { toast } = useToast('requests/hub')
   const [view, setView] = useState<'list' | 'grid'>('grid')
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editRequestData, setEditRequestData] = useState<any>(null)
-  const [pendingAction, setPendingAction] = useState<{ type: string; id: string } | null>(null)
+  const [pendingAction, setPendingAction] = useState<{
+    type: string
+    id: string
+  } | null>(null)
   const navigate = useNavigate()
 
   const { data: user } = useAuth()
   const buyerId = user?.id || ''
-  const { data: requests = [], refetch, isLoading, isRefetching } = useBuyerRequests(buyerId)
+  const {
+    data: requests = [],
+    refetch,
+    isLoading,
+    isRefetching,
+  } = useBuyerRequests(buyerId)
   const queryClient = useQueryClient()
   const prefetchedTaxonomy = useRef(false)
 
@@ -46,47 +68,65 @@ export function BuyerHub() {
 
   const clearPending = useCallback(() => setPendingAction(null), [])
 
-  const handleAction = useCallback((action: { type: string; item: any }) => {
-    switch (action.type) {
-      case 'view_request':
-        navigate({ to: '/dashboard/requests/$requestId', params: { requestId: action.item.id } })
-        break
-      case 'edit_request':
-        setEditRequestData(action.item)
-        setIsEditDialogOpen(true)
-        break
-      case 'close_request':
-        setPendingAction({ type: 'close_request', id: action.item.id })
-        cancelRequest(action.item.id, {
-          onSuccess: () => toast.success('toasts.closed'),
-          onError: (err: any) => toast.error('toasts.error', { error: err.message }),
-          onSettled: clearPending,
-        })
-        break
-      case 'reopen_request':
-        setPendingAction({ type: 'reopen_request', id: action.item.id })
-        reopenRequest(action.item.id, {
-          onSuccess: () => toast.success('toasts.reopened'),
-          onError: (err: any) => toast.error('toasts.error', { error: err.message }),
-          onSettled: clearPending,
-        })
-        break
-      case 'delete_request':
-        setPendingAction({ type: 'delete_request', id: action.item.id })
-        deleteRequest(action.item.id, {
-          onSuccess: () => toast.success('toasts.deleted'),
-          onError: (err: any) => toast.error('toasts.error', { error: err.message }),
-          onSettled: clearPending,
-        })
-        break
-    }
-  }, [navigate, cancelRequest, deleteRequest, reopenRequest, clearPending])
+  const handleAction = useCallback(
+    (action: { type: string; item: any }) => {
+      switch (action.type) {
+        case 'view_request':
+          navigate({
+            to: '/dashboard/requests/$requestId',
+            params: { requestId: action.item.id },
+          })
+          break
+        case 'edit_request':
+          setEditRequestData(action.item)
+          setIsEditDialogOpen(true)
+          break
+        case 'close_request':
+          setPendingAction({ type: 'close_request', id: action.item.id })
+          cancelRequest(action.item.id, {
+            onSuccess: () => toast.success('toasts.closed'),
+            onError: (err: any) =>
+              toast.error('toasts.error', { error: err.message }),
+            onSettled: clearPending,
+          })
+          break
+        case 'reopen_request':
+          setPendingAction({ type: 'reopen_request', id: action.item.id })
+          reopenRequest(action.item.id, {
+            onSuccess: () => toast.success('toasts.reopened'),
+            onError: (err: any) =>
+              toast.error('toasts.error', { error: err.message }),
+            onSettled: clearPending,
+          })
+          break
+        case 'delete_request':
+          setPendingAction({ type: 'delete_request', id: action.item.id })
+          deleteRequest(action.item.id, {
+            onSuccess: () => toast.success('toasts.deleted'),
+            onError: (err: any) =>
+              toast.error('toasts.error', { error: err.message }),
+            onSettled: clearPending,
+          })
+          break
+      }
+    },
+    [navigate, cancelRequest, deleteRequest, reopenRequest, clearPending],
+  )
 
   const { activeCount, fulfilledCount, totalQuotes } = useMemo(() => {
     const active = requests.filter((r: any) => r.status === 'open').length
-    const fulfilled = requests.filter((r: any) => r.status === 'fulfilled').length
-    const quotes = requests.reduce((acc: number, curr: any) => acc + (curr.quotes?.length || 0), 0)
-    return { activeCount: active, fulfilledCount: fulfilled, totalQuotes: quotes }
+    const fulfilled = requests.filter(
+      (r: any) => r.status === 'fulfilled',
+    ).length
+    const quotes = requests.reduce(
+      (acc: number, curr: any) => acc + (curr.quotes?.length || 0),
+      0,
+    )
+    return {
+      activeCount: active,
+      fulfilledCount: fulfilled,
+      totalQuotes: quotes,
+    }
   }, [requests])
 
   if (isLoading || !user) {
@@ -94,9 +134,24 @@ export function BuyerHub() {
   }
 
   const metrics = [
-    { label: t('stats.active.label', { ns: 'dashboard/buyer' }), value: activeCount, icon: Zap, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/30' },
-    { label: t('stats.offers.label', { ns: 'dashboard/buyer' }), value: totalQuotes, icon: MessageSquare, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30' },
-    { label: t('stats.fulfilled.label', { ns: 'dashboard/buyer' }), value: fulfilledCount, icon: CheckCircle2, color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/30' },
+    {
+      label: t('stats.active.label', { ns: 'dashboard/buyer' }),
+      value: activeCount,
+      icon: Zap,
+      color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/30',
+    },
+    {
+      label: t('stats.offers.label', { ns: 'dashboard/buyer' }),
+      value: totalQuotes,
+      icon: MessageSquare,
+      color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30',
+    },
+    {
+      label: t('stats.fulfilled.label', { ns: 'dashboard/buyer' }),
+      value: fulfilledCount,
+      icon: CheckCircle2,
+      color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/30',
+    },
   ]
 
   return (
@@ -127,7 +182,12 @@ export function BuyerHub() {
             disabled={isRefetching}
             title={t('buttons.refresh')}
           >
-            <RefreshCcw className={cn("size-4", isRefetching && "animate-spin [animation-direction:reverse]")} />
+            <RefreshCcw
+              className={cn(
+                'size-4',
+                isRefetching && 'animate-spin [animation-direction:reverse]',
+              )}
+            />
           </Button>
           <div className="w-px h-8 bg-border/40 block shrink-0" />
           <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
@@ -158,12 +218,17 @@ export function BuyerHub() {
           {metrics.map((m) => (
             <div
               key={m.label}
-              className={cn('flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all', m.color)}
+              className={cn(
+                'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
+                m.color,
+              )}
             >
               <div className="flex items-center gap-1.5">
                 <m.icon className="size-4" />
                 <span className="text-xl font-black tabular-nums leading-none">
-                  {typeof m.value === 'number' ? m.value.toLocaleString() : m.value}
+                  {typeof m.value === 'number'
+                    ? m.value.toLocaleString()
+                    : m.value}
                 </span>
               </div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
@@ -192,7 +257,12 @@ export function BuyerHub() {
           disabled={isRefetching}
           title={t('buttons.refresh')}
         >
-          <RefreshCcw className={cn("size-4", isRefetching && "animate-spin [animation-direction:reverse]")} />
+          <RefreshCcw
+            className={cn(
+              'size-4',
+              isRefetching && 'animate-spin [animation-direction:reverse]',
+            )}
+          />
         </Button>
       </div>
 
@@ -202,7 +272,9 @@ export function BuyerHub() {
           {requests.length > 0 ? (
             <>
               {t('requests.title')}
-              <span className="ml-2 text-muted-foreground/40 font-medium tabular-nums">{requests.length}</span>
+              <span className="ml-2 text-muted-foreground/40 font-medium tabular-nums">
+                {requests.length}
+              </span>
             </>
           ) : null}
         </p>
@@ -216,9 +288,14 @@ export function BuyerHub() {
             <Plus className="size-10 text-primary/50" strokeWidth={1.5} />
           </div>
           <div className="text-center space-y-2">
-            <h3 className="text-lg font-black tracking-tight">{t('empty.title', 'No Demands Yet')}</h3>
+            <h3 className="text-lg font-black tracking-tight">
+              {t('empty.title', 'No Demands Yet')}
+            </h3>
             <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-              {t('empty.desc', 'Start posting your part requests to get offers from sellers')}
+              {t(
+                'empty.desc',
+                'Start posting your part requests to get offers from sellers',
+              )}
             </p>
           </div>
           <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
@@ -234,7 +311,10 @@ export function BuyerHub() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[900px] w-[95vw] max-h-[95dvh] p-0 border-none shadow-2xl bg-background overflow-hidden rounded-2xl">
               <div className="h-dvh max-h-[85dvh]">
-                <RequestWizard onSuccess={() => setIsNewRequestOpen(false)} onCancel={() => setIsNewRequestOpen(false)} />
+                <RequestWizard
+                  onSuccess={() => setIsNewRequestOpen(false)}
+                  onCancel={() => setIsNewRequestOpen(false)}
+                />
               </div>
             </DialogContent>
           </Dialog>
@@ -242,7 +322,11 @@ export function BuyerHub() {
       ) : view === 'list' ? (
         <BuyerListView data={requests} onAction={handleAction} />
       ) : (
-        <BuyerGridView data={requests} onAction={handleAction} pendingActionId={pendingAction?.id} />
+        <BuyerGridView
+          data={requests}
+          onAction={handleAction}
+          pendingActionId={pendingAction?.id}
+        />
       )}
 
       {/* Edit Dialog */}

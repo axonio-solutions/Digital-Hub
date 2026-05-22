@@ -1,20 +1,31 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useToast } from '@/hooks/use-toast'
 import { useEffect } from 'react'
 import { Briefcase, FileText, Loader2, Store } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import type { UpdateProfileInput } from '@/types/account-schemas'
 import { updateProfileSchema } from '@/types/account-schemas'
-import type { UpdateProfileInput } from '@/types/account-schemas';
+import { useToast } from '@/hooks/use-toast'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { updateProfileServerFn } from '@/fn/users'
 import { Button } from '@/components/ui/button'
 import {
-  Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
 export function SellerSettings() {
   const { t } = useTranslation('dashboard/seller')
@@ -65,7 +76,9 @@ export function SellerSettings() {
       <CardHeader>
         <div className="flex items-center gap-2">
           <Store className="size-5 text-primary" />
-          <CardTitle className="text-xl font-bold">{t('settings.title')}</CardTitle>
+          <CardTitle className="text-xl font-bold">
+            {t('settings.title')}
+          </CardTitle>
         </div>
         <CardDescription>{t('settings.desc')}</CardDescription>
       </CardHeader>
@@ -82,7 +95,10 @@ export function SellerSettings() {
                     {t('settings.labels.store_name')}
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder={t('settings.placeholders.store_name')} {...field} />
+                    <Input
+                      placeholder={t('settings.placeholders.store_name')}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -99,7 +115,10 @@ export function SellerSettings() {
                       {t('settings.labels.rc_number')}
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder={t('settings.placeholders.rc_number')} {...field} />
+                      <Input
+                        placeholder={t('settings.placeholders.rc_number')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -115,7 +134,10 @@ export function SellerSettings() {
                       {t('settings.labels.address')}
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder={t('settings.placeholders.address')} {...field} />
+                      <Input
+                        placeholder={t('settings.placeholders.address')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -123,9 +145,17 @@ export function SellerSettings() {
               />
             </div>
             <div className="flex justify-end pt-2">
-              <Button type="submit" disabled={isPending || !form.formState.isDirty} className="font-bold min-w-[120px]">
-                {isPending ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : null}
-                {isPending ? t('settings.labels.submitting') : t('settings.labels.submit')}
+              <Button
+                type="submit"
+                disabled={isPending || !form.formState.isDirty}
+                className="font-bold min-w-[120px]"
+              >
+                {isPending ? (
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                ) : null}
+                {isPending
+                  ? t('settings.labels.submitting')
+                  : t('settings.labels.submit')}
               </Button>
             </div>
           </form>
