@@ -5,13 +5,19 @@ import { db } from '@/db'
 import * as schema from '@/db/schema'
 
 // Debug logging for environment variables (Netlify deployment)
-if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {
+if (
+  process.env.NODE_ENV === 'production' ||
+  process.env.NODE_ENV === 'development'
+) {
   console.log('--- ENV DEBUG ---')
   console.log('BETTER_AUTH_URL:', process.env.BETTER_AUTH_URL || 'MISSING')
   console.log('VITE_APP_URL:', process.env.VITE_APP_URL || 'MISSING')
   console.log('SUPABASE_URL:', process.env.SUPABASE_URL || 'MISSING')
   console.log('DATABASE:', process.env.DATABASE_URL || 'MISSING')
-  console.log('BETTER_AUTH_SECRET:', process.env.BETTER_AUTH_SECRET ? 'PRESENT' : 'MISSING')
+  console.log(
+    'BETTER_AUTH_SECRET:',
+    process.env.BETTER_AUTH_SECRET ? 'PRESENT' : 'MISSING',
+  )
   console.log('------------------')
 }
 
@@ -135,8 +141,8 @@ export interface User {
   whatsappNumber?: string | null
   preferredLanguage?: string | null
   isDeactivated?: boolean | null
-  sellerBrands?: { brand: { id: string; brand: string } }[]
-  sellerCategories?: { category: { id: string; name: string } }[]
+  sellerBrands?: Array<{ brand: { id: string; brand: string } }>
+  sellerCategories?: Array<{ category: { id: string; name: string } }>
   priorityScore?: number | null
 }
 

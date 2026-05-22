@@ -48,7 +48,13 @@ i18n
     resources,
     fallbackLng,
     defaultNS,
-    ns: ['common', 'dashboard/credits', 'dashboard/seller', 'dashboard/layout', 'dashboard/admin'],
+    ns: [
+      'common',
+      'dashboard/credits',
+      'dashboard/seller',
+      'dashboard/layout',
+      'dashboard/admin',
+    ],
     interpolation: {
       escapeValue: false,
     },

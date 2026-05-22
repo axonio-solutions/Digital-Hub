@@ -9,7 +9,10 @@ export function useLocalization() {
   const { t, i18n } = useTranslation()
 
   const currentLanguage = i18n.language
-  const isRTL = useMemo(() => currentLanguage === 'ar' || currentLanguage === 'ar-DZ', [currentLanguage])
+  const isRTL = useMemo(
+    () => currentLanguage === 'ar' || currentLanguage === 'ar-DZ',
+    [currentLanguage],
+  )
   const dir: 'ltr' | 'rtl' = useMemo(() => (isRTL ? 'rtl' : 'ltr'), [isRTL])
 
   const changeLanguage = useCallback(
@@ -18,7 +21,8 @@ export function useLocalization() {
       // Additional logic like persisting to localStorage or cookies
       // if not already handled by i18next-browser-languagedetector
       localStorage.setItem('i18nextLng', lng)
-      document.documentElement.dir = (lng === 'ar' || lng === 'ar-DZ') ? 'rtl' : 'ltr'
+      document.documentElement.dir =
+        lng === 'ar' || lng === 'ar-DZ' ? 'rtl' : 'ltr'
       document.documentElement.lang = lng
     },
     [i18n],

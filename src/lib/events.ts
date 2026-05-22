@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events'
+import { EventEmitter } from 'node:events'
 
 // Global event emitter for server-side events (SSE relay)
 // Using globalThis to maintain a single instance across Hot Module Replacement in dev
@@ -6,7 +6,7 @@ const globalForEvents = globalThis as unknown as {
   notificationEvents: EventEmitter | undefined
 }
 
-export const notificationEvents = 
+export const notificationEvents =
   globalForEvents.notificationEvents ?? new EventEmitter()
 
 if (process.env.NODE_ENV !== 'production') {

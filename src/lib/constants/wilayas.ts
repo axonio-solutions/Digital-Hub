@@ -26,7 +26,7 @@ export const WILAYAS = [
   { id: '25', name: 'Constantine' },
   { id: '26', name: 'Medea' },
   { id: '27', name: 'Mostaganem' },
-  { id: '28', name: 'M\'Sila' },
+  { id: '28', name: "M'Sila" },
   { id: '29', name: 'Mascara' },
   { id: '30', name: 'Ouargla' },
   { id: '31', name: 'Oran' },
@@ -47,7 +47,7 @@ export const WILAYAS = [
   { id: '46', name: 'Ain Temouchent' },
   { id: '47', name: 'Ghardaia' },
   { id: '48', name: 'Relizane' },
-  { id: '49', name: 'El M\'Ghair' },
+  { id: '49', name: "El M'Ghair" },
   { id: '50', name: 'El Meniaa' },
   { id: '51', name: 'Ouled Djellal' },
   { id: '52', name: 'Bordj Baji Mokhtar' },
@@ -57,4 +57,4 @@ export const WILAYAS = [
   { id: '56', name: 'Djanet' },
   { id: '57', name: 'In Salah' },
   { id: '58', name: 'In Guezzam' },
-] as const;
+] as const

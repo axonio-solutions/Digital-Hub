@@ -8,17 +8,19 @@ export class InvalidStateTransitionError extends Error {
 const allowedRequestTransitions: Record<string, Array<string> | undefined> = {
   open: ['cancelled', 'fulfilled'],
   cancelled: ['open'],
-  fulfilled: ['open'],
+  fulfilled: [],
 }
 
 const allowedQuoteTransitions: Record<string, Array<string> | undefined> = {
-  pending: ['accepted', 'rejected', 'withdrawn'],
-  accepted: ['pending'],
-  rejected: ['pending', 'withdrawn'],
-  withdrawn: [],
+  pending: ['accepted', 'rejected'],
+  accepted: ['pending', 'rejected'],
+  rejected: ['pending'],
 }
 
-export function validateRequestTransition(current: string, target: string): void {
+export function validateRequestTransition(
+  current: string,
+  target: string,
+): void {
   const allowed = allowedRequestTransitions[current]
   if (!allowed?.includes(target)) {
     throw new InvalidStateTransitionError('request', current, target)

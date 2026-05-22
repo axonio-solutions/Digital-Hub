@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from 'date-fns'
-import { enUS, fr, ar } from 'date-fns/locale'
+import { ar, enUS, fr } from 'date-fns/locale'
 import i18next from 'i18next'
 
 const locales: Record<string, any> = {
@@ -13,22 +13,24 @@ const locales: Record<string, any> = {
  * @param date The date to format
  * @param addSuffix Whether to add "ago" or "dans" suffixes
  */
-export function formatRelativeTime(date: Date | string | number | null | undefined, addSuffix: boolean = true) {
+export function formatRelativeTime(
+  date: Date | string | number | null | undefined,
+  addSuffix: boolean = true,
+) {
   const currentLang = i18next.language || 'en'
   const locale = locales[currentLang] || enUS
-  
+
   if (!date) return '---'
 
-  const dateObj = typeof date === 'string' || typeof date === 'number' 
-    ? new Date(date) 
-    : date
+  const dateObj =
+    typeof date === 'string' || typeof date === 'number' ? new Date(date) : date
 
   if (!dateObj || isNaN(dateObj.getTime())) {
     return '---'
   }
 
-  return formatDistanceToNow(dateObj, { 
+  return formatDistanceToNow(dateObj, {
     addSuffix,
-    locale 
+    locale,
   })
 }
