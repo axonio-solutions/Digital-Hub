@@ -26,8 +26,8 @@ fi
 
 # ─── Swap (needed for build on 2GB RAM machines) ──────────────────────────────
 if [ ! -f /swapfile ]; then
-  info "Creating 2GB swap file (required for the build step)..."
-  sudo fallocate -l 2G /swapfile
+  info "Creating 4GB swap file (required for the build step)..."
+  sudo fallocate -l 4G /swapfile
   sudo chmod 600 /swapfile
   sudo mkswap /swapfile
   sudo swapon /swapfile
@@ -140,7 +140,7 @@ log "Dependencies installed."
 
 # ─── 9. Build for VPS ─────────────────────────────────────────────────────────
 info "Building app for VPS (this may take a minute)..."
-NODE_OPTIONS='--max-old-space-size=1536' pnpm build:vps
+NODE_OPTIONS='--max-old-space-size=3072' pnpm build:vps
 log "Build complete — output at .output/"
 
 # ─── 10. Start app via PM2 ────────────────────────────────────────────────────
