@@ -2,7 +2,8 @@
 
 import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
-import { FileText, Tag, Info } from 'lucide-react'
+import { FileText, Info, Tag } from 'lucide-react'
+import { motion } from 'framer-motion'
 import type { RequestFormData } from '@/types/request-schemas'
 import {
   FormControl,
@@ -13,7 +14,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { motion } from 'framer-motion'
 
 export function PartDetailsStep() {
   const { t } = useTranslation('requests/form')

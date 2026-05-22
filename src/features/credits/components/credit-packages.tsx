@@ -2,14 +2,17 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Package, Pencil, Plus, Power, PowerOff } from 'lucide-react'
+import {
+  useCreditPackages,
+  useToggleCreditPackageStatus,
+} from '../hooks/use-credits'
+import { PackageDialog } from './package-dialog'
 import { useToast } from '@/hooks/use-toast'
-import { Plus, Package, Pencil, Power, PowerOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import { useCreditPackages, useToggleCreditPackageStatus } from '../hooks/use-credits'
-import { PackageDialog } from './package-dialog'
 
 export function CreditPackages() {
   const { t } = useTranslation('dashboard/credits')
@@ -24,7 +27,8 @@ export function CreditPackages() {
       { id, isActive: !currentActive },
       {
         onSuccess: () => toast.success('packages.toggled'),
-        onError: (err: any) => toast.error('packages.error', { error: err.message }),
+        onError: (err: any) =>
+          toast.error('packages.error', { error: err.message }),
       },
     )
   }
@@ -85,12 +89,18 @@ export function CreditPackages() {
                     variant={pkg.isActive ? 'success' : 'neutral'}
                     className="text-[9px] uppercase"
                   >
-                    {pkg.isActive ? t('packages.active') : t('packages.inactive')}
+                    {pkg.isActive
+                      ? t('packages.active')
+                      : t('packages.inactive')}
                   </GlowingBadge>
                 </div>
                 <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                  <span className="font-bold tabular-nums">{pkg.credits} {t('packages.credits_unit')}</span>
-                  <span className="font-bold tabular-nums">{pkg.price.toLocaleString()} {t('currency_dzd')}</span>
+                  <span className="font-bold tabular-nums">
+                    {pkg.credits} {t('packages.credits_unit')}
+                  </span>
+                  <span className="font-bold tabular-nums">
+                    {pkg.price.toLocaleString()} {t('currency_dzd')}
+                  </span>
                   {pkg.description && (
                     <>
                       <span className="text-muted-foreground/40">|</span>

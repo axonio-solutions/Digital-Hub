@@ -4,17 +4,25 @@ import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
 import { motion } from 'framer-motion'
-import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
-import type { RequestFormData } from '@/types/request-schemas'
 import { Building2, Check } from 'lucide-react'
+import type { RequestFormData } from '@/types/request-schemas'
+import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 
 const POPULAR_BRANDS = [
-  'Renault', 'Peugeot', 'Toyota', 'Hyundai', 'Volkswagen',
-  'Dacia', 'Ford', 'Nissan', 'BMW', 'Mercedes-Benz',
+  'Renault',
+  'Peugeot',
+  'Toyota',
+  'Hyundai',
+  'Volkswagen',
+  'Dacia',
+  'Ford',
+  'Nissan',
+  'BMW',
+  'Mercedes-Benz',
 ]
 
 function BrandItem({ brand, isSelected }: { brand: any; isSelected: boolean }) {
@@ -30,7 +38,7 @@ function BrandItem({ brand, isSelected }: { brand: any; isSelected: boolean }) {
         className={cn(
           'flex items-center gap-3 px-4 py-3 rounded-lg border-2 cursor-pointer transition-all hover:shadow-sm rtl:flex-row-reverse',
           'hover:bg-muted/50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:shadow-sm',
-          isSelected && 'border-primary bg-primary/5 shadow-sm'
+          isSelected && 'border-primary bg-primary/5 shadow-sm',
         )}
       >
         <div
@@ -38,7 +46,7 @@ function BrandItem({ brand, isSelected }: { brand: any; isSelected: boolean }) {
             'size-10 rounded-lg flex items-center justify-center shrink-0 transition-all',
             isSelected
               ? 'bg-primary/10 border-2 border-primary/30'
-              : 'bg-muted border border-border'
+              : 'bg-muted border border-border',
           )}
         >
           {brand.imageUrl ? (
@@ -47,22 +55,26 @@ function BrandItem({ brand, isSelected }: { brand: any; isSelected: boolean }) {
               alt={brand.brand}
               className={cn(
                 'size-6 object-contain transition-all',
-                !isSelected && 'opacity-60 grayscale'
+                !isSelected && 'opacity-60 grayscale',
               )}
             />
           ) : (
-            <span className={cn(
-              'text-sm font-bold',
-              isSelected ? 'text-primary' : 'text-muted-foreground'
-            )}>
+            <span
+              className={cn(
+                'text-sm font-bold',
+                isSelected ? 'text-primary' : 'text-muted-foreground',
+              )}
+            >
               {(brand.brand ?? 'B').substring(0, 2).toUpperCase()}
             </span>
           )}
         </div>
-        <span className={cn(
-          'text-sm font-semibold truncate',
-          isSelected ? 'text-primary' : 'text-foreground'
-        )}>
+        <span
+          className={cn(
+            'text-sm font-semibold truncate',
+            isSelected ? 'text-primary' : 'text-foreground',
+          )}
+        >
           {brand.brand}
         </span>
       </Label>
@@ -84,13 +96,16 @@ export function BrandStep() {
 
   const sortedBrands = useMemo(() => {
     if (!taxonomy?.brands) return []
-    const popular: any[] = []
-    const others: any[] = []
+    const popular: Array<any> = []
+    const others: Array<any> = []
     for (const b of taxonomy.brands) {
       if (POPULAR_BRANDS.includes(b.brand)) popular.push(b)
       else others.push(b)
     }
-    popular.sort((a, b) => POPULAR_BRANDS.indexOf(a.brand) - POPULAR_BRANDS.indexOf(b.brand))
+    popular.sort(
+      (a, b) =>
+        POPULAR_BRANDS.indexOf(a.brand) - POPULAR_BRANDS.indexOf(b.brand),
+    )
     others.sort((a, b) => (a.brand || '').localeCompare(b.brand || ''))
     return { popular, others }
   }, [taxonomy?.brands])
@@ -99,7 +114,9 @@ export function BrandStep() {
     return (
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold mb-1">{t('steps.brand.title')}</h3>
+          <h3 className="text-lg font-semibold mb-1">
+            {t('steps.brand.title')}
+          </h3>
           <p className="text-sm text-muted-foreground">
             {t('steps.brand.description')}
           </p>
@@ -135,13 +152,18 @@ export function BrandStep() {
         value={selectedBrandId || ''}
         onValueChange={(value) => {
           setValue('brandId', value)
-          const brand = taxonomy?.brands.find((b: any) => String(b.id) === String(value))
+          const brand = taxonomy?.brands.find(
+            (b: any) => String(b.id) === String(value),
+          )
           if (brand) {
             setValue('vehicleBrand', brand.brand)
           }
         }}
         className="flex flex-col gap-4 overflow-y-auto pr-1"
-        style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.2) transparent' }}
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(0,0,0,0.2) transparent',
+        }}
       >
         {sortedBrands.popular.length > 0 && (
           <div>

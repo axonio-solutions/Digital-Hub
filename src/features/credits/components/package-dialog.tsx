@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useToast } from '@/hooks/use-toast'
 import { Package } from 'lucide-react'
+import {
+  useCreateCreditPackage,
+  useUpdateCreditPackage,
+} from '../hooks/use-credits'
+import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -16,7 +20,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { useCreateCreditPackage, useUpdateCreditPackage } from '../hooks/use-credits'
 
 interface PackageDialogProps {
   pkg: {
@@ -70,17 +73,23 @@ export function PackageDialog({ pkg, open, onOpenChange }: PackageDialogProps) {
       return
     }
 
-    const data = { name: name.trim(), credits, price, description: description.trim() || undefined }
+    const data = {
+      name: name.trim(),
+      credits,
+      price,
+      description: description.trim() || undefined,
+    }
 
     if (isEditing) {
       update(
-        { id: pkg!.id!, ...data, isActive },
+        { id: pkg.id!, ...data, isActive },
         {
           onSuccess: () => {
             toast.success('packages.updated')
             onOpenChange(false)
           },
-          onError: (err: any) => toast.error('packages.error', { error: err.message }),
+          onError: (err: any) =>
+            toast.error('packages.error', { error: err.message }),
         },
       )
     } else {
@@ -89,7 +98,8 @@ export function PackageDialog({ pkg, open, onOpenChange }: PackageDialogProps) {
           toast.success('packages.created')
           onOpenChange(false)
         },
-        onError: (err: any) => toast.error('packages.error', { error: err.message }),
+        onError: (err: any) =>
+          toast.error('packages.error', { error: err.message }),
       })
     }
   }
@@ -105,7 +115,9 @@ export function PackageDialog({ pkg, open, onOpenChange }: PackageDialogProps) {
             {isEditing ? t('packages.edit') : t('packages.add')}
           </DialogTitle>
           <DialogDescription>
-            {isEditing ? t('packages.form.id_prefix', { id: pkg?.id?.slice(0, 8) }) : t('packages.subtitle')}
+            {isEditing
+              ? t('packages.form.id_prefix', { id: pkg?.id?.slice(0, 8) })
+              : t('packages.subtitle')}
           </DialogDescription>
         </DialogHeader>
 
@@ -156,7 +168,11 @@ export function PackageDialog({ pkg, open, onOpenChange }: PackageDialogProps) {
 
           {isEditing && (
             <div className="flex items-center gap-2">
-              <Switch id="pkg-active" checked={isActive} onCheckedChange={setIsActive} />
+              <Switch
+                id="pkg-active"
+                checked={isActive}
+                onCheckedChange={setIsActive}
+              />
               <Label htmlFor="pkg-active">{t('packages.form.is_active')}</Label>
             </div>
           )}

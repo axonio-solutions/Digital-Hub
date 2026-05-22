@@ -2,7 +2,8 @@
 
 import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
-import { CarFront, HelpCircle, Calendar, Hash } from 'lucide-react'
+import { Calendar, CarFront, Hash, HelpCircle } from 'lucide-react'
+import { motion } from 'framer-motion'
 import type { RequestFormData } from '@/types/request-schemas'
 import {
   FormControl,
@@ -18,7 +19,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { motion } from 'framer-motion'
 
 export function VehicleInfoStep() {
   const { t } = useTranslation('requests/form')

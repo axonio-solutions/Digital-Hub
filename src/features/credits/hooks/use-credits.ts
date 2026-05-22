@@ -1,19 +1,24 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
+import {
+  approveCreditRequestServerFn,
+  createCreditPackageServerFn,
+  getActiveCreditPackagesServerFn,
+  getCreditPackagesServerFn,
+  getCreditRequestsServerFn,
+  getCreditTransactionsServerFn,
+  getPendingCreditRequestsCountServerFn,
+  getRevenueMetricsServerFn,
   getSellersWithCreditsServerFn,
   grantCreditsServerFn,
-  getCreditTransactionsServerFn,
-  getCreditPackagesServerFn,
-  getActiveCreditPackagesServerFn,
-  createCreditPackageServerFn,
-  updateCreditPackageServerFn,
-  toggleCreditPackageStatusServerFn,
-  getRevenueMetricsServerFn,
-  requestCreditsServerFn,
-  getCreditRequestsServerFn,
-  approveCreditRequestServerFn,
   rejectCreditRequestServerFn,
-  getPendingCreditRequestsCountServerFn,
+  requestCreditsServerFn,
+  toggleCreditPackageStatusServerFn,
+  updateCreditPackageServerFn,
 } from '@/fn/credits'
 
 export const creditKeys = {
@@ -37,8 +42,11 @@ export function useSellersWithCredits() {
 export function useGrantCredits() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: { sellerId: string; amount: number; description?: string }) =>
-      grantCreditsServerFn({ data }),
+    mutationFn: (data: {
+      sellerId: string
+      amount: number
+      description?: string
+    }) => grantCreditsServerFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: creditKeys.sellers() })
       queryClient.invalidateQueries({ queryKey: creditKeys.transactions() })
@@ -50,7 +58,8 @@ export function useGrantCredits() {
 export function useCreditTransactions(sellerId?: string) {
   return useQuery({
     queryKey: [...creditKeys.transactions(), sellerId],
-    queryFn: () => (getCreditTransactionsServerFn as any)({ data: { sellerId } }),
+    queryFn: () =>
+      (getCreditTransactionsServerFn as any)({ data: { sellerId } }),
     staleTime: 30 * 1000,
     gcTime: 5 * 60 * 1000,
   })
@@ -77,8 +86,12 @@ export function useActiveCreditPackages() {
 export function useCreateCreditPackage() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: { name: string; credits: number; price: number; description?: string }) =>
-      createCreditPackageServerFn({ data }),
+    mutationFn: (data: {
+      name: string
+      credits: number
+      price: number
+      description?: string
+    }) => createCreditPackageServerFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: creditKeys.packages() })
     },
@@ -130,7 +143,9 @@ export function useRequestCredits() {
     mutationFn: (data: { credits: number; packageId?: string }) =>
       requestCreditsServerFn({ data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...creditKeys.all, 'my-requests'] })
+      queryClient.invalidateQueries({
+        queryKey: [...creditKeys.all, 'my-requests'],
+      })
     },
   })
 }
@@ -147,9 +162,12 @@ export function useCreditRequests(status?: string) {
 export function useApproveCreditRequest() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: { id: string }) => approveCreditRequestServerFn({ data }),
+    mutationFn: (data: { id: string }) =>
+      approveCreditRequestServerFn({ data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...creditKeys.all, 'requests'] })
+      queryClient.invalidateQueries({
+        queryKey: [...creditKeys.all, 'requests'],
+      })
       queryClient.invalidateQueries({ queryKey: creditKeys.sellers() })
       queryClient.invalidateQueries({ queryKey: creditKeys.revenue() })
     },
@@ -162,7 +180,9 @@ export function useRejectCreditRequest() {
     mutationFn: (data: { id: string; adminNote?: string }) =>
       rejectCreditRequestServerFn({ data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...creditKeys.all, 'requests'] })
+      queryClient.invalidateQueries({
+        queryKey: [...creditKeys.all, 'requests'],
+      })
     },
   })
 }

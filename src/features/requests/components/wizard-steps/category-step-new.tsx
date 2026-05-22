@@ -3,9 +3,9 @@
 import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
 import { motion } from 'framer-motion'
-import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
-import type { RequestFormData } from '@/types/request-schemas'
 import { Check, LayoutGrid } from 'lucide-react'
+import type { RequestFormData } from '@/types/request-schemas'
+import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -120,7 +120,11 @@ export function CategoryStep() {
                         )}
                       >
                         {imageUrl ? (
-                          <img src={imageUrl} alt={category.name} className="size-6 object-contain" />
+                          <img
+                            src={imageUrl}
+                            alt={category.name}
+                            className="size-6 object-contain"
+                          />
                         ) : (
                           <span className="text-xs font-bold">{initials}</span>
                         )}
@@ -136,9 +140,11 @@ export function CategoryStep() {
                         >
                           {tCategory(category.name, t)}
                         </span>
-                        {(tCategoryDescription(category, t) || category.description) && (
+                        {(tCategoryDescription(category, t) ||
+                          category.description) && (
                           <span className="text-xs text-muted-foreground/70 leading-tight line-clamp-1 text-start">
-                            {tCategoryDescription(category, t) || category.description}
+                            {tCategoryDescription(category, t) ||
+                              category.description}
                           </span>
                         )}
                       </div>

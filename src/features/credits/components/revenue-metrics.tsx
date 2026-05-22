@@ -2,14 +2,14 @@
 
 import { useTranslation } from 'react-i18next'
 import {
+  Banknote,
   Coins,
+  HelpCircle,
+  Package,
+  RefreshCw,
   TrendingUp,
   UserPlus,
-  Package,
-  Banknote,
   Users,
-  HelpCircle,
-  RefreshCw,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -34,7 +34,9 @@ export function RevenueMetrics() {
   const { data: metrics, isLoading, isError, refetch } = useRevenueMetrics()
   const { data: allTransactions = [] } = useCreditTransactions()
 
-  const transactions = allTransactions.filter((txn: any) => txn.type !== 'quote_spent')
+  const transactions = allTransactions.filter(
+    (txn: any) => txn.type !== 'quote_spent',
+  )
 
   const metricCards = [
     {
@@ -113,7 +115,12 @@ export function RevenueMetrics() {
         <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center max-w-xs">
           {t('revenue.no_transactions')}
         </p>
-        <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-1.5 text-xs font-bold">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => refetch()}
+          className="gap-1.5 text-xs font-bold"
+        >
           <RefreshCw className="size-3" />
           Retry
         </Button>
@@ -123,96 +130,111 @@ export function RevenueMetrics() {
 
   return (
     <DirectionProvider dir={i18n.dir()}>
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {metricCards.map((m) => (
-          <div
-            key={m.label}
-            className={cn(
-              'flex flex-col gap-1.5 px-4 py-3.5 rounded-2xl transition-all bg-gradient-to-br',
-              m.bg,
-            )}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                {m.label}
+      <div className="space-y-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {metricCards.map((m) => (
+            <div
+              key={m.label}
+              className={cn(
+                'flex flex-col gap-1.5 px-4 py-3.5 rounded-2xl transition-all bg-gradient-to-br',
+                m.bg,
+              )}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  {m.label}
+                </span>
+                <m.icon className={cn('size-4', m.color)} />
+              </div>
+              <span
+                className={cn(
+                  'text-xl sm:text-2xl font-black tabular-nums leading-none',
+                  m.color,
+                )}
+              >
+                {m.format(m.value)}
               </span>
-              <m.icon className={cn('size-4', m.color)} />
+              <span className="text-[10px] text-muted-foreground font-medium leading-tight">
+                {m.desc}
+              </span>
             </div>
-            <span className={cn('text-xl sm:text-2xl font-black tabular-nums leading-none', m.color)}>
-              {m.format(m.value)}
-            </span>
-            <span className="text-[10px] text-muted-foreground font-medium leading-tight">
-              {m.desc}
-            </span>
+          ))}
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
+              {t('revenue.transactions')}
+            </p>
+            {transactions.length > 20 && (
+              <span className="text-[10px] text-muted-foreground/50 font-medium">
+                {t('revenue.showing_latest', { count: 20 })}
+              </span>
+            )}
           </div>
-        ))}
-      </div>
 
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
-            {t('revenue.transactions')}
-          </p>
-          {transactions.length > 20 && (
-            <span className="text-[10px] text-muted-foreground/50 font-medium">
-              {t('revenue.showing_latest', { count: 20 })}
-            </span>
-          )}
-        </div>
-
-        <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-          {transactions.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground text-sm font-medium">
-              {t('revenue.no_transactions')}
-            </div>
-          ) : (
-            <div className="divide-y divide-border">
-              {transactions.slice(0, 20).map((txn: any) => (
-                <div key={txn.id} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted/30 transition-colors">
-                  <Avatar className="size-8 rounded-xl shrink-0">
-                    <AvatarFallback className="text-[10px] font-bold bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 text-amber-700 dark:text-amber-300">
-                      {txn.seller?.name?.substring(0, 2).toUpperCase() || 'S'}
-                    </AvatarFallback>
-                  </Avatar>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm truncate">
-                        {txn.seller?.name || txn.seller?.storeName || t('revenue.unknown_seller')}
-                      </span>
-                      <GlowingBadge
-                        variant={txn.type === 'bonus' ? 'warning' : 'success'}
-                        className="text-[9px] uppercase shrink-0"
-                      >
-                        {t(`revenue.transaction_types.${txn.type}`)}
-                      </GlowingBadge>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <span className="truncate">{txn.description || t(`revenue.transaction_types.${txn.type}`)}</span>
-                      <span className="text-muted-foreground/40">|</span>
-                      <span className="whitespace-nowrap">{new Date(txn.createdAt).toLocaleDateString(locale)}</span>
-                    </div>
-                  </div>
-
-                  <span
-                    className={cn(
-                      'text-sm font-black tabular-nums shrink-0',
-                      txn.amount > 0
-                        ? 'text-emerald-600 dark:text-emerald-400'
-                        : 'text-red-600 dark:text-red-400',
-                    )}
+          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+            {transactions.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground text-sm font-medium">
+                {t('revenue.no_transactions')}
+              </div>
+            ) : (
+              <div className="divide-y divide-border">
+                {transactions.slice(0, 20).map((txn: any) => (
+                  <div
+                    key={txn.id}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted/30 transition-colors"
                   >
-                    {txn.amount > 0 ? '+' : ''}
-                    {txn.amount}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+                    <Avatar className="size-8 rounded-xl shrink-0">
+                      <AvatarFallback className="text-[10px] font-bold bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 text-amber-700 dark:text-amber-300">
+                        {txn.seller?.name?.substring(0, 2).toUpperCase() || 'S'}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm truncate">
+                          {txn.seller?.name ||
+                            txn.seller?.storeName ||
+                            t('revenue.unknown_seller')}
+                        </span>
+                        <GlowingBadge
+                          variant={txn.type === 'bonus' ? 'warning' : 'success'}
+                          className="text-[9px] uppercase shrink-0"
+                        >
+                          {t(`revenue.transaction_types.${txn.type}`)}
+                        </GlowingBadge>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="truncate">
+                          {txn.description ||
+                            t(`revenue.transaction_types.${txn.type}`)}
+                        </span>
+                        <span className="text-muted-foreground/40">|</span>
+                        <span className="whitespace-nowrap">
+                          {new Date(txn.createdAt).toLocaleDateString(locale)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span
+                      className={cn(
+                        'text-sm font-black tabular-nums shrink-0',
+                        txn.amount > 0
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-red-600 dark:text-red-400',
+                      )}
+                    >
+                      {txn.amount > 0 ? '+' : ''}
+                      {txn.amount}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
     </DirectionProvider>
   )
 }

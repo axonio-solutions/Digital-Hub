@@ -3,14 +3,14 @@
 import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
 import {
+  Calendar,
   CarFront,
+  CheckCircle2,
+  Hash,
+  Image as ImageIcon,
   LayoutList,
   PencilLine,
-  Image as ImageIcon,
-  CheckCircle2,
   Tag,
-  Calendar,
-  Hash
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { RequestFormData } from '@/types/request-schemas'
@@ -32,13 +32,13 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.08 }
-    }
+      transition: { staggerChildren: 0.08 },
+    },
   }
 
   const item = {
     hidden: { opacity: 0, y: 12 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+    show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   }
 
   return (
@@ -64,7 +64,9 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
           <div className="flex items-center justify-between px-4 py-2.5 border-b bg-muted/40">
             <div className="flex items-center gap-2">
               <LayoutList className="size-4 text-muted-foreground" />
-              <span className="text-xs font-semibold uppercase tracking-wide">{t('steps.review.cards.part')}</span>
+              <span className="text-xs font-semibold uppercase tracking-wide">
+                {t('steps.review.cards.part')}
+              </span>
             </div>
             <Button
               variant="ghost"
@@ -77,7 +79,10 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
             </Button>
           </div>
           <div className="p-4 space-y-2">
-            <p className="text-base font-bold leading-tight break-words line-clamp-2" title={values.partName}>
+            <p
+              className="text-base font-bold leading-tight break-words line-clamp-2"
+              title={values.partName}
+            >
               {values.partName || t('steps.review.not_provided')}
             </p>
             {values.vehicleBrand && (
@@ -96,7 +101,9 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
           <div className="flex items-center justify-between px-4 py-2.5 border-b bg-muted/40">
             <div className="flex items-center gap-2">
               <CarFront className="size-4 text-muted-foreground" />
-              <span className="text-xs font-semibold uppercase tracking-wide">{t('steps.review.cards.vehicle')}</span>
+              <span className="text-xs font-semibold uppercase tracking-wide">
+                {t('steps.review.cards.vehicle')}
+              </span>
             </div>
             <Button
               variant="ghost"
@@ -113,22 +120,32 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
               <div>
                 <div className="flex items-center gap-1.5 mb-1">
                   <Calendar className="size-3 text-muted-foreground" />
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground/60">{t('steps.review.year')}</span>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground/60">
+                    {t('steps.review.year')}
+                  </span>
                 </div>
-                <p className="text-sm font-semibold">{values.modelYear || t('steps.review.not_provided')}</p>
+                <p className="text-sm font-semibold">
+                  {values.modelYear || t('steps.review.not_provided')}
+                </p>
               </div>
               <div>
                 <div className="flex items-center gap-1.5 mb-1">
                   <CarFront className="size-3 text-muted-foreground" />
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground/60">{t('steps.review.model')}</span>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground/60">
+                    {t('steps.review.model')}
+                  </span>
                 </div>
-                <p className="text-sm font-semibold truncate">{values.vehicleModel || t('steps.review.not_provided')}</p>
+                <p className="text-sm font-semibold truncate">
+                  {values.vehicleModel || t('steps.review.not_provided')}
+                </p>
               </div>
             </div>
             <div className="pt-2 border-t border-dashed">
               <div className="flex items-center gap-1.5 mb-1">
                 <Hash className="size-3 text-muted-foreground" />
-                <span className="text-[10px] uppercase font-bold text-muted-foreground/60">{t('steps.review.vin')}</span>
+                <span className="text-[10px] uppercase font-bold text-muted-foreground/60">
+                  {t('steps.review.vin')}
+                </span>
               </div>
               <p className="text-xs font-mono font-medium uppercase tracking-wider">
                 {values.vinNumber || t('steps.review.not_provided')}
@@ -138,11 +155,16 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
         </motion.div>
 
         {/* Photos */}
-        <motion.div variants={item} className="md:col-span-2 rounded-lg border bg-card">
+        <motion.div
+          variants={item}
+          className="md:col-span-2 rounded-lg border bg-card"
+        >
           <div className="flex items-center justify-between px-4 py-2.5 border-b bg-muted/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="size-4 text-muted-foreground" />
-              <span className="text-xs font-semibold uppercase tracking-wide">{t('steps.review.cards.media')}</span>
+              <span className="text-xs font-semibold uppercase tracking-wide">
+                {t('steps.review.cards.media')}
+              </span>
             </div>
             <Button
               variant="ghost"
@@ -158,15 +180,24 @@ export function ReviewStep({ onEditStep }: ReviewStepProps) {
             {imageUrls.length > 0 ? (
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {imageUrls.map((url, i) => (
-                  <div key={i} className="shrink-0 size-16 rounded-md overflow-hidden border bg-muted">
-                    <img src={url} alt="Review" className="w-full h-full object-cover" />
+                  <div
+                    key={i}
+                    className="shrink-0 size-16 rounded-md overflow-hidden border bg-muted"
+                  >
+                    <img
+                      src={url}
+                      alt="Review"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 ))}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-6 bg-muted/20 border-2 border-dashed rounded-md">
                 <ImageIcon className="size-6 text-muted-foreground/40 mb-1.5" />
-                <p className="text-xs font-medium text-muted-foreground/60">{t('steps.review.no_media')}</p>
+                <p className="text-xs font-medium text-muted-foreground/60">
+                  {t('steps.review.no_media')}
+                </p>
               </div>
             )}
           </div>

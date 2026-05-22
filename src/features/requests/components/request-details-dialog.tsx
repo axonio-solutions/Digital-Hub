@@ -30,10 +30,15 @@ const STATUS_VARIANT: Record<string, 'success' | 'info' | 'neutral'> = {
   accepted: 'success',
   pending: 'info',
   rejected: 'neutral',
-  withdrawn: 'neutral',
 }
 
-export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, footer }: RequestDetailsDialogProps) {
+export function RequestDetailsDialog({
+  request,
+  quote,
+  isOpen,
+  onOpenChange,
+  footer,
+}: RequestDetailsDialogProps) {
   const { t } = useTranslation('requests/details')
   if (!request) return null
 
@@ -45,11 +50,16 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
       {/* Price Hero */}
       <div className="text-center py-4">
         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-          {t('offer_details.price', { ns: 'marketplace', defaultValue: 'Offered Price' })}
+          {t('offer_details.price', {
+            ns: 'marketplace',
+            defaultValue: 'Offered Price',
+          })}
         </p>
         <p className="text-3xl sm:text-4xl font-black tabular-nums text-foreground">
           {(quote?.price || 0).toLocaleString()}{' '}
-          <span className="text-base font-bold text-muted-foreground">{t('columns.currency', { ns: 'quotes' })}</span>
+          <span className="text-base font-bold text-muted-foreground">
+            {t('columns.currency', { ns: 'quotes' })}
+          </span>
         </p>
       </div>
 
@@ -61,7 +71,10 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
             pulse={quote.status === 'pending'}
             className="text-xs font-black uppercase tracking-wider px-4 py-1.5"
           >
-            {t(`columns.statuses.${quote.status}`, { ns: 'quotes', defaultValue: quote.status })}
+            {t(`columns.statuses.${quote.status}`, {
+              ns: 'quotes',
+              defaultValue: quote.status,
+            })}
           </GlowingBadge>
         </div>
       )}
@@ -72,13 +85,22 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
             <BadgeCheck className="w-3 h-3" /> {t('offer_details.condition')}
           </div>
-          <p className="text-sm font-bold capitalize">{quote?.condition ? t(`columns.conditions.${quote.condition}`, { ns: 'quotes', defaultValue: quote.condition }) : '—'}</p>
+          <p className="text-sm font-bold capitalize">
+            {quote?.condition
+              ? t(`columns.conditions.${quote.condition}`, {
+                  ns: 'quotes',
+                  defaultValue: quote.condition,
+                })
+              : '—'}
+          </p>
         </div>
         <div className="p-3 rounded-xl bg-card border border-border">
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
             <FileText className="w-3 h-3" /> {t('offer_details.warranty')}
           </div>
-          <p className="text-sm font-bold">{quote?.warranty || t('offer_details.no_warranty')}</p>
+          <p className="text-sm font-bold">
+            {quote?.warranty || t('offer_details.no_warranty')}
+          </p>
         </div>
         <div className="p-3 rounded-xl bg-card border border-border">
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
@@ -92,7 +114,9 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
             <Info className="w-3 h-3" /> {t('offer_details.part')}
           </div>
-          <p className="text-sm font-bold truncate">{request?.partName || '—'}</p>
+          <p className="text-sm font-bold truncate">
+            {request?.partName || '—'}
+          </p>
         </div>
       </div>
     </div>
@@ -112,7 +136,11 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
         </h2>
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-[11px] font-bold text-primary uppercase inline-flex items-center gap-1">
-            <CategoryDisplay category={request?.category} showName={false} iconClassName="size-3.5" />
+            <CategoryDisplay
+              category={request?.category}
+              showName={false}
+              iconClassName="size-3.5"
+            />
             {tCategory(request?.category?.name || request?.category, t)}
           </span>
           <span className="text-[9px] text-muted-foreground font-mono font-medium">
@@ -129,7 +157,9 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
           <p className="text-sm font-bold text-foreground leading-tight">
             {request?.vehicleBrand} {request?.vehicleModel}
           </p>
-          <p className="text-[10px] font-semibold text-muted-foreground mt-0.5">{request?.modelYear}</p>
+          <p className="text-[10px] font-semibold text-muted-foreground mt-0.5">
+            {request?.modelYear}
+          </p>
         </div>
         <div className="p-3 rounded-xl bg-card border border-border">
           <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
@@ -174,7 +204,10 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
       <DialogContent className="sm:max-w-4xl w-full max-w-full sm:w-[95vw] max-h-[95vh] p-0 border-0 rounded-2xl shadow-2xl bg-card overflow-y-auto lg:overflow-hidden">
         {/* Mobile: Tabbed Interface */}
         <div className="lg:hidden flex flex-col h-full min-h-0">
-          <Tabs defaultValue={hasQuote ? 'offer' : 'request'} className="flex flex-col flex-1 min-h-0">
+          <Tabs
+            defaultValue={hasQuote ? 'offer' : 'request'}
+            className="flex flex-col flex-1 min-h-0"
+          >
             <div className="sticky top-0 z-20 bg-card border-b border-border/60">
               <TabsList className="w-full grid grid-cols-2 h-12 bg-muted/50 rounded-none p-1 gap-1.5">
                 <TabsTrigger
@@ -224,7 +257,10 @@ export function RequestDetailsDialog({ request, quote, isOpen, onOpenChange, foo
           <div className="w-1/2 p-6 lg:p-8 overflow-y-auto flex flex-col justify-between bg-card">
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-                {t('offer_details.title', { ns: 'marketplace', defaultValue: 'Your Offer Details' })}
+                {t('offer_details.title', {
+                  ns: 'marketplace',
+                  defaultValue: 'Your Offer Details',
+                })}
               </p>
               {offerContent}
             </div>

@@ -4,8 +4,13 @@ import { useCallback, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslation } from 'react-i18next'
-import { Check, ChevronLeft, ChevronRight, Loader2, Sparkles } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Sparkles,
+} from 'lucide-react'
 
 // Steps
 import { useCreateRequest, useUpdateRequest } from '../hooks/use-requests'
@@ -18,6 +23,7 @@ import { ReviewStep } from './wizard-steps/review-step-new'
 
 // Hooks & Types
 import type { RequestFormData } from '@/types/request-schemas'
+import { useToast } from '@/hooks/use-toast'
 import { requestFormSchema } from '@/types/request-schemas'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 
@@ -37,18 +43,46 @@ interface RequestWizardProps {
   initialData?: any
 }
 
-export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizardProps) {
+export function RequestWizard({
+  onSuccess,
+  onCancel,
+  initialData,
+}: RequestWizardProps) {
   const { t, i18n } = useTranslation('requests/form')
   const { toast } = useToast('requests/form')
   const isRtl = i18n.dir() === 'rtl'
 
   const STEPS = [
-    { id: 1, title: t('steps.part_details.title'), description: t('steps.part_details.description') },
-    { id: 2, title: t('steps.category.title'), description: t('steps.category.description') },
-    { id: 3, title: t('steps.brand.title'), description: t('steps.brand.description') },
-    { id: 4, title: t('steps.vehicle_info.title'), description: t('steps.vehicle_info.description') },
-    { id: 5, title: t('steps.photos.title'), description: t('steps.photos.description') },
-    { id: 6, title: t('steps.review.title'), description: t('steps.review.description') },
+    {
+      id: 1,
+      title: t('steps.part_details.title'),
+      description: t('steps.part_details.description'),
+    },
+    {
+      id: 2,
+      title: t('steps.category.title'),
+      description: t('steps.category.description'),
+    },
+    {
+      id: 3,
+      title: t('steps.brand.title'),
+      description: t('steps.brand.description'),
+    },
+    {
+      id: 4,
+      title: t('steps.vehicle_info.title'),
+      description: t('steps.vehicle_info.description'),
+    },
+    {
+      id: 5,
+      title: t('steps.photos.title'),
+      description: t('steps.photos.description'),
+    },
+    {
+      id: 6,
+      title: t('steps.review.title'),
+      description: t('steps.review.description'),
+    },
   ]
   const { data: user } = useAuth()
   const createRequest = useCreateRequest()
@@ -65,8 +99,12 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
       partName: initialData?.partName || '',
       description: initialData?.notes || '',
       vehicleBrand: initialData?.vehicleBrand || '',
-      vehicleModel: initialData?.modelYear ? initialData.modelYear.split(' ')[0] : '',
-      modelYear: initialData?.modelYear ? initialData.modelYear.split(' ').slice(1).join(' ') : '',
+      vehicleModel: initialData?.modelYear
+        ? initialData.modelYear.split(' ')[0]
+        : '',
+      modelYear: initialData?.modelYear
+        ? initialData.modelYear.split(' ').slice(1).join(' ')
+        : '',
       categoryId: initialData?.categoryId || undefined,
       brandId: initialData?.brandId || undefined,
       imageUrls: initialData?.imageUrls || [],
@@ -80,20 +118,32 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
   const watchVehicleModel = methods.watch('vehicleModel')
   const watchModelYear = methods.watch('modelYear')
 
-  const isStepComplete = useCallback((step: number) => {
-    switch (step) {
-      case 1:
-        return !!(watchPartName || '').trim()
-      case 2:
-        return !!watchCategoryId
-      case 3:
-        return !!watchBrandId
-      case 4:
-        return !!(watchVehicleModel || '').trim() && !!(watchModelYear || '').trim()
-      default:
-        return true
-    }
-  }, [watchPartName, watchCategoryId, watchBrandId, watchVehicleModel, watchModelYear])
+  const isStepComplete = useCallback(
+    (step: number) => {
+      switch (step) {
+        case 1:
+          return !!(watchPartName || '').trim()
+        case 2:
+          return !!watchCategoryId
+        case 3:
+          return !!watchBrandId
+        case 4:
+          return (
+            !!(watchVehicleModel || '').trim() &&
+            !!(watchModelYear || '').trim()
+          )
+        default:
+          return true
+      }
+    },
+    [
+      watchPartName,
+      watchCategoryId,
+      watchBrandId,
+      watchVehicleModel,
+      watchModelYear,
+    ],
+  )
 
   const handleNext = () => {
     if (currentStep < STEPS.length && isStepComplete(currentStep)) {
@@ -152,14 +202,21 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
 
   const contentRef = useRef<HTMLDivElement>(null)
 
-  const handleInputFocus = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
-      setTimeout(() => {
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }, 300)
-    }
-  }, [])
+  const handleInputFocus = useCallback(
+    (e: React.FocusEvent<HTMLDivElement>) => {
+      const target = e.target as HTMLElement
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT'
+      ) {
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }, 300)
+      }
+    },
+    [],
+  )
 
   const progress = Math.round((currentStep / STEPS.length) * 100)
   const canProceed = isStepComplete(currentStep)
@@ -173,13 +230,14 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
             <Check className="size-10 text-primary" />
           </div>
           <h2 className="mb-2 text-2xl font-bold">
-            {isEditing ? t('wizard.success.updated_title') : t('wizard.success.submitted_title')}
+            {isEditing
+              ? t('wizard.success.updated_title')
+              : t('wizard.success.submitted_title')}
           </h2>
           <p className="mb-6 text-muted-foreground">
             {isEditing
               ? t('wizard.success.updated_desc')
-              : t('wizard.success.submitted_desc')
-            }
+              : t('wizard.success.submitted_desc')}
           </p>
           <Button
             onClick={() => {
@@ -203,9 +261,15 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
         <div className="hidden sm:flex w-64 flex-col border-r bg-muted/30">
           <div className="p-5 border-b">
             <DialogHeader>
-              <DialogTitle className="text-base font-bold">{isEditing ? t('wizard.header.edit_title') : t('wizard.header.title')}</DialogTitle>
+              <DialogTitle className="text-base font-bold">
+                {isEditing
+                  ? t('wizard.header.edit_title')
+                  : t('wizard.header.title')}
+              </DialogTitle>
               <DialogDescription className="text-xs">
-                {isEditing ? t('wizard.header.edit_desc') : t('wizard.header.desc')}
+                {isEditing
+                  ? t('wizard.header.edit_desc')
+                  : t('wizard.header.desc')}
               </DialogDescription>
             </DialogHeader>
           </div>
@@ -230,22 +294,21 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
                     'flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-all',
                     isActive && 'bg-background shadow-sm font-medium',
                     isCompleted && 'text-muted-foreground hover:bg-muted/50',
-                    !isActive && !isCompleted && 'text-muted-foreground/50 cursor-not-allowed'
+                    !isActive &&
+                      !isCompleted &&
+                      'text-muted-foreground/50 cursor-not-allowed',
                   )}
                 >
                   <div
                     className={cn(
                       'flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-medium',
-                      isCompleted && 'bg-primary border-primary text-primary-foreground',
+                      isCompleted &&
+                        'bg-primary border-primary text-primary-foreground',
                       isActive && 'border-primary text-primary',
-                      !isActive && !isCompleted && 'border-muted-foreground/20'
+                      !isActive && !isCompleted && 'border-muted-foreground/20',
                     )}
                   >
-                    {isCompleted ? (
-                      <Check className="size-3" />
-                    ) : (
-                      step.id
-                    )}
+                    {isCompleted ? <Check className="size-3" /> : step.id}
                   </div>
                   <span className="truncate">{step.title}</span>
                 </button>
@@ -258,7 +321,10 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
             <div className="space-y-1.5">
               <Progress value={progress} className="h-1.5" variant="primary" />
               <p className="text-xs text-muted-foreground text-center">
-                {t('wizard.step_progress', { current: currentStep, total: STEPS.length })}
+                {t('wizard.step_progress', {
+                  current: currentStep,
+                  total: STEPS.length,
+                })}
               </p>
             </div>
             <Button
@@ -281,7 +347,10 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
                 {STEPS[currentStep - 1].title}
               </DialogTitle>
               <DialogDescription className="text-xs">
-                {t('wizard.step_progress', { current: currentStep, total: STEPS.length })}
+                {t('wizard.step_progress', {
+                  current: currentStep,
+                  total: STEPS.length,
+                })}
               </DialogDescription>
             </DialogHeader>
             <Progress value={progress} className="mt-2 h-1" variant="primary" />
@@ -299,7 +368,9 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
             {currentStep === 3 && <BrandStep />}
             {currentStep === 4 && <VehicleInfoStep />}
             {currentStep === 5 && <PhotosStep />}
-            {currentStep === 6 && <ReviewStep onEditStep={(i) => setCurrentStep(i + 1)} />}
+            {currentStep === 6 && (
+              <ReviewStep onEditStep={(i) => setCurrentStep(i + 1)} />
+            )}
           </div>
 
           {/* Navigation */}
@@ -312,7 +383,11 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
                 size="sm"
                 className="gap-1"
               >
-                {isRtl ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
+                {isRtl ? (
+                  <ChevronRight className="size-4" />
+                ) : (
+                  <ChevronLeft className="size-4" />
+                )}
                 {t('wizard.back')}
               </Button>
 
@@ -343,7 +418,11 @@ export function RequestWizard({ onSuccess, onCancel, initialData }: RequestWizar
                   className="gap-1"
                 >
                   {t('wizard.next')}
-                  {isRtl ? <ChevronLeft className="size-4" /> : <ChevronRight className="size-4" />}
+                  {isRtl ? (
+                    <ChevronLeft className="size-4" />
+                  ) : (
+                    <ChevronRight className="size-4" />
+                  )}
                 </Button>
               )}
             </div>

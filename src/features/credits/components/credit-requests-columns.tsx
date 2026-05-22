@@ -2,17 +2,23 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useToast } from '@/hooks/use-toast'
 import { Calendar, Check, Coins, X } from 'lucide-react'
 import type { ColumnDef } from '@tanstack/react-table'
+import { useToast } from '@/hooks/use-toast'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Textarea } from '@/components/ui/textarea'
 
 export const useCreditRequestsColumns = (
-  approve: (data: { id: string }, options?: { onSuccess?: () => void; onError?: (err: any) => void }) => void,
-  reject: (data: { id: string; adminNote?: string }, options?: { onSuccess?: () => void; onError?: (err: any) => void }) => void,
+  approve: (
+    data: { id: string },
+    options?: { onSuccess?: () => void; onError?: (err: any) => void },
+  ) => void,
+  reject: (
+    data: { id: string; adminNote?: string },
+    options?: { onSuccess?: () => void; onError?: (err: any) => void },
+  ) => void,
   isApproving: boolean,
   isRejecting: boolean,
 ): Array<ColumnDef<any>> => {
@@ -33,8 +39,12 @@ export const useCreditRequestsColumns = (
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold truncate">{seller?.name || t('credit_requests.unknown_seller')}</span>
-              <span className="text-[10px] text-muted-foreground truncate">{seller?.storeName || seller?.email || ''}</span>
+              <span className="text-sm font-bold truncate">
+                {seller?.name || t('credit_requests.unknown_seller')}
+              </span>
+              <span className="text-[10px] text-muted-foreground truncate">
+                {seller?.storeName || seller?.email || ''}
+              </span>
             </div>
           </div>
         )
@@ -46,7 +56,9 @@ export const useCreditRequestsColumns = (
       cell: ({ row }: { row: any }) => (
         <div className="flex items-center gap-1.5">
           <Coins className="size-3.5 text-amber-500 shrink-0" />
-          <span className="text-sm font-bold tabular-nums">{row.original.credits}</span>
+          <span className="text-sm font-bold tabular-nums">
+            {row.original.credits}
+          </span>
         </div>
       ),
     },
@@ -69,14 +81,21 @@ export const useCreditRequestsColumns = (
         const status = row.original.status
         return (
           <GlowingBadge
-            variant={status === 'pending' ? 'warning' : status === 'approved' ? 'success' : 'error'}
+            variant={
+              status === 'pending'
+                ? 'warning'
+                : status === 'approved'
+                  ? 'success'
+                  : 'error'
+            }
             className="text-[9px] uppercase"
           >
             {t(`credit_requests.filter_${status}` as any)}
           </GlowingBadge>
         )
       },
-      filterFn: (row: any, id: string, value: any) => value.includes(row.getValue(id)),
+      filterFn: (row: any, id: string, value: any) =>
+        value.includes(row.getValue(id)),
     },
     {
       accessorKey: 'createdAt',
@@ -98,27 +117,34 @@ export const useCreditRequestsColumns = (
         const [showReject, setShowReject] = useState(false)
         const [note, setNote] = useState('')
 
-        if (req.status !== 'pending') return <span className="text-xs text-muted-foreground">\u2014</span>
+        if (req.status !== 'pending')
+          return <span className="text-xs text-muted-foreground">\u2014</span>
 
         return (
-          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="flex items-center gap-1.5"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Button
               disabled={isApproving}
               size="sm"
               onClick={() => {
-                approve(
-                  { id: req.id },
-                  {
-                    onSuccess: () => {
-                      toast.success('credit_requests.grant_success', { values: { credits: req.credits, name: req.seller?.name } })
-                    },
-                        onError: (err: any) => toast.error('credit_requests.error', { error: err.message }),
-                  } as any,
-                )
+                approve({ id: req.id }, {
+                  onSuccess: () => {
+                    toast.success('credit_requests.grant_success', {
+                      values: { credits: req.credits, name: req.seller?.name },
+                    })
+                  },
+                  onError: (err: any) =>
+                    toast.error('credit_requests.error', {
+                      error: err.message,
+                    }),
+                } as any)
               }}
               className="h-7 text-[10px] font-bold px-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white"
             >
-              <Check className="size-3 mr-0.5" /> {t('credit_requests.approve_grant')}
+              <Check className="size-3 mr-0.5" />{' '}
+              {t('credit_requests.approve_grant')}
             </Button>
             {showReject ? (
               <div className="flex items-center gap-1">
@@ -132,29 +158,40 @@ export const useCreditRequestsColumns = (
                   disabled={isRejecting}
                   size="sm"
                   onClick={() => {
-                    reject(
-                      { id: req.id, adminNote: note || undefined },
-                      {
-                        onSuccess: () => {
-                          setShowReject(false)
-                          setNote('')
-                          toast.success('credit_requests.reject_success')
-                        },
-                    onError: (err: any) => toast.error('credit_requests.error', { error: err.message }),
-                      } as any,
-                    )
+                    reject({ id: req.id, adminNote: note || undefined }, {
+                      onSuccess: () => {
+                        setShowReject(false)
+                        setNote('')
+                        toast.success('credit_requests.reject_success')
+                      },
+                      onError: (err: any) =>
+                        toast.error('credit_requests.error', {
+                          error: err.message,
+                        }),
+                    } as any)
                   }}
                   className="h-7 text-[10px] font-bold px-2 rounded-lg bg-red-600 hover:bg-red-700 text-white"
                 >
                   {t('credit_requests.reject_action')}
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => setShowReject(false)} className="h-7 text-[10px] px-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowReject(false)}
+                  className="h-7 text-[10px] px-1"
+                >
                   {t('packages.form.cancel')}
                 </Button>
               </div>
             ) : (
-              <Button variant="outline" size="sm" onClick={() => setShowReject(true)} className="h-7 text-[10px] font-bold px-2 rounded-lg">
-                <X className="size-3 mr-0.5" /> {t('credit_requests.reject_action')}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowReject(true)}
+                className="h-7 text-[10px] font-bold px-2 rounded-lg"
+              >
+                <X className="size-3 mr-0.5" />{' '}
+                {t('credit_requests.reject_action')}
               </Button>
             )}
           </div>

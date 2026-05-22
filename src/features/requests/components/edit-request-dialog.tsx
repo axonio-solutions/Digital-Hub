@@ -1,7 +1,12 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { RequestWizard } from '@/features/requests/components/request-wizard-new'
 
 interface EditRequestDialogProps {

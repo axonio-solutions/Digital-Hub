@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, Coins, Store, Mail, ChevronRight } from 'lucide-react'
+import { ChevronRight, Coins, Mail, Search, Store } from 'lucide-react'
+import { useSellersWithCredits } from '../hooks/use-credits'
+import { GrantCreditsDialog } from './grant-credits-dialog'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import { useSellersWithCredits } from '../hooks/use-credits'
-import { GrantCreditsDialog } from './grant-credits-dialog'
 
 export function DistributeCredits() {
   const { t } = useTranslation('dashboard/credits')
@@ -78,7 +78,9 @@ export function DistributeCredits() {
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm truncate">{seller.name || t('distribute.unknown_seller')}</span>
+                  <span className="font-bold text-sm truncate">
+                    {seller.name || t('distribute.unknown_seller')}
+                  </span>
                   {seller.storeName && (
                     <span className="text-[10px] text-muted-foreground flex items-center gap-1 truncate">
                       <Store className="size-3 shrink-0" />

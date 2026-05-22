@@ -1,10 +1,16 @@
 'use client'
 
-import { useRef, useState, useCallback } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
-import { Camera, Loader2, Trash2, UploadCloud, CheckCircle2 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Camera,
+  CheckCircle2,
+  Loader2,
+  Trash2,
+  UploadCloud,
+} from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 import type { RequestFormData } from '@/types/request-schemas'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -28,22 +34,29 @@ export function PhotosStep() {
   const imageUrls = watch('imageUrls') || []
 
   const allImages = [
-    ...imageUrls.map((url, idx) => ({ type: 'url' as const, url, id: `url-${idx}`, originalIndex: idx })),
+    ...imageUrls.map((url, idx) => ({
+      type: 'url' as const,
+      url,
+      id: `url-${idx}`,
+      originalIndex: idx,
+    })),
     ...selectedImages.map((file, idx) => ({
       type: 'file' as const,
       file,
       id: `file-${idx}`,
       previewUrl: URL.createObjectURL(file),
-      originalIndex: idx
+      originalIndex: idx,
     })),
   ]
 
-  const handleRemoveImage = (item: typeof allImages[0]) => {
+  const handleRemoveImage = (item: (typeof allImages)[0]) => {
     if (item.type === 'url') {
       const newUrls = imageUrls.filter((_, i) => i !== item.originalIndex)
       setValue('imageUrls', newUrls)
     } else {
-      setSelectedImages((prev) => prev.filter((_, i) => i !== item.originalIndex))
+      setSelectedImages((prev) =>
+        prev.filter((_, i) => i !== item.originalIndex),
+      )
     }
   }
 
@@ -54,44 +67,47 @@ export function PhotosStep() {
     uploadFiles(newFiles)
   }
 
-  const uploadFiles = useCallback(async (filesToUpload: Array<File>) => {
-    if (filesToUpload.length === 0 || !user?.id) return
+  const uploadFiles = useCallback(
+    async (filesToUpload: Array<File>) => {
+      if (filesToUpload.length === 0 || !user?.id) return
 
-    setIsUploading(true)
-    setUploadProgress(0)
-    const finalImageUrls = [...imageUrls]
-
-    try {
-      for (let i = 0; i < filesToUpload.length; i++) {
-        const file = filesToUpload[i]
-        const fileExt = file.name.split('.').pop()
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-        const filePath = `${user.id}/${fileName}`
-
-        const { error: uploadError } = await supabase.storage
-          .from('requests-photos')
-          .upload(filePath, file)
-
-        if (uploadError) throw uploadError
-
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from('requests-photos').getPublicUrl(filePath)
-
-        finalImageUrls.push(publicUrl)
-        setUploadProgress(Math.round(((i + 1) / filesToUpload.length) * 100))
-      }
-
-      setValue('imageUrls', finalImageUrls)
-      setSelectedImages([])
-    } catch (error) {
-      console.error('Upload error:', error)
-      setSelectedImages([])
-    } finally {
-      setIsUploading(false)
+      setIsUploading(true)
       setUploadProgress(0)
-    }
-  }, [imageUrls, user?.id])
+      const finalImageUrls = [...imageUrls]
+
+      try {
+        for (let i = 0; i < filesToUpload.length; i++) {
+          const file = filesToUpload[i]
+          const fileExt = file.name.split('.').pop()
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+          const filePath = `${user.id}/${fileName}`
+
+          const { error: uploadError } = await supabase.storage
+            .from('requests-photos')
+            .upload(filePath, file)
+
+          if (uploadError) throw uploadError
+
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from('requests-photos').getPublicUrl(filePath)
+
+          finalImageUrls.push(publicUrl)
+          setUploadProgress(Math.round(((i + 1) / filesToUpload.length) * 100))
+        }
+
+        setValue('imageUrls', finalImageUrls)
+        setSelectedImages([])
+      } catch (error) {
+        console.error('Upload error:', error)
+        setSelectedImages([])
+      } finally {
+        setIsUploading(false)
+        setUploadProgress(0)
+      }
+    },
+    [imageUrls, user?.id],
+  )
 
   return (
     <motion.div
@@ -168,7 +184,9 @@ export function PhotosStep() {
                   </div>
                   {item.type === 'file' && (
                     <div className="absolute inset-x-0 bottom-0 bg-primary/90 py-0.5 flex items-center justify-center">
-                      <span className="text-[8px] font-bold text-white uppercase">{t('steps.photos.ready')}</span>
+                      <span className="text-[8px] font-bold text-white uppercase">
+                        {t('steps.photos.ready')}
+                      </span>
                     </div>
                   )}
                 </motion.div>
@@ -194,7 +212,9 @@ export function PhotosStep() {
             className="w-full gap-2 h-12 border-2 border-dashed hover:border-primary hover:bg-primary/5"
           >
             <UploadCloud className="size-5" />
-            {allImages.length > 0 ? t('steps.photos.add_more', 'Add More Photos') : t('steps.photos.add_photos', 'Add Photos')}
+            {allImages.length > 0
+              ? t('steps.photos.add_more', 'Add More Photos')
+              : t('steps.photos.add_photos', 'Add Photos')}
           </Button>
 
           {/* Upload indicator */}

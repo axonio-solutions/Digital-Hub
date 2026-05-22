@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { createBrowserClient } from '@supabase/ssr'
@@ -18,22 +18,28 @@ export function useNotifications(_userId?: string) {
   const { t } = useTranslation('notifications')
   const tRef = useRef(t)
   tRef.current = t
+  const hasConnectedRef = useRef(false)
 
   useEffect(() => {
     if (!_userId) return
 
     console.log('[Supabase Realtime] Connecting to notifications table...')
-    
-    // SSR-safe Supabase client instantiation
+
     const supabase = createBrowserClient(
       import.meta.env.VITE_SUPABASE_URL,
-      import.meta.env.VITE_SUPABASE_ANON_KEY
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
     )
 
-    // Using a random suffix prevents React StrictMode double mounts from reusing
-    // a channel that is already in the 'SUBSCRIBED' state.
-    const channelName = `notifications_${_userId}_${Math.random().toString(36).substring(7)}`
-    
+    const channelName = `notifications_${_userId}`
+
+    // createBrowserClient is a singleton — on StrictMode remount the old channel
+    // may still be in its internal map in SUBSCRIBED state. Remove it first so
+    // the subsequent .on() call doesn't throw "cannot add callbacks after subscribe".
+    supabase
+      .getChannels()
+      .filter((c) => c.topic === `realtime:${channelName}`)
+      .forEach((c) => supabase.removeChannel(c))
+
     const channel = supabase
       .channel(channelName)
       .on(
@@ -46,60 +52,115 @@ export function useNotifications(_userId?: string) {
         },
         (payload) => {
           try {
-            if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+            if (payload.eventType === 'DELETE') {
+              const deletedId = payload.old?.id
+              if (deletedId) {
+                queryClient.setQueryData(
+                  ['notifications', 'unread', _userId],
+                  (old: any) => {
+                    if (!Array.isArray(old)) return old
+                    return old.filter((n: any) => n.id !== deletedId)
+                  },
+                )
+                queryClient.setQueryData(['notifications'], (old: any) => {
+                  if (!Array.isArray(old)) return old
+                  return old.filter((n: any) => n.id !== deletedId)
+                })
+              }
+              return
+            }
+
+            if (
+              payload.eventType === 'INSERT' ||
+              payload.eventType === 'UPDATE'
+            ) {
               const notification = payload.new
-              console.log('[Supabase Realtime] Notification received:', notification)
+              console.log(
+                '[Supabase Realtime] Notification received:',
+                notification,
+              )
 
               // Optimistically update the unread notification cache array
               // Do NOT use refetchQueries per execution protocol
               queryClient.setQueryData(['notifications'], (oldData: any) => {
                 if (!Array.isArray(oldData)) return [notification]
-                
+
                 if (payload.eventType === 'UPDATE') {
-                  return oldData.map(n => n.id === notification.id ? notification : n)
+                  return oldData.map((n) =>
+                    n.id === notification.id ? notification : n,
+                  )
                 }
-                
+
                 // Avoid duplicate entries if already in cache
-                if (oldData.some(n => n.id === notification.id)) return oldData
+                if (oldData.some((n) => n.id === notification.id))
+                  return oldData
                 return [notification, ...oldData]
               })
-              
+
               // Patch the specific unread query as well to ensure UI consistency
-              queryClient.setQueryData(['notifications', 'unread', _userId], (oldData: any) => {
-                if (!Array.isArray(oldData)) return [notification]
-                if (payload.eventType === 'UPDATE') {
-                  return oldData.map(n => n.id === notification.id ? notification : n)
-                }
-                if (oldData.some(n => n.id === notification.id)) return oldData
-                return [notification, ...oldData]
-              })
+              queryClient.setQueryData(
+                ['notifications', 'unread', _userId],
+                (oldData: any) => {
+                  if (!Array.isArray(oldData)) return [notification]
+                  if (payload.eventType === 'UPDATE') {
+                    return oldData.map((n) =>
+                      n.id === notification.id ? notification : n,
+                    )
+                  }
+                  if (oldData.some((n) => n.id === notification.id))
+                    return oldData
+                  return [notification, ...oldData]
+                },
+              )
 
               // --- Real-time Cache Invalidation ---
               // Instead of patching with partial metadata, invalidate affected caches
               // so TanStack Query refetches from the server. This ensures full data consistency.
               if (notification.metadata?.requestId) {
-                const { requestId, quoteId, quoteStatus } = notification.metadata
-                console.log(`[Supabase Realtime] Invalidating caches for request ${requestId}`)
+                const { requestId, quoteId, quoteStatus } =
+                  notification.metadata
+                console.log(
+                  `[Supabase Realtime] Invalidating caches for request ${requestId}`,
+                )
 
-                queryClient.invalidateQueries({ queryKey: ['requests', 'details', requestId] })
-                queryClient.invalidateQueries({ queryKey: ['buyer', 'requests', _userId] })
-                queryClient.invalidateQueries({ queryKey: ['requests', 'open'] })
+                queryClient.invalidateQueries({
+                  queryKey: ['requests', 'details', requestId],
+                })
+                queryClient.invalidateQueries({
+                  queryKey: ['buyer', 'requests', _userId],
+                })
+                queryClient.invalidateQueries({
+                  queryKey: ['requests', 'open'],
+                })
 
                 if (quoteId && quoteStatus) {
-                  queryClient.invalidateQueries({ queryKey: ['seller', 'quotes', _userId] })
-                  queryClient.invalidateQueries({ queryKey: ['seller', 'dashboard', _userId] })
-                  queryClient.invalidateQueries({ queryKey: ['credits', 'my-balance'] })
+                  queryClient.invalidateQueries({
+                    queryKey: ['seller', 'quotes', _userId],
+                  })
+                  queryClient.invalidateQueries({
+                    queryKey: ['seller', 'dashboard', _userId],
+                  })
+                  queryClient.invalidateQueries({
+                    queryKey: ['credits', 'my-balance'],
+                  })
                 }
               }
-
               // Trigger Visual Feedback for new notifications
               if (payload.eventType === 'INSERT') {
                 const _t = tRef.current
                 const typeKey = (notification.type ?? '').toLowerCase()
-                const isErrorType = ['abandoned_request', 'spam_flag', 'bottleneck_alert'].includes(typeKey)
-                const title = _t(`types.${typeKey}`, { defaultValue: notification.title || _t('toast.alert') })
-                const message = _t(`messages.${typeKey}`, { defaultValue: notification.message })
-                
+                const isErrorType = [
+                  'abandoned_request',
+                  'spam_flag',
+                  'bottleneck_alert',
+                ].includes(typeKey)
+                const title = _t(`types.${typeKey}`, {
+                  defaultValue: notification.title || _t('toast.alert'),
+                })
+                const message = _t(`messages.${typeKey}`, {
+                  defaultValue: notification.message,
+                })
+
                 if (isErrorType) {
                   toast.error(title, {
                     description: message,
@@ -109,24 +170,37 @@ export function useNotifications(_userId?: string) {
                   toast.success(title, {
                     description: message,
                     duration: 5000,
-                    action: notification.linkUrl ? {
-                      label: _t('toast.view'),
-                      onClick: () => {
-                        window.location.href = notification.linkUrl
-                      }
-                    } : undefined,
+                    action: notification.linkUrl
+                      ? {
+                          label: _t('toast.view'),
+                          onClick: () => {
+                            window.location.href = notification.linkUrl
+                          },
+                        }
+                      : undefined,
                   })
                 }
               }
             }
           } catch (err) {
-            console.error('[Supabase Realtime] Error handling notification payload:', err)
+            console.error(
+              '[Supabase Realtime] Error handling notification payload:',
+              err,
+            )
           }
-        }
+        },
       )
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
           console.log('[Supabase Realtime] Connection established.')
+          if (hasConnectedRef.current) {
+            // Reconnect — fetch any notifications missed while offline
+            queryClient.invalidateQueries({
+              queryKey: ['notifications', 'unread', _userId],
+              exact: false,
+            })
+          }
+          hasConnectedRef.current = true
         }
         if (status === 'CHANNEL_ERROR') {
           console.error('[Supabase Realtime] connection error')
@@ -143,12 +217,12 @@ export function useNotifications(_userId?: string) {
 /**
  * Query for unread notifications
  */
-export function useUnreadNotifications(userId: string) {
+export function useUnreadNotifications(userId: string, limit = 10) {
   return useQuery({
-    queryKey: ['notifications', 'unread', userId],
-    queryFn: () => fetchUnreadNotificationsServerFn(),
+    queryKey: ['notifications', 'unread', userId, limit],
+    queryFn: () => fetchUnreadNotificationsServerFn({ data: limit }),
     enabled: !!userId,
-    staleTime: 10 * 1000,
+    staleTime: 60 * 1000,
   })
 }
 
@@ -174,18 +248,24 @@ export function useMarkNotificationRead() {
 
       // We also try to patch any unread specific queries we can find in the cache
       // This is a "best effort" optimistic update for nested keys
-      queryClient.getQueryCache().findAll({ queryKey: ['notifications', 'unread'] }).forEach(query => {
-        queryClient.setQueryData(query.queryKey, (old: any) => {
-          if (!Array.isArray(old)) return old
-          return old.filter((n: any) => n.id !== id)
+      queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ['notifications', 'unread'] })
+        .forEach((query) => {
+          queryClient.setQueryData(query.queryKey, (old: any) => {
+            if (!Array.isArray(old)) return old
+            return old.filter((n: any) => n.id !== id)
+          })
         })
-      })
 
       return { previousNotifications }
     },
     onError: (_err, _id, context) => {
       if (context?.previousNotifications) {
-        queryClient.setQueryData(['notifications'], context.previousNotifications)
+        queryClient.setQueryData(
+          ['notifications'],
+          context.previousNotifications,
+        )
       }
     },
 
@@ -194,7 +274,6 @@ export function useMarkNotificationRead() {
     },
   })
 }
-
 
 /**
  * Mutation to mark all notifications as read
@@ -205,9 +284,13 @@ export function useMarkAllNotificationsRead() {
     mutationFn: (_userId: string) => markAllNotificationsReadServerFn(),
     onMutate: async (userId) => {
       await queryClient.cancelQueries({ queryKey: ['notifications'] })
-      
+
       const previousNotifications = queryClient.getQueryData(['notifications'])
-      const previousUnread = queryClient.getQueryData(['notifications', 'unread', userId])
+      const previousUnread = queryClient.getQueryData([
+        'notifications',
+        'unread',
+        userId,
+      ])
 
       // Optimistically clear everything
       queryClient.setQueryData(['notifications'], [])
@@ -217,10 +300,16 @@ export function useMarkAllNotificationsRead() {
     },
     onError: (_err, _userId, context) => {
       if (context?.previousNotifications) {
-        queryClient.setQueryData(['notifications'], context.previousNotifications)
+        queryClient.setQueryData(
+          ['notifications'],
+          context.previousNotifications,
+        )
       }
       if (context?.previousUnread) {
-        queryClient.setQueryData(['notifications', 'unread', _userId], context.previousUnread)
+        queryClient.setQueryData(
+          ['notifications', 'unread', _userId],
+          context.previousUnread,
+        )
       }
     },
 
@@ -229,4 +318,3 @@ export function useMarkAllNotificationsRead() {
     },
   })
 }
-

@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useToast } from '@/hooks/use-toast'
 import { Coins, Loader2, Package, Store, User } from 'lucide-react'
+import { useCreditPackages, useGrantCredits } from '../hooks/use-credits'
+import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -14,7 +15,6 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { useCreditPackages, useGrantCredits } from '../hooks/use-credits'
 import { cn } from '@/lib/utils'
 
 const QUICK_AMOUNTS = [10, 20, 50, 100, 200, 500, 1000]
@@ -26,7 +26,12 @@ interface GrantCreditsDialogProps {
   showPackages?: boolean
 }
 
-export function GrantCreditsDialog({ seller, open, onOpenChange, showPackages }: GrantCreditsDialogProps) {
+export function GrantCreditsDialog({
+  seller,
+  open,
+  onOpenChange,
+  showPackages,
+}: GrantCreditsDialogProps) {
   const { t } = useTranslation('dashboard/credits')
   const { toast } = useToast('dashboard/credits')
   const [amount, setAmount] = useState<number>(0)
@@ -45,7 +50,9 @@ export function GrantCreditsDialog({ seller, open, onOpenChange, showPackages }:
       { sellerId: seller.id, amount, description: description || undefined },
       {
         onSuccess: () => {
-          toast.success('distribute.grant.success', { values: { amount, name: seller.name } })
+          toast.success('distribute.grant.success', {
+            values: { amount, name: seller.name },
+          })
           setAmount(0)
           setDescription('')
           onOpenChange(false)
@@ -93,42 +100,52 @@ export function GrantCreditsDialog({ seller, open, onOpenChange, showPackages }:
         <div className="space-y-3">
           {/* Credit Packages + Quick Amounts inline */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {showPackages && packages.filter((p: any) => p.isActive).length > 0 && (
-              <div className="space-y-1.5">
-                <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                  <Package className="size-3" /> {t('packages.title')}
-                </Label>
-                <div className="grid grid-cols-1 gap-1.5">
-                  {packages.filter((p: any) => p.isActive).map((pkg: any) => {
-                    const selected = amount === pkg.credits
-                    return (
-                      <button
-                        key={pkg.id}
-                        type="button"
-                        onClick={() => {
-                          setAmount(pkg.credits)
-                          setDescription(pkg.description || pkg.name)
-                        }}
-                        className={cn(
-                          'flex items-center justify-between gap-2 px-3 py-2 rounded-lg border text-left transition-all',
-                          selected
-                            ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
-                            : 'border-border bg-card hover:border-amber-200 dark:hover:border-amber-800',
-                        )}
-                      >
-                        <span className={cn(
-                          'text-xs font-bold',
-                          selected ? 'text-amber-700 dark:text-amber-300' : 'text-foreground',
-                        )}>{pkg.name}</span>
-                        <span className="text-[10px] font-bold tabular-nums text-muted-foreground">
-                          {pkg.credits} {t('packages.credits_unit')} / {pkg.price.toLocaleString()} {t('currency_dzd')}
-                        </span>
-                      </button>
-                    )
-                  })}
+            {showPackages &&
+              packages.filter((p: any) => p.isActive).length > 0 && (
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                    <Package className="size-3" /> {t('packages.title')}
+                  </Label>
+                  <div className="grid grid-cols-1 gap-1.5">
+                    {packages
+                      .filter((p: any) => p.isActive)
+                      .map((pkg: any) => {
+                        const selected = amount === pkg.credits
+                        return (
+                          <button
+                            key={pkg.id}
+                            type="button"
+                            onClick={() => {
+                              setAmount(pkg.credits)
+                              setDescription(pkg.description || pkg.name)
+                            }}
+                            className={cn(
+                              'flex items-center justify-between gap-2 px-3 py-2 rounded-lg border text-left transition-all',
+                              selected
+                                ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
+                                : 'border-border bg-card hover:border-amber-200 dark:hover:border-amber-800',
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                'text-xs font-bold',
+                                selected
+                                  ? 'text-amber-700 dark:text-amber-300'
+                                  : 'text-foreground',
+                              )}
+                            >
+                              {pkg.name}
+                            </span>
+                            <span className="text-[10px] font-bold tabular-nums text-muted-foreground">
+                              {pkg.credits} {t('packages.credits_unit')} /{' '}
+                              {pkg.price.toLocaleString()} {t('currency_dzd')}
+                            </span>
+                          </button>
+                        )
+                      })}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             <div className="space-y-1.5">
               <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                 {t('distribute.grant.quick_amounts')}
@@ -142,7 +159,8 @@ export function GrantCreditsDialog({ seller, open, onOpenChange, showPackages }:
                     onClick={() => setAmount(a)}
                     className={cn(
                       'h-7 min-w-[48px] text-[10px] font-bold px-2 transition-all',
-                      amount === a && 'bg-amber-600 hover:bg-amber-700 text-white',
+                      amount === a &&
+                        'bg-amber-600 hover:bg-amber-700 text-white',
                     )}
                   >
                     {a}
@@ -155,7 +173,10 @@ export function GrantCreditsDialog({ seller, open, onOpenChange, showPackages }:
           {/* Amount + Description inline */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="amount" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <Label
+                htmlFor="amount"
+                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+              >
                 {t('distribute.grant.amount')}
               </Label>
               <div className="relative">
@@ -172,7 +193,10 @@ export function GrantCreditsDialog({ seller, open, onOpenChange, showPackages }:
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="description" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <Label
+                htmlFor="description"
+                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+              >
                 {t('distribute.grant.description')}
               </Label>
               <Input
@@ -205,9 +229,15 @@ export function GrantCreditsDialog({ seller, open, onOpenChange, showPackages }:
               )}
             >
               {isPending ? (
-                <><Loader2 className="size-3.5 mr-1.5 animate-spin" /> {t('distribute.grant.processing')}</>
+                <>
+                  <Loader2 className="size-3.5 mr-1.5 animate-spin" />{' '}
+                  {t('distribute.grant.processing')}
+                </>
               ) : (
-                <><Coins className="size-3.5 mr-1.5" /> {t('distribute.grant.confirm', { amount })}</>
+                <>
+                  <Coins className="size-3.5 mr-1.5" />{' '}
+                  {t('distribute.grant.confirm', { amount })}
+                </>
               )}
             </Button>
           </div>
