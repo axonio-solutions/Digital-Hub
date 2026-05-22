@@ -1,29 +1,37 @@
+import { eq } from 'drizzle-orm'
+import type { NotificationTrigger } from '@/services/notification-service'
 import {
   fetchUnreadNotifications,
-  markNotificationRead,
   markAllNotificationsRead,
+  markNotificationRead,
 } from '@/data-access/notifications'
 import { users } from '@/db/schema'
 import { db } from '@/db'
-import { eq } from 'drizzle-orm'
+
+import { NotificationService } from '@/services/notification-service'
 
 /**
  * Axis Layer 4: Use Cases for Notifications
  */
 
-export async function getUnreadNotificationsUseCase(userId: string) {
-  return await fetchUnreadNotifications(userId)
+export async function getUnreadNotificationsUseCase(
+  userId: string,
+  limit = 10,
+  offset = 0,
+) {
+  return await fetchUnreadNotifications(userId, limit, offset)
 }
 
-export async function markNotificationAsReadUseCase(notificationId: string) {
-  return await markNotificationRead(notificationId)
+export async function markNotificationAsReadUseCase(
+  notificationId: string,
+  userId: string,
+) {
+  return await markNotificationRead(notificationId, userId)
 }
 
 export async function markAllAsReadUseCase(userId: string) {
   return await markAllNotificationsRead(userId)
 }
-
-import { NotificationService, NotificationTrigger } from '@/services/notification-service'
 
 export async function createNotificationUseCase(data: NotificationTrigger) {
   try {
@@ -54,12 +62,17 @@ export async function getSellersUseCase() {
   })
 }
 
-export async function updateNotificationSettingsUseCase(userId: string, data: any) {
-  const { upsertNotificationPreferences } = await import('@/data-access/notifications')
+export async function updateNotificationSettingsUseCase(
+  userId: string,
+  data: any,
+) {
+  const { upsertNotificationPreferences } =
+    await import('@/data-access/notifications')
   return await upsertNotificationPreferences(userId, data)
 }
 
 export async function getNotificationSettingsUseCase(userId: string) {
-  const { fetchNotificationPreferences } = await import('@/data-access/notifications')
+  const { fetchNotificationPreferences } =
+    await import('@/data-access/notifications')
   return await fetchNotificationPreferences(userId)
 }

@@ -1,6 +1,6 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { creditRequests } from '@/db/schema'
+import { creditRequests, users } from '@/db/schema'
 import {
   createCreditPackage,
   createCreditRequest,
@@ -36,7 +36,14 @@ export async function grantCreditsUseCase(
   if (amount <= 0) {
     return { success: false, error: 'Amount must be positive' }
   }
-  const txn = await grantCredits(sellerId, amount, 'purchase', adminId, description, packageId)
+  const txn = await grantCredits(
+    sellerId,
+    amount,
+    'purchase',
+    adminId,
+    description,
+    packageId,
+  )
   return { success: true, transaction: txn }
 }
 
@@ -74,7 +81,10 @@ export async function updateCreditPackageUseCase(
   return await updateCreditPackage(id, data)
 }
 
-export async function toggleCreditPackageStatusUseCase(id: string, isActive: boolean) {
+export async function toggleCreditPackageStatusUseCase(
+  id: string,
+  isActive: boolean,
+) {
   return await toggleCreditPackageStatus(id, isActive)
 }
 
@@ -82,7 +92,10 @@ export async function getRevenueMetricsUseCase() {
   return await fetchRevenueMetrics()
 }
 
-export async function deductCreditForQuoteUseCase(sellerId: string, quoteId: string) {
+export async function deductCreditForQuoteUseCase(
+  sellerId: string,
+  quoteId: string,
+) {
   return await deductCredits(sellerId, 1, quoteId)
 }
 
@@ -95,6 +108,19 @@ export async function requestCreditsUseCase(
     return { success: false, error: 'Credit amount must be positive' }
   }
   const req = await createCreditRequest(sellerId, credits, packageId)
+
+  const seller = await db.query.users.findFirst({
+    where: eq(users.id, sellerId),
+    columns: { name: true },
+  })
+  const { NotificationTriggers } =
+    await import('@/services/notification-triggers')
+  NotificationTriggers.onCreditRequestSubmitted(
+    sellerId,
+    seller?.name ?? 'A seller',
+    credits,
+  ).catch(console.error)
+
   return { success: true, data: req }
 }
 
@@ -106,19 +132,36 @@ export async function approveCreditRequestUseCase(
   id: string,
   adminId: string,
 ): Promise<{ success: boolean; error?: string }> {
-  const requests = await fetchCreditRequests('pending')
-  const req = requests.find((r) => r.id === id)
-  if (!req) return { success: false, error: 'Request not found' }
+  return await db.transaction(async (tx) => {
+    const updated = await tx
+      .update(creditRequests)
+      .set({ status: 'approved', adminId, updatedAt: new Date() })
+      .where(
+        and(eq(creditRequests.id, id), eq(creditRequests.status, 'pending')),
+      )
+      .returning()
 
-  await db
-    .update(creditRequests)
-    .set({ status: 'approved', adminId, updatedAt: new Date() })
-    .where(eq(creditRequests.id, id))
+    if (updated.length === 0)
+      return { success: false, error: 'Request not found or already processed' }
 
-  // Grant the credits
-  await grantCredits(req.sellerId, req.credits, 'credit_request_approved', adminId, `Credit request approved — ${req.credits} credits`)
+    const req = updated[0]
+    await grantCredits(
+      req.sellerId,
+      req.credits,
+      'credit_request_approved',
+      adminId,
+      `Credit request approved — ${req.credits} credits`,
+    )
 
-  return { success: true }
+    const { NotificationTriggers } =
+      await import('@/services/notification-triggers')
+    NotificationTriggers.onCreditRequestApproved(
+      req.sellerId,
+      req.credits,
+    ).catch(console.error)
+
+    return { success: true }
+  })
 }
 
 export async function rejectCreditRequestUseCase(
@@ -131,6 +174,17 @@ export async function rejectCreditRequestUseCase(
     .set({ status: 'rejected', adminId, adminNote, updatedAt: new Date() })
     .where(eq(creditRequests.id, id))
     .returning()
+
+  if (updated) {
+    const { NotificationTriggers } =
+      await import('@/services/notification-triggers')
+    NotificationTriggers.onCreditRequestRejected(
+      updated.sellerId,
+      updated.credits,
+      adminNote,
+    ).catch(console.error)
+  }
+
   return updated
 }
 

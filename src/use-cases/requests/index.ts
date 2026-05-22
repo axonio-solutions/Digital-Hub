@@ -8,27 +8,26 @@ import {
   fetchBuyerRequestsQuery,
   fetchOpenRequestsQuery,
   fetchRequestDetailsQuery,
+  fetchRequestStatusQuery,
   insertNewRequest,
   updateRequestFullQuery,
   updateRequestStatusQuery,
 } from '@/data-access/requests'
+import { fulfillRequestTransaction } from '@/data-access/quotes'
 import { db } from '@/db'
 import { sparePartRequests } from '@/db/schema'
-import { canDeleteRequest, validateRequestTransition } from '@/lib/state-machine'
+import {
+  canDeleteRequest,
+  validateRequestTransition,
+} from '@/lib/state-machine'
 import { NotificationTriggers } from '@/services/notification-triggers'
-
-/**
- * Axis Layer 2: Requests Use Cases
- */
 
 export async function createRequestUseCase(data: any) {
   try {
     const request = await insertNewRequest(data)
-    
     if (request?.id) {
-       await NotificationTriggers.onNewRequest(request.id)
+      await NotificationTriggers.onNewRequest(request.id)
     }
-
     return { success: true, data: request }
   } catch (error) {
     console.error('Error creating request:', error)
@@ -38,16 +37,14 @@ export async function createRequestUseCase(data: any) {
 
 export async function flagAsSpamUseCase(requestId: string) {
   try {
-    // Special case for Admin Simulation Test
     if (requestId === 'TEST-123') {
       await NotificationTriggers.onSpamFlagged(requestId)
       return { success: true }
     }
-
-    await db.update(sparePartRequests)
+    await db
+      .update(sparePartRequests)
       .set({ isSpam: true })
       .where(eq(sparePartRequests.id, requestId))
-    
     await NotificationTriggers.onSpamFlagged(requestId)
     return { success: true }
   } catch (error) {
@@ -56,7 +53,10 @@ export async function flagAsSpamUseCase(requestId: string) {
   }
 }
 
-export async function getBuyerRequestsUseCase(buyerId: string, options?: { limit?: number; offset?: number }) {
+export async function getBuyerRequestsUseCase(
+  buyerId: string,
+  options?: { limit?: number; offset?: number },
+) {
   try {
     const requests = await fetchBuyerRequestsQuery(buyerId, options)
     return { success: true, data: requests }
@@ -67,15 +67,12 @@ export async function getBuyerRequestsUseCase(buyerId: string, options?: { limit
 }
 
 export async function getOpenRequestsUseCase(options?: {
-  limit?: number;
-  offset?: number;
-  categoryId?: string;
-  brandIds?: string[];
-  search?: string;
-  specialtyFilter?: {
-    brandIds: string[];
-    categoryIds: string[];
-  };
+  limit?: number
+  offset?: number
+  categoryId?: string
+  brandIds?: Array<string>
+  search?: string
+  specialtyFilter?: { brandIds: Array<string>; categoryIds: Array<string> }
 }) {
   try {
     const requests = await fetchOpenRequestsQuery(options)
@@ -104,13 +101,10 @@ export async function getRequestDetailsUseCase(
     const request = await fetchRequestDetailsQuery(requestId)
     if (!request) return { success: false, error: 'Request not found' }
 
-    // RBAC & Ownership Verification
     const isAdmin = currentUser.role === 'admin'
     const isOwner = request.buyerId === currentUser.id
     const isSeller = currentUser.role === 'seller'
     const isMarketplaceAccess = isSeller && request.status === 'open'
-
-    // Allow access if Seller has already interacted with this request (Historical Access)
     const hasInteracted = request.quotes?.some(
       (q: any) => q.sellerId === currentUser.id,
     )
@@ -122,11 +116,9 @@ export async function getRequestDetailsUseCase(
       }
     }
 
-    // Data-Level Privacy: Sellers must NOT see competing quotes
     if (isSeller && !isAdmin) {
-      request.quotes = request.quotes?.filter(
-        (q: any) => q.sellerId === currentUser.id,
-      ) ?? []
+      request.quotes =
+        request.quotes?.filter((q: any) => q.sellerId === currentUser.id) ?? []
     }
 
     return { success: true, data: request }
@@ -136,48 +128,129 @@ export async function getRequestDetailsUseCase(
   }
 }
 
-export async function cancelRequestUseCase(requestId: string) {
+export async function cancelRequestUseCase(
+  requestId: string,
+  userId: string,
+  userRole: string,
+) {
   try {
-    const request = await fetchRequestDetailsQuery(requestId)
-    if (!request) return { success: false, error: 'Request not found' }
-    validateRequestTransition(request.status, 'cancelled')
-    const result = await updateRequestStatusQuery(requestId, 'cancelled')
-    if (!result || result.length === 0) {
-      return { success: false, error: 'Failed to cancel request' }
-    }
-    return { success: true, data: result[0] }
+    const result = await db.transaction(async (tx) => {
+      const row = await fetchRequestStatusQuery(requestId)
+      if (!row) throw new Error('Request not found')
+      if (row.buyerId !== userId && userRole !== 'admin') {
+        throw new Error('Forbidden: You do not own this request')
+      }
+      validateRequestTransition(row.status, 'cancelled')
+      const updated = await updateRequestStatusQuery(requestId, 'cancelled')
+      if (!updated || updated.length === 0)
+        throw new Error('Failed to cancel request')
+      return updated[0]
+    })
+    return { success: true, data: result }
   } catch (error: any) {
     console.error('Error cancelling request:', error)
-    return { success: false, error: error.message || 'Failed to cancel request' }
+    return {
+      success: false,
+      error: error.message || 'Failed to cancel request',
+    }
   }
 }
 
-export async function reopenRequestUseCase(requestId: string) {
+export async function reopenRequestUseCase(
+  requestId: string,
+  userId: string,
+  userRole: string,
+) {
   try {
-    const request = await fetchRequestDetailsQuery(requestId)
-    if (!request) return { success: false, error: 'Request not found' }
-    validateRequestTransition(request.status, 'open')
-    const result = await updateRequestStatusQuery(requestId, 'open')
-    if (!result || result.length === 0) {
-      return { success: false, error: 'Failed to reopen request' }
-    }
-    return { success: true, data: result[0] }
+    const result = await db.transaction(async (tx) => {
+      const row = await fetchRequestStatusQuery(requestId)
+      if (!row) throw new Error('Request not found')
+      if (row.buyerId !== userId && userRole !== 'admin') {
+        throw new Error('Forbidden: You do not own this request')
+      }
+      validateRequestTransition(row.status, 'open')
+      const updated = await updateRequestStatusQuery(requestId, 'open')
+      if (!updated || updated.length === 0)
+        throw new Error('Failed to reopen request')
+      return updated[0]
+    })
+    return { success: true, data: result }
   } catch (error: any) {
     console.error('Error reopening request:', error)
-    return { success: false, error: error.message || 'Failed to reopen request' }
+    return {
+      success: false,
+      error: error.message || 'Failed to reopen request',
+    }
   }
 }
 
-export async function deleteRequestUseCase(requestId: string) {
+export async function fulfillRequestUseCase(
+  requestId: string,
+  buyerId: string,
+  userRole: string,
+) {
+  try {
+    const result = await db.transaction(async (tx) => {
+      const request = await fetchRequestDetailsQuery(requestId)
+      if (!request) throw new Error('Request not found')
+      if (request.buyerId !== buyerId && userRole !== 'admin') {
+        throw new Error('Forbidden: You do not own this request')
+      }
+      validateRequestTransition(request.status, 'fulfilled')
+
+      const hasAcceptedQuote = request.quotes?.some(
+        (q: any) => q.status === 'accepted',
+      )
+      if (!hasAcceptedQuote) {
+        throw new Error('Cannot fulfill a request with no accepted quote')
+      }
+
+      // Capture pending sellers before fulfillRequestTransaction auto-rejects them
+      const pendingSellerIds: Array<string> =
+        request.quotes
+          ?.filter((q: any) => q.status === 'pending')
+          .map((q: any) => q.sellerId) ?? []
+
+      const fulfilled = await fulfillRequestTransaction(requestId, tx)
+      return { fulfilled, pendingSellerIds }
+    })
+
+    NotificationTriggers.onRequestFulfilled(
+      requestId,
+      result.pendingSellerIds,
+    ).catch(console.error)
+    return { success: true, data: result.fulfilled }
+  } catch (error: any) {
+    console.error('Error fulfilling request:', error)
+    return {
+      success: false,
+      error: error.message || 'Failed to fulfill request',
+    }
+  }
+}
+
+export async function deleteRequestUseCase(
+  requestId: string,
+  userId: string,
+  userRole: string,
+) {
   try {
     const request = await fetchRequestDetailsQuery(requestId)
     if (!request) return { success: false, error: 'Request not found' }
+    if (request.buyerId !== userId && userRole !== 'admin') {
+      return { success: false, error: 'Forbidden: You do not own this request' }
+    }
     if (!canDeleteRequest(request.status)) {
       return { success: false, error: 'Cannot delete a fulfilled request' }
     }
-    const hasAcceptedQuote = request.quotes?.some((q: any) => q.status === 'accepted')
+    const hasAcceptedQuote = request.quotes?.some(
+      (q: any) => q.status === 'accepted',
+    )
     if (hasAcceptedQuote) {
-      return { success: false, error: 'Cannot delete a request with an accepted quote' }
+      return {
+        success: false,
+        error: 'Cannot delete a request with an accepted quote',
+      }
     }
     const result = await deleteRequestQuery(requestId)
     if (!result || result.length === 0) {
@@ -186,7 +259,10 @@ export async function deleteRequestUseCase(requestId: string) {
     return { success: true, data: result[0] }
   } catch (error: any) {
     console.error('Error deleting request:', error)
-    return { success: false, error: error.message || 'Failed to delete request' }
+    return {
+      success: false,
+      error: error.message || 'Failed to delete request',
+    }
   }
 }
 
@@ -194,8 +270,11 @@ export async function updateRequestUseCase(requestId: string, data: any) {
   try {
     const request = await fetchRequestDetailsQuery(requestId)
     if (!request) return { success: false, error: 'Request not found' }
-    if (request.status !== 'open') {
-      return { success: false, error: 'Can only edit an open request' }
+    if (request.status === 'fulfilled' || request.status === 'cancelled') {
+      return {
+        success: false,
+        error: 'Cannot edit a fulfilled or cancelled request',
+      }
     }
     const { status, ...safeData } = data
     const result = await updateRequestFullQuery(requestId, safeData)
@@ -205,6 +284,9 @@ export async function updateRequestUseCase(requestId: string, data: any) {
     return { success: true, data: result[0] }
   } catch (error: any) {
     console.error('Error updating request:', error)
-    return { success: false, error: error.message || 'Failed to update request' }
+    return {
+      success: false,
+      error: error.message || 'Failed to update request',
+    }
   }
 }

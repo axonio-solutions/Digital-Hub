@@ -1,6 +1,6 @@
-import { 
-  fetchNotificationPreferences, 
-  upsertNotificationPreferences 
+import {
+  fetchNotificationPreferences,
+  upsertNotificationPreferences,
 } from '@/data-access/notifications'
 
 /**
@@ -10,7 +10,7 @@ import {
  */
 export async function getNotificationSettingsUseCase(userId: string) {
   const prefs = await fetchNotificationPreferences(userId)
-  
+
   if (!prefs) {
     return {
       userId,
@@ -20,27 +20,35 @@ export async function getNotificationSettingsUseCase(userId: string) {
       sellerBrandScope: 'SPECIALTY_ONLY',
     }
   }
-  
+
   return prefs
 }
 
 /**
  * Update notification settings for a user.
  */
-export async function updateNotificationSettingsUseCase(userId: string, data: any) {
+export async function updateNotificationSettingsUseCase(
+  userId: string,
+  data: any,
+) {
   // Validate frequency and scope if needed
   const allowedFrequencies = ['IMMEDIATE', 'DAILY_DIGEST']
   const allowedScopes = ['SPECIALTY_ONLY', 'ALL_BRANDS']
-  
+
   const updateData: any = {}
-  
-  if (typeof data.emailEnabled === 'boolean') updateData.emailEnabled = data.emailEnabled
-  if (typeof data.inAppEnabled === 'boolean') updateData.inAppEnabled = data.inAppEnabled
-  
-  if (data.sellerAlertFrequency && allowedFrequencies.includes(data.sellerAlertFrequency)) {
+
+  if (typeof data.emailEnabled === 'boolean')
+    updateData.emailEnabled = data.emailEnabled
+  if (typeof data.inAppEnabled === 'boolean')
+    updateData.inAppEnabled = data.inAppEnabled
+
+  if (
+    data.sellerAlertFrequency &&
+    allowedFrequencies.includes(data.sellerAlertFrequency)
+  ) {
     updateData.sellerAlertFrequency = data.sellerAlertFrequency
   }
-  
+
   if (data.sellerBrandScope && allowedScopes.includes(data.sellerBrandScope)) {
     updateData.sellerBrandScope = data.sellerBrandScope
   }

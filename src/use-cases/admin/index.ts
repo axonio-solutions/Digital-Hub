@@ -1,32 +1,39 @@
+import type {
+  BrandInput,
+  CategoryInput,
+} from '@/features/taxonomy/validations/taxonomy'
 import { fetchGlobalMetrics } from '@/data-access/admin'
-import { fetchAllUsers, fetchUserDetailsQuery, toggleUserBan } from '@/data-access/users'
 import {
-  fetchAdvancedSystemMetrics,
+  fetchAllUsers,
+  fetchUserDetailsQuery,
+  toggleUserBan,
+} from '@/data-access/users'
+import {
   fetchAdminDashboardStats,
+  fetchAdvancedSystemMetrics,
+  fetchBrandGapAnalysis,
   fetchBuyerMetrics,
+  fetchCategoryGapAnalysis,
   fetchDemandByOrigin,
+  fetchGapSummary,
   fetchMarketHealth,
-  fetchRequestVolume,
   fetchQuoteVolume,
+  fetchRegionalGapAnalysis,
+  fetchRequestVolume,
   fetchSellerCategoryFocus,
   fetchSellerMetrics,
   fetchUserDistributionByWilaya,
-  fetchCategoryGapAnalysis,
-  fetchBrandGapAnalysis,
-  fetchRegionalGapAnalysis,
-  fetchGapSummary,
 } from '@/data-access/analytics'
 import {
+  createPartCategory,
+  createVehicleBrand,
+  deletePartCategory,
+  deleteVehicleBrand,
   getPartCategories,
   getVehicleBrands,
-  createPartCategory,
   updatePartCategory,
-  deletePartCategory,
-  createVehicleBrand,
   updateVehicleBrand,
-  deleteVehicleBrand
 } from '@/data-access/taxonomy'
-import { CategoryInput, BrandInput } from '@/features/taxonomy/validations/taxonomy'
 
 /**
  * Axis Layer 4: Use Cases for Admin
@@ -40,16 +47,21 @@ export async function getAllUsersUseCase() {
   try {
     const [users, marketData] = await Promise.all([
       fetchAllUsers(),
-      import('@/data-access/vendors').then(m => m.getMarketPriorityMap())
+      import('@/data-access/vendors').then((m) => m.getMarketPriorityMap()),
     ])
 
     const { calculatePriorityScore } = await import('@/data-access/vendors')
 
-    return users.map(user => ({
+    return users.map((user) => ({
       ...user,
-      priorityScore: user.role === 'seller' 
-        ? calculatePriorityScore(user.sellerBrands || [], marketData.demandMap, marketData.supplyMap)
-        : null
+      priorityScore:
+        user.role === 'seller'
+          ? calculatePriorityScore(
+              user.sellerBrands || [],
+              marketData.demandMap,
+              marketData.supplyMap,
+            )
+          : null,
     }))
   } catch (error) {
     console.error('CRITICAL: getAllUsersUseCase FAILED:', error)
@@ -77,7 +89,10 @@ export async function createCategoryUseCase(data: CategoryInput) {
   return await createPartCategory(data)
 }
 
-export async function updateCategoryUseCase(id: string, data: Partial<CategoryInput>) {
+export async function updateCategoryUseCase(
+  id: string,
+  data: Partial<CategoryInput>,
+) {
   return await updatePartCategory(id, data)
 }
 
@@ -89,7 +104,10 @@ export async function createBrandUseCase(data: BrandInput) {
   return await createVehicleBrand(data)
 }
 
-export async function updateBrandUseCase(id: string, data: Partial<BrandInput>) {
+export async function updateBrandUseCase(
+  id: string,
+  data: Partial<BrandInput>,
+) {
   return await updateVehicleBrand(id, data)
 }
 
@@ -98,12 +116,13 @@ export async function deleteBrandUseCase(id: string) {
 }
 
 export async function getBuyerAnalyticsUseCase() {
-  const [metrics, distribution, demandByOrigin, requestVolume] = await Promise.all([
-    fetchBuyerMetrics(),
-    fetchUserDistributionByWilaya('buyer'),
-    fetchDemandByOrigin(),
-    fetchRequestVolume(),
-  ])
+  const [metrics, distribution, demandByOrigin, requestVolume] =
+    await Promise.all([
+      fetchBuyerMetrics(),
+      fetchUserDistributionByWilaya('buyer'),
+      fetchDemandByOrigin(),
+      fetchRequestVolume(),
+    ])
 
   return {
     metrics,
@@ -114,28 +133,30 @@ export async function getBuyerAnalyticsUseCase() {
 }
 
 export async function getSellerAnalyticsUseCase() {
-  const [metrics, distribution, demandByCategory, quoteVolume] = await Promise.all([
-    fetchSellerMetrics(),
-    fetchUserDistributionByWilaya('seller'),
-    fetchSellerCategoryFocus(),
-    fetchQuoteVolume()
-  ])
-  
-  return { 
-    metrics, 
-    distribution, 
+  const [metrics, distribution, demandByCategory, quoteVolume] =
+    await Promise.all([
+      fetchSellerMetrics(),
+      fetchUserDistributionByWilaya('seller'),
+      fetchSellerCategoryFocus(),
+      fetchQuoteVolume(),
+    ])
+
+  return {
+    metrics,
+    distribution,
     demandByCategory,
-    requestVolume: quoteVolume 
+    requestVolume: quoteVolume,
   }
 }
 
 export async function getAdvancedSystemMetricsUseCase(days?: number) {
-  const [systemMetrics, requestVolume, quoteVolume, marketHealth] = await Promise.all([
-    fetchAdvancedSystemMetrics(days),
-    fetchRequestVolume(days ?? 30),
-    fetchQuoteVolume(days ?? 30),
-    fetchMarketHealth(days),
-  ])
+  const [systemMetrics, requestVolume, quoteVolume, marketHealth] =
+    await Promise.all([
+      fetchAdvancedSystemMetrics(days),
+      fetchRequestVolume(days ?? 30),
+      fetchQuoteVolume(days ?? 30),
+      fetchMarketHealth(days),
+    ])
 
   return {
     ...systemMetrics,
@@ -151,13 +172,20 @@ export async function getAdminDashboardStatsUseCase(days?: number) {
 
 export async function activateSellerUseCase(userId: string, adminId?: string) {
   const { updateUserStatus } = await import('@/data-access/users')
-  const { NotificationTriggers } = await import('@/services/notification-triggers')
+  const { NotificationTriggers } =
+    await import('@/services/notification-triggers')
   const { grantCredits } = await import('@/data-access/credits')
 
   await updateUserStatus(userId, 'active')
 
   try {
-    await grantCredits(userId, 20, 'bonus', adminId, 'Welcome bonus — seller activation')
+    await grantCredits(
+      userId,
+      20,
+      'bonus',
+      adminId,
+      'Welcome bonus — seller activation',
+    )
   } catch (error) {
     console.error('Failed to grant welcome credits:', error)
   }
@@ -178,18 +206,24 @@ export async function getUserDetailsUseCase(userId: string) {
 }
 
 export async function getMarketGapAnalysisUseCase() {
-  const [categoryGaps, brandGaps, regionalGaps, gapSummary] = await Promise.all([
-    fetchCategoryGapAnalysis(),
-    fetchBrandGapAnalysis(),
-    fetchRegionalGapAnalysis(),
-    fetchGapSummary(),
-  ])
+  const [categoryGaps, brandGaps, regionalGaps, gapSummary] = await Promise.all(
+    [
+      fetchCategoryGapAnalysis(),
+      fetchBrandGapAnalysis(),
+      fetchRegionalGapAnalysis(),
+      fetchGapSummary(),
+    ],
+  )
 
   return {
     categoryGaps,
     brandGaps,
     regionalGaps,
     unservedCount: gapSummary.unserved,
-    fulfillment: { total: gapSummary.total, fulfilled: gapSummary.fulfilled, rate: gapSummary.rate },
+    fulfillment: {
+      total: gapSummary.total,
+      fulfilled: gapSummary.fulfilled,
+      rate: gapSummary.rate,
+    },
   }
 }
