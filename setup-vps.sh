@@ -144,6 +144,9 @@ NODE_OPTIONS='--max-old-space-size=1536' pnpm build:vps
 log "Build complete — output at .output/"
 
 # ─── 10. Start app via PM2 ────────────────────────────────────────────────────
+info "Stopping all existing PM2 processes..."
+pm2 kill || true
+
 info "Starting app with PM2..."
 pm2 start ecosystem.config.cjs
 pm2 save

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite dev --port 5173",
     "build": "vite build",
-    "build:vps": "NODE_OPTIONS='--max-old-space-size=1536' NITRO_PRESET=node-server BUILD_TARGET=vps vite build",
+    "build:vps": "NODE_OPTIONS='--max-old-space-size=1536' BUILD_TARGET=vps vite build",
     "start": "vite preview",
     "start:vps": "node .output/server/index.mjs",
     "test": "vitest run",
@@ -117,6 +117,7 @@
     "dotenv": "^17.3.1",
     "drizzle-kit": "^0.31.10",
     "jsdom": "^27.4.0",
+    "nitro": "^2.12.1",
     "prettier": "^3.8.1",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
