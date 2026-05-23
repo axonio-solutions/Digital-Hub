@@ -116,7 +116,7 @@ async function handleGetRequestDetails(request: Request): Promise<Response> {
   if (!user) return unauthorized()
   const requestId = parseGetPayload(request) as string
   if (!requestId) return badRequest('Missing request id')
-  const data = await getRequestDetailsUseCase(requestId, user as User)
+  const data = await getRequestDetailsUseCase(requestId, user)
   return json(data)
 }
 
@@ -326,7 +326,7 @@ async function handlePostUpdateRequest(request: Request): Promise<Response> {
   const user = await getSessionUser(request)
   if (!user) return unauthorized()
   const body = (await parseBody(request)) as { id: string; payload: any }
-  const details = await getRequestDetailsUseCase(body.id, user as User)
+  const details = await getRequestDetailsUseCase(body.id, user)
   if ('error' in (details as any)) throw new Error((details as any).error)
   return json(await updateRequestUseCase(body.id, body.payload))
 }

@@ -6,12 +6,9 @@ import {
 } from '@tanstack/react-router'
 import * as React from 'react'
 
-// 1. Import the unified DevTools wrapper
-import { TanStackDevtools } from '@tanstack/react-devtools'
-
-// 2. Import the *Panel* versions (not the floating default ones)
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
+import { TanStackDevtools } from '@tanstack/react-devtools'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import styles from '../styles.css?url'
@@ -114,26 +111,21 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
           </DirectionProvider>
         </I18nProvider>
 
-        {/* Render the unified devtools button with tabs for each plugin */}
-        <TanStackDevtools
-          config={{ position: 'bottom-right' }}
-          plugins={[
-            {
-              name: 'Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            {
-              name: 'Query',
-              render: <ReactQueryDevtoolsPanel />,
-            },
-          ]}
-        />
-
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `console.log("DevTools Render Context - DEV:", ${import.meta.env.DEV ? 'true' : 'false'}, "MODE:", "${import.meta.env.MODE}");`,
-          }}
-        />
+        {import.meta.env.DEV && (
+          <TanStackDevtools
+            config={{ position: 'bottom-right' }}
+            plugins={[
+              {
+                name: 'Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+              {
+                name: 'Query',
+                render: <ReactQueryDevtoolsPanel />,
+              },
+            ]}
+          />
+        )}
       </RootDocument>
     )
   },

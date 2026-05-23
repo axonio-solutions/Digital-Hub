@@ -29,8 +29,8 @@ import {
   unrejectQuoteFn,
 } from '../lib/api-client'
 import { radius, spacing } from '../theme/tokens'
-import type { Theme } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
+import type { Theme } from '../theme/tokens'
 import type { BuyerRequestRow, Quote } from '../types/buyer'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
