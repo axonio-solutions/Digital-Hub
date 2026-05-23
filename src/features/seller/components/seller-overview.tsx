@@ -3,27 +3,37 @@
 import React, { memo, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
+  Activity,
   ArrowRight,
   BarChart3,
   Coins,
   ShoppingBag,
   Sparkles,
+  Trophy,
+  Wallet,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { format, isSameDay, startOfDay, subDays } from 'date-fns'
 import { ar, enUS, fr } from 'date-fns/locale'
 import {
   Bar,
+  Cell,
   ComposedChart,
+  LabelList,
   Line,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from 'recharts'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useSellerCreditBalance } from '@/features/seller/hooks/use-billing'
 import { useSellerDashboardStats } from '@/features/marketplace/hooks/use-marketplace'
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart'
+import type { ChartConfig } from '@/components/ui/chart'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
@@ -56,13 +66,26 @@ const WeeklyChart = memo(
     language,
     t,
     isRtl,
+    todayIndex,
   }: {
     chartData: Array<{ name: string; accepted: number; revenue: number }>
     language: string
     t: any
     isRtl?: boolean
+    todayIndex: number
   }) => {
     const hasValues = chartData.some((d) => d.accepted > 0)
+
+    const config: ChartConfig = {
+      accepted: {
+        label: t('overview.legend_accepted', 'Accepted'),
+        color: 'var(--primary)',
+      },
+      revenue: {
+        label: t('overview.legend_revenue', 'Revenue'),
+        color: '#10b981',
+      },
+    }
 
     if (chartData.length === 0 || !hasValues) {
       return (
@@ -76,81 +99,117 @@ const WeeklyChart = memo(
     }
 
     const countAxisSide = isRtl ? 'right' : 'left'
-    const revenueAxisSide = isRtl ? 'left' : 'right'
     const countDx = isRtl ? 4 : -4
-    const revenueDx = isRtl ? -4 : 4
 
     return (
-      <ResponsiveContainer width="100%" height="100%" debounce={50}>
-        <ComposedChart
-          data={chartData}
-          margin={{ top: 8, right: 4, left: 4, bottom: 0 }}
-        >
-          <XAxis
-            dataKey="name"
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontSize: 11, fontWeight: 700, fill: '#94a3b8' }}
-            dy={6}
-            reversed={isRtl}
-          />
-          <YAxis
-            yAxisId="count"
-            orientation={countAxisSide}
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontSize: 10, fontWeight: 600, fill: '#94a3b8' }}
-            dx={countDx}
-            allowDecimals={false}
-            domain={[0, 'auto']}
-          />
-          <YAxis
-            yAxisId="revenue"
-            orientation={revenueAxisSide}
-            axisLine={false}
-            tickLine={false}
-            tick={{ fontSize: 10, fontWeight: 600, fill: '#94a3b8' }}
-            dx={revenueDx}
-            tickFormatter={(v) => (v > 0 ? `${(v / 1000).toFixed(0)}k` : '0')}
-            domain={[0, 'auto']}
-          />
-          <Tooltip
-            content={({ active, payload }) => {
-              if (!active || !payload?.length) return null
-              return (
-                <div className="rounded-xl border border-border bg-card px-3 py-2 shadow-xl text-sm">
-                  {payload.map((entry: any) => (
-                    <p
-                      key={entry.name}
-                      className="text-xs font-bold tabular-nums"
-                      style={{ color: entry.color }}
-                    >
-                      {entry.name === 'accepted'
-                        ? `${entry.value} ${t('overview.accepted_count', 'accepted')}`
-                        : `${entry.value?.toLocaleString(language)} DZD`}
-                    </p>
-                  ))}
-                </div>
-              )
-            }}
-          />
-          <Bar
-            yAxisId="count"
-            dataKey="accepted"
-            fill="var(--primary)"
-            radius={[3, 3, 0, 0]}
-            barSize={24}
-          />
-          <Line
-            yAxisId="revenue"
-            dataKey="revenue"
-            stroke="#10b981"
-            strokeWidth={2.5}
-            dot={{ r: 3, fill: '#10b981' }}
-            animationDuration={400}
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
+      <ChartContainer config={config} className="h-full w-full">
+        <ResponsiveContainer width="100%" height="100%" debounce={50}>
+          <ComposedChart
+            data={chartData}
+            margin={{ top: 24, right: 16, left: 4, bottom: 8 }}
+          >
+            <XAxis
+              dataKey="name"
+              axisLine={false}
+              tickLine={false}
+              reversed={isRtl}
+              tick={({ x, y, payload, index }: any) => (
+                <g transform={`translate(${x},${y})`}>
+                  <text
+                    dy={6}
+                    textAnchor="middle"
+                    fontSize={11}
+                    fontWeight={700}
+                    fill="#94a3b8"
+                  >
+                    {payload.value}
+                  </text>
+                  {index === todayIndex && (
+                    <circle cx={0} cy={18} r={3} fill="#10b981" />
+                  )}
+                </g>
+              )}
+            />
+            {/* Count axis — visible, drives bar height */}
+            <YAxis
+              yAxisId="count"
+              orientation={countAxisSide}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fontSize: 10, fontWeight: 600, fill: '#94a3b8' }}
+              dx={countDx}
+              allowDecimals={false}
+              domain={[0, 'auto']}
+              width={20}
+              tickCount={3}
+            />
+            {/* Revenue axis — hidden, gives line its own independent scale */}
+            <YAxis yAxisId="revenue" hide domain={[0, 'auto']} />
+            <ChartTooltip
+              cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+              content={
+                <ChartTooltipContent
+                  formatter={(value, name) =>
+                    name === 'revenue'
+                      ? `${Number(value).toLocaleString(language)} DZD`
+                      : value
+                  }
+                />
+              }
+            />
+            <Bar
+              yAxisId="count"
+              dataKey="accepted"
+              radius={[4, 4, 0, 0]}
+              barSize={24}
+            >
+              {chartData.map((_, i) => (
+                <Cell
+                  key={i}
+                  fill={
+                    i === todayIndex
+                      ? 'hsl(var(--muted-foreground) / 0.18)'
+                      : 'var(--color-accepted)'
+                  }
+                  stroke={
+                    i === todayIndex
+                      ? 'hsl(var(--muted-foreground) / 0.35)'
+                      : undefined
+                  }
+                  strokeDasharray={i === todayIndex ? '3 3' : undefined}
+                />
+              ))}
+              <LabelList
+                dataKey="accepted"
+                position="top"
+                formatter={(v: any) => (v > 0 ? v : '')}
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  fill: 'hsl(var(--foreground))',
+                }}
+              />
+            </Bar>
+            <Line
+              yAxisId="revenue"
+              dataKey="revenue"
+              stroke="#10b981"
+              strokeWidth={2.5}
+              dot={{ r: 3, fill: '#10b981' }}
+              animationDuration={400}
+            >
+              <LabelList
+                dataKey="revenue"
+                position="top"
+                formatter={(v: any) =>
+                  v > 0 ? `${(v / 1000).toFixed(1)}k` : ''
+                }
+                style={{ fontSize: 9, fontWeight: 600, fill: '#10b981' }}
+              />
+            </Line>
+          </ComposedChart>
+        </ResponsiveContainer>
+      </ChartContainer>
     )
   },
 )
@@ -204,50 +263,112 @@ function StatsCards({
 }) {
   const credits = creditData?.balance ?? 0
 
+  const fmtRevenue = (v: number) => {
+    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`
+    if (v >= 1_000) return `${(v / 1_000).toFixed(0)}k`
+    return v.toLocaleString(language)
+  }
+
   const metrics = [
     {
       label: t('stats.won.label'),
+      sub: t('stats.won.sub'),
       value: stats.won,
-      color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/50',
+      icon: Trophy,
+      badge: `${stats.winRate.toFixed(1)}%`,
+      badgeLabel: t('stats.win_rate.label'),
+      badgeColor: 'text-orange-500',
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-50 dark:bg-emerald-950/50',
+      iconBg: 'bg-emerald-100 dark:bg-emerald-900/50',
+      border: 'border-emerald-200/50 dark:border-emerald-800/30',
     },
     {
       label: t('stats.active.label'),
+      sub: t('stats.active.sub'),
       value: stats.pending,
-      color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50',
-    },
-    {
-      label: t('stats.win_rate.label'),
-      value: `${stats.winRate.toFixed(1)}%`,
-      color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/50',
+      icon: Activity,
+      badge: null as null | string,
+      badgeLabel: '',
+      badgeColor: '',
+      color: 'text-blue-500',
+      bg: 'bg-blue-50 dark:bg-blue-950/50',
+      iconBg: 'bg-blue-100 dark:bg-blue-900/50',
+      border: 'border-blue-200/50 dark:border-blue-800/30',
     },
     {
       label: t('stats.earnings.label'),
-      value: `${stats.totalRevenue.toLocaleString(language)} DZD`,
-      color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/50',
+      sub: t('stats.earnings.sub'),
+      value: `${fmtRevenue(stats.totalRevenue)} DZD`,
+      icon: Coins,
+      badge: null as null | string,
+      badgeLabel: '',
+      badgeColor: '',
+      color: 'text-purple-500',
+      bg: 'bg-purple-50 dark:bg-purple-950/50',
+      iconBg: 'bg-purple-100 dark:bg-purple-900/50',
+      border: 'border-purple-200/50 dark:border-purple-800/30',
     },
     {
       label: t('billing.current_balance'),
+      sub: t('billing.credits_available'),
       value: credits,
-      color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/50',
+      icon: Wallet,
+      badge: null as null | string,
+      badgeLabel: '',
+      badgeColor: '',
+      color: 'text-amber-500',
+      bg: 'bg-amber-50 dark:bg-amber-950/50',
+      iconBg: 'bg-amber-100 dark:bg-amber-900/50',
+      border: 'border-amber-200/50 dark:border-amber-800/30',
     },
   ]
 
   return (
-    <div className={cn('grid grid-cols-2 sm:grid-cols-5 gap-3', className)}>
+    <div className={cn('grid grid-cols-2 sm:grid-cols-4 gap-3', className)}>
       {metrics.map((m) => (
         <div
           key={m.label}
           className={cn(
-            'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
-            m.color,
+            'flex items-center gap-2.5 px-3 py-3 rounded-2xl border transition-all',
+            m.bg,
+            m.border,
           )}
         >
-          <span className="text-xl font-black tabular-nums leading-none">
-            {typeof m.value === 'number' ? m.value : m.value}
-          </span>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
-            {m.label}
-          </span>
+          <div
+            className={cn(
+              'size-8 rounded-xl flex items-center justify-center shrink-0',
+              m.iconBg,
+            )}
+          >
+            <m.icon className={cn('size-4', m.color)} />
+          </div>
+          <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+            <span className="text-base sm:text-xl font-black tabular-nums leading-none truncate">
+              {m.value}
+            </span>
+            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-foreground/70 leading-tight truncate">
+              {m.label}
+            </span>
+            <span className="text-[8px] sm:text-[9px] font-medium text-muted-foreground leading-tight">
+              {m.sub}
+            </span>
+          </div>
+          {m.badge && (
+            <div className="text-end shrink-0 ps-1">
+              <span
+                className={cn(
+                  'text-sm sm:text-base font-black tabular-nums leading-none',
+                  m.badgeColor,
+                )}
+              >
+                {m.badge}
+              </span>
+              <span className="text-[8px] font-bold text-muted-foreground block uppercase tracking-wider leading-tight">
+                {m.badgeLabel}
+              </span>
+            </div>
+          )}
         </div>
       ))}
     </div>
@@ -269,7 +390,7 @@ function StatsSection({
 }) {
   const { stats, todayStats, chartQuotes } = dashboardData
   const { data: creditData } = useSellerCreditBalance()
-  const today = new Date()
+  const today = useMemo(() => startOfDay(new Date()), [])
   const dateLocale = useMemo(() => {
     const map: Record<string, any> = { en: enUS, fr, ar }
     return map[language] || enUS
@@ -311,7 +432,7 @@ function StatsSection({
                 {t('overview.today_sales', "Today's Sales")}
               </h3>
               <p className="text-[10px] text-muted-foreground font-bold">
-                {format(today, 'M/d/yy')}
+                {format(today, 'P', { locale: dateLocale })}
               </p>
             </div>
 
@@ -346,7 +467,7 @@ function StatsSection({
                   {todayStats.lost}
                 </p>
                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
-                  {t('overview.cancelled_today', 'Cancelled')}
+                  {t('overview.rejected_today', 'Rejected')}
                 </p>
               </div>
               <div className="text-center">
@@ -364,10 +485,18 @@ function StatsSection({
         {/* Weekly Chart - 2/3 */}
         <Card className="overflow-hidden md:col-span-2">
           <CardContent className="p-5">
-            <div className="mb-3">
-              <h3 className="text-sm font-black tracking-tight">
+            <div className="flex items-center gap-3 mb-3">
+              <h3 className="text-sm font-black tracking-tight flex-1">
                 {t('overview.weekly_title', 'Last 7 Days')}
               </h3>
+              <span className="flex items-center gap-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+                <span className="w-3 h-3 rounded-sm bg-primary inline-block" />
+                {t('overview.legend_accepted', 'Accepted')}
+              </span>
+              <span className="flex items-center gap-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+                <span className="w-4 h-[2.5px] bg-emerald-500 inline-block rounded-full" />
+                {t('overview.legend_revenue', 'Revenue')}
+              </span>
             </div>
             <div className="h-[260px] sm:h-[300px]">
               <WeeklyChart
@@ -375,6 +504,7 @@ function StatsSection({
                 language={language}
                 t={t}
                 isRtl={isRtl}
+                todayIndex={chartData.length - 1}
               />
             </div>
           </CardContent>

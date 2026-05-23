@@ -34,7 +34,10 @@ export function useSellerQuotes(sellerId: string) {
 export function useSellerDashboardStats(sellerId: string) {
   return useQuery({
     queryKey: sellerKeys.dashboard(sellerId),
-    queryFn: () => fetchSellerStatsServerFn(),
+    queryFn: () =>
+      fetchSellerStatsServerFn({
+        data: { tzOffset: new Date().getTimezoneOffset() },
+      }),
     enabled: !!sellerId,
     staleTime: 60 * 1000,
     gcTime: 5 * 60 * 1000,

@@ -74,7 +74,9 @@ export function RequestDetailScreen({
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [isFulfilling, setIsFulfilling] = useState(false)
   const [imageIndex, setImageIndex] = useState(0)
-  const [contactSeller, setContactSeller] = useState<Quote['seller'] | null>(null)
+  const [contactSeller, setContactSeller] = useState<Quote['seller'] | null>(
+    null,
+  )
   const [acceptOverlay, setAcceptOverlay] = useState<Quote | null>(null)
   const [showRevokeOverlay, setShowRevokeOverlay] = useState(false)
   const [showRejectOverlay, setShowRejectOverlay] = useState(false)
@@ -499,16 +501,15 @@ export function RequestDetailScreen({
                 variant="outline"
               />
             )}
-            {isOpen &&
-              request.quotes?.some((q) => q.status === 'accepted') && (
-                <ActionBtn
-                  icon="checkmark-circle-outline"
-                  label="Fulfilled"
-                  onPress={confirmFulfill}
-                  loading={isFulfilling}
-                  variant="success"
-                />
-              )}
+            {isOpen && request.quotes?.some((q) => q.status === 'accepted') && (
+              <ActionBtn
+                icon="checkmark-circle-outline"
+                label="Fulfilled"
+                onPress={confirmFulfill}
+                loading={isFulfilling}
+                variant="success"
+              />
+            )}
             {isOpen && (
               <ActionBtn
                 icon="close-circle-outline"
@@ -728,9 +729,7 @@ function QuoteCard({
         <Text style={[s.priceValue, { color: qCfg.color }]}>
           {quote.price.toLocaleString('en-DZ')}
         </Text>
-        <Text style={[s.priceCurrency, { color: `${qCfg.color}99` }]}>
-          DZD
-        </Text>
+        <Text style={[s.priceCurrency, { color: `${qCfg.color}99` }]}>DZD</Text>
       </View>
 
       {/* Details grid */}
@@ -1111,10 +1110,7 @@ function ContactSellerModal({
 
           <Pressable
             onPress={onClose}
-            style={({ pressed }) => [
-              s.sheetClose,
-              pressed && { opacity: 0.7 },
-            ]}
+            style={({ pressed }) => [s.sheetClose, pressed && { opacity: 0.7 }]}
           >
             <Text style={s.sheetCloseText}>Close</Text>
           </Pressable>
@@ -1201,13 +1197,17 @@ function AcceptSuccessOverlay({
         pointerEvents="box-none"
       >
         <Pressable onPress={() => {}} style={s.overlayCardInner}>
-          <View style={[s.overlayIconBox, { backgroundColor: `${t.success}14` }]}>
+          <View
+            style={[s.overlayIconBox, { backgroundColor: `${t.success}14` }]}
+          >
             <Ionicons name="checkmark-circle" size={36} color={t.success} />
           </View>
           <Text style={s.overlayTitle}>Quote Accepted!</Text>
           <Text style={s.overlaySub}>
             You accepted{' '}
-            <Text style={{ fontWeight: '700', color: t.text }}>{storeName}</Text>
+            <Text style={{ fontWeight: '700', color: t.text }}>
+              {storeName}
+            </Text>
             's offer
           </Text>
           <View
@@ -1216,9 +1216,7 @@ function AcceptSuccessOverlay({
             <Text style={[s.overlayPrice, { color: t.success }]}>
               {quote.price.toLocaleString('en-DZ')}
             </Text>
-            <Text
-              style={[s.overlayPriceCurrency, { color: `${t.success}80` }]}
-            >
+            <Text style={[s.overlayPriceCurrency, { color: `${t.success}80` }]}>
               DZD
             </Text>
           </View>
@@ -1462,10 +1460,7 @@ function SkeletonContent() {
           <View key={i} style={s.infoCellWrap}>
             <Animated.View style={[s.infoCell, { opacity: anim }]}>
               <View
-                style={[
-                  s.infoCellIconBox,
-                  { backgroundColor: t.bgMuted },
-                ]}
+                style={[s.infoCellIconBox, { backgroundColor: t.bgMuted }]}
               />
               <View
                 style={[
@@ -1473,9 +1468,7 @@ function SkeletonContent() {
                   { width: '55%', height: 9, marginBottom: 8 },
                 ]}
               />
-              <View
-                style={[s.skeletonLine, { width: '80%', height: 13 }]}
-              />
+              <View style={[s.skeletonLine, { width: '80%', height: 13 }]} />
             </Animated.View>
           </View>
         ))}

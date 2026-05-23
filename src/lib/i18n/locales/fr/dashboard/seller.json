@@ -73,7 +73,10 @@
     "cancelled_today": "Annulé",
     "weekly_title": "7 Derniers Jours",
     "weekly_desc": "Ventes et annulations de la dernière semaine.",
-    "accepted_count": "accepté"
+    "accepted_count": "accepté",
+    "rejected_today": "Rejeté",
+    "legend_accepted": "Acceptés",
+    "legend_revenue": "Revenus"
   },
   "billing": {
     "title": "Facturation et Crédits",

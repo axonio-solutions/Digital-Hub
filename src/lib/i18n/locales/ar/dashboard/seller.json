@@ -73,7 +73,10 @@
     "cancelled_today": "ملغي",
     "weekly_title": "آخر 7 أيام",
     "weekly_desc": "المبيعات والإلغاءات خلال الأسبوع الماضي.",
-    "accepted_count": "مقبول"
+    "accepted_count": "مقبول",
+    "rejected_today": "مرفوض",
+    "legend_accepted": "مقبول",
+    "legend_revenue": "الإيرادات"
   },
   "billing": {
     "title": "الفواتير والائتمان",

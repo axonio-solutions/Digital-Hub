@@ -23,6 +23,7 @@ import { Route as PublicExploreIndexRouteImport } from './routes/_public/explore
 import { Route as PublicContactIndexRouteImport } from './routes/_public/contact/index'
 import { Route as PublicAboutIndexRouteImport } from './routes/_public/about/index'
 import { Route as AuthedDashboardIndexRouteImport } from './routes/_authed/dashboard/index'
+import { Route as ApiV1SplatRouteImport } from './routes/api/v1/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AuthedDashboardAdminRouteRouteImport } from './routes/_authed/dashboard/admin/route'
 import { Route as AuthedDashboardUsersIndexRouteImport } from './routes/_authed/dashboard/users/index'
@@ -110,6 +111,11 @@ const AuthedDashboardIndexRoute = AuthedDashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthedDashboardRouteRoute,
+} as any)
+const ApiV1SplatRoute = ApiV1SplatRouteImport.update({
+  id: '/api/v1/$',
+  path: '/api/v1/$',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -228,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/waitlist': typeof AuthedWaitlistRoute
   '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
   '/dashboard/': typeof AuthedDashboardIndexRoute
   '/about/': typeof PublicAboutIndexRoute
   '/contact/': typeof PublicContactIndexRoute
@@ -259,6 +266,7 @@ export interface FileRoutesByTo {
   '/waitlist': typeof AuthedWaitlistRoute
   '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
   '/dashboard': typeof AuthedDashboardIndexRoute
   '/about': typeof PublicAboutIndexRoute
   '/contact': typeof PublicContactIndexRoute
@@ -294,6 +302,7 @@ export interface FileRoutesById {
   '/_public/': typeof PublicIndexRoute
   '/_authed/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
   '/_authed/dashboard/': typeof AuthedDashboardIndexRoute
   '/_public/about/': typeof PublicAboutIndexRoute
   '/_public/contact/': typeof PublicContactIndexRoute
@@ -328,6 +337,7 @@ export interface FileRouteTypes {
     | '/waitlist'
     | '/dashboard/admin'
     | '/api/auth/$'
+    | '/api/v1/$'
     | '/dashboard/'
     | '/about/'
     | '/contact/'
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/waitlist'
     | '/dashboard/admin'
     | '/api/auth/$'
+    | '/api/v1/$'
     | '/dashboard'
     | '/about'
     | '/contact'
@@ -393,6 +404,7 @@ export interface FileRouteTypes {
     | '/_public/'
     | '/_authed/dashboard/admin'
     | '/api/auth/$'
+    | '/api/v1/$'
     | '/_authed/dashboard/'
     | '/_public/about/'
     | '/_public/contact/'
@@ -422,6 +434,7 @@ export interface RootRouteChildren {
   PublicRoute: typeof PublicRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiV1SplatRoute: typeof ApiV1SplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -523,6 +536,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/'
       preLoaderRoute: typeof AuthedDashboardIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
+    }
+    '/api/v1/$': {
+      id: '/api/v1/$'
+      path: '/api/v1/$'
+      fullPath: '/api/v1/$'
+      preLoaderRoute: typeof ApiV1SplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -756,6 +776,7 @@ const rootRouteChildren: RootRouteChildren = {
   PublicRoute: PublicRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiV1SplatRoute: ApiV1SplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

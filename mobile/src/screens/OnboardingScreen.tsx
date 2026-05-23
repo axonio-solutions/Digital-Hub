@@ -18,8 +18,7 @@ import { Field } from '../components/Field'
 import { ProgressIndicator } from '../components/ProgressIndicator'
 import { SpecialtiesSheet } from '../components/SpecialtiesSheet'
 import { WilayaPicker } from '../components/WilayaPicker'
-import { completeOnboarding, fetchServerFn } from '../lib/api-client'
-import { SERVER_FNS, serverFnUrl } from '../lib/server-fn'
+import { completeOnboarding, getPublicTaxonomyFn } from '../lib/api-client'
 import { radius, spacing, typography } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
 import type { SessionUser } from '../lib/api-client'
@@ -155,10 +154,8 @@ export function OnboardingScreen({
     if (taxonomy || taxonomyFetchedRef.current) return
     taxonomyFetchedRef.current = true
     setLoadingTaxonomy(true)
-    const url = serverFnUrl(SERVER_FNS.getPublicTaxonomy)
-    fetchServerFn<any>(url, { method: 'GET' })
-      .then((raw: any) => {
-        const payload = raw?.data ?? raw
+    getPublicTaxonomyFn()
+      .then((payload: any) => {
         if (payload?.brands || payload?.categories) {
           setTaxonomy({
             brands: (payload.brands || []).map((b: any) => ({

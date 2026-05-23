@@ -1,99 +1,65 @@
 /**
- * Builds the dev-server URL for a TanStack Start server function.
+ * REST API endpoint registry.
  *
- * Format observed in this repo's Vite dev mode:
- *   /_serverFn/<base64url({ file, export })>
- *
- * where:
- *   file   = `/@id/src/fn/<filename>.ts?tss-serverfn-split`
- *   export = `<fnName>_createServerFn_handler`
- *
- * The `/@id/` prefix is Vite's. After `vite build`, TanStack Start emits
- * different server-function paths (typically with content-hashed names),
- * so the URLs produced here MUST be regenerated for production. Treat this
- * helper as dev-only and gate it behind __DEV__ before shipping.
+ * Maps logical operation names to their /api/v1/* paths on the server.
+ * Use apiUrl(key) to get the path, then pass it to fetchApi() in api-client.ts.
  */
-function base64url(input: string): string {
-  // RN/Hermes provides global btoa.
-  const b64 = btoa(input)
-  return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+
+export type ServerFnKey = keyof typeof ENDPOINT_PATHS
+
+const ENDPOINT_PATHS = {
+  // Auth / Session
+  getUser: '/api/v1/session',
+
+  // Onboarding
+  completeOnboarding: '/api/v1/onboarding/complete',
+
+  // Buyer requests
+  fetchBuyerRequests: '/api/v1/requests/buyer',
+  fetchOpenRequests: '/api/v1/requests/open',
+  fetchPublicOpenRequests: '/api/v1/requests/public',
+  fetchRequestDetails: '/api/v1/requests/details',
+  createRequest: '/api/v1/requests/create',
+  cancelRequest: '/api/v1/requests/cancel',
+  reopenRequest: '/api/v1/requests/reopen',
+  deleteRequest: '/api/v1/requests/delete',
+  updateRequest: '/api/v1/requests/update',
+  fulfillRequest: '/api/v1/requests/fulfill',
+
+  // Quotes
+  getSellerQuotes: '/api/v1/quotes/seller',
+  fetchSellerStats: '/api/v1/quotes/stats',
+  createQuote: '/api/v1/quotes/create',
+  updateQuote: '/api/v1/quotes/update',
+  acceptQuote: '/api/v1/quotes/accept',
+  rejectQuote: '/api/v1/quotes/reject',
+  revokeQuote: '/api/v1/quotes/revoke',
+  unrejectQuote: '/api/v1/quotes/unreject',
+  retractQuote: '/api/v1/quotes/retract',
+  sendReminder: '/api/v1/quotes/remind',
+
+  // Notifications
+  fetchUnreadNotifications: '/api/v1/notifications/unread',
+  markNotificationRead: '/api/v1/notifications/read',
+  markAllNotificationsRead: '/api/v1/notifications/read-all',
+
+  // Users / Account
+  updateProfile: '/api/v1/users/profile',
+  deactivateAccount: '/api/v1/users/deactivate',
+  deleteAccount: '/api/v1/users/delete',
+
+  // Credits
+  getMyCreditBalance: '/api/v1/credits/balance',
+  getActiveCreditPackages: '/api/v1/credits/packages',
+  requestCredits: '/api/v1/credits/request',
+
+  // Support
+  submitSupportTicket: '/api/v1/support/ticket',
+
+  // Taxonomy
+  getPublicTaxonomy: '/api/v1/taxonomy',
+} as const
+
+export function apiUrl(key: ServerFnKey): string {
+  return ENDPOINT_PATHS[key]
 }
-
-export interface ServerFnRef {
-  /** File under `src/fn/` containing the server function, e.g. `'requests'`. */
-  file: string
-  /** Exported name of the server function, e.g. `'getPublicTaxonomyServerFn'`. */
-  fn: string
-}
-
-export function serverFnUrl(ref: ServerFnRef): string {
-  const payload = JSON.stringify({
-    file: `/@id/src/fn/${ref.file}.ts?tss-serverfn-split`,
-    export: `${ref.fn}_createServerFn_handler`,
-  })
-  return `/_serverFn/${base64url(payload)}`
-}
-
-/**
- * Centralized references to every server function the mobile app calls.
- * Add new entries here rather than scattering string literals across screens.
- * Each entry corresponds to an export in the web app's `src/fn/<file>.ts`.
- */
-export const SERVER_FNS = {
-  getPublicTaxonomy: { file: 'requests', fn: 'getPublicTaxonomyServerFn' },
-  fetchPublicOpenRequests: {
-    file: 'requests',
-    fn: 'fetchPublicOpenRequestsServerFn',
-  },
-  fetchBuyerRequests: { file: 'requests', fn: 'fetchBuyerRequestsServerFn' },
-  fetchOpenRequests: { file: 'requests', fn: 'fetchOpenRequestsServerFn' },
-  createRequest: { file: 'requests', fn: 'createRequestServerFn' },
-  fetchRequestDetails: {
-    file: 'requests',
-    fn: 'fetchRequestDetailsServerFn',
-  },
-  completeOnboarding: {
-    file: 'onboarding',
-    fn: 'completeOnboardingFn',
-  },
-  getUser: { file: 'auth', fn: 'getUser' },
-  cancelRequest: { file: 'requests', fn: 'cancelRequestServerFn' },
-  reopenRequest: { file: 'requests', fn: 'reopenRequestServerFn' },
-  deleteRequest: { file: 'requests', fn: 'deleteRequestServerFn' },
-  updateRequest: { file: 'requests', fn: 'updateRequestServerFn' },
-  acceptQuote: { file: 'quotes', fn: 'acceptQuoteServerFn' },
-  rejectQuote: { file: 'quotes', fn: 'rejectQuoteServerFn' },
-  revokeQuote: { file: 'quotes', fn: 'revokeQuoteServerFn' },
-  unrejectQuote: { file: 'quotes', fn: 'unrejectQuoteServerFn' },
-  fulfillRequest: { file: 'requests', fn: 'fulfillRequestServerFn' },
-  retractQuote: { file: 'quotes', fn: 'retractQuoteServerFn' },
-  sendReminder: { file: 'quotes', fn: 'sendReminderServerFn' },
-  fetchUnreadNotifications: {
-    file: 'notifications',
-    fn: 'fetchUnreadNotificationsServerFn',
-  },
-  markNotificationRead: {
-    file: 'notifications',
-    fn: 'markNotificationReadServerFn',
-  },
-  markAllNotificationsRead: {
-    file: 'notifications',
-    fn: 'markAllNotificationsReadServerFn',
-  },
-  submitSupportTicket: { file: 'support', fn: 'submitSupportTicketServerFn' },
-  updateProfile: { file: 'users', fn: 'updateProfileServerFn' },
-  deactivateAccount: { file: 'users', fn: 'deactivateAccountServerFn' },
-  deleteAccount: { file: 'users', fn: 'deleteAccountServerFn' },
-  getSellerQuotes: { file: 'quotes', fn: 'getSellerQuotesServerFn' },
-  fetchSellerStats: { file: 'quotes', fn: 'fetchSellerStatsServerFn' },
-  createQuote: { file: 'quotes', fn: 'createQuoteServerFn' },
-  updateQuote: { file: 'quotes', fn: 'updateQuoteServerFn' },
-  getMyCreditBalance: { file: 'credits', fn: 'getMyCreditBalanceServerFn' },
-  getActiveCreditPackages: {
-    file: 'credits',
-    fn: 'getActiveCreditPackagesServerFn',
-  },
-  requestCredits: { file: 'credits', fn: 'requestCreditsServerFn' },
-} as const satisfies Record<string, ServerFnRef>
-
-export type ServerFnKey = keyof typeof SERVER_FNS

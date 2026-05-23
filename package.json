@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite dev --port 5173",
     "build": "vite build",
-    "build:vps": "NODE_OPTIONS='--max-old-space-size=3072' BUILD_TARGET=vps vite build",
+    "build:vps": "NODE_OPTIONS='--max-old-space-size=3072' BUILD_TARGET=vps vite build --mode vps",
+    "deploy:vps": "pnpm build:vps && rsync -az --delete .output/ ubuntu@43.157.81.222:~/mlila/.output/ && ssh ubuntu@43.157.81.222 'cd ~/mlila && (pm2 delete mlila 2>/dev/null; pm2 start ecosystem.config.cjs) && pm2 save'",
     "start": "vite preview",
     "start:vps": "node .output/server/index.mjs",
     "test": "vitest run",

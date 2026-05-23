@@ -14,7 +14,10 @@ export const Route = createFileRoute('/_authed/dashboard/')({
       const { fetchSellerStatsServerFn } = await import('@/fn/quotes')
       await context.queryClient.ensureQueryData({
         queryKey: sellerKeys.dashboard(context.user.id),
-        queryFn: () => fetchSellerStatsServerFn(),
+        queryFn: () =>
+          fetchSellerStatsServerFn({
+            data: { tzOffset: new Date().getTimezoneOffset() },
+          }),
         staleTime: 60 * 1000,
       })
       return {}

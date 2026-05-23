@@ -122,6 +122,7 @@ function AppContent() {
     fetchSession()
       .then((sessionUser) => {
         if (!sessionUser) {
+          console.warn('⚠️ fetchSession returned null — clearing token')
           clearAuthToken()
           setAuthState('signed-out')
           return
@@ -129,7 +130,8 @@ function AppContent() {
         setUser(sessionUser)
         setAuthState('ready')
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('❌ fetchSession error:', err?.message ?? err)
         setAuthState('signed-out')
       })
   }, [])

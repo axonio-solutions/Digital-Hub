@@ -127,11 +127,22 @@ export const sendReminderServerFn = createServerFn({ method: 'POST' })
     return { success: true }
   })
 
+function localMidnightUTC(offsetMinutes: number): Date {
+  const now = new Date()
+  // Shift to user's local time (offsetMinutes = getTimezoneOffset(): negative for UTC+)
+  const localMs = now.getTime() - offsetMinutes * 60_000
+  const localDate = new Date(localMs)
+  localDate.setUTCHours(0, 0, 0, 0) // midnight in local coordinates
+  // Shift back to UTC for the DB query
+  return new Date(localDate.getTime() + offsetMinutes * 60_000)
+}
+
 export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
+  .inputValidator((data: { tzOffset?: number }) => data)
   .middleware([sellerMiddleware])
-  .handler(async ({ context }) => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+  .handler(async ({ data, context }) => {
+    const today = localMidnightUTC(data.tzOffset ?? 0)
+    const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
 
     const queryStats = db.execute(sql`
       SELECT
@@ -143,15 +154,15 @@ export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
       WHERE ${quotes.sellerId} = ${context.user.id}
     `)
 
+    const todayIso = today.toISOString()
     const queryTodayStats = db.execute(sql`
       SELECT
-        SUM(CASE WHEN ${quotes.status} = 'accepted' THEN 1 ELSE 0 END) as today_won,
-        SUM(CASE WHEN ${quotes.status} = 'pending' THEN 1 ELSE 0 END) as today_pending,
-        SUM(CASE WHEN ${quotes.status} = 'rejected' THEN 1 ELSE 0 END) as today_lost,
-        SUM(CASE WHEN ${quotes.status} = 'accepted' THEN ${quotes.price} ELSE 0 END) as today_revenue
+        SUM(CASE WHEN ${quotes.status} = 'accepted' AND ${quotes.updatedAt} >= ${todayIso} THEN 1 ELSE 0 END) as today_won,
+        SUM(CASE WHEN ${quotes.status} = 'pending'  AND ${quotes.createdAt} >= ${todayIso} THEN 1 ELSE 0 END) as today_pending,
+        SUM(CASE WHEN ${quotes.status} = 'rejected' AND ${quotes.updatedAt} >= ${todayIso} THEN 1 ELSE 0 END) as today_lost,
+        SUM(CASE WHEN ${quotes.status} = 'accepted' AND ${quotes.updatedAt} >= ${todayIso} THEN ${quotes.price} ELSE 0 END) as today_revenue
       FROM ${quotes}
       WHERE ${quotes.sellerId} = ${context.user.id}
-        AND ${quotes.createdAt} >= ${today.toISOString()}
     `)
 
     const queryRecentSales = db.query.quotes.findMany({
@@ -164,8 +175,6 @@ export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
       limit: 4,
     })
 
-    const sevenDaysAgo = new Date()
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
     const queryChartQuotes = db.query.quotes.findMany({
       where: and(
         eq(quotes.sellerId, context.user.id as any),

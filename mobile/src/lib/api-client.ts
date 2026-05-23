@@ -1,6 +1,5 @@
 import * as SecureStore from 'expo-secure-store'
-import { SERVER_FNS, serverFnUrl } from './server-fn'
-import { deserializeResponse, serializeRequestPayload } from './seroval-client'
+import { apiUrl } from './server-fn'
 import type { BuyerRequestRow } from '../types/buyer'
 import type { Notification } from '../types/notification'
 import type { PublicTaxonomyResult } from '../types/taxonomy'
@@ -17,22 +16,19 @@ const TOKEN_STORAGE_KEY = 'auth_session_token'
 const AUTH_COOKIE_NAME = 'better-auth.session_token'
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, '') || ''
-
-// Better Auth validates Origin against its baseURL (BETTER_AUTH_URL).
-// Must match the server's BETTER_AUTH_URL env var, NOT the API target.
-const AUTH_ORIGIN = 'http://localhost:5173'
+const AUTH_ORIGIN = API_BASE_URL || 'http://localhost:5173'
 
 export type ServerFnMethod = 'GET' | 'POST'
 
-export interface FetchServerFnOptions<TPayload = unknown> {
+export interface FetchApiOptions<TPayload = unknown> {
   method?: ServerFnMethod
   payload?: TPayload
   signal?: AbortSignal
 }
 
-export async function fetchServerFn<TResult, TPayload = unknown>(
-  endpoint: string,
-  options: FetchServerFnOptions<TPayload> = {},
+async function fetchApi<TResult, TPayload = unknown>(
+  path: string,
+  options: FetchApiOptions<TPayload> = {},
 ): Promise<TResult> {
   const { method = 'POST', payload, signal } = options
 
@@ -40,7 +36,6 @@ export async function fetchServerFn<TResult, TPayload = unknown>(
 
   const headers: Record<string, string> = {
     Accept: 'application/json',
-    'x-tsr-serverfn': 'true',
     Origin: AUTH_ORIGIN,
   }
 
@@ -52,59 +47,38 @@ export async function fetchServerFn<TResult, TPayload = unknown>(
     headers['Authorization'] = `Bearer ${token}`
   }
 
-  // 🚨 NUCLEAR OPTION: Manually combine strings instead of using the URL object
-  let finalUrl = `${API_BASE_URL}${endpoint}`
+  let finalUrl = `${API_BASE_URL}${path}`
   let body: string | undefined
 
   if (method === 'GET') {
     if (payload !== undefined) {
-      const serialized = await serializeRequestPayload(payload)
-      finalUrl += `?payload=${encodeURIComponent(serialized)}`
+      finalUrl += `?payload=${encodeURIComponent(JSON.stringify(payload))}`
     }
   } else if (payload !== undefined) {
-    body = await serializeRequestPayload(payload)
+    body = JSON.stringify(payload)
   }
 
-  if (__DEV__) console.log(`\n🚨 ATTEMPTING TO FETCH: ${finalUrl}\n`)
+  if (__DEV__) console.log(`\n🌐 API ${method}: ${finalUrl}\n`)
 
   const res = await fetch(finalUrl, { method, headers, body, signal })
 
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    throw new Error(
-      `fetchServerFn ${method} ${endpoint} failed: ${res.status} ${res.statusText} ${text}`.trim(),
-    )
-  }
-  const rawText = await res.text()
-
-  if (!rawText) {
-    throw new Error('Server returned an empty response.')
-  }
-
-  const deserialized: any = deserializeResponse(rawText)
-
-  // The server serialises the full middleware context including `.result` and
-  // `.error` fields. The official TanStack Start client unwraps `.result`
-  // after all middlewares execute. We mirror that here so callers receive
-  // just the handler's return value, or throw on error.
-  const isCtx =
-    deserialized && typeof deserialized === 'object' && 'result' in deserialized
-  if (isCtx) {
-    if (deserialized.error) {
-      throw deserialized.error instanceof Error
-        ? deserialized.error
-        : new Error(deserialized.error?.message ?? String(deserialized.error))
+    let message = `API ${method} ${path} failed: ${res.status} ${res.statusText}`
+    try {
+      const parsed = JSON.parse(text)
+      if (parsed?.error) message = parsed.error
+    } catch {
+      if (text) message += ` ${text}`
     }
-    return deserialized.result as TResult
+    throw new Error(message.trim())
   }
-  if (__DEV__)
-    console.log(
-      '\n📦 fetchServerFn: no .result wrapper, returning raw. keys=',
-      deserialized && typeof deserialized === 'object'
-        ? Object.keys(deserialized).slice(0, 8)
-        : typeof deserialized,
-    )
-  return deserialized as TResult
+
+  const rawText = await res.text()
+  if (!rawText) {
+    return undefined as TResult
+  }
+  return JSON.parse(rawText) as TResult
 }
 
 export async function setAuthToken(token: string): Promise<void> {
@@ -143,81 +117,98 @@ export interface CompleteOnboardingResult {
 export async function completeOnboarding(
   data: CompleteOnboardingInput,
 ): Promise<CompleteOnboardingResult> {
-  const url = serverFnUrl(SERVER_FNS.completeOnboarding)
-  return fetchServerFn<CompleteOnboardingResult>(url, {
+  return fetchApi<CompleteOnboardingResult>(apiUrl('completeOnboarding'), {
     method: 'POST',
     payload: data,
   })
 }
 
 export async function fetchBuyerRequests(): Promise<Array<BuyerRequestRow>> {
-  const url = serverFnUrl(SERVER_FNS.fetchBuyerRequests)
-  const result = await fetchServerFn<{
+  const result = await fetchApi<{
     success: boolean
     data: Array<BuyerRequestRow>
-  }>(url, { method: 'GET' })
+  }>(apiUrl('fetchBuyerRequests'), { method: 'GET' })
   return result?.data ?? []
 }
 
 export async function fetchRequestDetails(
   requestId: string,
 ): Promise<BuyerRequestRow | null> {
-  const url = serverFnUrl(SERVER_FNS.fetchRequestDetails)
-  const result = await fetchServerFn<{
+  const result = await fetchApi<{
     success: boolean
     data: BuyerRequestRow | null
-  }>(url, { method: 'GET', payload: requestId })
+  }>(apiUrl('fetchRequestDetails'), { method: 'GET', payload: requestId })
   return result?.data ?? null
 }
 
 export async function cancelRequestFn(requestId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.cancelRequest)
-  await fetchServerFn(url, { method: 'POST', payload: requestId })
+  await fetchApi(apiUrl('cancelRequest'), {
+    method: 'POST',
+    payload: requestId,
+  })
 }
 
 export async function reopenRequestFn(requestId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.reopenRequest)
-  await fetchServerFn(url, { method: 'POST', payload: requestId })
+  await fetchApi(apiUrl('reopenRequest'), {
+    method: 'POST',
+    payload: requestId,
+  })
 }
 
 export async function deleteRequestFn(requestId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.deleteRequest)
-  await fetchServerFn(url, { method: 'POST', payload: requestId })
+  await fetchApi(apiUrl('deleteRequest'), {
+    method: 'POST',
+    payload: requestId,
+  })
 }
 
 export async function acceptQuoteFn(quoteId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.acceptQuote)
-  await fetchServerFn(url, { method: 'POST', payload: { quoteId } })
+  await fetchApi(apiUrl('acceptQuote'), {
+    method: 'POST',
+    payload: { quoteId },
+  })
 }
 
 export async function rejectQuoteFn(quoteId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.rejectQuote)
-  await fetchServerFn(url, { method: 'POST', payload: { quoteId } })
+  await fetchApi(apiUrl('rejectQuote'), {
+    method: 'POST',
+    payload: { quoteId },
+  })
 }
 
 export async function revokeQuoteFn(quoteId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.revokeQuote)
-  await fetchServerFn(url, { method: 'POST', payload: { quoteId } })
+  await fetchApi(apiUrl('revokeQuote'), {
+    method: 'POST',
+    payload: { quoteId },
+  })
 }
 
 export async function unrejectQuoteFn(quoteId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.unrejectQuote)
-  await fetchServerFn(url, { method: 'POST', payload: { quoteId } })
+  await fetchApi(apiUrl('unrejectQuote'), {
+    method: 'POST',
+    payload: { quoteId },
+  })
 }
 
 export async function fulfillRequestFn(requestId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.fulfillRequest)
-  await fetchServerFn(url, { method: 'POST', payload: requestId })
+  await fetchApi(apiUrl('fulfillRequest'), {
+    method: 'POST',
+    payload: requestId,
+  })
 }
 
 export async function retractQuoteFn(quoteId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.retractQuote)
-  await fetchServerFn(url, { method: 'POST', payload: { id: quoteId } })
+  await fetchApi(apiUrl('retractQuote'), {
+    method: 'POST',
+    payload: { id: quoteId },
+  })
 }
 
 export async function sendReminderFn(quoteId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.sendReminder)
-  await fetchServerFn(url, { method: 'POST', payload: { quoteId } })
+  await fetchApi(apiUrl('sendReminder'), {
+    method: 'POST',
+    payload: { quoteId },
+  })
 }
 
 export interface CreateRequestPayload {
@@ -235,8 +226,7 @@ export async function createRequestFn(
   buyerId: string,
   data: CreateRequestPayload,
 ): Promise<{ success: boolean; data?: any; error?: string }> {
-  const url = serverFnUrl(SERVER_FNS.createRequest)
-  return fetchServerFn(url, {
+  return fetchApi(apiUrl('createRequest'), {
     method: 'POST',
     payload: { buyerId, ...data },
   })
@@ -246,27 +236,24 @@ export async function updateRequestFn(
   id: string,
   data: Partial<CreateRequestPayload>,
 ): Promise<{ success: boolean; data?: any; error?: string }> {
-  const url = serverFnUrl(SERVER_FNS.updateRequest)
-  return fetchServerFn(url, {
+  return fetchApi(apiUrl('updateRequest'), {
     method: 'POST',
     payload: { id, payload: data },
   })
 }
 
 export async function getPublicTaxonomyFn(): Promise<PublicTaxonomyResult> {
-  const url = serverFnUrl(SERVER_FNS.getPublicTaxonomy)
-  const result = await fetchServerFn<{
+  const result = await fetchApi<{
     success: boolean
     data: PublicTaxonomyResult
-  }>(url, { method: 'GET' })
+  }>(apiUrl('getPublicTaxonomy'), { method: 'GET' })
   return result?.data ?? { categories: [], brands: [] }
 }
 
 export async function fetchUnreadNotifications(): Promise<Array<Notification>> {
-  const url = serverFnUrl(SERVER_FNS.fetchUnreadNotifications)
-  const result = await fetchServerFn<
+  const result = await fetchApi<
     { items: Array<Notification>; total: number } | Array<Notification>
-  >(url, { method: 'GET' })
+  >(apiUrl('fetchUnreadNotifications'), { method: 'GET' })
   if (Array.isArray(result)) return result
   if (result && typeof result === 'object' && 'items' in result)
     return result.items ?? []
@@ -276,13 +263,17 @@ export async function fetchUnreadNotifications(): Promise<Array<Notification>> {
 export async function markNotificationRead(
   notificationId: string,
 ): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.markNotificationRead)
-  await fetchServerFn(url, { method: 'POST', payload: notificationId })
+  await fetchApi(apiUrl('markNotificationRead'), {
+    method: 'POST',
+    payload: notificationId,
+  })
 }
 
 export async function markAllNotificationsRead(): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.markAllNotificationsRead)
-  await fetchServerFn(url, { method: 'POST', payload: {} })
+  await fetchApi(apiUrl('markAllNotificationsRead'), {
+    method: 'POST',
+    payload: {},
+  })
 }
 
 export interface UpdateProfileInput {
@@ -303,18 +294,24 @@ export async function updateProfileFn(
   userId: string,
   updates: UpdateProfileInput,
 ): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.updateProfile)
-  await fetchServerFn(url, { method: 'POST', payload: { userId, updates } })
+  await fetchApi(apiUrl('updateProfile'), {
+    method: 'POST',
+    payload: { userId, updates },
+  })
 }
 
 export async function deactivateAccountFn(userId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.deactivateAccount)
-  await fetchServerFn(url, { method: 'POST', payload: { userId } })
+  await fetchApi(apiUrl('deactivateAccount'), {
+    method: 'POST',
+    payload: { userId },
+  })
 }
 
 export async function deleteAccountFn(userId: string): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.deleteAccount)
-  await fetchServerFn(url, { method: 'POST', payload: { userId } })
+  await fetchApi(apiUrl('deleteAccount'), {
+    method: 'POST',
+    payload: { userId },
+  })
 }
 
 export interface SupportTicketInput {
@@ -326,8 +323,10 @@ export interface SupportTicketInput {
 export async function submitSupportTicketFn(
   data: SupportTicketInput,
 ): Promise<{ success: boolean; data?: { id: string }; error?: string }> {
-  const url = serverFnUrl(SERVER_FNS.submitSupportTicket)
-  return fetchServerFn(url, { method: 'POST', payload: data })
+  return fetchApi(apiUrl('submitSupportTicket'), {
+    method: 'POST',
+    payload: data,
+  })
 }
 
 // ── Seller API ────────────────────────────────────────────────
@@ -335,10 +334,9 @@ export async function submitSupportTicketFn(
 export async function fetchOpenRequests(
   filters?: OpenRequestFilters,
 ): Promise<Array<OpenRequestRow>> {
-  const url = serverFnUrl(SERVER_FNS.fetchOpenRequests)
-  const result = await fetchServerFn<
+  const result = await fetchApi<
     { success: boolean; data: Array<OpenRequestRow> } | Array<OpenRequestRow>
-  >(url, {
+  >(apiUrl('fetchOpenRequests'), {
     method: 'GET',
     ...(filters ? { payload: filters } : {}),
   })
@@ -348,8 +346,9 @@ export async function fetchOpenRequests(
 }
 
 export async function fetchSellerQuotes(): Promise<Array<SellerQuote>> {
-  const url = serverFnUrl(SERVER_FNS.getSellerQuotes)
-  const result = await fetchServerFn<Array<SellerQuote>>(url, { method: 'GET' })
+  const result = await fetchApi<Array<SellerQuote>>(apiUrl('getSellerQuotes'), {
+    method: 'GET',
+  })
   if (Array.isArray(result)) return result
   if (result && typeof result === 'object' && 'data' in result) {
     const data = (result as any).data
@@ -359,10 +358,10 @@ export async function fetchSellerQuotes(): Promise<Array<SellerQuote>> {
 }
 
 export async function fetchSellerDashboardStats(): Promise<SellerDashboardData | null> {
-  const url = serverFnUrl(SERVER_FNS.fetchSellerStats)
-  const result = await fetchServerFn<SellerDashboardData>(url, {
-    method: 'GET',
-  })
+  const result = await fetchApi<SellerDashboardData>(
+    apiUrl('fetchSellerStats'),
+    { method: 'GET' },
+  )
   return result ?? null
 }
 
@@ -375,12 +374,11 @@ export interface CreateQuotePayload {
 }
 
 export async function createQuoteFn(data: CreateQuotePayload): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.createQuote)
-  const res = await fetchServerFn<{ success: boolean; error?: string }>(url, {
-    method: 'POST',
-    payload: data,
-  })
-  if (!res.success) {
+  const res = await fetchApi<{ success: boolean; error?: string }>(
+    apiUrl('createQuote'),
+    { method: 'POST', payload: data },
+  )
+  if (res && !res.success) {
     throw new Error(res.error || 'Failed to create quote')
   }
 }
@@ -397,35 +395,35 @@ export async function updateQuoteFn(
   quoteId: string,
   data: UpdateQuotePayload,
 ): Promise<void> {
-  const url = serverFnUrl(SERVER_FNS.updateQuote)
-  const res = await fetchServerFn<{ success: boolean; error?: string }>(url, {
-    method: 'POST',
-    payload: { id: quoteId, data },
-  })
-  if (!res.success) {
+  const res = await fetchApi<{ success: boolean; error?: string }>(
+    apiUrl('updateQuote'),
+    { method: 'POST', payload: { id: quoteId, data } },
+  )
+  if (res && !res.success) {
     throw new Error(res.error || 'Failed to update quote')
   }
 }
 
 export async function fetchCreditBalance(): Promise<CreditBalance | null> {
-  const url = serverFnUrl(SERVER_FNS.getMyCreditBalance)
-  const result = await fetchServerFn<CreditBalance>(url, { method: 'GET' })
+  const result = await fetchApi<CreditBalance>(apiUrl('getMyCreditBalance'), {
+    method: 'GET',
+  })
   return result ?? null
 }
 
 export async function fetchActiveCreditPackagesFn(): Promise<
   Array<CreditPackage>
 > {
-  const url = serverFnUrl(SERVER_FNS.getActiveCreditPackages)
-  return fetchServerFn<Array<CreditPackage>>(url, { method: 'GET' })
+  return fetchApi<Array<CreditPackage>>(apiUrl('getActiveCreditPackages'), {
+    method: 'GET',
+  })
 }
 
 export async function requestCreditsFn(
   credits: number,
   packageId?: string,
 ): Promise<{ success: boolean; error?: string }> {
-  const url = serverFnUrl(SERVER_FNS.requestCredits)
-  return fetchServerFn(url, {
+  return fetchApi(apiUrl('requestCredits'), {
     method: 'POST',
     payload: { credits, packageId },
   })
@@ -444,11 +442,6 @@ interface AuthEndpointBody {
   name?: string
 }
 
-/**
- * Shared core for /api/auth/sign-in/email and /api/auth/sign-up/email.
- * Returns either a parsed body (success) or throws an Error tagged with the
- * Better Auth error code so callers can branch on USER_NOT_FOUND, etc.
- */
 async function callAuthEndpoint(
   path: '/api/auth/sign-in/email' | '/api/auth/sign-up/email',
   body: AuthEndpointBody,
@@ -475,7 +468,7 @@ async function callAuthEndpoint(
     try {
       parsed = JSON.parse(rawText)
     } catch {
-      // ignore — we'll fall back to status text below
+      // ignore
     }
   }
 
@@ -540,11 +533,6 @@ export async function signUpWithEmail(
   })
 }
 
-/**
- * Better Auth ships the session+user via /api/auth/get-session. We use it
- * after sign-in to read account_status (which the sign-in response does not
- * include) so the app can route to onboarding / waitlist / main.
- */
 export interface SessionUser {
   id: string
   email: string
@@ -567,8 +555,7 @@ export async function fetchSession(): Promise<SessionUser | null> {
   const token = await SecureStore.getItemAsync(TOKEN_STORAGE_KEY)
   if (!token) return null
 
-  const url = serverFnUrl(SERVER_FNS.getUser)
-  const result = await fetchServerFn<any>(url, { method: 'GET' })
+  const result = await fetchApi<any>(apiUrl('getUser'), { method: 'GET' })
 
   if (!result || typeof result !== 'object') return null
 
@@ -582,9 +569,6 @@ export async function fetchSession(): Promise<SessionUser | null> {
     )
   }
 
-  // Drizzle's casing: "snake_case" config maps DB snake_case to TS
-  // camelCase in query results (e.g. account_status → accountStatus).
-  // Our SessionUser uses the snake_case `account_status`.
   if (
     result.accountStatus !== undefined &&
     result.account_status === undefined
@@ -595,14 +579,6 @@ export async function fetchSession(): Promise<SessionUser | null> {
   return result as SessionUser
 }
 
-/**
- * Pulls a single cookie value out of a Set-Cookie response header.
- *
- * RN's fetch concatenates multiple Set-Cookie headers into one comma-joined
- * string. Cookie attribute values can also contain commas (e.g. Expires
- * dates), so we split only on commas that look like a cookie boundary —
- * `, name=` — and fall back to getSetCookie() when the runtime supports it.
- */
 function extractCookieValue(headers: Headers, name: string): string | null {
   const maybeGetAll = (
     headers as Headers & {
