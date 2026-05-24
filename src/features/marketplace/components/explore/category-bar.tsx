@@ -133,7 +133,7 @@ export function CategoryBar({
 
   return (
     <>
-      <div className="sticky top-14 z-40 w-full border-b border-border bg-background/95 backdrop-blur-md">
+      <div className="w-full">
         {activeFilterCount > 0 && (
           <div
             className="h-0.5 bg-primary transition-all duration-500"

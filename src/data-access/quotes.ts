@@ -166,7 +166,9 @@ export async function fetchAnonymousQuotesQuery(requestId: string) {
       status: true,
       condition: true,
       warranty: true,
+      price: true,
       sellerId: true,
+      createdAt: true,
     },
   })
 }

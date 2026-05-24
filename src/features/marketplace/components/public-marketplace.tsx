@@ -11,7 +11,6 @@ import {
 import { Link, getRouteApi, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
-import { SendOfferDialog } from './send-offer-dialog'
 import { CategoryBar } from './explore/category-bar'
 import { MarketplaceFeed } from './explore/marketplace-feed'
 import { useToast } from '@/hooks/use-toast'
@@ -30,7 +29,6 @@ export function PublicMarketplace() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedBrands, setSelectedBrands] = useState<Array<string>>([])
   const [page, setPage] = useState(0)
-  const [selectedRequest, setSelectedRequest] = useState<any>(null)
   const [searchInput, setSearchInput] = useState('')
 
   const { t, i18n } = useTranslation(['home/explore', 'marketplace'])
@@ -92,7 +90,10 @@ export function PublicMarketplace() {
       return
     }
     if (req.buyerId === (user as any)?.id) return
-    setSelectedRequest(req)
+    navigate({
+      to: '/marketplace/$requestId',
+      params: { requestId: req.id },
+    } as any)
   }
 
   const totalCount = sortedRequests.length
@@ -100,25 +101,10 @@ export function PublicMarketplace() {
 
   return (
     <div className="flex flex-col flex-1 bg-background">
-      <CategoryBar
-        categories={taxonomyData?.categories || []}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={(id) => {
-          setSelectedCategory(id)
-          setPage(0)
-        }}
-        brands={taxonomyData?.brands || []}
-        selectedBrands={selectedBrands}
-        setSelectedBrands={(brands) => {
-          setSelectedBrands(brands)
-          setPage(0)
-        }}
-        onReset={handleResetFilters}
-      />
-
-      {/* Search bar — below category bar */}
+      {/* Cohesive header: search → categories → title */}
       <div className="border-b border-border bg-background">
-        <div className="max-w-[1700px] mx-auto px-4 lg:px-8 py-2.5">
+        {/* Search */}
+        <div className="max-w-[1700px] mx-auto px-4 lg:px-8 pt-3 pb-1.5">
           <form onSubmit={handleSearchSubmit} className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
             <Input
@@ -130,34 +116,46 @@ export function PublicMarketplace() {
             />
           </form>
         </div>
+
+        {/* Categories */}
+        <CategoryBar
+          categories={taxonomyData?.categories || []}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={(id) => {
+            setSelectedCategory(id)
+            setPage(0)
+          }}
+          brands={taxonomyData?.brands || []}
+          selectedBrands={selectedBrands}
+          setSelectedBrands={(brands) => {
+            setSelectedBrands(brands)
+            setPage(0)
+          }}
+          onReset={handleResetFilters}
+        />
+
+        {/* Title + count */}
+        <div className="max-w-[1700px] mx-auto px-4 lg:px-8 pb-3">
+          <div className="flex items-center gap-2">
+            <h1 className="text-base md:text-lg font-bold tracking-tight text-foreground">
+              {t('header.title')}{' '}
+              <span className="text-primary">
+                {t('header.title_highlight')}
+              </span>
+            </h1>
+            {!isLoadingReqs && (
+              <span className="text-xs font-semibold text-muted-foreground/55 tabular-nums">
+                {totalCount}{' '}
+                {totalCount === 1
+                  ? t('header.requests')
+                  : t('header.requests_plural')}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
       <main className="flex-1 w-full max-w-[1700px] mx-auto px-4 lg:px-8 py-6">
-        {/* Header */}
-        <div className="flex items-end justify-between gap-4 mb-6">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground">
-                {t('header.title')}{' '}
-                <span className="text-primary">
-                  {t('header.title_highlight')}
-                </span>
-              </h1>
-              {!isLoadingReqs && (
-                <span className="inline-flex items-center h-6 px-2 rounded-md bg-muted text-muted-foreground text-xs font-semibold tabular-nums">
-                  {totalCount}{' '}
-                  {totalCount === 1
-                    ? t('header.requests')
-                    : t('header.requests_plural')}
-                </span>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {t('header.subtitle')}
-            </p>
-          </div>
-        </div>
-
         {/* Auth banner — unauthenticated */}
         {!isAuthenticated && !isLoadingReqs && sortedRequests.length > 0 && (
           <div className="mb-6 p-4 rounded-xl bg-primary/5 border border-primary/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -262,13 +260,6 @@ export function PublicMarketplace() {
           </div>
         )}
       </main>
-
-      <SendOfferDialog
-        request={selectedRequest}
-        isOpen={!!selectedRequest}
-        onOpenChange={(open) => !open && setSelectedRequest(null)}
-        user={user}
-      />
 
       <footer className="border-t border-border py-8 mt-12">
         <div className="max-w-[1700px] mx-auto px-4 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
