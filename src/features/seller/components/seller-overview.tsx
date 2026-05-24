@@ -44,7 +44,12 @@ import type { ChartConfig } from '@/components/ui/chart'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import {
+  Stat,
+  StatIndicator,
+  StatLabel,
+  StatValue,
+} from '@/components/ui/stat'
 
 interface DashboardData {
   stats: {
@@ -260,13 +265,11 @@ function StatsCards({
   creditData,
   t,
   language,
-  className,
 }: {
   stats: DashboardData['stats']
   creditData?: { balance?: number } | null
   t: any
   language: string
-  className?: string
 }) {
   const credits = creditData?.balance ?? 0
 
@@ -312,7 +315,7 @@ function StatsCards({
   ]
 
   return (
-    <div className={cn('grid grid-cols-2 sm:grid-cols-4 gap-3', className)}>
+    <div className="grid grid-cols-2 gap-3">
       {metrics.map((m) => (
         <div
           key={m.label}
@@ -322,7 +325,7 @@ function StatsCards({
             <m.icon className="size-3.5 text-muted-foreground" />
           </div>
           <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-            <span className="text-lg sm:text-xl font-bold tabular-nums leading-none truncate">
+            <span className="text-lg font-bold tabular-nums leading-none truncate">
               {m.value}
             </span>
             <span className="text-[9px] font-medium uppercase tracking-widest text-muted-foreground leading-tight truncate">
@@ -386,14 +389,54 @@ function StatsSection({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Desktop Stats — hidden on mobile */}
-      <StatsCards
-        stats={stats}
-        creditData={creditData}
-        t={t}
-        language={language}
-        className="hidden sm:grid"
-      />
+      {/* Mobile Stats */}
+      <div className="sm:hidden">
+        <StatsCards
+          stats={stats}
+          creditData={creditData}
+          t={t}
+          language={language}
+        />
+      </div>
+
+      {/* Desktop Stats */}
+      <div className="hidden sm:grid grid-cols-4 gap-3">
+        <Stat>
+          <StatLabel>{t('stats.won.label')}</StatLabel>
+          <StatIndicator variant="icon" color="success">
+            <Trophy />
+          </StatIndicator>
+          <StatValue>{stats.won}</StatValue>
+        </Stat>
+        <Stat>
+          <StatLabel>{t('stats.active.label')}</StatLabel>
+          <StatIndicator variant="icon" color="info">
+            <Activity />
+          </StatIndicator>
+          <StatValue>{stats.pending}</StatValue>
+        </Stat>
+        <Stat>
+          <StatLabel>{t('stats.earnings.label')}</StatLabel>
+          <StatIndicator variant="icon" color="warning">
+            <Coins />
+          </StatIndicator>
+          <StatValue>
+            {stats.totalRevenue >= 1_000_000
+              ? `${(stats.totalRevenue / 1_000_000).toFixed(1)}M`
+              : stats.totalRevenue >= 1_000
+                ? `${(stats.totalRevenue / 1_000).toFixed(0)}k`
+                : stats.totalRevenue.toLocaleString(language)}{' '}
+            DZD
+          </StatValue>
+        </Stat>
+        <Stat>
+          <StatLabel>{t('billing.current_balance')}</StatLabel>
+          <StatIndicator variant="icon" color="default">
+            <Wallet />
+          </StatIndicator>
+          <StatValue>{creditData?.balance ?? 0}</StatValue>
+        </Stat>
+      </div>
 
       {/* Today's Sales + Weekly Chart */}
       <div className="grid gap-4 md:grid-cols-3">
@@ -410,44 +453,44 @@ function StatsSection({
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center">
-              <p className="text-6xl sm:text-7xl font-bold text-foreground tabular-nums leading-none tracking-tight">
+              <p className="text-6xl sm:text-7xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums leading-none tracking-tight">
                 {todayStats.won}
               </p>
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mt-2">
+              <p className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70 uppercase tracking-wider mt-2">
                 {t('overview.accepted_today', 'Accepted Today')}
               </p>
             </div>
 
             <div className="grid grid-cols-4 gap-1 pt-3 border-t border-border">
               <div className="text-center">
-                <p className="text-sm font-bold tabular-nums text-foreground">
+                <p className="text-sm font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
                   {todayStats.won}
                 </p>
-                <p className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">
+                <p className="text-[9px] font-medium text-emerald-600/60 dark:text-emerald-400/60 uppercase tracking-wider">
                   {t('overview.accepted_today', 'Accepted')}
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm font-bold tabular-nums text-foreground">
+                <p className="text-sm font-bold tabular-nums text-blue-600 dark:text-blue-400">
                   {todayStats.pending}
                 </p>
-                <p className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">
+                <p className="text-[9px] font-medium text-blue-600/60 dark:text-blue-400/60 uppercase tracking-wider">
                   {t('overview.pending_today', 'Pending')}
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm font-bold tabular-nums text-foreground">
+                <p className="text-sm font-bold tabular-nums text-red-600 dark:text-red-400">
                   {todayStats.lost}
                 </p>
-                <p className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">
+                <p className="text-[9px] font-medium text-red-600/60 dark:text-red-400/60 uppercase tracking-wider">
                   {t('overview.rejected_today', 'Rejected')}
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm font-bold tabular-nums text-foreground">
+                <p className="text-sm font-bold tabular-nums text-amber-600 dark:text-amber-400">
                   {todayStats.revenue.toLocaleString(language)}
                 </p>
-                <p className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">
+                <p className="text-[9px] font-medium text-amber-600/60 dark:text-amber-400/60 uppercase tracking-wider">
                   DZD
                 </p>
               </div>
@@ -548,18 +591,6 @@ export function SellerOverview() {
             </div>
           </div>
         </div>
-
-        {/* Mobile Stats — between title and explore button */}
-        {!isLoading && dashboardData && (
-          <div className="block sm:hidden">
-            <StatsCards
-              stats={dashboardData.stats}
-              creditData={creditData}
-              t={t}
-              language={language}
-            />
-          </div>
-        )}
 
         <Button
           asChild

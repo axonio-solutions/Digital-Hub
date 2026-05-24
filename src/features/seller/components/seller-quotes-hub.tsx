@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from '@tanstack/react-router'
+import { Tabs as RetrouiTabs } from '@/components/retroui/Tab'
 import {
   ArrowUpDown,
   Banknote,
@@ -60,6 +62,7 @@ export function SellerQuotesHub() {
 
   const { data: user } = useAuth()
   const sellerId = user?.id || ''
+  const navigate = useNavigate()
 
   const { data: myQuotes = [], isLoading } = useSellerQuotes(sellerId)
   const { data: taxonomy } = useTaxonomy()
@@ -82,7 +85,7 @@ export function SellerQuotesHub() {
 
     switch (action.type) {
       case 'view_request':
-        setIsRequestDetailsOpen(true)
+        navigate({ to: '/marketplace/$requestId', params: { requestId: action.item.requestId } })
         break
       case 'update':
         setIsQuoteModalOpen(true)
@@ -329,29 +332,25 @@ export function SellerQuotesHub() {
       </div>
 
       {/* Tabs */}
-      <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-900">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            onClick={() => setActiveTab(tab.key)}
-            className={cn(
-              'flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all',
-              activeTab === tab.key
-                ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300',
-            )}
-          >
-            <span className="truncate">{tab.label}</span>
-            <Badge
-              variant="secondary"
-              className="h-4.5 min-w-4.5 px-1 text-[9px] font-black rounded tabular-nums"
+      <RetrouiTabs value={activeTab} onValueChange={setActiveTab}>
+        <RetrouiTabs.List className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-900">
+          {tabs.map((tab) => (
+            <RetrouiTabs.Trigger
+              key={tab.key}
+              value={tab.key}
+              className="flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all data-[active]:bg-white dark:data-[active]:bg-slate-800 data-[active]:text-slate-900 dark:data-[active]:text-white data-[active]:shadow-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
             >
-              {tab.count}
-            </Badge>
-          </button>
-        ))}
-      </div>
+              {tab.label}
+              <Badge
+                variant="secondary"
+                className="h-4.5 min-w-4.5 px-1 text-[9px] font-black rounded tabular-nums"
+              >
+                {tab.count}
+              </Badge>
+            </RetrouiTabs.Trigger>
+          ))}
+        </RetrouiTabs.List>
+      </RetrouiTabs>
 
       {/* Time window + Table */}
       <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-900 self-start">

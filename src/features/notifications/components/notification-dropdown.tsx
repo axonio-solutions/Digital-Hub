@@ -192,7 +192,7 @@ export const NotificationDropdown = ({
       <DropdownMenuContent
         align={align}
         dir={i18n.dir()}
-        className="p-0 w-[calc(100vw-2rem)] sm:w-[380px] rounded-xl border-border bg-card shadow-xl overflow-hidden"
+        className="p-0 w-[calc(100vw-2rem)] sm:w-[440px] rounded-xl border-border bg-card shadow-xl overflow-hidden"
       >
         <DropdownMenuGroup>
           {/* Header */}
@@ -293,7 +293,7 @@ export const NotificationDropdown = ({
                           >
                             {displayTitle}
                           </p>
-                          <p className="truncate text-[11px] text-muted-foreground mt-0.5 max-w-[160px] sm:max-w-[240px]">
+                          <p className="truncate text-[11px] text-muted-foreground mt-0.5 max-w-[180px] sm:max-w-[280px]">
                             {getMessage(notification)}
                           </p>
                         </div>
