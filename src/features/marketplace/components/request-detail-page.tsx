@@ -61,6 +61,7 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { Link } from '@tanstack/react-router'
+import { PUBLIC_ROUTES } from '@/lib/routes'
 
 const dateFnsLocales: Record<string, Locale> = { en: enUS, fr, ar: arSA }
 
@@ -129,7 +130,7 @@ function ErrorView({ t }: { t: (key: string) => string }) {
           {t('detail_page.request_not_found_desc')}
         </p>
       </div>
-      <Link to={'/explore' as any}>
+      <Link to={PUBLIC_ROUTES.EXPLORE as any}>
         <Button variant="outline" size="sm" className="h-9 rounded-xl">
           {t('detail_page.back_to_explore')}
         </Button>
@@ -293,7 +294,7 @@ function OfferRow({
 export function RequestDetailPage() {
   const { t, i18n } = useTranslation('marketplace')
   const dateLocale = dateFnsLocales[i18n.language]
-  const { requestId } = useParams({ from: '/_authed/marketplace/$requestId' })
+  const { requestId } = useParams({ from: '/_authed/requests/$requestId' })
   const { toast } = useToast('marketplace')
   const [offerDialogOpen, setOfferDialogOpen] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)

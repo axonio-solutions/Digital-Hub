@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { NavMain } from '@/features/dashboard/components/layout/nav-main'
 import { NavSecondary } from '@/features/dashboard/components/layout/nav-secondary'
 import { DashboardShell } from '@/features/dashboard/components/layout/dashboard-shell'
+import { ADMIN_ROUTES, DASHBOARD_ROUTES } from '@/lib/routes'
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation('dashboard/layout')
@@ -22,42 +23,42 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const adminNavigation = [
     {
       title: t('nav.global_metrics'),
-      url: '/dashboard',
+      url: DASHBOARD_ROUTES.ROOT,
       icon: IconActivity,
     },
     {
       title: t('nav.market_intelligence'),
-      url: '/dashboard/admin/intelligence',
+      url: ADMIN_ROUTES.INTELLIGENCE,
       icon: IconChartBar,
     },
     {
       title: t('nav.buyers_hub'),
-      url: '/dashboard/admin/buyers',
+      url: ADMIN_ROUTES.BUYERS,
       icon: IconUsers,
     },
     {
       title: t('nav.sellers_hub'),
-      url: '/dashboard/admin/sellers',
+      url: ADMIN_ROUTES.SELLERS,
       icon: IconBuildingStore,
     },
     {
       title: t('nav.revenue'),
-      url: '/dashboard/admin/revenue',
+      url: ADMIN_ROUTES.REVENUE,
       icon: IconReportMoney,
     },
     {
       title: t('nav.request_audit'),
-      url: '/dashboard/admin/audit',
+      url: ADMIN_ROUTES.AUDIT_LOG,
       icon: IconArchive,
     },
     {
       title: t('nav.user_moderation'),
-      url: '/dashboard/admin/users',
+      url: ADMIN_ROUTES.USERS,
       icon: IconUsers,
     },
     {
       title: t('nav.credit_requests'),
-      url: '/dashboard/admin/credit-requests',
+      url: ADMIN_ROUTES.CREDIT_REQUESTS,
       icon: IconSend,
     },
   ]
@@ -65,7 +66,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const secondaryNavigation = [
     {
       title: t('nav.admin_profile'),
-      url: '/dashboard/profile',
+      url: DASHBOARD_ROUTES.PROFILE,
       icon: IconSettings,
     },
   ]

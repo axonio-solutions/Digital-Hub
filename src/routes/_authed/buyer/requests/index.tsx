@@ -1,15 +1,10 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { BuyerHub } from '@/features/buyer/components/buyer-hub'
 import { BuyerSkeleton } from '@/features/buyer/components/buyer-skeleton'
 import { buyerKeys } from '@/features/buyer/hooks/use-buyer'
 import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
 
-export const Route = createFileRoute('/_authed/dashboard/requests/')({
-  beforeLoad: ({ context }) => {
-    if (context.user?.role !== 'buyer' && context.user?.role !== 'admin') {
-      throw redirect({ to: '/dashboard' })
-    }
-  },
+export const Route = createFileRoute('/_authed/buyer/requests/')({
   loader: async ({ context }) => {
     const buyerId = context.user?.id
     if (buyerId) {

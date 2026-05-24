@@ -3,6 +3,8 @@ import {
   Outlet,
   Scripts,
   createRootRouteWithContext,
+  useNavigate,
+  useRouter,
 } from '@tanstack/react-router'
 import * as React from 'react'
 
@@ -13,12 +15,13 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import styles from '../styles.css?url'
 import { DefaultNotFound } from './components/errors/-default-not-found'
+import { RouteErrorFallback } from './components/errors/route-error-fallback'
 import type { MyRouterContext } from '@/types/router'
 import { Toaster } from '@/components/ui/sonner'
 import { DirectionProvider } from '@/components/ui/direction'
 import { authQueries } from '@/features/auth/queries/auth-queries'
 import { useNotifications } from '@/features/notifications/hooks/use-notifications'
-
+import { SYSTEM_ROUTES } from '@/lib/routes'
 import { MotionConfig } from 'framer-motion'
 import { ThemeProvider } from '@/components/theme-provider'
 import { I18nProvider } from '@/components/i18n-provider'
@@ -28,6 +31,24 @@ const rootSearchSchema = z.object({
 })
 
 type RootSearch = z.infer<typeof rootSearchSchema>
+
+function ConnectionGuard() {
+  const navigate = useNavigate()
+  const router = useRouter()
+
+  React.useEffect(() => {
+    const handleOffline = () => {
+      navigate({
+        to: SYSTEM_ROUTES.OFFLINE,
+        search: { from: router.state.location.pathname },
+      })
+    }
+    window.addEventListener('offline', handleOffline)
+    return () => window.removeEventListener('offline', handleOffline)
+  }, [navigate, router])
+
+  return null
+}
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   validateSearch: (search) => rootSearchSchema.parse(search),
@@ -105,6 +126,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         <I18nProvider>
           <DirectionProvider direction={direction}>
             <MotionConfig reducedMotion="user">
+              <ConnectionGuard />
               <Outlet />
               <Toaster
                 position={direction === 'rtl' ? 'bottom-left' : 'bottom-right'}
@@ -133,6 +155,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     )
   },
   notFoundComponent: DefaultNotFound,
+  errorComponent: RouteErrorFallback,
 })
 
 function RootDocument({
@@ -168,7 +191,7 @@ function RootDocument({
                   const theme = localStorage.getItem(storageKey);
                   const supportDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches === true;
                   const addDark = theme === "dark" || (theme !== "light" && supportDarkMode);
-                  
+
                   if (addDark) {
                     document.documentElement.classList.add("dark");
                   } else {

@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { AdminIntelligence } from '@/features/admin/components/admin-intelligence'
 import { Skeleton } from '@/components/ui/skeleton'
 import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
@@ -30,12 +30,7 @@ function AdminIntelligenceSkeleton() {
   )
 }
 
-export const Route = createFileRoute('/_authed/dashboard/admin/intelligence')({
-  beforeLoad: ({ context }: any) => {
-    if (context.user?.role !== 'admin') {
-      throw redirect({ to: '/dashboard' })
-    }
-  },
+export const Route = createFileRoute('/_authed/admin/intelligence/')({
   loader: async ({ context }) => {
     const { getMarketGapAnalysisServerFn } = await import('@/fn/admin')
     const { adminKeys } = await import('@/features/admin/hooks/use-admin')

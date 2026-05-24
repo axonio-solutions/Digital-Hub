@@ -28,6 +28,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
+import {
+  ADMIN_ROUTES,
+  AUTH_ROUTES,
+  BUYER_ROUTES,
+  DASHBOARD_ROUTES,
+  SELLER_ROUTES,
+} from '@/lib/routes'
 
 interface UserMenuProps {
   user: any
@@ -60,41 +67,21 @@ export function UserMenu({
   const roleLinks = useMemo(() => {
     if (role === 'admin') {
       return [
-        { to: '/dashboard', label: t('nav.global_metrics'), icon: Activity },
-        {
-          to: '/dashboard/admin/users',
-          label: t('nav.user_moderation'),
-          icon: Users,
-        },
-        {
-          to: '/dashboard/admin/categories',
-          label: t('nav.categories'),
-          icon: Layers,
-        },
-        {
-          to: '/dashboard/admin/audit',
-          label: t('nav.request_audit'),
-          icon: Archive,
-        },
-        {
-          to: '/dashboard/admin/settings',
-          label: t('nav.admin_settings'),
-          icon: Settings,
-        },
+        { to: DASHBOARD_ROUTES.ROOT, label: t('nav.global_metrics'), icon: Activity },
+        { to: ADMIN_ROUTES.USERS, label: t('nav.user_moderation'), icon: Users },
+        { to: ADMIN_ROUTES.CATEGORIES, label: t('nav.categories'), icon: Layers },
+        { to: ADMIN_ROUTES.AUDIT_LOG, label: t('nav.request_audit'), icon: Archive },
+        { to: DASHBOARD_ROUTES.PROFILE, label: t('nav.admin_settings'), icon: Settings },
       ]
     }
     if (role === 'seller') {
       return [
-        { to: '/dashboard/quotes', label: t('nav.my_quotes'), icon: Tag },
-        { to: '/dashboard/billing', label: t('nav.billing'), icon: Coins },
+        { to: SELLER_ROUTES.QUOTES, label: t('nav.my_quotes'), icon: Tag },
+        { to: SELLER_ROUTES.BILLING, label: t('nav.billing'), icon: Coins },
       ]
     }
     return [
-      {
-        to: '/dashboard/requests',
-        label: t('user_dropdown.my_requests'),
-        icon: ClipboardList,
-      },
+      { to: BUYER_ROUTES.REQUESTS, label: t('user_dropdown.my_requests'), icon: ClipboardList },
     ]
   }, [role, t])
 
@@ -103,7 +90,7 @@ export function UserMenu({
     try {
       await authClient.signOut()
       queryClient.clear()
-      window.location.href = '/login'
+      window.location.href = AUTH_ROUTES.LOGIN
     } catch {
       setIsLoggingOut(false)
     }
@@ -199,7 +186,7 @@ export function UserMenu({
         {/* Account */}
         <DropdownMenuGroup>
           <DropdownMenuItem
-            onClick={() => navigate({ to: '/dashboard/profile' as any })}
+            onClick={() => navigate({ to: DASHBOARD_ROUTES.PROFILE })}
             className={cn(itemClass, 'mx-2')}
           >
             <CircleUserRound className="w-4 h-4 text-muted-foreground group-hover/item:text-primary transition-colors" />

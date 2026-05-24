@@ -1,21 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router'
 import {
   AdminAnalyticsSkeleton,
-  SellerAnalytics,
-} from '@/features/admin/components/seller-analytics'
+  BuyerAnalytics,
+} from '@/features/admin/components/buyer-analytics'
 import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
 
-export const Route = createFileRoute('/_authed/dashboard/admin/sellers')({
+export const Route = createFileRoute('/_authed/admin/buyers/')({
   loader: async ({ context }) => {
-    const { getSellerAnalyticsServerFn } = await import('@/fn/admin')
+    const { getBuyerAnalyticsServerFn } = await import('@/fn/admin')
     const { adminKeys } = await import('@/features/admin/hooks/use-admin')
     await context.queryClient.ensureQueryData({
-      queryKey: adminKeys.analytics('sellers'),
-      queryFn: () => getSellerAnalyticsServerFn(),
+      queryKey: adminKeys.analytics('buyers'),
+      queryFn: () => getBuyerAnalyticsServerFn(),
       staleTime: 5 * 60 * 1000,
     })
   },
-  component: SellerAnalytics,
+  component: BuyerAnalytics,
   pendingComponent: AdminAnalyticsSkeleton,
   errorComponent: RouteErrorFallback,
 })

@@ -28,6 +28,7 @@ import {
 } from '@/features/requests/hooks/use-requests'
 import { taxonomyKeys } from '@/features/taxonomy/hooks/use-taxonomy'
 import { cn } from '@/lib/utils'
+import { BUYER_ROUTES } from '@/lib/routes'
 
 export function BuyerHub() {
   const { t } = useTranslation([
@@ -73,7 +74,7 @@ export function BuyerHub() {
       switch (action.type) {
         case 'view_request':
           navigate({
-            to: '/dashboard/requests/$requestId',
+            to: BUYER_ROUTES.REQUEST_DETAIL_PATTERN,
             params: { requestId: action.item.id },
           })
           break

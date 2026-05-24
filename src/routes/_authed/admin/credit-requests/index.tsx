@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Send } from 'lucide-react'
@@ -16,14 +16,7 @@ import { useCreditRequestsColumns } from '@/features/credits/components/credit-r
 import { CreditPackages } from '@/features/credits/components/credit-packages'
 import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
 
-export const Route = createFileRoute(
-  '/_authed/dashboard/admin/credit-requests/',
-)({
-  beforeLoad: ({ context }) => {
-    if (context.user?.role !== 'admin') {
-      throw redirect({ to: '/dashboard' })
-    }
-  },
+export const Route = createFileRoute('/_authed/admin/credit-requests/')({
   loader: async ({ context }) => {
     const { getCreditRequestsServerFn } = await import('@/fn/credits')
     await context.queryClient.ensureQueryData({
@@ -74,7 +67,6 @@ function CreditRequestsRoute() {
 
   return (
     <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <div className="size-10 rounded-2xl bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-amber-500/20 shrink-0">
           <Send className="size-5" />
@@ -101,7 +93,6 @@ function CreditRequestsRoute() {
           </TabsList>
 
           <TabsContent value="requests" className="mt-4 space-y-4">
-            {/* Filter buttons */}
             <div className="flex gap-1.5 overflow-x-auto pb-1">
               {[undefined, 'pending', 'approved', 'rejected'].map((f) => (
                 <button

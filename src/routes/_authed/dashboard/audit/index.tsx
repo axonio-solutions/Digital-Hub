@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { ADMIN_ROUTES } from '@/lib/routes'
 
-// Redirect old route to new consolidated admin path
 export const Route = createFileRoute('/_authed/dashboard/audit/')({
   beforeLoad: () => {
-    throw redirect({ to: '/dashboard/admin/audit' })
+    throw redirect({ to: ADMIN_ROUTES.AUDIT_LOG })
   },
 })

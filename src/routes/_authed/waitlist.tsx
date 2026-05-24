@@ -17,6 +17,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageToggle } from '@/components/language-toggle'
 import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
+import { AUTH_ROUTES } from '@/lib/routes'
 
 export const Route = createFileRoute('/_authed/waitlist')({
   component: WaitlistPage,
@@ -34,7 +35,7 @@ function WaitlistPage() {
     try {
       await authClient.signOut()
       queryClient.clear()
-      window.location.href = '/login'
+      window.location.href = AUTH_ROUTES.LOGIN
     } catch (error) {
       console.error('Logout failed', error)
       setIsLoggingOut(false)

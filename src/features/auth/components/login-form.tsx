@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { DASHBOARD_ROUTES } from '@/lib/routes'
 
 type AuthInput = z.infer<typeof authSchema>
 
@@ -117,7 +118,7 @@ export function LoginForm() {
       // state (auth context, hooks, router guards) for the authenticated session.
 
       const search = router.state.location.search as { redirect?: string }
-      const redirectUrl = search?.redirect || '/dashboard'
+      const redirectUrl = search?.redirect || DASHBOARD_ROUTES.ROOT
 
       // Perform a hard redirect to bypass stale TanStack Router context caches
       window.location.href = redirectUrl

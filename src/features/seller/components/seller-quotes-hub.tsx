@@ -27,8 +27,7 @@ import { useSendReminder } from '@/features/quotes/hooks/use-quotes'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
+  DialogDescription,  DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
 import { RequestDetailsDialog } from '@/features/requests/components/request-details-dialog'
@@ -43,6 +42,7 @@ import {
   StatLabel,
   StatValue,
 } from '@/components/ui/stat'
+import { SELLER_ROUTES } from '@/lib/routes'
 
 type TimeWindow = 'all' | 'today' | 'week' | 'month'
 
@@ -91,7 +91,7 @@ export function SellerQuotesHub() {
 
     switch (action.type) {
       case 'view_request':
-        navigate({ to: '/marketplace/$requestId', params: { requestId: action.item.requestId } })
+        navigate({ to: SELLER_ROUTES.MARKETPLACE_REQUEST_PATTERN, params: { requestId: action.item.requestId } })
         break
       case 'update':
         setIsQuoteModalOpen(true)

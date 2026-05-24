@@ -36,6 +36,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { cn } from '@/lib/utils'
+import { SELLER_ROUTES } from '@/lib/routes'
 
 interface SubmitQuoteFormProps {
   quoteId?: string
@@ -350,7 +351,7 @@ export function SubmitQuoteForm({
             <Button
               onClick={() => {
                 setCreditDialogOpen(false)
-                navigate({ to: '/dashboard/billing' as any })
+                navigate({ to: SELLER_ROUTES.BILLING })
               }}
               className="rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white"
             >

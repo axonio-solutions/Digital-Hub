@@ -40,6 +40,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination'
+import { PUBLIC_ROUTES } from '@/lib/routes'
 
 const DATE_LOCALE: Record<string, string> = {
   en: 'en-US',
@@ -275,7 +276,7 @@ export function BillingOverview() {
                 {tc('billing.no_activity')}
               </p>
               <Button asChild className="rounded-xl text-xs font-bold">
-                <a href="/explore">
+                <a href={PUBLIC_ROUTES.EXPLORE}>
                   {t('dashboard/seller:actions.browse_requests')}{' '}
                   <ArrowRight className="size-3.5 ms-1.5" />
                 </a>

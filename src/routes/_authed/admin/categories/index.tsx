@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { TaxonomyHub } from '@/features/taxonomy/components/taxonomy-hub'
 import { taxonomyKeys } from '@/features/taxonomy/hooks/use-taxonomy'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -31,12 +31,7 @@ function TaxonomySkeleton() {
   )
 }
 
-export const Route = createFileRoute('/_authed/dashboard/admin/categories')({
-  beforeLoad: ({ context }: any) => {
-    if (context.user?.role !== 'admin') {
-      throw redirect({ to: '/dashboard' })
-    }
-  },
+export const Route = createFileRoute('/_authed/admin/categories/')({
   loader: async ({ context }) => {
     const { getTaxonomyServerFn } = await import('@/fn/admin')
     await context.queryClient.ensureQueryData({

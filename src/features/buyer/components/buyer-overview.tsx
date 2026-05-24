@@ -31,6 +31,7 @@ import {
   StatValue,
 } from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
+import { BUYER_ROUTES } from '@/lib/routes'
 
 export function BuyerOverview() {
   const { t } = useTranslation(['dashboard/buyer', 'requests/details'])
@@ -57,7 +58,7 @@ export function BuyerOverview() {
       switch (action.type) {
         case 'view_request':
           navigate({
-            to: '/dashboard/requests/$requestId',
+            to: BUYER_ROUTES.REQUEST_DETAIL_PATTERN,
             params: { requestId: action.item.id },
           })
           break
@@ -239,7 +240,7 @@ export function BuyerOverview() {
               size="sm"
               className="h-auto py-1 px-2 text-xs font-bold gap-1"
             >
-              <Link to="/dashboard/requests">
+              <Link to={BUYER_ROUTES.REQUESTS}>
                 {t('recent.view_all')}{' '}
                 <ArrowRight className="size-3 rtl:rotate-180" />
               </Link>

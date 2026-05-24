@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
@@ -16,34 +17,44 @@ import { Route as AuthedWaitlistRouteImport } from './routes/_authed/waitlist'
 import { Route as AuthedOnboardingRouteImport } from './routes/_authed/onboarding'
 import { Route as AuthedCompleteRegistrationRouteImport } from './routes/_authed/complete-registration'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AuthedSellerRouteRouteImport } from './routes/_authed/seller/route'
 import { Route as AuthedDashboardRouteRouteImport } from './routes/_authed/dashboard/route'
+import { Route as AuthedBuyerRouteRouteImport } from './routes/_authed/buyer/route'
+import { Route as AuthedAdminRouteRouteImport } from './routes/_authed/admin/route'
+import { Route as PublicRequestsIndexRouteImport } from './routes/_public/requests/index'
 import { Route as PublicPricingIndexRouteImport } from './routes/_public/pricing/index'
 import { Route as PublicFaqIndexRouteImport } from './routes/_public/faq/index'
-import { Route as PublicExploreIndexRouteImport } from './routes/_public/explore/index'
 import { Route as PublicContactIndexRouteImport } from './routes/_public/contact/index'
 import { Route as PublicAboutIndexRouteImport } from './routes/_public/about/index'
+import { Route as AuthedSellerIndexRouteImport } from './routes/_authed/seller/index'
 import { Route as AuthedDashboardIndexRouteImport } from './routes/_authed/dashboard/index'
+import { Route as AuthedBuyerIndexRouteImport } from './routes/_authed/buyer/index'
+import { Route as AuthedAdminIndexRouteImport } from './routes/_authed/admin/index'
 import { Route as ApiV1SplatRouteImport } from './routes/api/v1/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as AuthedMarketplaceRequestIdRouteImport } from './routes/_authed/marketplace/$requestId'
-import { Route as AuthedDashboardAdminRouteRouteImport } from './routes/_authed/dashboard/admin/route'
+import { Route as AuthedRequestsRequestIdRouteImport } from './routes/_authed/requests/$requestId'
+import { Route as AuthedSellerQuotesIndexRouteImport } from './routes/_authed/seller/quotes/index'
+import { Route as AuthedSellerBillingIndexRouteImport } from './routes/_authed/seller/billing/index'
 import { Route as AuthedDashboardUsersIndexRouteImport } from './routes/_authed/dashboard/users/index'
 import { Route as AuthedDashboardSupportIndexRouteImport } from './routes/_authed/dashboard/support/index'
-import { Route as AuthedDashboardRequestsIndexRouteImport } from './routes/_authed/dashboard/requests/index'
-import { Route as AuthedDashboardQuotesIndexRouteImport } from './routes/_authed/dashboard/quotes/index'
 import { Route as AuthedDashboardProfileIndexRouteImport } from './routes/_authed/dashboard/profile/index'
-import { Route as AuthedDashboardBillingIndexRouteImport } from './routes/_authed/dashboard/billing/index'
 import { Route as AuthedDashboardAuditIndexRouteImport } from './routes/_authed/dashboard/audit/index'
-import { Route as AuthedDashboardRequestsRequestIdRouteImport } from './routes/_authed/dashboard/requests/$requestId'
-import { Route as AuthedDashboardAdminSellersRouteImport } from './routes/_authed/dashboard/admin/sellers'
-import { Route as AuthedDashboardAdminIntelligenceRouteImport } from './routes/_authed/dashboard/admin/intelligence'
-import { Route as AuthedDashboardAdminCategoriesRouteImport } from './routes/_authed/dashboard/admin/categories'
-import { Route as AuthedDashboardAdminBuyersRouteImport } from './routes/_authed/dashboard/admin/buyers'
-import { Route as AuthedDashboardAdminUsersIndexRouteImport } from './routes/_authed/dashboard/admin/users/index'
-import { Route as AuthedDashboardAdminRevenueIndexRouteImport } from './routes/_authed/dashboard/admin/revenue/index'
-import { Route as AuthedDashboardAdminCreditRequestsIndexRouteImport } from './routes/_authed/dashboard/admin/credit-requests/index'
-import { Route as AuthedDashboardAdminAuditIndexRouteImport } from './routes/_authed/dashboard/admin/audit/index'
+import { Route as AuthedBuyerRequestsIndexRouteImport } from './routes/_authed/buyer/requests/index'
+import { Route as AuthedAdminUsersIndexRouteImport } from './routes/_authed/admin/users/index'
+import { Route as AuthedAdminSellersIndexRouteImport } from './routes/_authed/admin/sellers/index'
+import { Route as AuthedAdminRevenueIndexRouteImport } from './routes/_authed/admin/revenue/index'
+import { Route as AuthedAdminIntelligenceIndexRouteImport } from './routes/_authed/admin/intelligence/index'
+import { Route as AuthedAdminCreditRequestsIndexRouteImport } from './routes/_authed/admin/credit-requests/index'
+import { Route as AuthedAdminCategoriesIndexRouteImport } from './routes/_authed/admin/categories/index'
+import { Route as AuthedAdminBuyersIndexRouteImport } from './routes/_authed/admin/buyers/index'
+import { Route as AuthedAdminAuditLogIndexRouteImport } from './routes/_authed/admin/audit-log/index'
+import { Route as AuthedBuyerRequestsRequestIdRouteImport } from './routes/_authed/buyer/requests/$requestId'
 
+const OfflineRoute = OfflineRouteImport.update({
+  id: '/offline',
+  path: '/offline',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
   getParentRoute: () => rootRouteImport,
@@ -78,10 +89,30 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedSellerRouteRoute = AuthedSellerRouteRouteImport.update({
+  id: '/seller',
+  path: '/seller',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedDashboardRouteRoute = AuthedDashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedBuyerRouteRoute = AuthedBuyerRouteRouteImport.update({
+  id: '/buyer',
+  path: '/buyer',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedAdminRouteRoute = AuthedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const PublicRequestsIndexRoute = PublicRequestsIndexRouteImport.update({
+  id: '/requests/',
+  path: '/requests/',
+  getParentRoute: () => PublicRoute,
 } as any)
 const PublicPricingIndexRoute = PublicPricingIndexRouteImport.update({
   id: '/pricing/',
@@ -91,11 +122,6 @@ const PublicPricingIndexRoute = PublicPricingIndexRouteImport.update({
 const PublicFaqIndexRoute = PublicFaqIndexRouteImport.update({
   id: '/faq/',
   path: '/faq/',
-  getParentRoute: () => PublicRoute,
-} as any)
-const PublicExploreIndexRoute = PublicExploreIndexRouteImport.update({
-  id: '/explore/',
-  path: '/explore/',
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicContactIndexRoute = PublicContactIndexRouteImport.update({
@@ -108,10 +134,25 @@ const PublicAboutIndexRoute = PublicAboutIndexRouteImport.update({
   path: '/about/',
   getParentRoute: () => PublicRoute,
 } as any)
+const AuthedSellerIndexRoute = AuthedSellerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthedSellerRouteRoute,
+} as any)
 const AuthedDashboardIndexRoute = AuthedDashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthedDashboardRouteRoute,
+} as any)
+const AuthedBuyerIndexRoute = AuthedBuyerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthedBuyerRouteRoute,
+} as any)
+const AuthedAdminIndexRoute = AuthedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthedAdminRouteRoute,
 } as any)
 const ApiV1SplatRoute = ApiV1SplatRouteImport.update({
   id: '/api/v1/$',
@@ -123,17 +164,21 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthedMarketplaceRequestIdRoute =
-  AuthedMarketplaceRequestIdRouteImport.update({
-    id: '/marketplace/$requestId',
-    path: '/marketplace/$requestId',
-    getParentRoute: () => AuthedRoute,
-  } as any)
-const AuthedDashboardAdminRouteRoute =
-  AuthedDashboardAdminRouteRouteImport.update({
-    id: '/admin',
-    path: '/admin',
-    getParentRoute: () => AuthedDashboardRouteRoute,
+const AuthedRequestsRequestIdRoute = AuthedRequestsRequestIdRouteImport.update({
+  id: '/requests/$requestId',
+  path: '/requests/$requestId',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedSellerQuotesIndexRoute = AuthedSellerQuotesIndexRouteImport.update({
+  id: '/quotes/',
+  path: '/quotes/',
+  getParentRoute: () => AuthedSellerRouteRoute,
+} as any)
+const AuthedSellerBillingIndexRoute =
+  AuthedSellerBillingIndexRouteImport.update({
+    id: '/billing/',
+    path: '/billing/',
+    getParentRoute: () => AuthedSellerRouteRoute,
   } as any)
 const AuthedDashboardUsersIndexRoute =
   AuthedDashboardUsersIndexRouteImport.update({
@@ -147,28 +192,10 @@ const AuthedDashboardSupportIndexRoute =
     path: '/support/',
     getParentRoute: () => AuthedDashboardRouteRoute,
   } as any)
-const AuthedDashboardRequestsIndexRoute =
-  AuthedDashboardRequestsIndexRouteImport.update({
-    id: '/requests/',
-    path: '/requests/',
-    getParentRoute: () => AuthedDashboardRouteRoute,
-  } as any)
-const AuthedDashboardQuotesIndexRoute =
-  AuthedDashboardQuotesIndexRouteImport.update({
-    id: '/quotes/',
-    path: '/quotes/',
-    getParentRoute: () => AuthedDashboardRouteRoute,
-  } as any)
 const AuthedDashboardProfileIndexRoute =
   AuthedDashboardProfileIndexRouteImport.update({
     id: '/profile/',
     path: '/profile/',
-    getParentRoute: () => AuthedDashboardRouteRoute,
-  } as any)
-const AuthedDashboardBillingIndexRoute =
-  AuthedDashboardBillingIndexRouteImport.update({
-    id: '/billing/',
-    path: '/billing/',
     getParentRoute: () => AuthedDashboardRouteRoute,
   } as any)
 const AuthedDashboardAuditIndexRoute =
@@ -177,274 +204,307 @@ const AuthedDashboardAuditIndexRoute =
     path: '/audit/',
     getParentRoute: () => AuthedDashboardRouteRoute,
   } as any)
-const AuthedDashboardRequestsRequestIdRoute =
-  AuthedDashboardRequestsRequestIdRouteImport.update({
-    id: '/requests/$requestId',
-    path: '/requests/$requestId',
-    getParentRoute: () => AuthedDashboardRouteRoute,
+const AuthedBuyerRequestsIndexRoute =
+  AuthedBuyerRequestsIndexRouteImport.update({
+    id: '/requests/',
+    path: '/requests/',
+    getParentRoute: () => AuthedBuyerRouteRoute,
   } as any)
-const AuthedDashboardAdminSellersRoute =
-  AuthedDashboardAdminSellersRouteImport.update({
-    id: '/sellers',
-    path: '/sellers',
-    getParentRoute: () => AuthedDashboardAdminRouteRoute,
+const AuthedAdminUsersIndexRoute = AuthedAdminUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AuthedAdminRouteRoute,
+} as any)
+const AuthedAdminSellersIndexRoute = AuthedAdminSellersIndexRouteImport.update({
+  id: '/sellers/',
+  path: '/sellers/',
+  getParentRoute: () => AuthedAdminRouteRoute,
+} as any)
+const AuthedAdminRevenueIndexRoute = AuthedAdminRevenueIndexRouteImport.update({
+  id: '/revenue/',
+  path: '/revenue/',
+  getParentRoute: () => AuthedAdminRouteRoute,
+} as any)
+const AuthedAdminIntelligenceIndexRoute =
+  AuthedAdminIntelligenceIndexRouteImport.update({
+    id: '/intelligence/',
+    path: '/intelligence/',
+    getParentRoute: () => AuthedAdminRouteRoute,
   } as any)
-const AuthedDashboardAdminIntelligenceRoute =
-  AuthedDashboardAdminIntelligenceRouteImport.update({
-    id: '/intelligence',
-    path: '/intelligence',
-    getParentRoute: () => AuthedDashboardAdminRouteRoute,
-  } as any)
-const AuthedDashboardAdminCategoriesRoute =
-  AuthedDashboardAdminCategoriesRouteImport.update({
-    id: '/categories',
-    path: '/categories',
-    getParentRoute: () => AuthedDashboardAdminRouteRoute,
-  } as any)
-const AuthedDashboardAdminBuyersRoute =
-  AuthedDashboardAdminBuyersRouteImport.update({
-    id: '/buyers',
-    path: '/buyers',
-    getParentRoute: () => AuthedDashboardAdminRouteRoute,
-  } as any)
-const AuthedDashboardAdminUsersIndexRoute =
-  AuthedDashboardAdminUsersIndexRouteImport.update({
-    id: '/users/',
-    path: '/users/',
-    getParentRoute: () => AuthedDashboardAdminRouteRoute,
-  } as any)
-const AuthedDashboardAdminRevenueIndexRoute =
-  AuthedDashboardAdminRevenueIndexRouteImport.update({
-    id: '/revenue/',
-    path: '/revenue/',
-    getParentRoute: () => AuthedDashboardAdminRouteRoute,
-  } as any)
-const AuthedDashboardAdminCreditRequestsIndexRoute =
-  AuthedDashboardAdminCreditRequestsIndexRouteImport.update({
+const AuthedAdminCreditRequestsIndexRoute =
+  AuthedAdminCreditRequestsIndexRouteImport.update({
     id: '/credit-requests/',
     path: '/credit-requests/',
-    getParentRoute: () => AuthedDashboardAdminRouteRoute,
+    getParentRoute: () => AuthedAdminRouteRoute,
   } as any)
-const AuthedDashboardAdminAuditIndexRoute =
-  AuthedDashboardAdminAuditIndexRouteImport.update({
-    id: '/audit/',
-    path: '/audit/',
-    getParentRoute: () => AuthedDashboardAdminRouteRoute,
+const AuthedAdminCategoriesIndexRoute =
+  AuthedAdminCategoriesIndexRouteImport.update({
+    id: '/categories/',
+    path: '/categories/',
+    getParentRoute: () => AuthedAdminRouteRoute,
+  } as any)
+const AuthedAdminBuyersIndexRoute = AuthedAdminBuyersIndexRouteImport.update({
+  id: '/buyers/',
+  path: '/buyers/',
+  getParentRoute: () => AuthedAdminRouteRoute,
+} as any)
+const AuthedAdminAuditLogIndexRoute =
+  AuthedAdminAuditLogIndexRouteImport.update({
+    id: '/audit-log/',
+    path: '/audit-log/',
+    getParentRoute: () => AuthedAdminRouteRoute,
+  } as any)
+const AuthedBuyerRequestsRequestIdRoute =
+  AuthedBuyerRequestsRequestIdRouteImport.update({
+    id: '/requests/$requestId',
+    path: '/requests/$requestId',
+    getParentRoute: () => AuthedBuyerRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
+  '/offline': typeof OfflineRoute
+  '/admin': typeof AuthedAdminRouteRouteWithChildren
+  '/buyer': typeof AuthedBuyerRouteRouteWithChildren
   '/dashboard': typeof AuthedDashboardRouteRouteWithChildren
+  '/seller': typeof AuthedSellerRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/complete-registration': typeof AuthedCompleteRegistrationRoute
   '/onboarding': typeof AuthedOnboardingRoute
   '/waitlist': typeof AuthedWaitlistRoute
-  '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
-  '/marketplace/$requestId': typeof AuthedMarketplaceRequestIdRoute
+  '/requests/$requestId': typeof AuthedRequestsRequestIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/v1/$': typeof ApiV1SplatRoute
+  '/admin/': typeof AuthedAdminIndexRoute
+  '/buyer/': typeof AuthedBuyerIndexRoute
   '/dashboard/': typeof AuthedDashboardIndexRoute
+  '/seller/': typeof AuthedSellerIndexRoute
   '/about/': typeof PublicAboutIndexRoute
   '/contact/': typeof PublicContactIndexRoute
-  '/explore/': typeof PublicExploreIndexRoute
   '/faq/': typeof PublicFaqIndexRoute
   '/pricing/': typeof PublicPricingIndexRoute
-  '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
-  '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
-  '/dashboard/admin/intelligence': typeof AuthedDashboardAdminIntelligenceRoute
-  '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
-  '/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
+  '/requests/': typeof PublicRequestsIndexRoute
+  '/buyer/requests/$requestId': typeof AuthedBuyerRequestsRequestIdRoute
+  '/admin/audit-log/': typeof AuthedAdminAuditLogIndexRoute
+  '/admin/buyers/': typeof AuthedAdminBuyersIndexRoute
+  '/admin/categories/': typeof AuthedAdminCategoriesIndexRoute
+  '/admin/credit-requests/': typeof AuthedAdminCreditRequestsIndexRoute
+  '/admin/intelligence/': typeof AuthedAdminIntelligenceIndexRoute
+  '/admin/revenue/': typeof AuthedAdminRevenueIndexRoute
+  '/admin/sellers/': typeof AuthedAdminSellersIndexRoute
+  '/admin/users/': typeof AuthedAdminUsersIndexRoute
+  '/buyer/requests/': typeof AuthedBuyerRequestsIndexRoute
   '/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
-  '/dashboard/billing/': typeof AuthedDashboardBillingIndexRoute
   '/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
-  '/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
-  '/dashboard/requests/': typeof AuthedDashboardRequestsIndexRoute
   '/dashboard/support/': typeof AuthedDashboardSupportIndexRoute
   '/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
-  '/dashboard/admin/audit/': typeof AuthedDashboardAdminAuditIndexRoute
-  '/dashboard/admin/credit-requests/': typeof AuthedDashboardAdminCreditRequestsIndexRoute
-  '/dashboard/admin/revenue/': typeof AuthedDashboardAdminRevenueIndexRoute
-  '/dashboard/admin/users/': typeof AuthedDashboardAdminUsersIndexRoute
+  '/seller/billing/': typeof AuthedSellerBillingIndexRoute
+  '/seller/quotes/': typeof AuthedSellerQuotesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
+  '/offline': typeof OfflineRoute
   '/login': typeof AuthLoginRoute
   '/complete-registration': typeof AuthedCompleteRegistrationRoute
   '/onboarding': typeof AuthedOnboardingRoute
   '/waitlist': typeof AuthedWaitlistRoute
-  '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
-  '/marketplace/$requestId': typeof AuthedMarketplaceRequestIdRoute
+  '/requests/$requestId': typeof AuthedRequestsRequestIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/v1/$': typeof ApiV1SplatRoute
+  '/admin': typeof AuthedAdminIndexRoute
+  '/buyer': typeof AuthedBuyerIndexRoute
   '/dashboard': typeof AuthedDashboardIndexRoute
+  '/seller': typeof AuthedSellerIndexRoute
   '/about': typeof PublicAboutIndexRoute
   '/contact': typeof PublicContactIndexRoute
-  '/explore': typeof PublicExploreIndexRoute
   '/faq': typeof PublicFaqIndexRoute
   '/pricing': typeof PublicPricingIndexRoute
-  '/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
-  '/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
-  '/dashboard/admin/intelligence': typeof AuthedDashboardAdminIntelligenceRoute
-  '/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
-  '/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
+  '/requests': typeof PublicRequestsIndexRoute
+  '/buyer/requests/$requestId': typeof AuthedBuyerRequestsRequestIdRoute
+  '/admin/audit-log': typeof AuthedAdminAuditLogIndexRoute
+  '/admin/buyers': typeof AuthedAdminBuyersIndexRoute
+  '/admin/categories': typeof AuthedAdminCategoriesIndexRoute
+  '/admin/credit-requests': typeof AuthedAdminCreditRequestsIndexRoute
+  '/admin/intelligence': typeof AuthedAdminIntelligenceIndexRoute
+  '/admin/revenue': typeof AuthedAdminRevenueIndexRoute
+  '/admin/sellers': typeof AuthedAdminSellersIndexRoute
+  '/admin/users': typeof AuthedAdminUsersIndexRoute
+  '/buyer/requests': typeof AuthedBuyerRequestsIndexRoute
   '/dashboard/audit': typeof AuthedDashboardAuditIndexRoute
-  '/dashboard/billing': typeof AuthedDashboardBillingIndexRoute
   '/dashboard/profile': typeof AuthedDashboardProfileIndexRoute
-  '/dashboard/quotes': typeof AuthedDashboardQuotesIndexRoute
-  '/dashboard/requests': typeof AuthedDashboardRequestsIndexRoute
   '/dashboard/support': typeof AuthedDashboardSupportIndexRoute
   '/dashboard/users': typeof AuthedDashboardUsersIndexRoute
-  '/dashboard/admin/audit': typeof AuthedDashboardAdminAuditIndexRoute
-  '/dashboard/admin/credit-requests': typeof AuthedDashboardAdminCreditRequestsIndexRoute
-  '/dashboard/admin/revenue': typeof AuthedDashboardAdminRevenueIndexRoute
-  '/dashboard/admin/users': typeof AuthedDashboardAdminUsersIndexRoute
+  '/seller/billing': typeof AuthedSellerBillingIndexRoute
+  '/seller/quotes': typeof AuthedSellerQuotesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authed': typeof AuthedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
+  '/offline': typeof OfflineRoute
+  '/_authed/admin': typeof AuthedAdminRouteRouteWithChildren
+  '/_authed/buyer': typeof AuthedBuyerRouteRouteWithChildren
   '/_authed/dashboard': typeof AuthedDashboardRouteRouteWithChildren
+  '/_authed/seller': typeof AuthedSellerRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_authed/complete-registration': typeof AuthedCompleteRegistrationRoute
   '/_authed/onboarding': typeof AuthedOnboardingRoute
   '/_authed/waitlist': typeof AuthedWaitlistRoute
   '/_public/': typeof PublicIndexRoute
-  '/_authed/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
-  '/_authed/marketplace/$requestId': typeof AuthedMarketplaceRequestIdRoute
+  '/_authed/requests/$requestId': typeof AuthedRequestsRequestIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/v1/$': typeof ApiV1SplatRoute
+  '/_authed/admin/': typeof AuthedAdminIndexRoute
+  '/_authed/buyer/': typeof AuthedBuyerIndexRoute
   '/_authed/dashboard/': typeof AuthedDashboardIndexRoute
+  '/_authed/seller/': typeof AuthedSellerIndexRoute
   '/_public/about/': typeof PublicAboutIndexRoute
   '/_public/contact/': typeof PublicContactIndexRoute
-  '/_public/explore/': typeof PublicExploreIndexRoute
   '/_public/faq/': typeof PublicFaqIndexRoute
   '/_public/pricing/': typeof PublicPricingIndexRoute
-  '/_authed/dashboard/admin/buyers': typeof AuthedDashboardAdminBuyersRoute
-  '/_authed/dashboard/admin/categories': typeof AuthedDashboardAdminCategoriesRoute
-  '/_authed/dashboard/admin/intelligence': typeof AuthedDashboardAdminIntelligenceRoute
-  '/_authed/dashboard/admin/sellers': typeof AuthedDashboardAdminSellersRoute
-  '/_authed/dashboard/requests/$requestId': typeof AuthedDashboardRequestsRequestIdRoute
+  '/_public/requests/': typeof PublicRequestsIndexRoute
+  '/_authed/buyer/requests/$requestId': typeof AuthedBuyerRequestsRequestIdRoute
+  '/_authed/admin/audit-log/': typeof AuthedAdminAuditLogIndexRoute
+  '/_authed/admin/buyers/': typeof AuthedAdminBuyersIndexRoute
+  '/_authed/admin/categories/': typeof AuthedAdminCategoriesIndexRoute
+  '/_authed/admin/credit-requests/': typeof AuthedAdminCreditRequestsIndexRoute
+  '/_authed/admin/intelligence/': typeof AuthedAdminIntelligenceIndexRoute
+  '/_authed/admin/revenue/': typeof AuthedAdminRevenueIndexRoute
+  '/_authed/admin/sellers/': typeof AuthedAdminSellersIndexRoute
+  '/_authed/admin/users/': typeof AuthedAdminUsersIndexRoute
+  '/_authed/buyer/requests/': typeof AuthedBuyerRequestsIndexRoute
   '/_authed/dashboard/audit/': typeof AuthedDashboardAuditIndexRoute
-  '/_authed/dashboard/billing/': typeof AuthedDashboardBillingIndexRoute
   '/_authed/dashboard/profile/': typeof AuthedDashboardProfileIndexRoute
-  '/_authed/dashboard/quotes/': typeof AuthedDashboardQuotesIndexRoute
-  '/_authed/dashboard/requests/': typeof AuthedDashboardRequestsIndexRoute
   '/_authed/dashboard/support/': typeof AuthedDashboardSupportIndexRoute
   '/_authed/dashboard/users/': typeof AuthedDashboardUsersIndexRoute
-  '/_authed/dashboard/admin/audit/': typeof AuthedDashboardAdminAuditIndexRoute
-  '/_authed/dashboard/admin/credit-requests/': typeof AuthedDashboardAdminCreditRequestsIndexRoute
-  '/_authed/dashboard/admin/revenue/': typeof AuthedDashboardAdminRevenueIndexRoute
-  '/_authed/dashboard/admin/users/': typeof AuthedDashboardAdminUsersIndexRoute
+  '/_authed/seller/billing/': typeof AuthedSellerBillingIndexRoute
+  '/_authed/seller/quotes/': typeof AuthedSellerQuotesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/offline'
+    | '/admin'
+    | '/buyer'
     | '/dashboard'
+    | '/seller'
     | '/login'
     | '/complete-registration'
     | '/onboarding'
     | '/waitlist'
-    | '/dashboard/admin'
-    | '/marketplace/$requestId'
+    | '/requests/$requestId'
     | '/api/auth/$'
     | '/api/v1/$'
+    | '/admin/'
+    | '/buyer/'
     | '/dashboard/'
+    | '/seller/'
     | '/about/'
     | '/contact/'
-    | '/explore/'
     | '/faq/'
     | '/pricing/'
-    | '/dashboard/admin/buyers'
-    | '/dashboard/admin/categories'
-    | '/dashboard/admin/intelligence'
-    | '/dashboard/admin/sellers'
-    | '/dashboard/requests/$requestId'
+    | '/requests/'
+    | '/buyer/requests/$requestId'
+    | '/admin/audit-log/'
+    | '/admin/buyers/'
+    | '/admin/categories/'
+    | '/admin/credit-requests/'
+    | '/admin/intelligence/'
+    | '/admin/revenue/'
+    | '/admin/sellers/'
+    | '/admin/users/'
+    | '/buyer/requests/'
     | '/dashboard/audit/'
-    | '/dashboard/billing/'
     | '/dashboard/profile/'
-    | '/dashboard/quotes/'
-    | '/dashboard/requests/'
     | '/dashboard/support/'
     | '/dashboard/users/'
-    | '/dashboard/admin/audit/'
-    | '/dashboard/admin/credit-requests/'
-    | '/dashboard/admin/revenue/'
-    | '/dashboard/admin/users/'
+    | '/seller/billing/'
+    | '/seller/quotes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/offline'
     | '/login'
     | '/complete-registration'
     | '/onboarding'
     | '/waitlist'
-    | '/dashboard/admin'
-    | '/marketplace/$requestId'
+    | '/requests/$requestId'
     | '/api/auth/$'
     | '/api/v1/$'
+    | '/admin'
+    | '/buyer'
     | '/dashboard'
+    | '/seller'
     | '/about'
     | '/contact'
-    | '/explore'
     | '/faq'
     | '/pricing'
-    | '/dashboard/admin/buyers'
-    | '/dashboard/admin/categories'
-    | '/dashboard/admin/intelligence'
-    | '/dashboard/admin/sellers'
-    | '/dashboard/requests/$requestId'
+    | '/requests'
+    | '/buyer/requests/$requestId'
+    | '/admin/audit-log'
+    | '/admin/buyers'
+    | '/admin/categories'
+    | '/admin/credit-requests'
+    | '/admin/intelligence'
+    | '/admin/revenue'
+    | '/admin/sellers'
+    | '/admin/users'
+    | '/buyer/requests'
     | '/dashboard/audit'
-    | '/dashboard/billing'
     | '/dashboard/profile'
-    | '/dashboard/quotes'
-    | '/dashboard/requests'
     | '/dashboard/support'
     | '/dashboard/users'
-    | '/dashboard/admin/audit'
-    | '/dashboard/admin/credit-requests'
-    | '/dashboard/admin/revenue'
-    | '/dashboard/admin/users'
+    | '/seller/billing'
+    | '/seller/quotes'
   id:
     | '__root__'
     | '/_authed'
     | '/_public'
+    | '/offline'
+    | '/_authed/admin'
+    | '/_authed/buyer'
     | '/_authed/dashboard'
+    | '/_authed/seller'
     | '/_auth/login'
     | '/_authed/complete-registration'
     | '/_authed/onboarding'
     | '/_authed/waitlist'
     | '/_public/'
-    | '/_authed/dashboard/admin'
-    | '/_authed/marketplace/$requestId'
+    | '/_authed/requests/$requestId'
     | '/api/auth/$'
     | '/api/v1/$'
+    | '/_authed/admin/'
+    | '/_authed/buyer/'
     | '/_authed/dashboard/'
+    | '/_authed/seller/'
     | '/_public/about/'
     | '/_public/contact/'
-    | '/_public/explore/'
     | '/_public/faq/'
     | '/_public/pricing/'
-    | '/_authed/dashboard/admin/buyers'
-    | '/_authed/dashboard/admin/categories'
-    | '/_authed/dashboard/admin/intelligence'
-    | '/_authed/dashboard/admin/sellers'
-    | '/_authed/dashboard/requests/$requestId'
+    | '/_public/requests/'
+    | '/_authed/buyer/requests/$requestId'
+    | '/_authed/admin/audit-log/'
+    | '/_authed/admin/buyers/'
+    | '/_authed/admin/categories/'
+    | '/_authed/admin/credit-requests/'
+    | '/_authed/admin/intelligence/'
+    | '/_authed/admin/revenue/'
+    | '/_authed/admin/sellers/'
+    | '/_authed/admin/users/'
+    | '/_authed/buyer/requests/'
     | '/_authed/dashboard/audit/'
-    | '/_authed/dashboard/billing/'
     | '/_authed/dashboard/profile/'
-    | '/_authed/dashboard/quotes/'
-    | '/_authed/dashboard/requests/'
     | '/_authed/dashboard/support/'
     | '/_authed/dashboard/users/'
-    | '/_authed/dashboard/admin/audit/'
-    | '/_authed/dashboard/admin/credit-requests/'
-    | '/_authed/dashboard/admin/revenue/'
-    | '/_authed/dashboard/admin/users/'
+    | '/_authed/seller/billing/'
+    | '/_authed/seller/quotes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthedRoute: typeof AuthedRouteWithChildren
   PublicRoute: typeof PublicRouteWithChildren
+  OfflineRoute: typeof OfflineRoute
   AuthLoginRoute: typeof AuthLoginRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiV1SplatRoute: typeof ApiV1SplatRoute
@@ -452,6 +512,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/offline': {
+      id: '/offline'
+      path: '/offline'
+      fullPath: '/offline'
+      preLoaderRoute: typeof OfflineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_public': {
       id: '/_public'
       path: ''
@@ -501,12 +568,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authed/seller': {
+      id: '/_authed/seller'
+      path: '/seller'
+      fullPath: '/seller'
+      preLoaderRoute: typeof AuthedSellerRouteRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/dashboard': {
       id: '/_authed/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthedDashboardRouteRouteImport
       parentRoute: typeof AuthedRoute
+    }
+    '/_authed/buyer': {
+      id: '/_authed/buyer'
+      path: '/buyer'
+      fullPath: '/buyer'
+      preLoaderRoute: typeof AuthedBuyerRouteRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/admin': {
+      id: '/_authed/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthedAdminRouteRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_public/requests/': {
+      id: '/_public/requests/'
+      path: '/requests'
+      fullPath: '/requests/'
+      preLoaderRoute: typeof PublicRequestsIndexRouteImport
+      parentRoute: typeof PublicRoute
     }
     '/_public/pricing/': {
       id: '/_public/pricing/'
@@ -520,13 +615,6 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq/'
       preLoaderRoute: typeof PublicFaqIndexRouteImport
-      parentRoute: typeof PublicRoute
-    }
-    '/_public/explore/': {
-      id: '/_public/explore/'
-      path: '/explore'
-      fullPath: '/explore/'
-      preLoaderRoute: typeof PublicExploreIndexRouteImport
       parentRoute: typeof PublicRoute
     }
     '/_public/contact/': {
@@ -543,12 +631,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicAboutIndexRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_authed/seller/': {
+      id: '/_authed/seller/'
+      path: '/'
+      fullPath: '/seller/'
+      preLoaderRoute: typeof AuthedSellerIndexRouteImport
+      parentRoute: typeof AuthedSellerRouteRoute
+    }
     '/_authed/dashboard/': {
       id: '/_authed/dashboard/'
       path: '/'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof AuthedDashboardIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
+    }
+    '/_authed/buyer/': {
+      id: '/_authed/buyer/'
+      path: '/'
+      fullPath: '/buyer/'
+      preLoaderRoute: typeof AuthedBuyerIndexRouteImport
+      parentRoute: typeof AuthedBuyerRouteRoute
+    }
+    '/_authed/admin/': {
+      id: '/_authed/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthedAdminIndexRouteImport
+      parentRoute: typeof AuthedAdminRouteRoute
     }
     '/api/v1/$': {
       id: '/api/v1/$'
@@ -564,19 +673,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authed/marketplace/$requestId': {
-      id: '/_authed/marketplace/$requestId'
-      path: '/marketplace/$requestId'
-      fullPath: '/marketplace/$requestId'
-      preLoaderRoute: typeof AuthedMarketplaceRequestIdRouteImport
+    '/_authed/requests/$requestId': {
+      id: '/_authed/requests/$requestId'
+      path: '/requests/$requestId'
+      fullPath: '/requests/$requestId'
+      preLoaderRoute: typeof AuthedRequestsRequestIdRouteImport
       parentRoute: typeof AuthedRoute
     }
-    '/_authed/dashboard/admin': {
-      id: '/_authed/dashboard/admin'
-      path: '/admin'
-      fullPath: '/dashboard/admin'
-      preLoaderRoute: typeof AuthedDashboardAdminRouteRouteImport
-      parentRoute: typeof AuthedDashboardRouteRoute
+    '/_authed/seller/quotes/': {
+      id: '/_authed/seller/quotes/'
+      path: '/quotes'
+      fullPath: '/seller/quotes/'
+      preLoaderRoute: typeof AuthedSellerQuotesIndexRouteImport
+      parentRoute: typeof AuthedSellerRouteRoute
+    }
+    '/_authed/seller/billing/': {
+      id: '/_authed/seller/billing/'
+      path: '/billing'
+      fullPath: '/seller/billing/'
+      preLoaderRoute: typeof AuthedSellerBillingIndexRouteImport
+      parentRoute: typeof AuthedSellerRouteRoute
     }
     '/_authed/dashboard/users/': {
       id: '/_authed/dashboard/users/'
@@ -592,32 +708,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardSupportIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
     }
-    '/_authed/dashboard/requests/': {
-      id: '/_authed/dashboard/requests/'
-      path: '/requests'
-      fullPath: '/dashboard/requests/'
-      preLoaderRoute: typeof AuthedDashboardRequestsIndexRouteImport
-      parentRoute: typeof AuthedDashboardRouteRoute
-    }
-    '/_authed/dashboard/quotes/': {
-      id: '/_authed/dashboard/quotes/'
-      path: '/quotes'
-      fullPath: '/dashboard/quotes/'
-      preLoaderRoute: typeof AuthedDashboardQuotesIndexRouteImport
-      parentRoute: typeof AuthedDashboardRouteRoute
-    }
     '/_authed/dashboard/profile/': {
       id: '/_authed/dashboard/profile/'
       path: '/profile'
       fullPath: '/dashboard/profile/'
       preLoaderRoute: typeof AuthedDashboardProfileIndexRouteImport
-      parentRoute: typeof AuthedDashboardRouteRoute
-    }
-    '/_authed/dashboard/billing/': {
-      id: '/_authed/dashboard/billing/'
-      path: '/billing'
-      fullPath: '/dashboard/billing/'
-      preLoaderRoute: typeof AuthedDashboardBillingIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
     }
     '/_authed/dashboard/audit/': {
@@ -627,125 +722,133 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardAuditIndexRouteImport
       parentRoute: typeof AuthedDashboardRouteRoute
     }
-    '/_authed/dashboard/requests/$requestId': {
-      id: '/_authed/dashboard/requests/$requestId'
-      path: '/requests/$requestId'
-      fullPath: '/dashboard/requests/$requestId'
-      preLoaderRoute: typeof AuthedDashboardRequestsRequestIdRouteImport
-      parentRoute: typeof AuthedDashboardRouteRoute
+    '/_authed/buyer/requests/': {
+      id: '/_authed/buyer/requests/'
+      path: '/requests'
+      fullPath: '/buyer/requests/'
+      preLoaderRoute: typeof AuthedBuyerRequestsIndexRouteImport
+      parentRoute: typeof AuthedBuyerRouteRoute
     }
-    '/_authed/dashboard/admin/sellers': {
-      id: '/_authed/dashboard/admin/sellers'
-      path: '/sellers'
-      fullPath: '/dashboard/admin/sellers'
-      preLoaderRoute: typeof AuthedDashboardAdminSellersRouteImport
-      parentRoute: typeof AuthedDashboardAdminRouteRoute
-    }
-    '/_authed/dashboard/admin/intelligence': {
-      id: '/_authed/dashboard/admin/intelligence'
-      path: '/intelligence'
-      fullPath: '/dashboard/admin/intelligence'
-      preLoaderRoute: typeof AuthedDashboardAdminIntelligenceRouteImport
-      parentRoute: typeof AuthedDashboardAdminRouteRoute
-    }
-    '/_authed/dashboard/admin/categories': {
-      id: '/_authed/dashboard/admin/categories'
-      path: '/categories'
-      fullPath: '/dashboard/admin/categories'
-      preLoaderRoute: typeof AuthedDashboardAdminCategoriesRouteImport
-      parentRoute: typeof AuthedDashboardAdminRouteRoute
-    }
-    '/_authed/dashboard/admin/buyers': {
-      id: '/_authed/dashboard/admin/buyers'
-      path: '/buyers'
-      fullPath: '/dashboard/admin/buyers'
-      preLoaderRoute: typeof AuthedDashboardAdminBuyersRouteImport
-      parentRoute: typeof AuthedDashboardAdminRouteRoute
-    }
-    '/_authed/dashboard/admin/users/': {
-      id: '/_authed/dashboard/admin/users/'
+    '/_authed/admin/users/': {
+      id: '/_authed/admin/users/'
       path: '/users'
-      fullPath: '/dashboard/admin/users/'
-      preLoaderRoute: typeof AuthedDashboardAdminUsersIndexRouteImport
-      parentRoute: typeof AuthedDashboardAdminRouteRoute
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AuthedAdminUsersIndexRouteImport
+      parentRoute: typeof AuthedAdminRouteRoute
     }
-    '/_authed/dashboard/admin/revenue/': {
-      id: '/_authed/dashboard/admin/revenue/'
+    '/_authed/admin/sellers/': {
+      id: '/_authed/admin/sellers/'
+      path: '/sellers'
+      fullPath: '/admin/sellers/'
+      preLoaderRoute: typeof AuthedAdminSellersIndexRouteImport
+      parentRoute: typeof AuthedAdminRouteRoute
+    }
+    '/_authed/admin/revenue/': {
+      id: '/_authed/admin/revenue/'
       path: '/revenue'
-      fullPath: '/dashboard/admin/revenue/'
-      preLoaderRoute: typeof AuthedDashboardAdminRevenueIndexRouteImport
-      parentRoute: typeof AuthedDashboardAdminRouteRoute
+      fullPath: '/admin/revenue/'
+      preLoaderRoute: typeof AuthedAdminRevenueIndexRouteImport
+      parentRoute: typeof AuthedAdminRouteRoute
     }
-    '/_authed/dashboard/admin/credit-requests/': {
-      id: '/_authed/dashboard/admin/credit-requests/'
+    '/_authed/admin/intelligence/': {
+      id: '/_authed/admin/intelligence/'
+      path: '/intelligence'
+      fullPath: '/admin/intelligence/'
+      preLoaderRoute: typeof AuthedAdminIntelligenceIndexRouteImport
+      parentRoute: typeof AuthedAdminRouteRoute
+    }
+    '/_authed/admin/credit-requests/': {
+      id: '/_authed/admin/credit-requests/'
       path: '/credit-requests'
-      fullPath: '/dashboard/admin/credit-requests/'
-      preLoaderRoute: typeof AuthedDashboardAdminCreditRequestsIndexRouteImport
-      parentRoute: typeof AuthedDashboardAdminRouteRoute
+      fullPath: '/admin/credit-requests/'
+      preLoaderRoute: typeof AuthedAdminCreditRequestsIndexRouteImport
+      parentRoute: typeof AuthedAdminRouteRoute
     }
-    '/_authed/dashboard/admin/audit/': {
-      id: '/_authed/dashboard/admin/audit/'
-      path: '/audit'
-      fullPath: '/dashboard/admin/audit/'
-      preLoaderRoute: typeof AuthedDashboardAdminAuditIndexRouteImport
-      parentRoute: typeof AuthedDashboardAdminRouteRoute
+    '/_authed/admin/categories/': {
+      id: '/_authed/admin/categories/'
+      path: '/categories'
+      fullPath: '/admin/categories/'
+      preLoaderRoute: typeof AuthedAdminCategoriesIndexRouteImport
+      parentRoute: typeof AuthedAdminRouteRoute
+    }
+    '/_authed/admin/buyers/': {
+      id: '/_authed/admin/buyers/'
+      path: '/buyers'
+      fullPath: '/admin/buyers/'
+      preLoaderRoute: typeof AuthedAdminBuyersIndexRouteImport
+      parentRoute: typeof AuthedAdminRouteRoute
+    }
+    '/_authed/admin/audit-log/': {
+      id: '/_authed/admin/audit-log/'
+      path: '/audit-log'
+      fullPath: '/admin/audit-log/'
+      preLoaderRoute: typeof AuthedAdminAuditLogIndexRouteImport
+      parentRoute: typeof AuthedAdminRouteRoute
+    }
+    '/_authed/buyer/requests/$requestId': {
+      id: '/_authed/buyer/requests/$requestId'
+      path: '/requests/$requestId'
+      fullPath: '/buyer/requests/$requestId'
+      preLoaderRoute: typeof AuthedBuyerRequestsRequestIdRouteImport
+      parentRoute: typeof AuthedBuyerRouteRoute
     }
   }
 }
 
-interface AuthedDashboardAdminRouteRouteChildren {
-  AuthedDashboardAdminBuyersRoute: typeof AuthedDashboardAdminBuyersRoute
-  AuthedDashboardAdminCategoriesRoute: typeof AuthedDashboardAdminCategoriesRoute
-  AuthedDashboardAdminIntelligenceRoute: typeof AuthedDashboardAdminIntelligenceRoute
-  AuthedDashboardAdminSellersRoute: typeof AuthedDashboardAdminSellersRoute
-  AuthedDashboardAdminAuditIndexRoute: typeof AuthedDashboardAdminAuditIndexRoute
-  AuthedDashboardAdminCreditRequestsIndexRoute: typeof AuthedDashboardAdminCreditRequestsIndexRoute
-  AuthedDashboardAdminRevenueIndexRoute: typeof AuthedDashboardAdminRevenueIndexRoute
-  AuthedDashboardAdminUsersIndexRoute: typeof AuthedDashboardAdminUsersIndexRoute
+interface AuthedAdminRouteRouteChildren {
+  AuthedAdminIndexRoute: typeof AuthedAdminIndexRoute
+  AuthedAdminAuditLogIndexRoute: typeof AuthedAdminAuditLogIndexRoute
+  AuthedAdminBuyersIndexRoute: typeof AuthedAdminBuyersIndexRoute
+  AuthedAdminCategoriesIndexRoute: typeof AuthedAdminCategoriesIndexRoute
+  AuthedAdminCreditRequestsIndexRoute: typeof AuthedAdminCreditRequestsIndexRoute
+  AuthedAdminIntelligenceIndexRoute: typeof AuthedAdminIntelligenceIndexRoute
+  AuthedAdminRevenueIndexRoute: typeof AuthedAdminRevenueIndexRoute
+  AuthedAdminSellersIndexRoute: typeof AuthedAdminSellersIndexRoute
+  AuthedAdminUsersIndexRoute: typeof AuthedAdminUsersIndexRoute
 }
 
-const AuthedDashboardAdminRouteRouteChildren: AuthedDashboardAdminRouteRouteChildren =
-  {
-    AuthedDashboardAdminBuyersRoute: AuthedDashboardAdminBuyersRoute,
-    AuthedDashboardAdminCategoriesRoute: AuthedDashboardAdminCategoriesRoute,
-    AuthedDashboardAdminIntelligenceRoute:
-      AuthedDashboardAdminIntelligenceRoute,
-    AuthedDashboardAdminSellersRoute: AuthedDashboardAdminSellersRoute,
-    AuthedDashboardAdminAuditIndexRoute: AuthedDashboardAdminAuditIndexRoute,
-    AuthedDashboardAdminCreditRequestsIndexRoute:
-      AuthedDashboardAdminCreditRequestsIndexRoute,
-    AuthedDashboardAdminRevenueIndexRoute:
-      AuthedDashboardAdminRevenueIndexRoute,
-    AuthedDashboardAdminUsersIndexRoute: AuthedDashboardAdminUsersIndexRoute,
-  }
+const AuthedAdminRouteRouteChildren: AuthedAdminRouteRouteChildren = {
+  AuthedAdminIndexRoute: AuthedAdminIndexRoute,
+  AuthedAdminAuditLogIndexRoute: AuthedAdminAuditLogIndexRoute,
+  AuthedAdminBuyersIndexRoute: AuthedAdminBuyersIndexRoute,
+  AuthedAdminCategoriesIndexRoute: AuthedAdminCategoriesIndexRoute,
+  AuthedAdminCreditRequestsIndexRoute: AuthedAdminCreditRequestsIndexRoute,
+  AuthedAdminIntelligenceIndexRoute: AuthedAdminIntelligenceIndexRoute,
+  AuthedAdminRevenueIndexRoute: AuthedAdminRevenueIndexRoute,
+  AuthedAdminSellersIndexRoute: AuthedAdminSellersIndexRoute,
+  AuthedAdminUsersIndexRoute: AuthedAdminUsersIndexRoute,
+}
 
-const AuthedDashboardAdminRouteRouteWithChildren =
-  AuthedDashboardAdminRouteRoute._addFileChildren(
-    AuthedDashboardAdminRouteRouteChildren,
-  )
+const AuthedAdminRouteRouteWithChildren =
+  AuthedAdminRouteRoute._addFileChildren(AuthedAdminRouteRouteChildren)
+
+interface AuthedBuyerRouteRouteChildren {
+  AuthedBuyerIndexRoute: typeof AuthedBuyerIndexRoute
+  AuthedBuyerRequestsRequestIdRoute: typeof AuthedBuyerRequestsRequestIdRoute
+  AuthedBuyerRequestsIndexRoute: typeof AuthedBuyerRequestsIndexRoute
+}
+
+const AuthedBuyerRouteRouteChildren: AuthedBuyerRouteRouteChildren = {
+  AuthedBuyerIndexRoute: AuthedBuyerIndexRoute,
+  AuthedBuyerRequestsRequestIdRoute: AuthedBuyerRequestsRequestIdRoute,
+  AuthedBuyerRequestsIndexRoute: AuthedBuyerRequestsIndexRoute,
+}
+
+const AuthedBuyerRouteRouteWithChildren =
+  AuthedBuyerRouteRoute._addFileChildren(AuthedBuyerRouteRouteChildren)
 
 interface AuthedDashboardRouteRouteChildren {
-  AuthedDashboardAdminRouteRoute: typeof AuthedDashboardAdminRouteRouteWithChildren
   AuthedDashboardIndexRoute: typeof AuthedDashboardIndexRoute
-  AuthedDashboardRequestsRequestIdRoute: typeof AuthedDashboardRequestsRequestIdRoute
   AuthedDashboardAuditIndexRoute: typeof AuthedDashboardAuditIndexRoute
-  AuthedDashboardBillingIndexRoute: typeof AuthedDashboardBillingIndexRoute
   AuthedDashboardProfileIndexRoute: typeof AuthedDashboardProfileIndexRoute
-  AuthedDashboardQuotesIndexRoute: typeof AuthedDashboardQuotesIndexRoute
-  AuthedDashboardRequestsIndexRoute: typeof AuthedDashboardRequestsIndexRoute
   AuthedDashboardSupportIndexRoute: typeof AuthedDashboardSupportIndexRoute
   AuthedDashboardUsersIndexRoute: typeof AuthedDashboardUsersIndexRoute
 }
 
 const AuthedDashboardRouteRouteChildren: AuthedDashboardRouteRouteChildren = {
-  AuthedDashboardAdminRouteRoute: AuthedDashboardAdminRouteRouteWithChildren,
   AuthedDashboardIndexRoute: AuthedDashboardIndexRoute,
-  AuthedDashboardRequestsRequestIdRoute: AuthedDashboardRequestsRequestIdRoute,
   AuthedDashboardAuditIndexRoute: AuthedDashboardAuditIndexRoute,
-  AuthedDashboardBillingIndexRoute: AuthedDashboardBillingIndexRoute,
   AuthedDashboardProfileIndexRoute: AuthedDashboardProfileIndexRoute,
-  AuthedDashboardQuotesIndexRoute: AuthedDashboardQuotesIndexRoute,
-  AuthedDashboardRequestsIndexRoute: AuthedDashboardRequestsIndexRoute,
   AuthedDashboardSupportIndexRoute: AuthedDashboardSupportIndexRoute,
   AuthedDashboardUsersIndexRoute: AuthedDashboardUsersIndexRoute,
 }
@@ -753,20 +856,41 @@ const AuthedDashboardRouteRouteChildren: AuthedDashboardRouteRouteChildren = {
 const AuthedDashboardRouteRouteWithChildren =
   AuthedDashboardRouteRoute._addFileChildren(AuthedDashboardRouteRouteChildren)
 
+interface AuthedSellerRouteRouteChildren {
+  AuthedSellerIndexRoute: typeof AuthedSellerIndexRoute
+  AuthedSellerBillingIndexRoute: typeof AuthedSellerBillingIndexRoute
+  AuthedSellerQuotesIndexRoute: typeof AuthedSellerQuotesIndexRoute
+}
+
+const AuthedSellerRouteRouteChildren: AuthedSellerRouteRouteChildren = {
+  AuthedSellerIndexRoute: AuthedSellerIndexRoute,
+  AuthedSellerBillingIndexRoute: AuthedSellerBillingIndexRoute,
+  AuthedSellerQuotesIndexRoute: AuthedSellerQuotesIndexRoute,
+}
+
+const AuthedSellerRouteRouteWithChildren =
+  AuthedSellerRouteRoute._addFileChildren(AuthedSellerRouteRouteChildren)
+
 interface AuthedRouteChildren {
+  AuthedAdminRouteRoute: typeof AuthedAdminRouteRouteWithChildren
+  AuthedBuyerRouteRoute: typeof AuthedBuyerRouteRouteWithChildren
   AuthedDashboardRouteRoute: typeof AuthedDashboardRouteRouteWithChildren
+  AuthedSellerRouteRoute: typeof AuthedSellerRouteRouteWithChildren
   AuthedCompleteRegistrationRoute: typeof AuthedCompleteRegistrationRoute
   AuthedOnboardingRoute: typeof AuthedOnboardingRoute
   AuthedWaitlistRoute: typeof AuthedWaitlistRoute
-  AuthedMarketplaceRequestIdRoute: typeof AuthedMarketplaceRequestIdRoute
+  AuthedRequestsRequestIdRoute: typeof AuthedRequestsRequestIdRoute
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedAdminRouteRoute: AuthedAdminRouteRouteWithChildren,
+  AuthedBuyerRouteRoute: AuthedBuyerRouteRouteWithChildren,
   AuthedDashboardRouteRoute: AuthedDashboardRouteRouteWithChildren,
+  AuthedSellerRouteRoute: AuthedSellerRouteRouteWithChildren,
   AuthedCompleteRegistrationRoute: AuthedCompleteRegistrationRoute,
   AuthedOnboardingRoute: AuthedOnboardingRoute,
   AuthedWaitlistRoute: AuthedWaitlistRoute,
-  AuthedMarketplaceRequestIdRoute: AuthedMarketplaceRequestIdRoute,
+  AuthedRequestsRequestIdRoute: AuthedRequestsRequestIdRoute,
 }
 
 const AuthedRouteWithChildren =
@@ -776,18 +900,18 @@ interface PublicRouteChildren {
   PublicIndexRoute: typeof PublicIndexRoute
   PublicAboutIndexRoute: typeof PublicAboutIndexRoute
   PublicContactIndexRoute: typeof PublicContactIndexRoute
-  PublicExploreIndexRoute: typeof PublicExploreIndexRoute
   PublicFaqIndexRoute: typeof PublicFaqIndexRoute
   PublicPricingIndexRoute: typeof PublicPricingIndexRoute
+  PublicRequestsIndexRoute: typeof PublicRequestsIndexRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
   PublicIndexRoute: PublicIndexRoute,
   PublicAboutIndexRoute: PublicAboutIndexRoute,
   PublicContactIndexRoute: PublicContactIndexRoute,
-  PublicExploreIndexRoute: PublicExploreIndexRoute,
   PublicFaqIndexRoute: PublicFaqIndexRoute,
   PublicPricingIndexRoute: PublicPricingIndexRoute,
+  PublicRequestsIndexRoute: PublicRequestsIndexRoute,
 }
 
 const PublicRouteWithChildren =
@@ -796,6 +920,7 @@ const PublicRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
+  OfflineRoute: OfflineRoute,
   AuthLoginRoute: AuthLoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiV1SplatRoute: ApiV1SplatRoute,

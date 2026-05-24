@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { fadeUp, stagger } from '@/lib/motion'
+import { AUTH_ROUTES, PUBLIC_ROUTES } from '@/lib/routes'
 
 export function CtaSection() {
   const { t: tMarketing } = useTranslation('home/marketing')
@@ -161,7 +162,7 @@ export function CtaSection() {
             {tMarketing('marketplace.description')}
           </motion.p>
           <motion.div variants={fadeUp}>
-            <Link to="/explore" search={{ q: '' }}>
+            <Link to={PUBLIC_ROUTES.EXPLORE} search={{ q: '' }}>
               <Button
                 size="lg"
                 className="cursor-pointer h-11 px-6 text-[0.9375rem] font-semibold bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.97] transition-all duration-150 rounded-full"
@@ -202,7 +203,7 @@ export function CtaSection() {
             {/* Inline links */}
             <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
               <Link
-                to="/explore"
+                to={PUBLIC_ROUTES.EXPLORE}
                 search={{ q: '' }}
                 className="hover:text-foreground transition-colors"
               >
@@ -234,7 +235,7 @@ export function CtaSection() {
                 Sign In
               </Link>
               <Link
-                to={'/register' as any}
+                to={AUTH_ROUTES.REGISTER as any}
                 className="hover:text-foreground transition-colors font-medium text-foreground"
               >
                 Get Started

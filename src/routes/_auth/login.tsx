@@ -1,12 +1,13 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { AuthForm } from '@/features/auth/components/auth-form'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { DASHBOARD_ROUTES } from '@/lib/routes'
 
 export const Route = createFileRoute('/_auth/login')({
   beforeLoad: async ({ context, search }) => {
     if (context.user) {
       throw redirect({
-        to: (search as any).redirect || '/dashboard',
+        to: (search as any).redirect || DASHBOARD_ROUTES.ROOT,
       })
     }
   },

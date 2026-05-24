@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { fadeUp } from '@/lib/motion'
+import { BUYER_ROUTES, AUTH_ROUTES } from '@/lib/routes'
 
 export function HeroSection() {
   const { t: tHero } = useTranslation('home/hero')
@@ -103,7 +104,7 @@ export function HeroSection() {
               variants={fadeUp}
               className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mt-6"
             >
-              <Link to={'/dashboard/requests/new' as any}>
+              <Link to={BUYER_ROUTES.REQUESTS}>
                 <Button
                   size="lg"
                   className="cursor-pointer h-11 px-6 text-[0.9375rem] font-semibold bg-primary text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/50 transition-all hover:-translate-y-0.5 active:scale-[0.97] rounded-lg group"
@@ -112,7 +113,7 @@ export function HeroSection() {
                   <ArrowRight className="ms-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Link to="/login">
+              <Link to={AUTH_ROUTES.LOGIN}>
                 <Button
                   size="lg"
                   variant="outline"

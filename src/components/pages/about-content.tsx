@@ -3,6 +3,7 @@ import { ArrowRight, Eye, Shield, Users, Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
+import { AUTH_ROUTES } from '@/lib/routes'
 
 const ICONS: Record<string, typeof Shield> = { Shield, Zap, Eye, Users }
 
@@ -143,7 +144,7 @@ export function AboutContent() {
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.05] text-foreground mb-4">
             {t('cta.title')}
           </h2>
-          <Link to={'/register' as any}>
+          <Link to={AUTH_ROUTES.REGISTER as any}>
             <Button className="h-12 px-8 rounded-lg text-sm font-semibold bg-primary text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/50 transition-all hover:-translate-y-0.5">
               {t('cta.button')}
               <ArrowRight className="ms-2 h-4 w-4" />

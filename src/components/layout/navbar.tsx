@@ -7,9 +7,13 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { NotificationBell } from '@/features/notifications'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { cn } from '@/lib/utils'
-
 import { NavControls } from '@/components/navigation/nav-controls'
 import { UserMenu } from '@/components/navigation/user-menu'
+import {
+  AUTH_ROUTES,
+  DASHBOARD_ROUTES,
+  PUBLIC_ROUTES,
+} from '@/lib/routes'
 
 export default function Navbar() {
   const { t } = useTranslation('common')
@@ -27,16 +31,16 @@ export default function Navbar() {
     }> = []
     if (isAuthenticated) {
       links.push({
-        to: '/dashboard',
+        to: DASHBOARD_ROUTES.ROOT,
         label: t('nav.dashboard', 'Dashboard'),
         icon: <LayoutDashboard className="h-4 w-4" />,
       })
     }
     links.push(
-      { to: '/explore', search: { q: '' }, label: t('nav.explore', 'Explore') },
-      { to: '/pricing', label: t('nav.pricing', 'Pricing') },
-      { to: '/about', label: t('nav.about', 'About') },
-      { to: '/contact', label: t('nav.contact', 'Contact') },
+      { to: PUBLIC_ROUTES.EXPLORE, search: { q: '' }, label: t('nav.explore', 'Explore') },
+      { to: PUBLIC_ROUTES.PRICING, label: t('nav.pricing', 'Pricing') },
+      { to: PUBLIC_ROUTES.ABOUT, label: t('nav.about', 'About') },
+      { to: PUBLIC_ROUTES.CONTACT, label: t('nav.contact', 'Contact') },
     )
     return links
   }, [t, isAuthenticated])
@@ -123,7 +127,7 @@ export default function Navbar() {
                   asChild
                   className="h-8 rounded-md px-3 text-xs font-medium hover:bg-accent hover:text-accent-foreground"
                 >
-                  <Link to="/login">
+                  <Link to={AUTH_ROUTES.LOGIN}>
                     {t('nav.sign_in', 'Sign In')}
                   </Link>
                 </Button>
@@ -131,7 +135,7 @@ export default function Navbar() {
                   asChild
                   className="h-8 rounded-md px-3 text-xs font-semibold shadow-md hover:shadow-lg bg-primary text-primary-foreground hover:bg-primary/92 hover:-translate-y-px transition-all"
                 >
-                  <Link to={'/register' as any}>
+                  <Link to={AUTH_ROUTES.REGISTER as any}>
                     {t('nav.get_started', 'Get Started')}
                   </Link>
                 </Button>
@@ -231,7 +235,7 @@ export default function Navbar() {
                           variant="outline"
                           className="w-full h-11 rounded-xl text-sm font-semibold"
                         >
-                          <Link to="/login" onClick={() => setMobileOpen(false)}>
+                          <Link to={AUTH_ROUTES.LOGIN} onClick={() => setMobileOpen(false)}>
                             Sign In
                           </Link>
                         </Button>
@@ -240,7 +244,7 @@ export default function Navbar() {
                           className="w-full h-11 rounded-xl text-sm font-semibold"
                         >
                           <Link
-                            to={'/register' as any}
+                            to={AUTH_ROUTES.REGISTER as any}
                             onClick={() => setMobileOpen(false)}
                           >
                             Get Started

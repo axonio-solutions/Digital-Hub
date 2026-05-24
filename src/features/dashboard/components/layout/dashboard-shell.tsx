@@ -24,6 +24,12 @@ import {
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useNotifications } from '@/features/notifications/hooks/use-notifications'
 import { Separator } from '@/components/ui/separator'
+import {
+  ADMIN_ROUTES,
+  BUYER_ROUTES,
+  DASHBOARD_ROUTES,
+  SELLER_ROUTES,
+} from '@/lib/routes'
 
 function DynamicBreadcrumb() {
   const { t } = useTranslation('dashboard/layout')
@@ -31,44 +37,42 @@ function DynamicBreadcrumb() {
   const pathname = location.pathname
 
   const CRUMB_MAP: Record<string, string> = {
-    '/dashboard': t('breadcrumbs.overview'),
-    '/dashboard/': t('breadcrumbs.overview'),
-    '/dashboard/requests': t('breadcrumbs.demands_hub'),
-    '/dashboard/quotes': t('breadcrumbs.my_quotes'),
-    '/dashboard/profile': t('breadcrumbs.profile'),
-    '/dashboard/billing': t('breadcrumbs.billing'),
-    '/dashboard/audit': t('breadcrumbs.audit_log'),
-    '/dashboard/users': t('breadcrumbs.user_moderation'),
-    '/dashboard/support': t('breadcrumbs.support'),
-    '/dashboard/admin/buyers': t('breadcrumbs.buyers_intelligence'),
-    '/dashboard/admin/sellers': t('breadcrumbs.sellers_ecosystem'),
-    '/dashboard/admin/categories': t('breadcrumbs.taxonomy_management'),
-    '/dashboard/admin/users': t('breadcrumbs.user_moderation'),
-    '/dashboard/admin/audit': t('breadcrumbs.audit_log'),
-    '/dashboard/admin/intelligence': t('breadcrumbs.market_intelligence'),
-    '/dashboard/admin/revenue': t('breadcrumbs.revenue'),
-    '/dashboard/admin/credit-requests': t('breadcrumbs.credit_requests'),
+    [DASHBOARD_ROUTES.ROOT]: t('breadcrumbs.overview'),
+    [`${DASHBOARD_ROUTES.ROOT}/`]: t('breadcrumbs.overview'),
+    [DASHBOARD_ROUTES.PROFILE]: t('breadcrumbs.profile'),
+    [DASHBOARD_ROUTES.SUPPORT]: t('breadcrumbs.support'),
+    [BUYER_ROUTES.REQUESTS]: t('breadcrumbs.demands_hub'),
+    [SELLER_ROUTES.QUOTES]: t('breadcrumbs.my_quotes'),
+    [SELLER_ROUTES.BILLING]: t('breadcrumbs.billing'),
+    [ADMIN_ROUTES.BUYERS]: t('breadcrumbs.buyers_intelligence'),
+    [ADMIN_ROUTES.SELLERS]: t('breadcrumbs.sellers_ecosystem'),
+    [ADMIN_ROUTES.CATEGORIES]: t('breadcrumbs.taxonomy_management'),
+    [ADMIN_ROUTES.USERS]: t('breadcrumbs.user_moderation'),
+    [ADMIN_ROUTES.AUDIT_LOG]: t('breadcrumbs.audit_log'),
+    [ADMIN_ROUTES.INTELLIGENCE]: t('breadcrumbs.market_intelligence'),
+    [ADMIN_ROUTES.REVENUE]: t('breadcrumbs.revenue'),
+    [ADMIN_ROUTES.CREDIT_REQUESTS]: t('breadcrumbs.credit_requests'),
   }
 
   let breadcrumbs: Array<{ pathname: string; title: string }> = []
 
-  const requestMatch = pathname.match(/^\/dashboard\/requests\/(.+)$/)
+  const requestMatch = pathname.match(/^\/buyer\/requests\/(.+)$/)
   if (requestMatch) {
     breadcrumbs = [
-      { pathname: '/dashboard/requests', title: t('breadcrumbs.demands_hub') },
+      { pathname: BUYER_ROUTES.REQUESTS, title: t('breadcrumbs.demands_hub') },
       { pathname, title: t('breadcrumbs.request_detail') },
     ]
   } else if (CRUMB_MAP[pathname]) {
     breadcrumbs = [{ pathname, title: CRUMB_MAP[pathname] }]
   } else {
-    breadcrumbs = [{ pathname: '/dashboard', title: t('breadcrumbs.overview') }]
+    breadcrumbs = [{ pathname: DASHBOARD_ROUTES.ROOT, title: t('breadcrumbs.overview') }]
   }
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem className="hidden md:block">
-          <BreadcrumbLink href="/dashboard">
+          <BreadcrumbLink href={DASHBOARD_ROUTES.ROOT}>
             {t('breadcrumbs.dashboard')}
           </BreadcrumbLink>
         </BreadcrumbItem>

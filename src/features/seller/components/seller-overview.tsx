@@ -50,6 +50,7 @@ import {
   StatLabel,
   StatValue,
 } from '@/components/ui/stat'
+import { PUBLIC_ROUTES } from '@/lib/routes'
 
 interface DashboardData {
   stats: {
@@ -536,7 +537,7 @@ function StatsSection({
           desc={t('actions.view_quotes_desc', { count: stats.totalQuotes })}
         />
         <QuickLink
-          to="/explore"
+          to={PUBLIC_ROUTES.EXPLORE}
           icon={ShoppingBag}
           title={t('actions.browse_requests')}
           desc={t('actions.browse_requests_desc')}
@@ -596,7 +597,7 @@ export function SellerOverview() {
           asChild
           className="font-semibold text-sm h-10 px-5 rounded-full w-full sm:w-auto"
         >
-          <Link to="/explore">
+          <Link to={PUBLIC_ROUTES.EXPLORE}>
             <Sparkles className="size-4 me-2" />
             {t('actions.explore_cta')}
           </Link>

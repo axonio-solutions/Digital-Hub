@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { NavMain } from '@/features/dashboard/components/layout/nav-main'
 import { NavSecondary } from '@/features/dashboard/components/layout/nav-secondary'
 import { DashboardShell } from '@/features/dashboard/components/layout/dashboard-shell'
+import { SELLER_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from '@/lib/routes'
 
 export function SellerLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation('dashboard/layout')
@@ -21,34 +22,34 @@ export function SellerLayout({ children }: { children: React.ReactNode }) {
     main: [
       {
         title: t('nav.overview'),
-        url: '/dashboard',
+        url: DASHBOARD_ROUTES.ROOT,
         icon: IconDashboard,
       },
       {
         title: t('nav.my_quotes'),
-        url: '/dashboard/quotes',
+        url: SELLER_ROUTES.QUOTES,
         icon: IconMessages,
       },
       {
         title: t('nav.explore_marketplace'),
-        url: '/explore',
+        url: PUBLIC_ROUTES.EXPLORE,
         icon: IconSearch,
       },
       {
         title: t('nav.billing'),
-        url: '/dashboard/billing',
+        url: SELLER_ROUTES.BILLING,
         icon: IconCoin,
       },
     ],
     secondary: [
       {
         title: t('nav.settings'),
-        url: '/dashboard/profile',
+        url: DASHBOARD_ROUTES.PROFILE,
         icon: IconSettings,
       },
       {
         title: t('nav.support'),
-        url: '/dashboard/support',
+        url: DASHBOARD_ROUTES.SUPPORT,
         icon: IconHelpCircle,
       },
     ],

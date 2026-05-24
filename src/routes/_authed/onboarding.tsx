@@ -42,6 +42,7 @@ import { getTaxonomyServerFn } from '@/fn/admin'
 import { completeOnboardingFn } from '@/fn/onboarding'
 import { authQueries } from '@/features/auth/queries/auth-queries'
 import { AvatarUpload } from '@/features/upload/components/avatar-upload'
+import { AUTH_ROUTES, DASHBOARD_ROUTES } from '@/lib/routes'
 
 export const Route = createFileRoute('/_authed/onboarding')({
   beforeLoad: async ({ context }) => {
@@ -51,7 +52,7 @@ export const Route = createFileRoute('/_authed/onboarding')({
     // If user is already fully onboarded, do not let them access the onboarding page again.
     if (!isPending) {
       throw redirect({
-        to: '/dashboard',
+        to: DASHBOARD_ROUTES.ROOT,
       })
     }
   },
@@ -63,7 +64,7 @@ function OnboardingFlow() {
   const { toast } = useToast('dashboard/onboarding')
   const [currentStep, setCurrentStep] = useState(1)
   const [isSuccess, setIsSuccess] = useState(false)
-  const [redirectTarget, setRedirectTarget] = useState('/dashboard')
+  const [redirectTarget, setRedirectTarget] = useState(DASHBOARD_ROUTES.ROOT)
   const router = useRouter()
   const queryClient = useQueryClient()
   const { user } = Route.useRouteContext()
@@ -126,7 +127,7 @@ function OnboardingFlow() {
     onSuccess: (response) => {
       toast.success('toast.success')
       const target =
-        response?.account_status === 'waitlisted' ? '/waitlist' : '/dashboard'
+        response?.account_status === 'waitlisted' ? AUTH_ROUTES.WAITLIST : DASHBOARD_ROUTES.ROOT
       setRedirectTarget(target)
       setIsSuccess(true)
     },

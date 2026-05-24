@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
   Activity,
@@ -39,19 +39,19 @@ import {
 } from '@/components/ui/table'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
 import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination'
-import { cn } from '@/lib/utils'
+import {
+  Stat,
+  StatIndicator,
+  StatLabel,
+  StatValue,
+} from '@/components/ui/stat'
 import {
   requestKeys,
   useAllRequests,
 } from '@/features/requests/hooks/use-requests'
 import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
 
-export const Route = createFileRoute('/_authed/dashboard/admin/audit/')({
-  beforeLoad: ({ context }: any) => {
-    if (context.user?.role !== 'admin') {
-      throw redirect({ to: '/dashboard' })
-    }
-  },
+export const Route = createFileRoute('/_authed/admin/audit-log/')({
   loader: async ({ context }) => {
     const { fetchAllRequestsServerFn } = await import('@/fn/requests')
     await context.queryClient.ensureQueryData({
@@ -300,7 +300,6 @@ function AuditRoute() {
 
   return (
     <div className="flex-1 flex flex-col gap-6 w-full pb-8 pt-2">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="size-10 rounded-2xl bg-gradient-to-br from-amber-600 to-orange-600 flex items-center justify-center text-white font-black text-sm uppercase shadow-lg shadow-amber-500/20 shrink-0">
@@ -323,30 +322,29 @@ function AuditRoute() {
         </div>
       </div>
 
-      {/* Metrics */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {metrics.map((m) => (
-          <div
-            key={m.label}
-            className={cn(
-              'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl',
-              m.color,
-            )}
-          >
-            <div className="flex items-center gap-1.5">
-              <m.icon className="size-4" />
-              <span className="text-xl font-black tabular-nums leading-none">
-                {m.value}
-              </span>
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
-              {m.label}
-            </span>
-          </div>
+          <Stat key={m.label}>
+            <StatLabel>{m.label}</StatLabel>
+            <StatIndicator
+              variant="icon"
+              color={
+                m.color.includes('amber')
+                  ? 'warning'
+                  : m.color.includes('red')
+                    ? 'error'
+                    : m.color.includes('emerald')
+                      ? 'success'
+                      : 'info'
+              }
+            >
+              <m.icon />
+            </StatIndicator>
+            <StatValue>{m.value}</StatValue>
+          </Stat>
         ))}
       </div>
 
-      {/* Toolbar */}
       <DataTableToolbar
         table={table}
         searchColumn="partName"
@@ -367,7 +365,6 @@ function AuditRoute() {
         ]}
       />
 
-      {/* Table */}
       <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
@@ -419,7 +416,6 @@ function AuditRoute() {
         </div>
       </div>
 
-      {/* Pagination */}
       <DataTablePagination table={table} />
     </div>
   )

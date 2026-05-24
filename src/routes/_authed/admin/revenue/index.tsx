@@ -5,7 +5,7 @@ import {
 } from '@/features/credits/components/revenue-route'
 import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
 
-export const Route = createFileRoute('/_authed/dashboard/admin/revenue/')({
+export const Route = createFileRoute('/_authed/admin/revenue/')({
   loader: async ({ context }) => {
     const { creditKeys } = await import('@/features/credits/hooks/use-credits')
     const { getRevenueMetricsServerFn, getCreditTransactionsServerFn } =

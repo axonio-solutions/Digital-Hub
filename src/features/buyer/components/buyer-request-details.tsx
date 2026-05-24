@@ -49,6 +49,7 @@ import { EditRequestDialog } from '@/features/requests/components/edit-request-d
 import { QuoteList } from '@/features/quotes/components/quote-list'
 import { CategoryDisplay } from '@/components/ui/category-display'
 import { tCategory } from '@/utils/category-utils'
+import { BUYER_ROUTES } from '@/lib/routes'
 
 function InfoRow({
   icon: Icon,
@@ -154,7 +155,7 @@ export function BuyerRequestDetails() {
   const { t, i18n } = useTranslation(['requests/details', 'requests/list'])
   const isRtl = i18n.dir() === 'rtl'
   const { requestId } = useParams({
-    from: '/_authed/dashboard/requests/$requestId',
+    from: '/_authed/buyer/requests/$requestId',
   })
   const navigate = useNavigate()
   const { data: request, isLoading, error } = useRequestDetails(requestId)
@@ -196,7 +197,7 @@ export function BuyerRequestDetails() {
     deleteRequest(requestId, {
       onSuccess: () => {
         toast.success('toasts.request_deleted')
-        navigate({ to: '/dashboard/requests' })
+        navigate({ to: BUYER_ROUTES.REQUESTS })
       },
       onError: (err: any) =>
         toast.error('toasts.error', { error: err.message }),
@@ -741,7 +742,7 @@ function ErrorView({ t }: { t: any }) {
           })}
         </p>
       </div>
-      <Link to="/dashboard/requests">
+      <Link to={BUYER_ROUTES.REQUESTS}>
         <Button variant="outline" size="sm" className="h-10 rounded-xl">
           {t('actions.back_to_list')}
         </Button>

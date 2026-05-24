@@ -22,8 +22,9 @@ import { useAuth } from '@/features/auth/hooks/use-auth'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { AUTH_ROUTES, BUYER_ROUTES, PUBLIC_ROUTES, SELLER_ROUTES } from '@/lib/routes'
 
-const routeApi = getRouteApi('/_public/explore/')
+const routeApi = getRouteApi('/_public/requests/')
 
 export function PublicMarketplace() {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -67,7 +68,7 @@ export function PublicMarketplace() {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    navigate({ to: '/explore', search: { q: searchInput } as any })
+    navigate({ to: PUBLIC_ROUTES.EXPLORE, search: { q: searchInput } as any })
   }
 
   const sortedRequests = React.useMemo(() => {
@@ -82,7 +83,7 @@ export function PublicMarketplace() {
 
   const handleQuote = (req: any) => {
     if (!isAuthenticated) {
-      navigate({ to: '/login' })
+      navigate({ to: AUTH_ROUTES.LOGIN })
       return
     }
     if (userRole !== 'seller') {
@@ -91,7 +92,7 @@ export function PublicMarketplace() {
     }
     if (req.buyerId === (user as any)?.id) return
     navigate({
-      to: '/marketplace/$requestId',
+      to: SELLER_ROUTES.MARKETPLACE_REQUEST_PATTERN,
       params: { requestId: req.id },
     } as any)
   }
@@ -203,7 +204,7 @@ export function PublicMarketplace() {
                   </p>
                 </div>
               </div>
-              <Link to="/dashboard/requests">
+              <Link to={BUYER_ROUTES.REQUESTS}>
                 <Button
                   size="sm"
                   className="h-9 px-5 rounded-lg text-xs font-bold bg-primary text-primary-foreground hover:brightness-110"

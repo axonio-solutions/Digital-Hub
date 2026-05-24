@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
+import { PUBLIC_ROUTES } from '@/lib/routes'
 
 export function ContactContent() {
   const { t } = useTranslation('home/contact')
@@ -217,7 +218,7 @@ export function ContactContent() {
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.05] text-foreground mb-4">
             {t('cta.title')}
           </h2>
-          <Link to="/explore" search={{ q: '' }}>
+          <Link to={PUBLIC_ROUTES.EXPLORE} search={{ q: '' }}>
             <Button className="h-12 px-8 rounded-lg text-sm font-semibold bg-primary text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/50 transition-all hover:-translate-y-0.5">
               {t('cta.button')}
             </Button>

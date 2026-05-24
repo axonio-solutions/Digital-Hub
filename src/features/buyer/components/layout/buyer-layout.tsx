@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { NavMain } from '@/features/dashboard/components/layout/nav-main'
 import { NavSecondary } from '@/features/dashboard/components/layout/nav-secondary'
 import { DashboardShell } from '@/features/dashboard/components/layout/dashboard-shell'
+import { BUYER_ROUTES, DASHBOARD_ROUTES } from '@/lib/routes'
 
 export function BuyerLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation('dashboard/layout')
@@ -19,24 +20,24 @@ export function BuyerLayout({ children }: { children: React.ReactNode }) {
     main: [
       {
         title: t('nav.overview'),
-        url: '/dashboard',
+        url: DASHBOARD_ROUTES.ROOT,
         icon: IconDashboard,
       },
       {
         title: t('nav.demands_hub'),
-        url: '/dashboard/requests',
+        url: BUYER_ROUTES.REQUESTS,
         icon: IconClipboardList,
       },
     ],
     secondary: [
       {
         title: t('nav.settings'),
-        url: '/dashboard/profile',
+        url: DASHBOARD_ROUTES.PROFILE,
         icon: IconSettings,
       },
       {
         title: t('nav.support'),
-        url: '/dashboard/support',
+        url: DASHBOARD_ROUTES.SUPPORT,
         icon: IconHelpCircle,
       },
     ],

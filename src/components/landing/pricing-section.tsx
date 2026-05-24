@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Coins, BadgeCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { fadeUp } from '@/lib/motion'
+import { AUTH_ROUTES } from '@/lib/routes'
 
 const routeApi = getRouteApi('/_public/')
 
@@ -149,7 +150,7 @@ export function PricingSection() {
                           }
                           variant={i === 1 ? 'default' : 'outline'}
                         >
-                          <Link to={'/register' as any}>
+                          <Link to={AUTH_ROUTES.REGISTER as any}>
                             Get Started
                             <ArrowRight className="ms-2 h-4 w-4" />
                           </Link>

@@ -50,6 +50,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ADMIN_ROUTES } from '@/lib/routes'
 
 type TimeRange = 7 | 30 | 90 | undefined
 
@@ -506,7 +507,7 @@ export function AdminOverview() {
               size="sm"
               className="h-auto py-1 px-2 text-xs font-bold gap-1"
             >
-              <Link to="/dashboard/admin/intelligence">
+              <Link to={ADMIN_ROUTES.INTELLIGENCE}>
                 {t('users.overview.view_analytics')}{' '}
                 <ArrowRight className="size-3" />
               </Link>
