@@ -37,6 +37,12 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
+import {
+  Stat,
+  StatIndicator,
+  StatLabel,
+  StatValue,
+} from '@/components/ui/stat'
 
 type TimeWindow = 'all' | 'today' | 'week' | 'month'
 
@@ -309,7 +315,8 @@ export function SellerQuotesHub() {
       </div>
 
       {/* Dynamic Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* Mobile */}
+      <div className="grid grid-cols-2 gap-3 sm:hidden">
         {tabStats.map((stat) => (
           <div
             key={stat.key}
@@ -328,6 +335,27 @@ export function SellerQuotesHub() {
               {stat.label}
             </span>
           </div>
+        ))}
+      </div>
+      {/* Desktop */}
+      <div className="hidden sm:grid grid-cols-4 gap-3">
+        {tabStats.map((stat) => (
+          <Stat key={stat.key}>
+            <StatLabel>{stat.label}</StatLabel>
+            <StatIndicator
+              variant="icon"
+              color={
+                stat.color.includes('blue')
+                  ? 'info'
+                  : stat.color.includes('emerald')
+                    ? 'success'
+                    : 'default'
+              }
+            >
+              <stat.icon />
+            </StatIndicator>
+            <StatValue>{stat.value}</StatValue>
+          </Stat>
         ))}
       </div>
 
