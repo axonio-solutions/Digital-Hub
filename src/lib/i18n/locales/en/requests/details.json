@@ -52,7 +52,8 @@
     "reopen_request_btn": "Reopen Request",
     "whatsapp": "WhatsApp",
     "call": "Call",
-    "deleting": "Deleting..."
+    "deleting": "Deleting...",
+    "mark_fulfilled": "Mark as Fulfilled"
   },
   "toasts": {
     "error": "An error occurred",
@@ -65,7 +66,8 @@
     "offer_accepted": "Offer accepted successfully",
     "offer_declined": "Offer declined",
     "offer_restored": "Offer restored successfully",
-    "acceptance_revoked": "Acceptance revoked"
+    "acceptance_revoked": "Acceptance revoked",
+    "request_fulfilled": "Request marked as fulfilled"
   },
   "errors": {
     "not_found": "Request Not Found",

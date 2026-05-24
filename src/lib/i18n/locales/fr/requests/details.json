@@ -50,7 +50,8 @@
     "reopening": "Réouverture...",
     "close_request_btn": "Fermer la demande",
     "reopen_request_btn": "Réouvrir la demande",
-    "deleting": "Suppression..."
+    "deleting": "Suppression...",
+    "mark_fulfilled": "Marquer comme satisfaite"
   },
   "toasts": {
     "error": "Une erreur s'est produite",
@@ -63,7 +64,8 @@
     "offer_accepted": "Offre acceptée avec succès",
     "offer_declined": "Offre refusée",
     "offer_restored": "Offre restaurée avec succès",
-    "acceptance_revoked": "Acceptation révoquée"
+    "acceptance_revoked": "Acceptation révoquée",
+    "request_fulfilled": "Demande marquée comme satisfaite"
   },
   "errors": {
     "not_found": "Demande introuvable",

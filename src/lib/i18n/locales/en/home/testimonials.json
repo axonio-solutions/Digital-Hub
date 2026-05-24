@@ -1,0 +1,22 @@
+{
+  "section_badge": "Testimonials",
+  "section_title": "What our users say",
+  "section_desc": "Join hundreds of sellers and buyers across Algeria who trust MLILA.",
+  "items": [
+    {
+      "name": "Karim B.",
+      "role": "Auto Parts Seller, Algiers",
+      "quote": "MLILA completely changed how I find clients. I get qualified leads every day and the commission is more than fair."
+    },
+    {
+      "name": "Sofiane M.",
+      "role": "Garage Owner, Oran",
+      "quote": "I needed a rare transmission for a client. Within hours I had 3 quotes. The part was delivered the next day."
+    },
+    {
+      "name": "Amira K.",
+      "role": "Fleet Manager, Sétif",
+      "quote": "Managing a fleet means I'm always sourcing parts. MLILA saves me hours of calling around. I just post and compare."
+    }
+  ]
+}

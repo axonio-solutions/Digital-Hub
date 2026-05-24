@@ -1,0 +1,22 @@
+{
+  "section_badge": "Témoignages",
+  "section_title": "Ce que disent nos utilisateurs",
+  "section_desc": "Rejoignez des centaines de vendeurs et d'acheteurs à travers l'Algérie qui font confiance à MLILA.",
+  "items": [
+    {
+      "name": "Karim B.",
+      "role": "Vendeur de pièces auto, Alger",
+      "quote": "MLILA a complètement changé ma façon de trouver des clients. Je reçois des leads qualifiés chaque jour et la commission est plus que raisonnable."
+    },
+    {
+      "name": "Sofiane M.",
+      "role": "Propriétaire de garage, Oran",
+      "quote": "J'avais besoin d'une transmission rare pour un client. En quelques heures, j'avais 3 devis. La pièce a été livrée le lendemain."
+    },
+    {
+      "name": "Amira K.",
+      "role": "Gestionnaire de flotte, Sétif",
+      "quote": "Gérer une flotte signifie que je suis toujours à la recherche de pièces. MLILA me fait gagner des heures d'appels. Je publie et je compare."
+    }
+  ]
+}

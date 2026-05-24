@@ -5,5 +5,14 @@
   "description": "Les acheteurs publient leurs besoins. Les vendeurs vérifiés à travers l'Algérie rivalisent pour donner les meilleurs devis. Connectez-vous instantanément via Appel ou WhatsApp.",
   "buyer_btn": "Je suis un Acheteur",
   "seller_btn": "Je suis un Vendeur",
-  "live": "En direct"
+  "live": "En direct",
+  "trust_verified": "Vérification Sécurisée",
+  "trust_quotes": "Devis en Temps Réel",
+  "trust_delivery": "Livraison Directe",
+  "stats": {
+    "sellers": "Vendeurs Actifs",
+    "sourced": "Pièces Trouvées",
+    "quotes": "Devis Envoyés",
+    "buyers": "Acheteurs Actifs"
+  }
 }

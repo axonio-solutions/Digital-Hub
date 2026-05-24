@@ -5,5 +5,14 @@
   "description": "Buyers post what they need. Verified sellers across Algeria compete to give the best quotes. Connect instantly via Call or WhatsApp.",
   "buyer_btn": "I am a Buyer",
   "seller_btn": "I am a Seller",
-  "live": "Live"
+  "live": "Live",
+  "trust_verified": "Secure Verification",
+  "trust_quotes": "Real-time Quotes",
+  "trust_delivery": "Direct Delivery",
+  "stats": {
+    "sellers": "Active Sellers",
+    "sourced": "Parts Sourced",
+    "quotes": "Quotes Sent",
+    "buyers": "Active Buyers"
+  }
 }

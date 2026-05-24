@@ -50,7 +50,8 @@
     "reopening": "جاري إعادة الفتح...",
     "close_request_btn": "إغلاق الطلب",
     "reopen_request_btn": "إعادة فتح الطلب",
-    "deleting": "جاري الحذف..."
+    "deleting": "جاري الحذف...",
+    "mark_fulfilled": "تحديد كمنفذ"
   },
   "toasts": {
     "error": "حدث خطأ",
@@ -63,7 +64,8 @@
     "offer_accepted": "تم قبول العرض بنجاح",
     "offer_declined": "تم رفض العرض",
     "offer_restored": "تم استعادة العرض بنجاح",
-    "acceptance_revoked": "تم إلغاء القبول"
+    "acceptance_revoked": "تم إلغاء القبول",
+    "request_fulfilled": "تم وضع علامة منفذ على الطلب"
   },
   "errors": {
     "not_found": "الطلب غير موجود",
