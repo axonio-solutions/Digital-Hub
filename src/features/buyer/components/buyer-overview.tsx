@@ -24,6 +24,12 @@ import {
   useDeleteRequest,
   useReopenRequest,
 } from '@/features/requests/hooks/use-requests'
+import {
+  Stat,
+  StatIndicator,
+  StatLabel,
+  StatValue,
+} from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 
 export function BuyerOverview() {
@@ -166,27 +172,51 @@ export function BuyerOverview() {
       </div>
 
       {requests.length > 0 && (
-        <div className="grid grid-cols-3 gap-3">
-          {metrics.map((m) => (
-            <div
-              key={m.label}
-              className={cn(
-                'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
-                m.color,
-              )}
-            >
-              <div className="flex items-center gap-1.5">
-                <m.icon className="size-4" />
-                <span className="text-xl font-black tabular-nums leading-none">
-                  {m.value}
+        <>
+          {/* Mobile */}
+          <div className="grid grid-cols-3 gap-3 sm:hidden">
+            {metrics.map((m) => (
+              <div
+                key={m.label}
+                className={cn(
+                  'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
+                  m.color,
+                )}
+              >
+                <div className="flex items-center gap-1.5">
+                  <m.icon className="size-4" />
+                  <span className="text-xl font-black tabular-nums leading-none">
+                    {m.value}
+                  </span>
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
+                  {m.label}
                 </span>
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
-                {m.label}
-              </span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+          {/* Desktop */}
+          <div className="hidden sm:grid grid-cols-3 gap-3">
+            {metrics.map((m) => (
+              <Stat key={m.label}>
+                <StatLabel>{m.label}</StatLabel>
+                <StatIndicator
+                  variant="icon"
+                  color={
+                    m.color.includes('blue')
+                      ? 'info'
+                      : m.color.includes('emerald')
+                        ? 'success'
+                        : 'warning'
+                  }
+                >
+                  <m.icon />
+                </StatIndicator>
+                <StatValue>{m.value}</StatValue>
+              </Stat>
+            ))}
+          </div>
+        </>
       )}
 
       <Button

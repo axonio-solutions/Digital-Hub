@@ -30,6 +30,12 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DirectionProvider } from '@/components/ui/direction'
+import {
+  Stat,
+  StatIndicator,
+  StatLabel,
+  StatValue,
+} from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useMarketGapAnalysis } from '@/features/admin/hooks/use-analytics'
@@ -348,27 +354,53 @@ export function AdminIntelligence() {
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {metrics.map((m) => (
-          <div
-            key={m.label}
-            className={cn(
-              'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
-              m.color,
-            )}
-          >
-            <div className="flex items-center gap-1.5">
-              <m.icon className="size-4" />
-              <span className="text-xl font-black tabular-nums leading-none text-foreground">
-                {m.value}
+      <>
+        {/* Mobile */}
+        <div className="grid grid-cols-2 gap-3 sm:hidden">
+          {metrics.map((m) => (
+            <div
+              key={m.label}
+              className={cn(
+                'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
+                m.color,
+              )}
+            >
+              <div className="flex items-center gap-1.5">
+                <m.icon className="size-4" />
+                <span className="text-xl font-black tabular-nums leading-none text-foreground">
+                  {m.value}
+                </span>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
+                {m.label}
               </span>
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
-              {m.label}
-            </span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+        {/* Desktop */}
+        <div className="hidden sm:grid grid-cols-4 gap-3">
+          {metrics.map((m) => (
+            <Stat key={m.label}>
+              <StatLabel>{m.label}</StatLabel>
+              <StatIndicator
+                variant="icon"
+                color={
+                  m.color.includes('blue')
+                    ? 'info'
+                    : m.color.includes('emerald')
+                      ? 'success'
+                      : m.color.includes('amber')
+                        ? 'warning'
+                        : 'default'
+                }
+              >
+                <m.icon />
+              </StatIndicator>
+              <StatValue>{m.value}</StatValue>
+            </Stat>
+          ))}
+        </div>
+      </>
 
       {/* Tabs: Bar Chart view / Summary Table view */}
       <Card className="rounded-2xl border-border shadow-sm overflow-hidden">

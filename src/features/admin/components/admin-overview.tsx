@@ -41,6 +41,12 @@ import {
 } from '@/features/admin/hooks/use-analytics'
 import { tCategory } from '@/utils/category-utils'
 import { DirectionProvider } from '@/components/ui/direction'
+import {
+  Stat,
+  StatIndicator,
+  StatLabel,
+  StatValue,
+} from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -271,6 +277,21 @@ function CategorySupplyGapsChart({
   )
 }
 
+const ADMIN_COLOR_MAP: Record<string, string> = {
+  'text-blue-600 bg-blue-50 dark:bg-blue-950/30': 'info',
+  'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30': 'success',
+  'text-amber-600 bg-amber-50 dark:bg-amber-950/30': 'warning',
+  'text-violet-600 bg-violet-50 dark:bg-violet-950/30': 'default',
+  'text-sky-600 bg-sky-50 dark:bg-sky-950/30': 'warning',
+  'text-teal-600 bg-teal-50 dark:bg-teal-950/30': 'success',
+  'text-rose-600 bg-rose-50 dark:bg-rose-950/30': 'error',
+  'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/30': 'default',
+}
+
+function statIndicatorColor(color: string) {
+  return (ADMIN_COLOR_MAP[color] || 'default') as any
+}
+
 function StatCard({
   icon: Icon,
   label,
@@ -283,24 +304,39 @@ function StatCard({
   color: string
 }) {
   return (
-    <div
-      className={cn(
-        'flex items-center gap-3 px-4 py-4 sm:px-5 sm:py-5 rounded-2xl transition-all',
-        color,
-      )}
-    >
-      <div className="p-2 rounded-xl bg-background/40 shrink-0">
-        <Icon className="size-5 sm:size-6" />
+    <>
+      {/* Mobile */}
+      <div
+        className={cn(
+          'flex items-center gap-3 px-4 py-4 rounded-2xl transition-all sm:hidden',
+          color,
+        )}
+      >
+        <div className="p-2 rounded-xl bg-background/40 shrink-0">
+          <Icon className="size-5" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-base font-black tabular-nums leading-none text-foreground">
+            {typeof value === 'number' ? value.toLocaleString() : value}
+          </p>
+          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground leading-tight mt-1 truncate">
+            {label}
+          </p>
+        </div>
       </div>
-      <div className="min-w-0">
-        <p className="text-base sm:text-xl font-black tabular-nums leading-none text-foreground">
-          {typeof value === 'number' ? value.toLocaleString() : value}
-        </p>
-        <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground leading-tight mt-1 truncate">
-          {label}
-        </p>
+      {/* Desktop */}
+      <div className="hidden sm:block">
+        <Stat>
+          <StatLabel>{label}</StatLabel>
+          <StatIndicator variant="icon" color={statIndicatorColor(color)}>
+            <Icon />
+          </StatIndicator>
+          <StatValue>
+            {typeof value === 'number' ? value.toLocaleString() : value}
+          </StatValue>
+        </Stat>
       </div>
-    </div>
+    </>
   )
 }
 

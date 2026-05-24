@@ -60,12 +60,14 @@ function InfoRow({
   value: string
 }) {
   return (
-    <div className="flex items-center gap-3 py-1.5">
-      <Icon className="size-4 text-muted-foreground shrink-0" />
+    <div className="flex items-start gap-3 py-1.5">
+      <Icon className="size-4 text-muted-foreground shrink-0 mt-0.5" />
       <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground w-20 shrink-0">
         {label}
       </span>
-      <span className="text-sm text-foreground">{value}</span>
+      <span className="text-sm text-foreground break-words whitespace-pre-wrap leading-relaxed min-w-0">
+        {value}
+      </span>
     </div>
   )
 }

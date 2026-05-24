@@ -4,6 +4,12 @@ import { HelpCircle, RefreshCw } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Stat,
+  StatIndicator,
+  StatLabel,
+  StatValue,
+} from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 
 export interface AnalyticsMetric {
@@ -139,25 +145,49 @@ export function AnalyticsMetricsGrid({
   )
 }
 
+function analyticsIndicatorColor(color: string) {
+  if (color.includes('blue')) return 'info' as const
+  if (color.includes('emerald')) return 'success' as const
+  if (color.includes('amber')) return 'warning' as const
+  if (color.includes('rose')) return 'error' as const
+  return 'default' as const
+}
+
 export function AnalyticsMetricCard({ metric }: { metric: AnalyticsMetric }) {
   const Icon = metric.icon
   return (
-    <div
-      className={cn(
-        'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all',
-        metric.color,
-      )}
-    >
-      <div className="flex items-center gap-1.5">
-        <Icon className="size-4" />
-        <span className="text-xl font-black tabular-nums leading-none">
-          {metric.value}
+    <>
+      {/* Mobile */}
+      <div
+        className={cn(
+          'flex flex-col items-center gap-1 px-3 py-3 rounded-2xl transition-all sm:hidden',
+          metric.color,
+        )}
+      >
+        <div className="flex items-center gap-1.5">
+          <Icon className="size-4" />
+          <span className="text-xl font-black tabular-nums leading-none">
+            {metric.value}
+          </span>
+        </div>
+        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
+          {metric.label}
         </span>
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">
-        {metric.label}
-      </span>
-    </div>
+      {/* Desktop */}
+      <div className="hidden sm:block">
+        <Stat>
+          <StatLabel>{metric.label}</StatLabel>
+          <StatIndicator
+            variant="icon"
+            color={analyticsIndicatorColor(metric.color)}
+          >
+            <Icon />
+          </StatIndicator>
+          <StatValue>{metric.value}</StatValue>
+        </Stat>
+      </div>
+    </>
   )
 }
 
