@@ -12,6 +12,13 @@ import {
   Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  Stat,
+  StatDescription,
+  StatIndicator,
+  StatLabel,
+  StatValue,
+} from '@/components/ui/stat'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { DirectionProvider } from '@/components/ui/direction'
@@ -128,36 +135,30 @@ export function RevenueMetrics() {
     )
   }
 
+  const toStatColor = (color: string) =>
+    color.includes('emerald')
+      ? 'success'
+      : color.includes('blue')
+        ? 'info'
+        : color.includes('amber')
+          ? 'warning'
+          : color.includes('rose')
+            ? 'error'
+            : 'default'
+
   return (
     <DirectionProvider dir={i18n.dir()}>
       <div className="space-y-6">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {metricCards.map((m) => (
-            <div
-              key={m.label}
-              className={cn(
-                'flex flex-col gap-1.5 px-4 py-3.5 rounded-2xl transition-all bg-gradient-to-br',
-                m.bg,
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  {m.label}
-                </span>
-                <m.icon className={cn('size-4', m.color)} />
-              </div>
-              <span
-                className={cn(
-                  'text-xl sm:text-2xl font-black tabular-nums leading-none',
-                  m.color,
-                )}
-              >
-                {m.format(m.value)}
-              </span>
-              <span className="text-[10px] text-muted-foreground font-medium leading-tight">
-                {m.desc}
-              </span>
-            </div>
+            <Stat key={m.label}>
+              <StatLabel>{m.label}</StatLabel>
+              <StatIndicator variant="icon" color={toStatColor(m.color)}>
+                <m.icon />
+              </StatIndicator>
+              <StatValue>{m.format(m.value)}</StatValue>
+              <StatDescription>{m.desc}</StatDescription>
+            </Stat>
           ))}
         </div>
 
