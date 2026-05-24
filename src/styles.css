@@ -9,37 +9,38 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.12 0.01 280);
-  --card: oklch(0.98 0.002 80);
-  --card-foreground: oklch(0.12 0.01 280);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.12 0.01 280);
-  --primary: oklch(50% 0.14 260);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.94 0.04 265);
-  --secondary-foreground: oklch(50% 0.14 260);
-  --muted: oklch(0.955 0.005 260);
-  --muted-foreground: oklch(0.48 0.01 280);
-  --accent: oklch(0.94 0.04 265);
-  --accent-foreground: oklch(46% 0.12 260);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.89 0.005 280);
-  --input: oklch(0.89 0.005 280);
-  --ring: oklch(50% 0.14 260);
-  --chart-1: oklch(0.55 0.18 260);
-  --chart-2: oklch(0.6 0.12 195);
-  --chart-3: oklch(0.5 0.14 300);
-  --chart-4: oklch(0.65 0.12 145);
-  --chart-5: oklch(0.68 0.12 75);
-  --sidebar: oklch(0.98 0.002 80);
-  --sidebar-foreground: oklch(0.12 0.01 280);
-  --sidebar-primary: oklch(50% 0.14 260);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.94 0.04 265);
-  --sidebar-accent-foreground: oklch(46% 0.12 260);
-  --sidebar-border: oklch(0.89 0.005 280);
-  --sidebar-ring: oklch(50% 0.14 260);
+  --background: oklch(99% .005 240);
+  --foreground: oklch(18% .04 250);
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(18% .04 250);
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(18% .04 250);
+  --border: oklch(92% .015 250);
+  --input: oklch(92% .015 250);
+  --ring: oklch(45% .18 255);
+  --primary: oklch(45% .18 255);
+  --primary-foreground: oklch(99% .005 240);
+  --secondary: oklch(96% .015 250);
+  --secondary-foreground: oklch(25% .05 255);
+  --muted: oklch(96% .01 250);
+  --muted-foreground: oklch(50% .03 250);
+  --accent: oklch(94% .03 250);
+  --accent-foreground: oklch(30% .1 255);
+  --destructive: oklch(60% .22 27);
+  --destructive-foreground: oklch(99% .005 240);
+  --chart-1: oklch(55% .2 255);
+  --chart-2: oklch(65% .18 200);
+  --chart-3: oklch(60% .15 155);
+  --chart-4: oklch(75% .15 75);
+  --chart-5: oklch(60% .22 27);
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 240 5.3% 26.1%;
+  --sidebar-primary: 240 5.9% 10%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
 
   --font-sans:
     'Noto Sans Arabic Variable', 'Geist', 'Geist Fallback', ui-sans-serif,
@@ -150,14 +151,14 @@
   --chart-3: oklch(0.55 0.16 300);
   --chart-4: oklch(0.68 0.12 145);
   --chart-5: oklch(0.7 0.12 75);
-  --sidebar: oklch(0.16 0.01 280);
-  --sidebar-foreground: oklch(0.95 0.005 280);
-  --sidebar-primary: oklch(64% 0.13 260);
-  --sidebar-primary-foreground: oklch(0.12 0.01 280);
-  --sidebar-accent: oklch(0.22 0.04 260);
-  --sidebar-accent-foreground: oklch(0.95 0.005 280);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(64% 0.13 260);
+  --sidebar: 240 5.9% 10%;
+  --sidebar-foreground: 240 4.8% 95.9%;
+  --sidebar-primary: 0 0% 98%;
+  --sidebar-primary-foreground: 240 5.9% 10%;
+  --sidebar-accent: 240 3.7% 15.9%;
+  --sidebar-accent-foreground: 240 4.8% 95.9%;
+  --sidebar-border: 240 3.7% 15.9%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
   --chart-background: oklch(0.12 0.01 280);
   --chart-foreground: oklch(0.45 0.01 280);
   --chart-foreground-muted: oklch(0.62 0.01 280);
@@ -242,7 +243,29 @@
       transform: translateX(100%);
     }
   }
-}
+
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-16px);
+    }
+  }
+
+  --animate-spin-around: spin-around 0.8s linear infinite
+;
+  @keyframes spin-around {
+  0% {
+    transform: rotate(-90deg);
+    }
+  100% {
+    transform: rotate(270deg);
+    }
+  }}
 
 @layer base {
   * {
@@ -260,6 +283,11 @@
 }
 
 @layer utilities {
+  /* Keyboard focus-visible ring */
+  .focus-visible-ring {
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -412,4 +440,16 @@
 /* Expandable / rich toast */
 [data-sonner-toast][data-rich-color='true'] {
   border-left-width: 4px;
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

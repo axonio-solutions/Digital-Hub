@@ -25,6 +25,7 @@ import { Route as PublicAboutIndexRouteImport } from './routes/_public/about/ind
 import { Route as AuthedDashboardIndexRouteImport } from './routes/_authed/dashboard/index'
 import { Route as ApiV1SplatRouteImport } from './routes/api/v1/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AuthedMarketplaceRequestIdRouteImport } from './routes/_authed/marketplace/$requestId'
 import { Route as AuthedDashboardAdminRouteRouteImport } from './routes/_authed/dashboard/admin/route'
 import { Route as AuthedDashboardUsersIndexRouteImport } from './routes/_authed/dashboard/users/index'
 import { Route as AuthedDashboardSupportIndexRouteImport } from './routes/_authed/dashboard/support/index'
@@ -122,6 +123,12 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedMarketplaceRequestIdRoute =
+  AuthedMarketplaceRequestIdRouteImport.update({
+    id: '/marketplace/$requestId',
+    path: '/marketplace/$requestId',
+    getParentRoute: () => AuthedRoute,
+  } as any)
 const AuthedDashboardAdminRouteRoute =
   AuthedDashboardAdminRouteRouteImport.update({
     id: '/admin',
@@ -233,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthedOnboardingRoute
   '/waitlist': typeof AuthedWaitlistRoute
   '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
+  '/marketplace/$requestId': typeof AuthedMarketplaceRequestIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/v1/$': typeof ApiV1SplatRoute
   '/dashboard/': typeof AuthedDashboardIndexRoute
@@ -265,6 +273,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthedOnboardingRoute
   '/waitlist': typeof AuthedWaitlistRoute
   '/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
+  '/marketplace/$requestId': typeof AuthedMarketplaceRequestIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/v1/$': typeof ApiV1SplatRoute
   '/dashboard': typeof AuthedDashboardIndexRoute
@@ -301,6 +310,7 @@ export interface FileRoutesById {
   '/_authed/waitlist': typeof AuthedWaitlistRoute
   '/_public/': typeof PublicIndexRoute
   '/_authed/dashboard/admin': typeof AuthedDashboardAdminRouteRouteWithChildren
+  '/_authed/marketplace/$requestId': typeof AuthedMarketplaceRequestIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/v1/$': typeof ApiV1SplatRoute
   '/_authed/dashboard/': typeof AuthedDashboardIndexRoute
@@ -336,6 +346,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/waitlist'
     | '/dashboard/admin'
+    | '/marketplace/$requestId'
     | '/api/auth/$'
     | '/api/v1/$'
     | '/dashboard/'
@@ -368,6 +379,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/waitlist'
     | '/dashboard/admin'
+    | '/marketplace/$requestId'
     | '/api/auth/$'
     | '/api/v1/$'
     | '/dashboard'
@@ -403,6 +415,7 @@ export interface FileRouteTypes {
     | '/_authed/waitlist'
     | '/_public/'
     | '/_authed/dashboard/admin'
+    | '/_authed/marketplace/$requestId'
     | '/api/auth/$'
     | '/api/v1/$'
     | '/_authed/dashboard/'
@@ -550,6 +563,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authed/marketplace/$requestId': {
+      id: '/_authed/marketplace/$requestId'
+      path: '/marketplace/$requestId'
+      fullPath: '/marketplace/$requestId'
+      preLoaderRoute: typeof AuthedMarketplaceRequestIdRouteImport
+      parentRoute: typeof AuthedRoute
     }
     '/_authed/dashboard/admin': {
       id: '/_authed/dashboard/admin'
@@ -738,6 +758,7 @@ interface AuthedRouteChildren {
   AuthedCompleteRegistrationRoute: typeof AuthedCompleteRegistrationRoute
   AuthedOnboardingRoute: typeof AuthedOnboardingRoute
   AuthedWaitlistRoute: typeof AuthedWaitlistRoute
+  AuthedMarketplaceRequestIdRoute: typeof AuthedMarketplaceRequestIdRoute
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
@@ -745,6 +766,7 @@ const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedCompleteRegistrationRoute: AuthedCompleteRegistrationRoute,
   AuthedOnboardingRoute: AuthedOnboardingRoute,
   AuthedWaitlistRoute: AuthedWaitlistRoute,
+  AuthedMarketplaceRequestIdRoute: AuthedMarketplaceRequestIdRoute,
 }
 
 const AuthedRouteWithChildren =

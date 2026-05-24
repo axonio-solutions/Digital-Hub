@@ -1,21 +1,9 @@
-/* Hallmark · genre: modern-minimal · macrostructure: Long Document · S3 sticky section head for plan comparison
- * design-system: design.md · designed-as-app
- */
-'use client'
-
 import { motion } from 'framer-motion'
 import { ArrowRight, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-
-const reveal = {
-  initial: { opacity: 0, y: 8 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.36 },
-}
 
 export function PricingContent() {
   const { t } = useTranslation('home/pricing')
@@ -38,48 +26,55 @@ export function PricingContent() {
   return (
     <main className="flex-1 w-full pt-[76px]">
       {/* Lede */}
-      <section className="w-full pt-16 sm:pt-24 pb-12">
-        <div className="max-w-3xl mx-auto px-6">
-          <h1 className="text-[2.5rem] sm:text-[3.25rem] font-semibold tracking-[-0.025em] text-foreground leading-[1.08] overflow-wrap-anywhere">
+      <section className="w-full pt-20 md:pt-28 pb-12">
+        <div className="max-w-3xl mx-auto px-4 md:px-6">
+          <p className="text-xs font-semibold text-primary mb-3">
+            Pricing
+          </p>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.05] text-foreground">
             {t('hero.title')}
           </h1>
-          <p className="mt-5 text-[1.125rem] text-muted-foreground leading-[1.7] max-w-xl">
+          <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-xl leading-[1.6]">
             {t('hero.subtitle')}
           </p>
         </div>
       </section>
 
       {/* Plans */}
-      <section className="w-full py-12 sm:py-16 border-t border-border">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
+      <section className="w-full py-16 md:py-20 border-t border-border">
+        <div className="max-w-5xl mx-auto px-4 md:px-6">
+          <div className="grid md:grid-cols-3 gap-6">
             {plans.map((plan, i) => (
               <motion.div
                 key={i}
-                {...reveal}
-                transition={{ duration: 0.36, delay: i * 0.06 }}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 0.5,
+                  delay: i * 0.1,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
                 className={cn(
-                  'relative rounded-2xl border p-6 sm:p-8 flex flex-col',
+                  'rounded-xl border bg-card p-8 flex flex-col transition-all duration-200 hover:shadow-md hover:-translate-y-0.5',
                   plan.popular
-                    ? 'border-primary/40 bg-primary/[0.02]'
-                    : 'border-border bg-card',
+                    ? 'border-primary ring-1 ring-primary/20 shadow-sm'
+                    : 'border-border',
                 )}
               >
                 {plan.popular && (
-                  <p className="text-xs font-semibold text-primary mb-3">
-                    Most popular
-                  </p>
+                  <span className="text-[11px] font-semibold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full self-start mb-4">
+                    Most Popular
+                  </span>
                 )}
-                <div className="mb-5">
-                  <h3 className="text-base font-semibold text-foreground">
-                    {plan.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                    {plan.description}
-                  </p>
-                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  {plan.name}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                  {plan.description}
+                </p>
                 <div className="mb-6">
-                  <span className="text-4xl font-semibold tabular-nums tracking-[-0.02em] text-foreground">
+                  <span className="text-4xl font-extrabold tracking-tight text-foreground">
                     {plan.price}
                   </span>
                   {plan.currency && (
@@ -93,15 +88,15 @@ export function PricingContent() {
                     </span>
                   )}
                 </div>
-                <ul className="space-y-2.5 flex-1 mb-7">
+                <ul className="space-y-3 flex-1 mb-8">
                   {plan.features.map((feat, j) => (
                     <li
                       key={j}
-                      className="flex items-start gap-2.5 text-sm text-foreground/80"
+                      className="flex items-start gap-2.5 text-sm text-muted-foreground"
                     >
                       <Check
                         className={cn(
-                          'w-3.5 h-3.5 mt-0.5 flex-shrink-0',
+                          'w-4 h-4 mt-0.5 shrink-0',
                           plan.popular
                             ? 'text-primary'
                             : 'text-muted-foreground',
@@ -122,14 +117,15 @@ export function PricingContent() {
                 >
                   <Button
                     className={cn(
-                      'w-full h-10 rounded-full font-semibold text-sm',
+                      'w-full h-11 rounded-lg text-sm font-semibold transition-all',
                       plan.popular
-                        ? 'bg-primary text-primary-foreground hover:opacity-90'
-                        : 'bg-muted text-foreground hover:bg-muted/80',
+                        ? 'bg-primary text-primary-foreground shadow-md hover:shadow-lg hover:-translate-y-0.5'
+                        : 'bg-background text-foreground border-2 border-border hover:border-primary/40 hover:bg-primary/5',
                     )}
+                    variant={plan.popular ? 'default' : 'outline'}
                   >
                     {plan.cta}
-                    <ArrowRight className="ms-2 w-3.5 h-3.5" />
+                    <ArrowRight className="ms-2 h-4 w-4" />
                   </Button>
                 </Link>
               </motion.div>
@@ -138,19 +134,16 @@ export function PricingContent() {
         </div>
       </section>
 
-      {/* FAQ — inline prose questions */}
-      <motion.section
-        {...reveal}
-        className="w-full py-16 sm:py-20 border-t border-border"
-      >
-        <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-xs font-mono text-muted-foreground tracking-widest uppercase mb-8">
+      {/* FAQ */}
+      <motion.section className="w-full py-16 md:py-20 border-t border-border">
+        <div className="max-w-3xl mx-auto px-4 md:px-6">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.05] text-foreground mb-8">
             {t('faq.title')}
           </h2>
-          <div className="space-y-7">
+          <div className="space-y-6">
             {faqQuestions.map((item, i) => (
-              <div key={i} className="space-y-2">
-                <h3 className="text-[0.9375rem] font-semibold text-foreground">
+              <div key={i} className="space-y-2 pb-6 border-b border-border last:border-0">
+                <h3 className="text-sm font-semibold text-foreground">
                   {item.q}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
@@ -162,19 +155,18 @@ export function PricingContent() {
         </div>
       </motion.section>
 
-      {/* CTA — typographic link */}
-      <section className="w-full py-16 sm:py-24 border-t border-border">
-        <div className="max-w-3xl mx-auto px-6">
-          <p className="text-[1.125rem] text-foreground leading-relaxed">
-            {t('cta.title')}{' '}
-            <Link
-              to={'/register' as any}
-              className="inline-flex items-center gap-1 text-primary font-medium hover:opacity-80 transition-opacity underline underline-offset-2 decoration-primary/30"
-            >
+      {/* CTA */}
+      <section className="w-full py-20 md:py-28 border-t border-border bg-muted/30">
+        <div className="max-w-3xl mx-auto px-4 md:px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.05] text-foreground mb-4">
+            {t('cta.title')}
+          </h2>
+          <Link to={'/register' as any}>
+            <Button className="h-12 px-8 rounded-lg text-sm font-semibold bg-primary text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/50 transition-all hover:-translate-y-0.5">
               {t('cta.button')}
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </p>
+              <ArrowRight className="ms-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </section>
     </main>

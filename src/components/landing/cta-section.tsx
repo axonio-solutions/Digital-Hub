@@ -4,8 +4,10 @@
  */
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
 import { ArrowRight, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { fadeUp, stagger } from '@/lib/motion'
 
 export function CtaSection() {
   const { t: tMarketing } = useTranslation('home/marketing')
@@ -19,17 +21,32 @@ export function CtaSection() {
       >
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-14 md:gap-20 items-center">
           {/* Text column */}
-          <div className="space-y-6">
-            <p className="text-sm font-medium text-primary tracking-wide">
+          <motion.div
+            className="space-y-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            variants={stagger}
+          >
+            <motion.p
+              variants={fadeUp}
+              className="text-xs font-semibold text-primary"
+            >
               {tMarketing('sellers.badge')}
-            </p>
-            <h2 className="text-3xl sm:text-[2.5rem] font-semibold tracking-[-0.02em] text-foreground leading-[1.1]">
+            </motion.p>
+            <motion.h2
+              variants={fadeUp}
+              className="text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.05] text-foreground"
+            >
               {tMarketing('sellers.title')}
-            </h2>
-            <p className="text-[1.0625rem] text-muted-foreground leading-relaxed">
+            </motion.h2>
+            <motion.p
+              variants={fadeUp}
+              className="text-base md:text-lg text-muted-foreground leading-[1.6]"
+            >
               {tMarketing('sellers.description')}
-            </p>
-            <ul className="space-y-3">
+            </motion.p>
+            <motion.ul variants={fadeUp} className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-foreground">
                 <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                 <span>{tMarketing('sellers.feature1')}</span>
@@ -38,20 +55,28 @@ export function CtaSection() {
                 <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                 <span>{tMarketing('sellers.feature2')}</span>
               </li>
-            </ul>
-            <Link to="/login" className="inline-block">
-              <Button
-                size="lg"
-                className="h-11 px-6 text-[0.9375rem] font-semibold bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.97] transition-all duration-150 rounded-full"
-              >
-                {tMarketing('sellers.btn')}
-              </Button>
-            </Link>
-          </div>
+            </motion.ul>
+            <motion.div variants={fadeUp}>
+              <Link to="/login" className="inline-block">
+                <Button
+                  size="lg"
+                  className="cursor-pointer h-11 px-6 text-[0.9375rem] font-semibold bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.97] transition-all duration-150 rounded-full"
+                >
+                  {tMarketing('sellers.btn')}
+                </Button>
+              </Link>
+            </motion.div>
+          </motion.div>
 
-          {/* Visual — honest request list, no fake browser chrome */}
-          <div className="order-first md:order-last">
-            <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          {/* Visual — request list */}
+          <motion.div
+            className="order-first md:order-last"
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
               <div className="px-5 py-3 border-b border-border bg-muted/30">
                 <p className="text-xs font-medium text-muted-foreground">
                   Seller Dashboard — Requests
@@ -80,7 +105,7 @@ export function CtaSection() {
                 ].map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between px-4 py-3 rounded-xl bg-background border border-border/60"
+                    className="flex cursor-pointer items-center justify-between px-4 py-3 rounded-xl bg-background border border-border/60 hover:border-border hover:shadow-sm transition-all duration-200"
                   >
                     <div>
                       <div className="flex items-center gap-2">
@@ -97,40 +122,57 @@ export function CtaSection() {
                         {item.id} · {item.quotes} devis
                       </p>
                     </div>
-                    <button className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+                    <button className="cursor-pointer text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
                       Répondre →
                     </button>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Marketplace CTA — typographic link style */}
-      <section className="w-full py-24 sm:py-32 bg-muted/30 border-t border-border">
+      {/* Marketplace CTA */}
+      <motion.section
+        className="w-full py-24 sm:py-32 bg-muted/30 border-t border-border"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-80px' }}
+        variants={stagger}
+      >
         <div className="max-w-3xl mx-auto px-6">
-          <p className="text-sm font-medium text-primary tracking-wide mb-5">
+          <motion.p
+            variants={fadeUp}
+            className="text-xs font-semibold text-primary mb-5"
+          >
             {tMarketing('marketplace.badge')}
-          </p>
-          <h2 className="text-3xl sm:text-[2.5rem] font-semibold tracking-[-0.02em] text-foreground leading-[1.1] mb-5">
+          </motion.p>
+          <motion.h2
+            variants={fadeUp}
+            className="text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.05] text-foreground mb-5"
+          >
             {tMarketing('marketplace.title')}
-          </h2>
-          <p className="text-[1.0625rem] text-muted-foreground leading-relaxed max-w-lg mb-8">
+          </motion.h2>
+          <motion.p
+            variants={fadeUp}
+            className="text-base md:text-lg text-muted-foreground leading-[1.6] max-w-xl mb-8"
+          >
             {tMarketing('marketplace.description')}
-          </p>
-          <Link to="/explore" search={{ q: '' }}>
-            <Button
-              size="lg"
-              className="h-11 px-6 text-[0.9375rem] font-semibold bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.97] transition-all duration-150 rounded-full"
-            >
-              {tMarketing('marketplace.btn')}
-              <ArrowRight className="ms-2 h-4 w-4" />
-            </Button>
-          </Link>
+          </motion.p>
+          <motion.div variants={fadeUp}>
+            <Link to="/explore" search={{ q: '' }}>
+              <Button
+                size="lg"
+                className="cursor-pointer h-11 px-6 text-[0.9375rem] font-semibold bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.97] transition-all duration-150 rounded-full"
+              >
+                {tMarketing('marketplace.btn')}
+                <ArrowRight className="ms-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Footer — Ft1 Mast-headed */}
       <footer className="border-t border-border py-10 px-6">

@@ -19,6 +19,7 @@ import { DirectionProvider } from '@/components/ui/direction'
 import { authQueries } from '@/features/auth/queries/auth-queries'
 import { useNotifications } from '@/features/notifications/hooks/use-notifications'
 
+import { MotionConfig } from 'framer-motion'
 import { ThemeProvider } from '@/components/theme-provider'
 import { I18nProvider } from '@/components/i18n-provider'
 
@@ -103,11 +104,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       <RootDocument lang={i18n.language} dir={direction}>
         <I18nProvider>
           <DirectionProvider direction={direction}>
-            <Outlet />
-            <Toaster
-              position={direction === 'rtl' ? 'bottom-left' : 'bottom-right'}
-              closeButton
-            />
+            <MotionConfig reducedMotion="user">
+              <Outlet />
+              <Toaster
+                position={direction === 'rtl' ? 'bottom-left' : 'bottom-right'}
+                closeButton
+              />
+            </MotionConfig>
           </DirectionProvider>
         </I18nProvider>
 
