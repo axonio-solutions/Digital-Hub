@@ -1,5 +1,23 @@
 [
   {
+    "date": "2026-05-23",
+    "scope": "component",
+    "macrostructure": "Marketplace-Detail (public-shell page)",
+    "theme": "brand blue hue 260° — design.md locked system",
+    "theme_axes": "light / geometric-sans / cool",
+    "enrichment": "none",
+    "brief": "Seller request detail moved out of dashboard onto public Navbar shell + competing-offers signal upgrade + 6-move polish · genre: modern-minimal"
+  },
+  {
+    "date": "2026-05-23",
+    "scope": "component",
+    "macrostructure": "Dashboard-Workbench (app-page)",
+    "theme": "brand blue hue 260° — design.md locked system",
+    "theme_axes": "light / geometric-sans / cool",
+    "enrichment": "none",
+    "brief": "Seller request detail page — 5/7 sticky sidebar layout, InfoRow specs, offer management, competing offers anonymized · genre: modern-minimal"
+  },
+  {
     "date": "2026-05-21",
     "scope": "app",
     "macrostructure": "Workbench (home) + Long Document (content pages)",
