@@ -117,7 +117,9 @@
     "new_request_action": "Show Now"
   },
   "alerts": {
-    "delete_confirm": "Permanently delete this offer? This cannot be undone."
+    "delete_confirm": "Permanently delete this offer? This cannot be undone.",
+    "withdraw_title": "Withdraw Offer",
+    "withdraw_confirm_btn": "Yes, Withdraw Offer"
   },
   "loading": "Loading marketplace feed...",
   "error": "Failed to load marketplace data.",
@@ -137,7 +139,10 @@
   "statuses": {
     "accepted": "Accepted",
     "pending": "Pending",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "open": "Open",
+    "fulfilled": "Fulfilled",
+    "cancelled": "Cancelled"
   },
   "conditions": {
     "new": "New",
@@ -260,6 +265,8 @@
     "stats_total": "Total Offers",
     "stats_pending": "Pending",
     "stats_in_discussion": "In Discussion",
+    "stats_selected": "Selected",
+    "stats_rejected": "Rejected",
     "vehicle_match": "Vehicle Match",
     "oem_number": "OEM Number",
     "buyer_target_price": "Buyer's Target Price",
@@ -290,6 +297,9 @@
     "dialog_submit": "Submit Offer",
     "mobile_add": "Add Another Offer",
     "mobile_submit": "Submit Your Offer",
+    "offer_selected": "Selected",
+    "competition_fulfilled": "Request fulfilled — the selected offer was finalized.",
+    "competition_cancelled": "Request cancelled — no offers were selected.",
     "seller_count": "{{count}} seller",
     "seller_count_plural": "{{count}} sellers",
     "in_discussion_count": "{{count}} in discussion"

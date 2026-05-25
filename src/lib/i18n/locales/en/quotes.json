@@ -52,6 +52,28 @@
     "edit_offer": "Edit Offer",
     "withdraw_offer": "Withdraw Offer"
   },
+  "dialogs": {
+    "accept": {
+      "title": "Accept this offer?",
+      "description": "You are about to accept {{seller}}'s offer of {{price}} DZD. Once accepted, you can contact the seller to arrange fulfillment.",
+      "confirm": "Accept Offer"
+    },
+    "reject": {
+      "title": "Decline this offer?",
+      "description": "Are you sure you want to decline {{seller}}'s offer? This action can be undone if the request is still open.",
+      "confirm": "Decline Offer"
+    },
+    "revoke": {
+      "title": "Revoke acceptance?",
+      "description": "This will undo your acceptance of {{seller}}'s offer. Their offer will return to pending status.",
+      "confirm": "Revoke Acceptance"
+    },
+    "unreject": {
+      "title": "Restore this offer?",
+      "description": "This will reinstate {{seller}}'s offer to pending status, allowing you to accept it.",
+      "confirm": "Restore Offer"
+    }
+  },
   "hub": {
     "title": "Sales Pipeline",
     "desc": "Manage your quotes and track your parts sales.",

@@ -107,7 +107,9 @@
     "new_request_action": "Voir maintenant"
   },
   "alerts": {
-    "delete_confirm": "Supprimer définitivement cette offre ? Cette action est irréversible."
+    "delete_confirm": "Supprimer définitivement cette offre ? Cette action est irréversible.",
+    "withdraw_title": "Retirer l'Offre",
+    "withdraw_confirm_btn": "Oui, Retirer l'Offre"
   },
   "loading": "Chargement du flux du marché...",
   "error": "Échec du chargement des données du marché.",
@@ -127,7 +129,10 @@
   "statuses": {
     "accepted": "Accepté",
     "pending": "En Attente",
-    "rejected": "Rejeté"
+    "rejected": "Rejeté",
+    "open": "Ouvert",
+    "fulfilled": "Pourvu",
+    "cancelled": "Annulé"
   },
   "conditions": {
     "new": "Neuf",
@@ -226,6 +231,8 @@
     "stats_total": "Total des Offres",
     "stats_pending": "En Attente",
     "stats_in_discussion": "En Discussion",
+    "stats_selected": "Sélectionné",
+    "stats_rejected": "Rejeté",
     "vehicle_match": "Véhicule Compatible",
     "oem_number": "Numéro OEM",
     "buyer_target_price": "Prix Cible de l'Acheteur",
@@ -256,6 +263,9 @@
     "dialog_submit": "Soumettre l'Offre",
     "mobile_add": "Ajouter une Autre Offre",
     "mobile_submit": "Soumettre Votre Offre",
+    "offer_selected": "Sélectionné",
+    "competition_fulfilled": "Demande pourvue — l'offre sélectionnée a été finalisée.",
+    "competition_cancelled": "Demande annulée — aucune offre sélectionnée.",
     "seller_count": "{{count}} vendeur",
     "seller_count_plural": "{{count}} vendeurs",
     "in_discussion_count": "{{count}} en discussion"

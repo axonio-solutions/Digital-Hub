@@ -117,7 +117,9 @@
     "new_request_action": "عرض الآن"
   },
   "alerts": {
-    "delete_confirm": "حذف هذا العرض نهائياً؟ لا يمكن التراجع عن هذا الإجراء."
+    "delete_confirm": "حذف هذا العرض نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
+    "withdraw_title": "سحب العرض",
+    "withdraw_confirm_btn": "نعم، اسحب العرض"
   },
   "loading": "جاري تحميل بث السوق...",
   "error": "فشل تحميل بيانات السوق.",
@@ -137,7 +139,10 @@
   "statuses": {
     "accepted": "مقبول",
     "pending": "قيد الانتظار",
-    "rejected": "مرفوض"
+    "rejected": "مرفوض",
+    "open": "مفتوح",
+    "fulfilled": "مُنجز",
+    "cancelled": "ملغي"
   },
   "conditions": {
     "new": "جديد",
@@ -254,6 +259,8 @@
     "stats_total": "إجمالي العروض",
     "stats_pending": "معلّق",
     "stats_in_discussion": "قيد النقاش",
+    "stats_selected": "مُختار",
+    "stats_rejected": "مرفوض",
     "vehicle_match": "المركبة المتوافقة",
     "oem_number": "رقم OEM",
     "buyer_target_price": "السعر المستهدف للمشتري",
@@ -284,6 +291,9 @@
     "dialog_submit": "تقديم العرض",
     "mobile_add": "إضافة عرض آخر",
     "mobile_submit": "تقديم عرضك",
+    "offer_selected": "مُختار",
+    "competition_fulfilled": "تمت تلبية الطلب — تم اختيار العرض النهائي.",
+    "competition_cancelled": "تم إلغاء الطلب — لم يتم اختيار أي عروض.",
     "seller_count": "{{count}} بائع",
     "seller_count_plural": "{{count}} بائعين",
     "in_discussion_count": "{{count}} قيد النقاش"

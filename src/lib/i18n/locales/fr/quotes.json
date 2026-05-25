@@ -52,6 +52,28 @@
     "edit_offer": "Modifier l'Offre",
     "withdraw_offer": "Retirer l'Offre"
   },
+  "dialogs": {
+    "accept": {
+      "title": "Accepter cette offre ?",
+      "description": "Vous allez accepter l'offre de {{seller}} de {{price}} DA. Une fois acceptée, vous pouvez contacter le vendeur pour finaliser.",
+      "confirm": "Accepter l'Offre"
+    },
+    "reject": {
+      "title": "Refuser cette offre ?",
+      "description": "Êtes-vous sûr de vouloir refuser l'offre de {{seller}} ? Cette action peut être annulée si la demande est toujours ouverte.",
+      "confirm": "Refuser l'Offre"
+    },
+    "revoke": {
+      "title": "Révoquer l'acceptation ?",
+      "description": "Cela annulera votre acceptation de l'offre de {{seller}}. Leur offre retournera en statut en attente.",
+      "confirm": "Révoquer l'Acceptation"
+    },
+    "unreject": {
+      "title": "Restaurer cette offre ?",
+      "description": "Cela rétablira l'offre de {{seller}} en statut en attente, vous permettant de l'accepter.",
+      "confirm": "Restaurer l'Offre"
+    }
+  },
   "hub": {
     "title": "Pipeline de Ventes",
     "desc": "Gérez vos devis et suivez vos ventes de pièces.",
