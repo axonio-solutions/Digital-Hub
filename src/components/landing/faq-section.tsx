@@ -5,11 +5,26 @@ import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const faqKeys = [
-  { q: 'Is there a fee to post a request?', a: 'No. Posting a part request is completely free for all buyers.' },
-  { q: 'How is the seller commission calculated?', a: 'Sellers pay a small percentage of the deal value upon successful sale. The exact rate is displayed during registration.' },
-  { q: 'Are there any monthly subscription fees?', a: 'No. There are no monthly fees for buyers or sellers. You only pay when value is delivered.' },
-  { q: 'How do I become a seller?', a: 'Register as a seller, complete your profile, and get verified by our team. Once approved, you can start browsing requests and submitting quotes.' },
-  { q: 'Which regions does MLILA serve?', a: 'MLILA operates across all 48 wilayas of Algeria.' },
+  {
+    q: 'Is there a fee to post a request?',
+    a: 'No. Posting a part request is completely free for all buyers.',
+  },
+  {
+    q: 'How is the seller commission calculated?',
+    a: 'Sellers pay a small percentage of the deal value upon successful sale. The exact rate is displayed during registration.',
+  },
+  {
+    q: 'Are there any monthly subscription fees?',
+    a: 'No. There are no monthly fees for buyers or sellers. You only pay when value is delivered.',
+  },
+  {
+    q: 'How do I become a seller?',
+    a: 'Register as a seller, complete your profile, and get verified by our team. Once approved, you can start browsing requests and submitting quotes.',
+  },
+  {
+    q: 'Which regions does MLILA serve?',
+    a: 'MLILA operates across all 48 wilayas of Algeria.',
+  },
 ]
 
 export function FaqSection() {

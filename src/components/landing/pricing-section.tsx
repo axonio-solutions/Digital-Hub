@@ -49,7 +49,8 @@ export function PricingSection() {
             variants={fadeUp}
             className="mt-4 text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-[1.6]"
           >
-            Buy credits to post requests and unlock more features. The more you buy, the more you save.
+            Buy credits to post requests and unlock more features. The more you
+            buy, the more you save.
           </motion.p>
         </motion.div>
 
@@ -78,7 +79,10 @@ export function PricingSection() {
               <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                 {maxPkgs.map((pkg, i) => {
                   const creditPrice = Math.round(pkg.price / pkg.credits)
-                  const pkgPerks = perks[i] ?? ['Access marketplace', 'Post requests']
+                  const pkgPerks = perks[i] ?? [
+                    'Access marketplace',
+                    'Post requests',
+                  ]
 
                   return (
                     <motion.div

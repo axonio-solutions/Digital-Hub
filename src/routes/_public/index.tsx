@@ -10,13 +10,8 @@ import { CtaSection } from '@/components/landing/cta-section'
 
 export const Route = createFileRoute('/_public/')({
   loader: async () => {
-    const [
-      { getLandingStatsServerFn },
-      { getCreditPackagesServerFn },
-    ] = await Promise.all([
-      import('@/fn/landing'),
-      import('@/fn/landing'),
-    ])
+    const [{ getLandingStatsServerFn }, { getCreditPackagesServerFn }] =
+      await Promise.all([import('@/fn/landing'), import('@/fn/landing')])
     const statsPromise = getLandingStatsServerFn()
     const packagesPromise = getCreditPackagesServerFn()
     return {

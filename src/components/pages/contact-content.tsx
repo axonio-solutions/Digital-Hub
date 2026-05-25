@@ -39,9 +39,7 @@ export function ContactContent() {
       {/* Lede */}
       <section className="w-full pt-20 md:pt-28 pb-12">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
-          <p className="text-xs font-semibold text-primary mb-3">
-            Contact
-          </p>
+          <p className="text-xs font-semibold text-primary mb-3">Contact</p>
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.05] text-foreground">
             {t('hero.title')}
           </h1>

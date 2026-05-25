@@ -9,11 +9,7 @@ function formatNumber(num: number): string {
   return num.toString()
 }
 
-function AnimatedCounter({
-  value,
-}: {
-  value: number
-}) {
+function AnimatedCounter({ value }: { value: number }) {
   const [displayValue, setDisplayValue] = useState(0)
   const ref = useRef<HTMLSpanElement>(null)
   const triggered = useRef(false)

@@ -29,9 +29,7 @@ export function PricingContent() {
       {/* Lede */}
       <section className="w-full pt-20 md:pt-28 pb-12">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
-          <p className="text-xs font-semibold text-primary mb-3">
-            Pricing
-          </p>
+          <p className="text-xs font-semibold text-primary mb-3">Pricing</p>
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-[1.05] text-foreground">
             {t('hero.title')}
           </h1>
@@ -143,7 +141,10 @@ export function PricingContent() {
           </h2>
           <div className="space-y-6">
             {faqQuestions.map((item, i) => (
-              <div key={i} className="space-y-2 pb-6 border-b border-border last:border-0">
+              <div
+                key={i}
+                className="space-y-2 pb-6 border-b border-border last:border-0"
+              >
                 <h3 className="text-sm font-semibold text-foreground">
                   {item.q}
                 </h3>
