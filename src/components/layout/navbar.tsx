@@ -9,11 +9,7 @@ import { useAuth } from '@/features/auth/hooks/use-auth'
 import { cn } from '@/lib/utils'
 import { NavControls } from '@/components/navigation/nav-controls'
 import { UserMenu } from '@/components/navigation/user-menu'
-import {
-  AUTH_ROUTES,
-  DASHBOARD_ROUTES,
-  PUBLIC_ROUTES,
-} from '@/lib/routes'
+import { AUTH_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from '@/lib/routes'
 
 export default function Navbar() {
   const { t } = useTranslation('common')
@@ -37,7 +33,11 @@ export default function Navbar() {
       })
     }
     links.push(
-      { to: PUBLIC_ROUTES.EXPLORE, search: { q: '' }, label: t('nav.explore', 'Explore') },
+      {
+        to: PUBLIC_ROUTES.EXPLORE,
+        search: { q: '' },
+        label: t('nav.explore', 'Explore'),
+      },
       { to: PUBLIC_ROUTES.PRICING, label: t('nav.pricing', 'Pricing') },
       { to: PUBLIC_ROUTES.ABOUT, label: t('nav.about', 'About') },
       { to: PUBLIC_ROUTES.CONTACT, label: t('nav.contact', 'Contact') },
@@ -87,7 +87,7 @@ export default function Navbar() {
             src="/logo192.png"
             style={{ height: 36, width: 'auto' }}
           />
-          <span className="font-bold text-lg tracking-tight hidden sm:inline text-foreground">
+          <span className="font-bold text-lg tracking-tight text-foreground">
             MLILA
           </span>
         </Link>
@@ -112,14 +112,12 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {isAuthenticated && <NotificationBell />}
+
           <div className="hidden md:flex items-center gap-2">
             <NavControls showLanguage={true} showTheme={true} />
-
             {isAuthenticated ? (
-              <>
-                <NotificationBell />
-                <UserMenu user={user} role={role} />
-              </>
+              <UserMenu user={user} role={role} />
             ) : (
               <>
                 <Button
@@ -143,9 +141,10 @@ export default function Navbar() {
             )}
           </div>
 
-          <div className="md:hidden flex items-center gap-1">
-            <NavControls showLanguage={true} showTheme={true} />
-            
+          <div className="md:hidden flex items-center gap-2">
+            {isAuthenticated && (
+              <UserMenu user={user} role={role} align="end" />
+            )}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <button
@@ -160,99 +159,52 @@ export default function Navbar() {
                 </button>
               </SheetTrigger>
               <SheetContent
-                side="right"
+                side="top"
                 showCloseButton={false}
-                className="w-full sm:w-80 p-0 border-l border-border/60"
+                className="w-full p-0 border-b border-border/60"
               >
-                <div className="flex flex-col h-full">
-                  <div className="flex items-center justify-between px-5 h-14 border-b border-border/60 shrink-0">
+                <div className="container mx-auto px-4 py-3 flex flex-col gap-1">
+                  {NAV_LINKS.map((link) => (
                     <Link
-                      to="/"
-                      className="flex items-center gap-2"
+                      key={link.to}
+                      to={link.to as any}
+                      search={(link as any).search}
                       onClick={() => setMobileOpen(false)}
+                      className={cn(
+                        'px-3 py-2.5 text-sm font-medium rounded-md hover:bg-accent',
+                        currentPath.startsWith(link.to) && 'text-primary',
+                      )}
                     >
-                      <img
-                        alt="MLILA"
-                        height={28}
-                        className="rounded-md"
-                        src="/logo192.png"
-                        style={{ height: 28, width: 'auto' }}
-                      />
-                      <span className="font-bold text-base tracking-tight text-foreground">
-                        MLILA
-                      </span>
+                      {link.label}
                     </Link>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-8 rounded-lg"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      <X className="size-4" />
-                    </Button>
+                  ))}
+                  <div className="flex items-center gap-1 pt-2 border-t mt-2">
+                    <NavControls showLanguage={true} showTheme={true} />
                   </div>
-
-                  <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-                    {NAV_LINKS.map((link) => (
-                      <Link
-                        key={link.to}
-                        to={link.to as any}
-                        search={(link as any).search}
-                        onClick={() => setMobileOpen(false)}
-                        className={cn(
-                          'flex items-center gap-2.5 h-11 px-4 rounded-xl text-sm font-medium transition-all',
-                          currentPath.startsWith(link.to)
-                            ? 'bg-primary/10 text-primary border border-primary/20'
-                            : 'text-foreground hover:bg-muted',
-                        )}
+                  {!isAuthenticated && (
+                    <div className="flex gap-2 pt-2 border-t mt-1">
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="h-10 px-4 py-2 flex-1"
                       >
-                        {link.icon}
-                        {link.label}
-                      </Link>
-                    ))}
-                  </nav>
-
-                  <div className="border-t border-border/60 p-4 space-y-3 shrink-0">
-                    <div className="flex items-center justify-center gap-3">
-                      <NavControls showTheme />
+                        <Link
+                          to={AUTH_ROUTES.LOGIN}
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          {t('nav.sign_in', 'Sign In')}
+                        </Link>
+                      </Button>
+                      <Button asChild className="h-10 px-4 py-2 flex-1">
+                        <Link
+                          to={AUTH_ROUTES.REGISTER as any}
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          {t('nav.get_started', 'Get Started')}
+                        </Link>
+                      </Button>
                     </div>
-                    {isAuthenticated ? (
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
-                        <UserMenu user={user} role={role} align="start" />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-semibold truncate">
-                            {user?.name || user?.email || 'User'}
-                          </p>
-                          <p className="text-[11px] text-muted-foreground truncate capitalize">
-                            {role}
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-2">
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="w-full h-11 rounded-xl text-sm font-semibold"
-                        >
-                          <Link to={AUTH_ROUTES.LOGIN} onClick={() => setMobileOpen(false)}>
-                            Sign In
-                          </Link>
-                        </Button>
-                        <Button
-                          asChild
-                          className="w-full h-11 rounded-xl text-sm font-semibold"
-                        >
-                          <Link
-                            to={AUTH_ROUTES.REGISTER as any}
-                            onClick={() => setMobileOpen(false)}
-                          >
-                            Get Started
-                          </Link>
-                        </Button>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
@@ -262,5 +214,3 @@ export default function Navbar() {
     </header>
   )
 }
-
-
