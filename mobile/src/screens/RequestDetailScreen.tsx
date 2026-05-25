@@ -418,7 +418,7 @@ export function RequestDetailScreen({
                       <QuoteCard
                         key={q.id}
                         quote={q}
-                        isRequestOpen={isOpen}
+                        requestStatus={request.status}
                         actionLoading={actionLoading}
                         onAccept={handleAcceptQuote}
                         onReject={handleRejectQuote}
@@ -623,7 +623,7 @@ function InfoGridLogoCell({
 
 interface QuoteCardProps {
   quote: Quote
-  isRequestOpen: boolean
+  requestStatus: string
   actionLoading: string | null
   onAccept: (id: string) => void
   onReject: (id: string) => void
@@ -634,7 +634,7 @@ interface QuoteCardProps {
 
 function QuoteCard({
   quote,
-  isRequestOpen,
+  requestStatus,
   actionLoading,
   onAccept,
   onReject,
@@ -650,6 +650,7 @@ function QuoteCard({
     bg: t.bgMuted,
   }
 
+  const isRequestOpen = requestStatus === 'open'
   const storeName =
     quote.seller?.storeName || quote.seller?.name || 'Unknown seller'
   const isPending = quote.status === 'pending'
@@ -760,7 +761,9 @@ function QuoteCard({
       {isPending && !isRequestOpen && (
         <View style={s.quoteActions}>
           <View style={s.disabledBadge}>
-            <Text style={s.disabledBadgeText}>Request closed</Text>
+            <Text style={s.disabledBadgeText}>
+              {requestStatus === 'fulfilled' ? 'Request fulfilled' : 'Request closed'}
+            </Text>
           </View>
         </View>
       )}
@@ -805,7 +808,9 @@ function QuoteCard({
             />
           ) : (
             <View style={s.disabledBadge}>
-              <Text style={s.disabledBadgeText}>Request closed</Text>
+              <Text style={s.disabledBadgeText}>
+                {requestStatus === 'fulfilled' ? 'Request fulfilled' : 'Request closed'}
+              </Text>
             </View>
           )}
         </View>
