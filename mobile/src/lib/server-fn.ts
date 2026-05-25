@@ -37,6 +37,7 @@ const ENDPOINT_PATHS = {
   unrejectQuote: '/api/v1/quotes/unreject',
   retractQuote: '/api/v1/quotes/retract',
   sendReminder: '/api/v1/quotes/remind',
+  getAnonymousQuotes: '/api/v1/quotes/anonymous',
 
   // Notifications
   fetchUnreadNotifications: '/api/v1/notifications/unread',

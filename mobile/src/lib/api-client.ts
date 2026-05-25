@@ -429,6 +429,26 @@ export async function requestCreditsFn(
   })
 }
 
+export interface AnonymousQuote {
+  id: string
+  status: string
+  condition: string
+  warranty: string | null
+  price: number
+  sellerId: string
+  createdAt: string
+}
+
+export async function fetchAnonymousQuotes(
+  requestId: string,
+): Promise<Array<AnonymousQuote>> {
+  const result = await fetchApi<{ success: boolean; data: Array<AnonymousQuote> }>(
+    apiUrl('getAnonymousQuotes'),
+    { method: 'GET', payload: requestId },
+  )
+  return result?.data ?? []
+}
+
 // ── Auth ──────────────────────────────────────────────────────
 
 export interface SignInResult {
