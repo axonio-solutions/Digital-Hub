@@ -1,0 +1,29 @@
+import { createServerFn } from '@tanstack/react-start'
+import { PutObjectCommand } from '@aws-sdk/client-s3'
+import { authMiddleware } from '@/features/auth/guards/auth'
+import { r2, R2_BUCKET, R2_PUBLIC_URL } from '@/lib/r2'
+
+function nanoid(len: number) {
+  return Math.random()
+    .toString(36)
+    .slice(2, 2 + len)
+}
+
+export const uploadImageFn = createServerFn({ method: 'POST' })
+  .inputValidator((data: unknown) => data as { base64: string; folder: string })
+  .middleware([authMiddleware])
+  .handler(async ({ data }) => {
+    const buffer = Buffer.from(data.base64, 'base64')
+    const key = `${data.folder}/${Date.now()}-${nanoid(8)}.webp`
+
+    await r2.send(
+      new PutObjectCommand({
+        Bucket: R2_BUCKET,
+        Key: key,
+        Body: buffer,
+        ContentType: 'image/webp',
+      }),
+    )
+
+    return { publicUrl: `${R2_PUBLIC_URL}/${key}` }
+  })

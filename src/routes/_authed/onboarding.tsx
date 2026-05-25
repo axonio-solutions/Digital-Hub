@@ -127,7 +127,9 @@ function OnboardingFlow() {
     onSuccess: (response) => {
       toast.success('toast.success')
       const target =
-        response?.account_status === 'waitlisted' ? AUTH_ROUTES.WAITLIST : DASHBOARD_ROUTES.ROOT
+        response?.account_status === 'waitlisted'
+          ? AUTH_ROUTES.WAITLIST
+          : DASHBOARD_ROUTES.ROOT
       setRedirectTarget(target)
       setIsSuccess(true)
     },

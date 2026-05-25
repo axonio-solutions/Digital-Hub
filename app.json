@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "a3a7c4bc-20ca-468d-8598-91d4f008d22c"
+      }
+    },
+    "android": {
+      "package": "com.axiono.mlila"
+    }
+  }
+}

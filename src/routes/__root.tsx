@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import styles from '../styles.css?url'
 import { DefaultNotFound } from './components/errors/-default-not-found'
-import { RouteErrorFallback } from './components/errors/route-error-fallback'
 import type { MyRouterContext } from '@/types/router'
 import { Toaster } from '@/components/ui/sonner'
 import { DirectionProvider } from '@/components/ui/direction'
@@ -155,7 +154,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     )
   },
   notFoundComponent: DefaultNotFound,
-  errorComponent: RouteErrorFallback,
+  errorComponent: () => <h1>error</h1>,
 })
 
 function RootDocument({
