@@ -40,7 +40,11 @@ export const Route = createFileRoute('/_authed/seller')({
   beforeLoad: ({ context }) => {
     const role = context.user?.role
     if (role !== 'seller' && role !== 'admin') {
-      throw redirect({ to: ROLE_HOME[(role as keyof typeof ROLE_HOME) ?? 'seller'] || DASHBOARD_ROUTES.ROOT })
+      throw redirect({
+        to:
+          ROLE_HOME[(role as keyof typeof ROLE_HOME) ?? 'seller'] ||
+          DASHBOARD_ROUTES.ROOT,
+      })
     }
   },
   component: SellerLayoutRoute,

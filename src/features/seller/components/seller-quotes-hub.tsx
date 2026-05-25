@@ -27,7 +27,8 @@ import { useSendReminder } from '@/features/quotes/hooks/use-quotes'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,  DialogHeader,
+  DialogDescription,
+  DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
 import { RequestDetailsDialog } from '@/features/requests/components/request-details-dialog'
@@ -36,12 +37,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { useTaxonomy } from '@/features/taxonomy/hooks/use-taxonomy'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { SELLER_ROUTES } from '@/lib/routes'
 
 type TimeWindow = 'all' | 'today' | 'week' | 'month'
@@ -60,7 +56,6 @@ function getTimeCutoff(window: TimeWindow): Date | null {
 export function SellerQuotesHub() {
   const { t, i18n } = useTranslation('quotes')
   const { toast } = useToast('quotes')
-  const [selectedQuote, setSelectedQuote] = useState<any>(null)
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
   const [isRequestDetailsOpen, setIsRequestDetailsOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('pending')
@@ -71,6 +66,14 @@ export function SellerQuotesHub() {
   const navigate = useNavigate()
 
   const { data: myQuotes = [], isLoading } = useSellerQuotes(sellerId)
+
+  // Derive selectedQuote from live query data so the dialog always reflects
+  // the latest server state (e.g., status changes after fulfillment).
+  const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null)
+  const selectedQuote = useMemo(
+    () => myQuotes.find((q: any) => q.id === selectedQuoteId) ?? null,
+    [myQuotes, selectedQuoteId],
+  )
   const { data: taxonomy } = useTaxonomy()
   const deleteQuote = useDeleteQuote()
   const { mutate: sendReminder, isPending: isSendingReminder } =
@@ -87,11 +90,14 @@ export function SellerQuotesHub() {
   }, [taxonomy])
 
   const handleAction = (action: { type: string; item: any }) => {
-    setSelectedQuote(action.item)
+    setSelectedQuoteId(action.item.id)
 
     switch (action.type) {
       case 'view_request':
-        navigate({ to: SELLER_ROUTES.MARKETPLACE_REQUEST_PATTERN, params: { requestId: action.item.requestId } })
+        navigate({
+          to: SELLER_ROUTES.MARKETPLACE_REQUEST_PATTERN,
+          params: { requestId: action.item.requestId },
+        })
         break
       case 'update':
         setIsQuoteModalOpen(true)
@@ -460,17 +466,19 @@ export function SellerQuotesHub() {
         quote={selectedQuote}
         footer={
           <div className="pt-6 flex gap-4 w-full">
-            {selectedQuote?.status === 'pending' && (
-              <Button
-                className="flex-1 h-12 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-primary/20"
-                onClick={() => {
-                  setIsRequestDetailsOpen(false)
-                  setIsQuoteModalOpen(true)
-                }}
-              >
-                {t('hub.dialog.update_btn')}
-              </Button>
-            )}
+            {selectedQuote?.status === 'pending' &&
+              selectedQuote?.request?.status !== 'fulfilled' &&
+              selectedQuote?.request?.status !== 'cancelled' && (
+                <Button
+                  className="flex-1 h-12 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+                  onClick={() => {
+                    setIsRequestDetailsOpen(false)
+                    setIsQuoteModalOpen(true)
+                  }}
+                >
+                  {t('hub.dialog.update_btn')}
+                </Button>
+              )}
             {selectedQuote?.status === 'accepted' && (
               <Button
                 variant="outline"

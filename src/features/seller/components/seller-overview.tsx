@@ -44,13 +44,8 @@ import type { ChartConfig } from '@/components/ui/chart'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
-import { PUBLIC_ROUTES } from '@/lib/routes'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
+import { PUBLIC_ROUTES, SELLER_ROUTES } from '@/lib/routes'
 
 interface DashboardData {
   stats: {
@@ -531,7 +526,7 @@ function StatsSection({
       {/* Quick Links */}
       <div className="grid gap-3 sm:grid-cols-3">
         <QuickLink
-          to="/dashboard/quotes"
+          to={SELLER_ROUTES.QUOTES}
           icon={BarChart3}
           title={t('actions.view_quotes')}
           desc={t('actions.view_quotes_desc', { count: stats.totalQuotes })}
@@ -543,7 +538,7 @@ function StatsSection({
           desc={t('actions.browse_requests_desc')}
         />
         <QuickLink
-          to="/dashboard/billing"
+          to={SELLER_ROUTES.BILLING}
           icon={Coins}
           title={t('billing.title')}
           desc={t('billing.credits_available')}

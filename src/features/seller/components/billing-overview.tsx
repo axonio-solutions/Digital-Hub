@@ -23,12 +23,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { GlowingBadge } from '@/components/unlumen-ui/glowing-badge'
 import { Button } from '@/components/ui/button'
 import { CircularProgressCombined } from '@/components/ui/circular-progress'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 import { RequestCreditsDialog } from '@/features/credits/components/request-credits-dialog'
 import {
@@ -248,8 +243,6 @@ export function BillingOverview() {
             </div>
           </div>
         </div>
-
-
 
         {/* Transaction History */}
         <div className="space-y-3">
