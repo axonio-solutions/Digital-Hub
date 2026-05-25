@@ -22,7 +22,6 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import { useNotifications } from '@/features/notifications/hooks/use-notifications'
 import { Separator } from '@/components/ui/separator'
 import {
   ADMIN_ROUTES,
@@ -65,7 +64,9 @@ function DynamicBreadcrumb() {
   } else if (CRUMB_MAP[pathname]) {
     breadcrumbs = [{ pathname, title: CRUMB_MAP[pathname] }]
   } else {
-    breadcrumbs = [{ pathname: DASHBOARD_ROUTES.ROOT, title: t('breadcrumbs.overview') }]
+    breadcrumbs = [
+      { pathname: DASHBOARD_ROUTES.ROOT, title: t('breadcrumbs.overview') },
+    ]
   }
 
   return (
@@ -111,11 +112,7 @@ export function DashboardShell({
   sidebarContent,
 }: DashboardShellProps) {
   const { data: user } = useAuth()
-  const userId = user?.id || ''
   const dir = useDirection()
-
-  // Establish SSE connection for real-time updates
-  useNotifications(userId)
 
   return (
     <SidebarProvider>

@@ -5,7 +5,6 @@ import { SellerOverview } from '@/features/seller'
 import { AdminOverview } from '@/features/admin/components/admin-overview'
 import { sellerKeys } from '@/features/marketplace/hooks/use-marketplace'
 import { adminKeys } from '@/features/admin/hooks/use-admin'
-import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
 
 export const Route = createFileRoute('/_authed/dashboard/')({
   loader: async ({ context }) => {
@@ -60,7 +59,7 @@ export const Route = createFileRoute('/_authed/dashboard/')({
     return {}
   },
   component: DashboardOverview,
-  errorComponent: RouteErrorFallback,
+  errorComponent: () => <h1>error</h1>,
 })
 
 function DashboardOverview() {

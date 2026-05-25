@@ -24,12 +24,7 @@ import {
   useDeleteRequest,
   useReopenRequest,
 } from '@/features/requests/hooks/use-requests'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 import { BUYER_ROUTES } from '@/lib/routes'
 
