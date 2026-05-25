@@ -7,14 +7,19 @@ const EDGE_FN_URL =
   'https://hfilegaukynyagypmuwf.supabase.co/functions/v1/send-push'
 const ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || ''
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-})
+export function initNotificationHandler() {
+  try {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    })
+  } catch (e) {
+    console.warn('Failed to set notification handler:', e)
+  }
+}
 
 let responseSubscription: Notifications.EventSubscription | null = null
 

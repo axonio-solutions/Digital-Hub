@@ -256,7 +256,7 @@ export function RequestDetailScreen({
   const topInset =
     Platform.OS === 'ios' ? 54 : (StatusBar.currentHeight ?? 28) + 8
 
-  const sCfg = statusConfig(t)[request?.status || ''] ?? {
+  const sCfg = statusConfig(t)[request?.status || 'open'] ?? {
     label: request?.status || '',
     color: t.textMuted,
     bg: t.bgMuted,

@@ -16,12 +16,44 @@ import { BuyerScreen } from './src/screens/BuyerScreen'
 import { SellerScreen } from './src/screens/SellerScreen'
 import {
   cleanupNotificationResponseListener,
+  initNotificationHandler,
   registerPushToken,
   setupNotificationResponseListener,
 } from './src/lib/push-notifications'
 import type { SessionUser } from './src/lib/api-client'
 
 type AuthState = 'checking' | 'signed-out' | 'session-loading' | 'ready'
+
+function ErrorFallback({ error }: { error: Error }) {
+  return (
+    <View style={errorStyles.container}>
+      <StatusBar style="dark" />
+      <Text style={errorStyles.title}>Something went wrong</Text>
+      <Text style={errorStyles.message}>{error.message}</Text>
+    </View>
+  )
+}
+
+const errorStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: '#EFF6FF',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: 8,
+  },
+  message: {
+    fontSize: 14,
+    color: '#64748B',
+    textAlign: 'center',
+  },
+})
 
 function LoadingScreen({ message }: { message: string }) {
   const pulse = useRef(new Animated.Value(1)).current
@@ -86,6 +118,10 @@ function AppContent() {
   const [showSplash, setShowSplash] = useState(true)
   const [checkingStatus, setCheckingStatus] = useState(false)
   const pendingRequestRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    initNotificationHandler()
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -298,6 +334,29 @@ function AppContent() {
 }
 
 export default function App() {
+  const [crashError, setCrashError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const handler = (error: ErrorEvent) => {
+      setCrashError(error.message ?? 'Unknown error')
+    }
+    if (typeof ErrorUtils !== 'undefined') {
+      const prev = ErrorUtils.getGlobalHandler()
+      ErrorUtils.setGlobalHandler((error: Error) => {
+        setCrashError(error?.message ?? String(error))
+        prev?.(error, false)
+      })
+    }
+  }, [])
+
+  if (crashError) {
+    return (
+      <SafeAreaProvider>
+        <ErrorFallback error={new Error(crashError)} />
+      </SafeAreaProvider>
+    )
+  }
+
   return (
     <SafeAreaProvider>
       <AppContent />
@@ -329,7 +388,6 @@ const loadingStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 16,
   },
   brandMark: {
     width: 72,
