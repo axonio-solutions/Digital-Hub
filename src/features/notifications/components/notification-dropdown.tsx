@@ -16,6 +16,7 @@ import {
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ReactElement } from 'react'
+import { useRouter } from '@tanstack/react-router'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -181,6 +182,7 @@ export const NotificationDropdown = ({
   align = 'end',
 }: Props) => {
   const { t, i18n } = useTranslation('notifications')
+  const router = useRouter()
 
   const getTitle = useMemo(() => (notif: any) => notif.title || '', [])
 
@@ -270,7 +272,7 @@ export const NotificationDropdown = ({
                       onClick={() => {
                         if (!notification.isRead) onMarkRead?.(notification.id)
                         if (notification.linkUrl)
-                          window.location.href = notification.linkUrl
+                          router.navigate({ to: notification.linkUrl })
                       }}
                       className={cn(
                         'mx-1.5 my-0.5 p-2.5 flex items-center justify-between cursor-pointer rounded-lg transition-all hover:bg-muted border border-transparent hover:border-border group/item',

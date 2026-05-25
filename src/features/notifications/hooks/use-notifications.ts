@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { createBrowserClient } from '@supabase/ssr'
+import { useRouter } from '@tanstack/react-router'
 import {
   fetchUnreadNotificationsServerFn,
   markAllNotificationsReadServerFn,
@@ -19,6 +20,7 @@ export function useNotifications(_userId?: string) {
   const tRef = useRef(t)
   tRef.current = t
   const hasConnectedRef = useRef(false)
+  const router = useRouter()
 
   useEffect(() => {
     if (!_userId) return
@@ -52,76 +54,25 @@ export function useNotifications(_userId?: string) {
         },
         (payload) => {
           try {
-            if (payload.eventType === 'DELETE') {
-              const deletedId = payload.old?.id
-              if (deletedId) {
-                queryClient.setQueryData(
-                  ['notifications', 'unread', _userId],
-                  (old: any) => {
-                    if (!Array.isArray(old)) return old
-                    return old.filter((n: any) => n.id !== deletedId)
-                  },
-                )
-                queryClient.setQueryData(['notifications'], (old: any) => {
-                  if (!Array.isArray(old)) return old
-                  return old.filter((n: any) => n.id !== deletedId)
-                })
-              }
-              return
-            }
+            // Always refetch the notification list so the dropdown reflects server state
+            // with the correct { items, total } shape. Cache-patching is avoided because
+            // the Supabase payload is snake_case while the cache holds camelCase Drizzle rows.
+            queryClient.invalidateQueries({
+              queryKey: ['notifications', 'unread', _userId],
+              exact: false,
+            })
+
+            if (payload.eventType === 'DELETE') return
 
             if (
               payload.eventType === 'INSERT' ||
               payload.eventType === 'UPDATE'
             ) {
               const notification = payload.new
-              console.log(
-                '[Supabase Realtime] Notification received:',
-                notification,
-              )
 
-              // Optimistically update the unread notification cache array
-              // Do NOT use refetchQueries per execution protocol
-              queryClient.setQueryData(['notifications'], (oldData: any) => {
-                if (!Array.isArray(oldData)) return [notification]
-
-                if (payload.eventType === 'UPDATE') {
-                  return oldData.map((n) =>
-                    n.id === notification.id ? notification : n,
-                  )
-                }
-
-                // Avoid duplicate entries if already in cache
-                if (oldData.some((n) => n.id === notification.id))
-                  return oldData
-                return [notification, ...oldData]
-              })
-
-              // Patch the specific unread query as well to ensure UI consistency
-              queryClient.setQueryData(
-                ['notifications', 'unread', _userId],
-                (oldData: any) => {
-                  if (!Array.isArray(oldData)) return [notification]
-                  if (payload.eventType === 'UPDATE') {
-                    return oldData.map((n) =>
-                      n.id === notification.id ? notification : n,
-                    )
-                  }
-                  if (oldData.some((n) => n.id === notification.id))
-                    return oldData
-                  return [notification, ...oldData]
-                },
-              )
-
-              // --- Real-time Cache Invalidation ---
-              // Instead of patching with partial metadata, invalidate affected caches
-              // so TanStack Query refetches from the server. This ensures full data consistency.
+              // Invalidate business-data caches based on notification metadata
               if (notification.metadata?.requestId) {
-                const { requestId, quoteId, quoteStatus } =
-                  notification.metadata
-                console.log(
-                  `[Supabase Realtime] Invalidating caches for request ${requestId}`,
-                )
+                const { requestId } = notification.metadata
 
                 queryClient.invalidateQueries({
                   queryKey: ['requests', 'details', requestId],
@@ -132,20 +83,27 @@ export function useNotifications(_userId?: string) {
                 queryClient.invalidateQueries({
                   queryKey: ['requests', 'open'],
                 })
-
-                if (quoteId && quoteStatus) {
-                  queryClient.invalidateQueries({
-                    queryKey: ['seller', 'quotes', _userId],
-                  })
-                  queryClient.invalidateQueries({
-                    queryKey: ['seller', 'dashboard', _userId],
-                  })
-                  queryClient.invalidateQueries({
-                    queryKey: ['credits', 'my-balance'],
-                  })
-                }
+                // Always invalidate seller queries — the receiving user may be a
+                // seller whose quote or dashboard is affected regardless of whether
+                // the notification carries a quoteId.
+                queryClient.invalidateQueries({
+                  queryKey: ['seller', 'quotes', _userId],
+                })
+                queryClient.invalidateQueries({
+                  queryKey: ['seller', 'dashboard', _userId],
+                })
+                queryClient.invalidateQueries({
+                  queryKey: ['credits', 'my-balance'],
+                })
+                // Invalidate marketplace queries so the request detail page
+                // reflects fulfilled status and disables the submit-offer button.
+                queryClient.invalidateQueries({
+                  queryKey: ['marketplace'],
+                  exact: false,
+                })
               }
-              // Trigger Visual Feedback for new notifications
+
+              // Toast for new notifications only
               if (payload.eventType === 'INSERT') {
                 const _t = tRef.current
                 const typeKey = (notification.type ?? '').toLowerCase()
@@ -162,19 +120,16 @@ export function useNotifications(_userId?: string) {
                 })
 
                 if (isErrorType) {
-                  toast.error(title, {
-                    description: message,
-                    duration: 8000,
-                  })
+                  toast.error(title, { description: message, duration: 8000 })
                 } else {
                   toast.success(title, {
                     description: message,
                     duration: 5000,
-                    action: notification.linkUrl
+                    action: notification.link_url
                       ? {
                           label: _t('toast.view'),
                           onClick: () => {
-                            window.location.href = notification.linkUrl
+                            router.navigate({ to: notification.link_url })
                           },
                         }
                       : undefined,
@@ -234,43 +189,41 @@ export function useMarkNotificationRead() {
   return useMutation({
     mutationFn: (id: string) => markNotificationReadServerFn({ data: id }),
     onMutate: async (id) => {
-      // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['notifications'] })
-
-      // Snapshot previous data
-      const previousNotifications = queryClient.getQueryData(['notifications'])
-
-      // Optimistically update: Filter out the read notification
-      queryClient.setQueryData(['notifications'], (old: any) => {
-        if (!Array.isArray(old)) return old
-        return old.filter((n: any) => n.id !== id)
+      await queryClient.cancelQueries({
+        queryKey: ['notifications', 'unread'],
+        exact: false,
       })
 
-      // We also try to patch any unread specific queries we can find in the cache
-      // This is a "best effort" optimistic update for nested keys
+      // Snapshot all matching unread queries for rollback
+      const snapshots = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ['notifications', 'unread'], exact: false })
+        .map((query) => ({ key: query.queryKey, data: query.state.data }))
+
+      // Optimistically remove the notification from every { items, total } cache
       queryClient
         .getQueryCache()
-        .findAll({ queryKey: ['notifications', 'unread'] })
+        .findAll({ queryKey: ['notifications', 'unread'], exact: false })
         .forEach((query) => {
           queryClient.setQueryData(query.queryKey, (old: any) => {
-            if (!Array.isArray(old)) return old
-            return old.filter((n: any) => n.id !== id)
+            if (!old?.items) return old
+            const filtered = old.items.filter((n: any) => n.id !== id)
+            return { items: filtered, total: Math.max(0, filtered.length) }
           })
         })
 
-      return { previousNotifications }
+      return { snapshots }
     },
     onError: (_err, _id, context) => {
-      if (context?.previousNotifications) {
-        queryClient.setQueryData(
-          ['notifications'],
-          context.previousNotifications,
-        )
-      }
+      context?.snapshots?.forEach(({ key, data }: any) => {
+        queryClient.setQueryData(key, data)
+      })
     },
-
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] })
+      queryClient.invalidateQueries({
+        queryKey: ['notifications', 'unread'],
+        exact: false,
+      })
     },
   })
 }
@@ -282,39 +235,37 @@ export function useMarkAllNotificationsRead() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (_userId: string) => markAllNotificationsReadServerFn(),
-    onMutate: async (userId) => {
-      await queryClient.cancelQueries({ queryKey: ['notifications'] })
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ['notifications', 'unread'],
+        exact: false,
+      })
 
-      const previousNotifications = queryClient.getQueryData(['notifications'])
-      const previousUnread = queryClient.getQueryData([
-        'notifications',
-        'unread',
-        userId,
-      ])
+      const snapshots = queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ['notifications', 'unread'], exact: false })
+        .map((query) => ({ key: query.queryKey, data: query.state.data }))
 
-      // Optimistically clear everything
-      queryClient.setQueryData(['notifications'], [])
-      queryClient.setQueryData(['notifications', 'unread', userId], [])
+      // Optimistically clear all unread caches
+      queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ['notifications', 'unread'], exact: false })
+        .forEach((query) => {
+          queryClient.setQueryData(query.queryKey, { items: [], total: 0 })
+        })
 
-      return { previousNotifications, previousUnread }
+      return { snapshots }
     },
     onError: (_err, _userId, context) => {
-      if (context?.previousNotifications) {
-        queryClient.setQueryData(
-          ['notifications'],
-          context.previousNotifications,
-        )
-      }
-      if (context?.previousUnread) {
-        queryClient.setQueryData(
-          ['notifications', 'unread', _userId],
-          context.previousUnread,
-        )
-      }
+      context?.snapshots?.forEach(({ key, data }: any) => {
+        queryClient.setQueryData(key, data)
+      })
     },
-
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] })
+      queryClient.invalidateQueries({
+        queryKey: ['notifications', 'unread'],
+        exact: false,
+      })
     },
   })
 }

@@ -3,6 +3,7 @@ import { NotificationService } from './notification-service'
 import { db } from '@/db'
 import { notifications, quotes, sparePartRequests, users } from '@/db/schema'
 import { supabase } from '@/lib/supabase-client'
+import { ADMIN_ROUTES, BUYER_ROUTES, SELLER_ROUTES } from '@/lib/routes'
 
 /**
  * Higher-level triggers that map business events to notifications
@@ -37,7 +38,7 @@ export class NotificationTriggers {
           title: 'First Offer Received!',
           message: `Good news! A seller has submitted the first offer for your ${quote.request.partName}. Review it now.`,
           referenceId: quote.requestId,
-          linkUrl: `/dashboard/requests/${quote.requestId}`,
+          linkUrl: BUYER_ROUTES.REQUEST_DETAIL(quote.requestId),
           metadata,
         },
         tx,
@@ -50,7 +51,7 @@ export class NotificationTriggers {
           title: '3 Offers Received!',
           message: `You now have 3 competitive offers for your ${quote.request.partName}. Compare prices and choose the best deal.`,
           referenceId: quote.requestId,
-          linkUrl: `/dashboard/requests/${quote.requestId}`,
+          linkUrl: BUYER_ROUTES.REQUEST_DETAIL(quote.requestId),
           isPriority: true,
           metadata,
         },
@@ -89,7 +90,7 @@ export class NotificationTriggers {
             title: 'New Offer Received',
             message: `A new offer has been submitted for your ${quote.request.partName}. Open the request to review it.`,
             referenceId: quote.requestId,
-            linkUrl: `/dashboard/requests/${quote.requestId}`,
+            linkUrl: BUYER_ROUTES.REQUEST_DETAIL(quote.requestId),
             metadata,
           },
           tx,
@@ -118,7 +119,7 @@ export class NotificationTriggers {
         title: 'Offer Price Updated',
         message: `A seller revised their offer for your ${quote.request.partName}. Check the updated price and terms.`,
         referenceId: quote.requestId,
-        linkUrl: `/dashboard/requests/${quote.requestId}`,
+        linkUrl: BUYER_ROUTES.REQUEST_DETAIL(quote.requestId),
         metadata: {
           requestId: quote.requestId,
           status: quote.request.status,
@@ -179,7 +180,7 @@ export class NotificationTriggers {
         title: 'You Won the Deal!',
         message: `Congratulations! The buyer accepted your offer for ${quote.request.partName}. Go to your orders to proceed.`,
         referenceId: quote.requestId,
-        linkUrl: `/dashboard/orders`,
+        linkUrl: SELLER_ROUTES.QUOTES,
         isPriority: true,
         metadata: {
           requestId: quote.requestId,
@@ -214,7 +215,7 @@ export class NotificationTriggers {
         title: 'Offer Not Selected',
         message: `The buyer reviewed all offers for ${quote.request.partName} and chose a different one. Keep bidding on other requests!`,
         referenceId: quote.requestId,
-        linkUrl: `/dashboard/quotes`,
+        linkUrl: SELLER_ROUTES.QUOTES,
         metadata: {
           requestId: quote.requestId,
           status: quote.request.status,
@@ -247,7 +248,7 @@ export class NotificationTriggers {
         title: 'Offer Back in the Running',
         message: `Good news! The buyer reconsidered and your offer for ${quote.request.partName} is back in consideration.`,
         referenceId: quote.requestId,
-        linkUrl: `/dashboard/quotes`,
+        linkUrl: SELLER_ROUTES.QUOTES,
         metadata: {
           requestId: quote.requestId,
           status: quote.request.status,
@@ -273,7 +274,7 @@ export class NotificationTriggers {
       title: 'Offer Back in Consideration',
       message: `The buyer revoked their acceptance for ${quote.request.partName}. Your offer is back in consideration — the request is still open.`,
       referenceId: quote.requestId,
-      linkUrl: `/dashboard/quotes`,
+      linkUrl: SELLER_ROUTES.QUOTES,
       metadata: {
         requestId: quote.requestId,
         quoteId: quote.id,
@@ -295,7 +296,7 @@ export class NotificationTriggers {
       title: 'Action Required — Mark Request as Fulfilled',
       message: `The seller is waiting for you to confirm the deal on your request for "${quote.request.partName}". Please mark it as fulfilled once you receive the part.`,
       referenceId: quote.requestId,
-      linkUrl: `/dashboard/requests/${quote.requestId}`,
+      linkUrl: BUYER_ROUTES.REQUEST_DETAIL(quote.requestId),
       metadata: {
         requestId: quote.requestId,
         quoteId: quote.id,
@@ -322,7 +323,7 @@ export class NotificationTriggers {
         title: 'Deal Confirmed!',
         message: `The buyer confirmed the deal for "${request.partName}". The request is now fulfilled — contact them to arrange delivery.`,
         referenceId: requestId,
-        linkUrl: `/dashboard/quotes`,
+        linkUrl: SELLER_ROUTES.QUOTES,
         isPriority: true,
         metadata: {
           requestId,
@@ -339,7 +340,7 @@ export class NotificationTriggers {
         title: 'Request Fulfilled by Another Seller',
         message: `The request for "${request.partName}" was fulfilled by another seller. Your offer was not selected this time — keep bidding on open requests!`,
         referenceId: requestId,
-        linkUrl: `/dashboard/quotes`,
+        linkUrl: SELLER_ROUTES.QUOTES,
         metadata: {
           requestId,
           quoteStatus: 'rejected',
@@ -359,7 +360,7 @@ export class NotificationTriggers {
         type: 'NEW_SELLER_WAITLIST',
         title: 'New Seller Application',
         message: `${sellerName} has registered and is waiting for account approval.`,
-        linkUrl: `/admin/dashboard/users`,
+        linkUrl: ADMIN_ROUTES.USERS,
         metadata: { requestId: sellerId },
       })
     }
@@ -373,7 +374,7 @@ export class NotificationTriggers {
         title: 'Your Store is Live!',
         message:
           'Your seller account has been reviewed and approved by our team. You can now browse open requests and start bidding.',
-        linkUrl: `/dashboard/seller`,
+        linkUrl: SELLER_ROUTES.ROOT,
         isPriority: true,
       },
       tx,
@@ -397,7 +398,7 @@ export class NotificationTriggers {
         type: 'CREDIT_REQUEST',
         title: 'New Credit Request',
         message: `${sellerName} has requested ${credits} credits.`,
-        linkUrl: `/admin/dashboard/credit-requests`,
+        linkUrl: ADMIN_ROUTES.CREDIT_REQUESTS,
         metadata: { requestId: sellerId },
       })
     }
@@ -409,7 +410,7 @@ export class NotificationTriggers {
       type: 'CREDIT_APPROVED',
       title: 'Credits Added to Your Account!',
       message: `Your request was approved! ${credits} credits have been added to your account. You're ready to bid on new requests.`,
-      linkUrl: `/dashboard/seller`,
+      linkUrl: SELLER_ROUTES.ROOT,
       isPriority: true,
     })
   }
@@ -426,7 +427,7 @@ export class NotificationTriggers {
       message: adminNote
         ? `Your request for ${credits} credits was declined. Reason: ${adminNote}. Please contact support if you have questions.`
         : `Your request for ${credits} credits was declined. Please contact support for more information.`,
-      linkUrl: `/dashboard/seller`,
+      linkUrl: SELLER_ROUTES.ROOT,
     })
   }
 
@@ -442,7 +443,7 @@ export class NotificationTriggers {
         type: 'SPAM_FLAG',
         title: 'Spam Report — Review Required',
         message: `Request #${requestId.slice(0, 8)} has been flagged as potential spam. Please review and take action.`,
-        linkUrl: `/admin/dashboard/requests`,
+        linkUrl: ADMIN_ROUTES.AUDIT_LOG,
       })
     }
   }
