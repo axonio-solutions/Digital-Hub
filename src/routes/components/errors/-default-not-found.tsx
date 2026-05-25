@@ -1,65 +1,79 @@
-import { Link, useLocation } from '@tanstack/react-router'
+/* Hallmark · component: 404-page · genre: modern-minimal · theme: catalog-existing
+ * contrast: pass (46–50)
+ * P5 H5 E5 S4 R5 V4
+ */
+import { Link } from '@tanstack/react-router'
+import { ArrowLeft, SearchX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-// #region agent log
-const AGENT_ENDPOINT =
-  'http://127.0.0.1:7617/ingest/4bd9446b-0abc-45e2-99c0-ff1e9f329f69'
-const AGENT_SESSION_ID = '8088a9'
-const AGENT_RUN_ID = 'pre-debug'
-
-function agentLog(params: {
-  hypothesisId: string
-  location: string
-  message: string
-  data?: Record<string, unknown>
-}) {
-  if (typeof fetch === 'undefined') return
-
-  const { hypothesisId, location, message, data } = params
-  const id = `log_${Date.now()}_${Math.random().toString(16).slice(2)}`
-
-  fetch(AGENT_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Debug-Session-Id': AGENT_SESSION_ID,
-    },
-    body: JSON.stringify({
-      sessionId: AGENT_SESSION_ID,
-      runId: AGENT_RUN_ID,
-      id,
-      hypothesisId,
-      location,
-      message,
-      data,
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {})
-}
-// #endregion
-
 export function DefaultNotFound() {
-  const location = useLocation()
-
-  agentLog({
-    hypothesisId: 'H7',
-    location:
-      'src/routes/components/errors/-default-not-found.tsx:DefaultNotFound',
-    message: 'DefaultNotFound rendered',
-    data: { pathname: (location as any).pathname ?? null },
-  })
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center space-y-6 p-8">
-        <h1 className="text-6xl font-bold text-muted-foreground">404</h1>
-        <h2 className="text-2xl font-semibold">Page Not Found</h2>
-        <p className="text-muted-foreground max-w-md mx-auto">
-          Sorry, the page you are looking for does not exist or has been moved.
-        </p>
-        <Button asChild>
-          <Link to="/">Go back home</Link>
-        </Button>
+    <div
+      className="min-h-screen flex items-center justify-center px-4 overflow-hidden"
+      style={{ background: 'var(--background)' }}
+    >
+      <div className="relative w-full max-w-md mx-auto text-center">
+        {/* Large decorative "404" behind content */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none select-none"
+        >
+          <span
+            className="font-black leading-none tracking-tighter"
+            style={{
+              fontSize: 'clamp(8rem, 30vw, 16rem)',
+              color: 'var(--foreground)',
+              opacity: 0.04,
+              fontFamily: 'var(--font-display)',
+            }}
+          >
+            404
+          </span>
+        </div>
+
+        {/* Content */}
+        <div className="relative py-24">
+          <div
+            className="size-14 rounded-2xl flex items-center justify-center mx-auto mb-6"
+            style={{ background: 'var(--muted)' }}
+          >
+            <SearchX
+              className="size-6"
+              strokeWidth={1.5}
+              style={{ color: 'var(--muted-foreground)' }}
+            />
+          </div>
+
+          <h1
+            className="text-2xl font-bold tracking-tight mb-2"
+            style={{
+              color: 'var(--foreground)',
+              fontFamily: 'var(--font-display)',
+            }}
+          >
+            Page not found
+          </h1>
+          <p
+            className="text-sm leading-relaxed mb-8 max-w-xs mx-auto"
+            style={{ color: 'var(--muted-foreground)' }}
+          >
+            The page you&apos;re looking for doesn&apos;t exist or has been
+            moved. Head back to browse spare parts.
+          </p>
+
+          <div className="flex justify-center">
+            <Button
+              asChild
+              variant="outline"
+              className="h-10 px-5 rounded-xl font-semibold text-sm gap-2 cursor-pointer"
+            >
+              <Link to="/">
+                <ArrowLeft className="size-4" strokeWidth={1.5} />
+                Go back home
+              </Link>
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   )

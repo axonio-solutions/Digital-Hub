@@ -3,6 +3,7 @@ import {
   Outlet,
   Scripts,
   createRootRouteWithContext,
+  redirect,
   useNavigate,
   useRouter,
 } from '@tanstack/react-router'
@@ -13,6 +14,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
+import { MotionConfig } from 'framer-motion'
 import styles from '../styles.css?url'
 import { DefaultNotFound } from './components/errors/-default-not-found'
 import type { MyRouterContext } from '@/types/router'
@@ -21,7 +23,6 @@ import { DirectionProvider } from '@/components/ui/direction'
 import { authQueries } from '@/features/auth/queries/auth-queries'
 import { useNotifications } from '@/features/notifications/hooks/use-notifications'
 import { SYSTEM_ROUTES } from '@/lib/routes'
-import { MotionConfig } from 'framer-motion'
 import { ThemeProvider } from '@/components/theme-provider'
 import { I18nProvider } from '@/components/i18n-provider'
 
@@ -39,7 +40,7 @@ function ConnectionGuard() {
     const handleOffline = () => {
       navigate({
         to: SYSTEM_ROUTES.OFFLINE,
-        search: { from: router.state.location.pathname },
+        search: { from: router.state.location.pathname } as any,
       })
     }
     window.addEventListener('offline', handleOffline)
@@ -51,7 +52,19 @@ function ConnectionGuard() {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   validateSearch: (search) => rootSearchSchema.parse(search),
-  beforeLoad: async ({ context }) => {
+  beforeLoad: async ({ context, location }) => {
+    // Redirect to offline page before any auth check when the device has no network
+    if (
+      typeof navigator !== 'undefined' &&
+      !navigator.onLine &&
+      location.pathname !== SYSTEM_ROUTES.OFFLINE
+    ) {
+      throw redirect({
+        to: SYSTEM_ROUTES.OFFLINE,
+        search: { from: location.pathname } as any,
+      })
+    }
+
     try {
       const user = (await context.queryClient.ensureQueryData(
         authQueries.user(),
@@ -60,6 +73,17 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         user,
       }
     } catch (error) {
+      // Network failure mid-request (went offline after the check above)
+      if (
+        typeof navigator !== 'undefined' &&
+        !navigator.onLine &&
+        location.pathname !== SYSTEM_ROUTES.OFFLINE
+      ) {
+        throw redirect({
+          to: SYSTEM_ROUTES.OFFLINE,
+          search: { from: location.pathname } as any,
+        })
+      }
       console.error('Auth Session Error:', error)
       return {
         user: null as any,

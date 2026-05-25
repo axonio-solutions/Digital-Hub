@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
-import { ROLE_HOME, DASHBOARD_ROUTES } from '@/lib/routes'
+import { DASHBOARD_ROUTES, ROLE_HOME } from '@/lib/routes'
 
 const BuyerLayout = React.lazy(() =>
   import('@/features/buyer/components/layout/buyer-layout').then((m) => ({
