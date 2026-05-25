@@ -39,12 +39,7 @@ import {
 } from '@/components/ui/table'
 import { DataTableToolbar } from '@/components/ui/data-table/data-table-toolbar'
 import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import {
   requestKeys,
   useAllRequests,

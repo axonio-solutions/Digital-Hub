@@ -41,12 +41,7 @@ import {
 } from '@/features/admin/hooks/use-analytics'
 import { tCategory } from '@/utils/category-utils'
 import { DirectionProvider } from '@/components/ui/direction'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'

@@ -9,6 +9,7 @@ import {
   IconReportMoney,
   IconSend,
   IconSettings,
+  IconTag,
   IconUsers,
 } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
@@ -40,6 +41,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       title: t('nav.sellers_hub'),
       url: ADMIN_ROUTES.SELLERS,
       icon: IconBuildingStore,
+    },
+    {
+      title: t('nav.categories'),
+      url: ADMIN_ROUTES.CATEGORIES,
+      icon: IconTag,
     },
     {
       title: t('nav.revenue'),

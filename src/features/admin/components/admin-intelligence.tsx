@@ -30,12 +30,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DirectionProvider } from '@/components/ui/direction'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useMarketGapAnalysis } from '@/features/admin/hooks/use-analytics'

@@ -4,12 +4,7 @@ import { HelpCircle, RefreshCw } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 
 export interface AnalyticsMetric {

@@ -12,12 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { RouteErrorFallback } from '@/routes/components/errors/route-error-fallback'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { AdminUsersTable } from '@/features/admin/components/users-table'
 import {
   useAdminUsers,
