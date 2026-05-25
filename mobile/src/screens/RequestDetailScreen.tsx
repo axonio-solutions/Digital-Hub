@@ -32,6 +32,7 @@ import { radius, spacing } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
 import type { Theme } from '../theme/tokens'
 import type { BuyerRequestRow, Quote } from '../types/buyer'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
@@ -68,11 +69,15 @@ export function RequestDetailScreen({
 }: RequestDetailScreenProps) {
   const t = useTheme()
   const s = makeStyles(t)
+  const insets = useSafeAreaInsets()
 
   const [request, setRequest] = useState<BuyerRequestRow | null>(null)
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
-  const [isFulfilling, setIsFulfilling] = useState(false)
+  const [confirmAction, setConfirmAction] = useState<
+    'close' | 'fulfill' | 'reopen' | 'delete' | null
+  >(null)
+  const [confirmLoading, setConfirmLoading] = useState(false)
   const [imageIndex, setImageIndex] = useState(0)
   const [contactSeller, setContactSeller] = useState<Quote['seller'] | null>(
     null,
@@ -156,27 +161,7 @@ export function RequestDetailScreen({
   }
 
   function confirmFulfill() {
-    Alert.alert(
-      'Mark as Fulfilled',
-      'Confirm that the deal is done and close this request?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Mark Fulfilled',
-          onPress: async () => {
-            setIsFulfilling(true)
-            try {
-              await fulfillRequestFn(requestId)
-              silentLoad()
-            } catch (e: any) {
-              Alert.alert('Error', e?.message || 'Could not fulfill request.')
-            } finally {
-              setIsFulfilling(false)
-            }
-          },
-        },
-      ],
-    )
+    setConfirmAction('fulfill')
   }
 
   async function handleUnrejectQuote(quoteId: string) {
@@ -192,69 +177,49 @@ export function RequestDetailScreen({
   }
 
   function confirmCancel() {
-    Alert.alert('Close request', 'Mark this request as closed?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Close',
-        style: 'destructive',
-        onPress: async () => {
-          setActionLoading('close')
-          try {
-            await cancelRequestFn(requestId)
-            silentLoad()
-          } catch {
-            Alert.alert('Error', 'Could not close request.')
-          } finally {
-            setActionLoading(null)
-          }
-        },
-      },
-    ])
+    setConfirmAction('close')
   }
 
   function confirmReopen() {
-    Alert.alert('Reopen request', 'Reopen this request for new offers?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Reopen',
-        onPress: async () => {
-          setActionLoading('reopen')
-          try {
-            await reopenRequestFn(requestId)
-            silentLoad()
-          } catch {
-            Alert.alert('Error', 'Could not reopen request.')
-          } finally {
-            setActionLoading(null)
-          }
-        },
-      },
-    ])
+    setConfirmAction('reopen')
   }
 
   function confirmDelete() {
-    Alert.alert('Delete request', 'This cannot be undone.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          setActionLoading('delete')
-          try {
-            await deleteRequestFn(requestId)
-            onBack()
-          } catch {
-            Alert.alert('Error', 'Could not delete request.')
-          } finally {
-            setActionLoading(null)
-          }
-        },
-      },
-    ])
+    setConfirmAction('delete')
   }
 
-  const topInset =
-    Platform.OS === 'ios' ? 54 : (StatusBar.currentHeight ?? 28) + 8
+  async function executeConfirmedAction() {
+    if (!confirmAction) return
+    setConfirmLoading(true)
+    try {
+      switch (confirmAction) {
+        case 'close':
+          await cancelRequestFn(requestId)
+          silentLoad()
+          break
+        case 'fulfill':
+          await fulfillRequestFn(requestId)
+          silentLoad()
+          break
+        case 'reopen':
+          await reopenRequestFn(requestId)
+          silentLoad()
+          break
+        case 'delete':
+          await deleteRequestFn(requestId)
+          onBack()
+          break
+      }
+      setConfirmAction(null)
+    } catch (e: any) {
+      setConfirmAction(null)
+      Alert.alert('Error', e?.message || 'Action failed.')
+    } finally {
+      setConfirmLoading(false)
+    }
+  }
+
+  const topInset = insets.top
 
   const sCfg = statusConfig(t)[request?.status || 'open'] ?? {
     label: request?.status || '',
@@ -263,7 +228,6 @@ export function RequestDetailScreen({
   }
 
   const isOpen = request?.status === 'open'
-  const isFulfilled = request?.status === 'fulfilled'
   const isCancelled = request?.status === 'cancelled'
 
   if (!request && !loading) {
@@ -492,7 +456,7 @@ export function RequestDetailScreen({
           </>
         ) : request ? (
           <>
-            {!!onEdit && (
+            {!!onEdit && isOpen && (
               <ActionBtn
                 icon="create-outline"
                 label="Edit"
@@ -506,7 +470,7 @@ export function RequestDetailScreen({
                 icon="checkmark-circle-outline"
                 label="Fulfilled"
                 onPress={confirmFulfill}
-                loading={isFulfilling}
+                loading={false}
                 variant="success"
               />
             )}
@@ -515,7 +479,7 @@ export function RequestDetailScreen({
                 icon="close-circle-outline"
                 label="Close"
                 onPress={confirmCancel}
-                loading={actionLoading === 'close'}
+                loading={false}
                 variant="danger"
               />
             )}
@@ -528,7 +492,9 @@ export function RequestDetailScreen({
                 variant="primary"
               />
             )}
-            {!isOpen && !isCancelled && !isFulfilled && (
+            {(isCancelled ||
+              (isOpen &&
+                !request.quotes?.some((q) => q.status === 'accepted'))) && (
               <ActionBtn
                 icon="trash-outline"
                 label="Delete"
@@ -572,6 +538,16 @@ export function RequestDetailScreen({
           onClose={() => {
             setShowRejectOverlay(false)
             silentLoad()
+          }}
+        />
+      )}
+      {confirmAction && (
+        <RequestConfirmOverlay
+          action={confirmAction}
+          loading={confirmLoading}
+          onConfirm={executeConfirmedAction}
+          onDismiss={() => {
+            if (!confirmLoading) setConfirmAction(null)
           }}
         />
       )}
@@ -1386,6 +1362,165 @@ function RejectOverlay({ onClose }: { onClose: () => void }) {
           >
             <Ionicons name="checkmark" size={18} color="#fff" />
             <Text style={s.overlayBtnText}>Got it</Text>
+          </Pressable>
+        </Pressable>
+      </Animated.View>
+    </View>
+  )
+}
+
+// ── RequestConfirmOverlay ─────────────────────────────────────────────────────
+
+function RequestConfirmOverlay({
+  action,
+  loading,
+  onConfirm,
+  onDismiss,
+}: {
+  action: 'close' | 'fulfill' | 'reopen' | 'delete'
+  loading: boolean
+  onConfirm: () => void
+  onDismiss: () => void
+}) {
+  const t = useTheme()
+  const s = makeStyles(t)
+  const bgOpacity = useRef(new Animated.Value(0)).current
+  const cardScale = useRef(new Animated.Value(0.88)).current
+  const cardOpacity = useRef(new Animated.Value(0)).current
+  const confirmScale = useRef(new Animated.Value(1)).current
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(bgOpacity, {
+        toValue: 1,
+        duration: 220,
+        useNativeDriver: true,
+      }),
+      Animated.timing(cardOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.spring(cardScale, {
+        toValue: 1,
+        stiffness: 320,
+        damping: 24,
+        useNativeDriver: true,
+      }),
+    ]).start()
+  }, [])
+
+  const cfg = {
+    close: {
+      icon: 'close-circle-outline' as keyof typeof Ionicons.glyphMap,
+      iconColor: t.danger,
+      iconBg: t.dangerBg,
+      title: 'Close Request',
+      sub: "Sellers won't be able to see or respond to this request.",
+      confirmLabel: 'Close Request',
+      confirmBg: t.danger,
+    },
+    fulfill: {
+      icon: 'checkmark-circle-outline' as keyof typeof Ionicons.glyphMap,
+      iconColor: t.success,
+      iconBg: `${t.success}14`,
+      title: 'Mark as Fulfilled',
+      sub: 'Confirm the deal is done and close this request.',
+      confirmLabel: 'Mark Fulfilled',
+      confirmBg: t.success,
+    },
+    reopen: {
+      icon: 'refresh-outline' as keyof typeof Ionicons.glyphMap,
+      iconColor: t.accent,
+      iconBg: `${t.accent}14`,
+      title: 'Reopen Request',
+      sub: 'This request will be visible to sellers again and open for new offers.',
+      confirmLabel: 'Reopen',
+      confirmBg: t.accent,
+    },
+    delete: {
+      icon: 'trash-outline' as keyof typeof Ionicons.glyphMap,
+      iconColor: t.danger,
+      iconBg: t.dangerBg,
+      title: 'Delete Request',
+      sub: 'This cannot be undone. The request and all its offers will be permanently removed.',
+      confirmLabel: 'Delete',
+      confirmBg: t.danger,
+    },
+  }[action]
+
+  return (
+    <View style={[StyleSheet.absoluteFillObject, s.overlayRoot]}>
+      <Animated.View
+        style={[StyleSheet.absoluteFillObject, s.overlayBg, { opacity: bgOpacity }]}
+      />
+      <Pressable
+        style={StyleSheet.absoluteFillObject}
+        onPress={loading ? undefined : onDismiss}
+      />
+      <Animated.View
+        style={[
+          s.overlayCard,
+          { transform: [{ scale: cardScale }], opacity: cardOpacity },
+        ]}
+        pointerEvents="box-none"
+      >
+        <Pressable onPress={() => {}} style={s.overlayCardInner}>
+          <View style={[s.overlayIconBox, { backgroundColor: cfg.iconBg }]}>
+            <Ionicons name={cfg.icon} size={36} color={cfg.iconColor} />
+          </View>
+          <Text style={s.overlayTitle}>{cfg.title}</Text>
+          <Text style={s.overlaySub}>{cfg.sub}</Text>
+          <Pressable
+            onPress={onConfirm}
+            disabled={loading}
+            onPressIn={() =>
+              Animated.spring(confirmScale, {
+                toValue: 0.96,
+                stiffness: 400,
+                damping: 20,
+                useNativeDriver: true,
+              }).start()
+            }
+            onPressOut={() =>
+              Animated.spring(confirmScale, {
+                toValue: 1,
+                stiffness: 400,
+                damping: 20,
+                useNativeDriver: true,
+              }).start()
+            }
+            style={{ width: '100%' }}
+          >
+            <Animated.View
+              style={[
+                s.overlayBtn,
+                {
+                  backgroundColor: cfg.confirmBg,
+                  transform: [{ scale: confirmScale }],
+                },
+                loading && { opacity: 0.65 },
+              ]}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Ionicons name={cfg.icon} size={18} color="#fff" />
+              )}
+              <Text style={s.overlayBtnText}>
+                {loading ? 'Please wait…' : cfg.confirmLabel}
+              </Text>
+            </Animated.View>
+          </Pressable>
+          <Pressable
+            onPress={loading ? undefined : onDismiss}
+            style={({ pressed }) => [
+              s.overlayBtn,
+              s.overlayBtnOutline,
+              pressed && !loading && { opacity: 0.7 },
+            ]}
+          >
+            <Text style={[s.overlayBtnText, { color: t.accent }]}>Cancel</Text>
           </Pressable>
         </Pressable>
       </Animated.View>

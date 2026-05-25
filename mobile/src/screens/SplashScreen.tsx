@@ -5,12 +5,12 @@ import {
   FlatList,
   Platform,
   Pressable,
-  StatusBar,
   StyleSheet,
   Text,
   View,
   useWindowDimensions,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from '@expo/vector-icons/Ionicons'
 
 import SplashBg from '../components/SplashBg'
@@ -62,24 +62,36 @@ interface SplashScreenProps {
 }
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
-  const { width, height: screenHeight } = useWindowDimensions()
-  const topInset =
-    Platform.OS === 'ios' ? 54 : (StatusBar.currentHeight ?? 28) + 8
+  const { width } = useWindowDimensions()
+  const insets = useSafeAreaInsets()
   const scrollX = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [reduced, setReduced] = useState(false)
-
   const ctaScale = useRef(new Animated.Value(1)).current
+  const shimmerX = useRef(new Animated.Value(-100)).current
 
   useEffect(() => {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduced)
-    const sub = AccessibilityInfo.addEventListener(
-      'reduceMotionChanged',
-      setReduced,
-    )
+    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduced)
     return () => sub.remove()
   }, [])
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.delay(2800),
+        Animated.timing(shimmerX, {
+          toValue: 500,
+          duration: 720,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shimmerX, { toValue: -100, duration: 0, useNativeDriver: true }),
+      ]),
+    )
+    loop.start()
+    return () => loop.stop()
+  }, [shimmerX])
 
   const isLastSlide = currentIndex === SLIDES.length - 1
 
@@ -104,10 +116,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     if (isLastSlide) {
       onComplete()
     } else {
-      flatListRef.current?.scrollToIndex({
-        index: currentIndex + 1,
-        animated: true,
-      })
+      flatListRef.current?.scrollToIndex({ index: currentIndex + 1, animated: true })
       setCurrentIndex(currentIndex + 1)
     }
   }, [isLastSlide, currentIndex, onComplete])
@@ -134,8 +143,11 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     }).start()
   }, [ctaScale, reduced])
 
+  const topPadding = insets.top + 4
+  const bottomPadding = insets.bottom + 16
+
   return (
-    <View style={[styles.root, { paddingTop: topInset }]}>
+    <View style={[styles.root, { paddingTop: topPadding }]}>
       <SplashBg reduced={reduced} />
 
       {/* Top bar */}
@@ -150,10 +162,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             hitSlop={12}
             accessibilityLabel="Skip onboarding"
             accessibilityRole="button"
-            style={({ pressed }) => [
-              styles.skipBtn,
-              pressed && !reduced && { opacity: 0.6 },
-            ]}
+            style={({ pressed }) => [styles.skipBtn, pressed && !reduced && { opacity: 0.6 }]}
           >
             <Text style={styles.skipText}>Skip</Text>
           </Pressable>
@@ -175,11 +184,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         scrollEventThrottle={16}
         style={{ flex: 1 }}
         renderItem={({ item, index }) => {
-          const inputRange = [
-            width * (index - 1),
-            width * index,
-            width * (index + 1),
-          ]
+          const inputRange = [width * (index - 1), width * index, width * (index + 1)]
 
           const iconScale = scrollX.interpolate({
             inputRange,
@@ -207,20 +212,17 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
           const ghostOpacity = scrollX.interpolate({
             inputRange,
-            outputRange: [0, 0.045, 0],
+            outputRange: [0, 0.055, 0],
             extrapolate: 'clamp',
           })
 
           const slideNumber = `0${index + 1}`
-          // Use green accent for last two slides
           const isGreenSlide = index >= 2
 
           return (
             <View style={[styles.slide, { width }]}>
               {/* Ghost step number */}
-              <Animated.Text
-                style={[styles.ghostNumber, { opacity: ghostOpacity }]}
-              >
+              <Animated.Text style={[styles.ghostNumber, { opacity: ghostOpacity }]}>
                 {slideNumber}
               </Animated.Text>
 
@@ -229,10 +231,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
                 <Animated.View
                   style={[
                     styles.badge,
-                    {
-                      opacity: textOpacity,
-                      transform: [{ translateY: textTranslateY }],
-                    },
+                    { opacity: textOpacity, transform: [{ translateY: textTranslateY }] },
                   ]}
                 >
                   <View style={styles.badgeDot} />
@@ -257,16 +256,13 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
                   />
                 </Animated.View>
 
-                {/* Accent dot — top-right of diamond area */}
                 <Animated.View
                   style={[
                     styles.accentDot,
-                    isGreenSlide && styles.accentDotPurple,
+                    isGreenSlide && styles.accentDotBlue,
                     { transform: [{ scale: iconScale }] },
                   ]}
                 />
-
-                {/* Small accent ring — bottom-left */}
                 <Animated.View
                   style={[
                     styles.accentRing,
@@ -280,10 +276,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               <Animated.Text
                 style={[
                   styles.title,
-                  {
-                    opacity: textOpacity,
-                    transform: [{ translateY: textTranslateY }],
-                  },
+                  { opacity: textOpacity, transform: [{ translateY: textTranslateY }] },
                 ]}
               >
                 {item.title}
@@ -294,10 +287,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
                 style={[
                   styles.divider,
                   isGreenSlide && styles.dividerGreen,
-                  {
-                    opacity: textOpacity,
-                    transform: [{ translateY: textTranslateY }],
-                  },
+                  { opacity: textOpacity, transform: [{ translateY: textTranslateY }] },
                 ]}
               />
 
@@ -305,10 +295,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               <Animated.Text
                 style={[
                   styles.description,
-                  {
-                    opacity: textOpacity,
-                    transform: [{ translateY: descTranslateY }],
-                  },
+                  { opacity: textOpacity, transform: [{ translateY: descTranslateY }] },
                 ]}
               >
                 {item.description}
@@ -319,22 +306,14 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       />
 
       {/* Bottom area */}
-      <View
-        style={[
-          styles.bottom,
-          { paddingBottom: Platform.OS === 'ios' ? 32 : 20 },
-        ]}
-      >
+      <View style={[styles.bottom, { paddingBottom: bottomPadding }]}>
         {/* Sign in link */}
         <Pressable
           onPress={onComplete}
           hitSlop={8}
           accessibilityLabel="Sign in to existing account"
           accessibilityRole="button"
-          style={({ pressed }) => [
-            styles.signInRow,
-            pressed && !reduced && { opacity: 0.6 },
-          ]}
+          style={({ pressed }) => [styles.signInRow, pressed && !reduced && { opacity: 0.6 }]}
         >
           <Text style={styles.signInPrefix}>Already have an account? </Text>
           <Text style={styles.signInLink}>Sign in</Text>
@@ -349,29 +328,23 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         />
 
         {/* CTA */}
-        <Animated.View
-          style={[styles.ctaWrap, { transform: [{ scale: ctaScale }] }]}
-        >
+        <Animated.View style={[styles.ctaWrap, { transform: [{ scale: ctaScale }] }]}>
           <Pressable
             onPress={handleNext}
             onPressIn={handleCtaPressIn}
             onPressOut={handleCtaPressOut}
-            accessibilityLabel={
-              isLastSlide ? 'Get started with mlila' : 'Go to next slide'
-            }
+            accessibilityLabel={isLastSlide ? 'Get started with mlila' : 'Go to next slide'}
             accessibilityRole="button"
             style={styles.cta}
           >
-            {/* Diagonal shimmer stripe */}
-            <View style={styles.ctaShimmer} />
-            <Text style={styles.ctaText}>
-              {isLastSlide ? 'Get Started' : 'Next'}
-            </Text>
+            <View style={styles.ctaHighlight} />
+            <Animated.View
+              style={[styles.ctaShimmer, { transform: [{ translateX: shimmerX }] }]}
+            />
+            <Text style={styles.ctaText}>{isLastSlide ? 'Get Started' : 'Next'}</Text>
             <View style={styles.ctaIconBubble}>
               <Ionicons
-                name={
-                  isLastSlide ? 'checkmark-outline' : 'arrow-forward-outline'
-                }
+                name={isLastSlide ? 'checkmark-outline' : 'arrow-forward-outline'}
                 size={17}
                 color="#fff"
               />
@@ -513,7 +486,7 @@ const styles = StyleSheet.create({
     backgroundColor: C.green,
     zIndex: 2,
   },
-  accentDotPurple: {
+  accentDotBlue: {
     backgroundColor: C.blue,
   },
   accentRing: {
@@ -534,10 +507,10 @@ const styles = StyleSheet.create({
 
   // ── Text ─────────────────────────────────────────────────
   title: {
-    fontSize: 34,
+    fontSize: 36,
     fontWeight: '900',
     textAlign: 'center',
-    letterSpacing: -0.8,
+    letterSpacing: -0.9,
     color: '#0a0a0a',
     marginBottom: 12,
     zIndex: 1,
@@ -557,7 +530,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
     textAlign: 'center',
-    lineHeight: 26,
+    lineHeight: 28,
     color: '#52525b',
     zIndex: 1,
   },
@@ -601,18 +574,26 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     shadowColor: C.blue,
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.38,
-    shadowRadius: 20,
-    elevation: 12,
+    shadowOpacity: 0.4,
+    shadowRadius: 22,
+    elevation: 14,
+  },
+  ctaHighlight: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   ctaShimmer: {
     position: 'absolute',
-    left: '35%',
+    left: 0,
     top: -10,
     bottom: -10,
-    width: 28,
+    width: 56,
     backgroundColor: '#ffffff',
-    opacity: 0.07,
+    opacity: 0.1,
     transform: [{ skewX: '-18deg' }],
   },
   ctaText: {

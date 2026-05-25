@@ -1,15 +1,16 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
-  Alert,
   Animated,
   Image,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { radius, spacing, typography } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
@@ -72,8 +73,56 @@ export function ProfileScreen({
   creditBalance,
 }: ProfileScreenProps) {
   const t = useTheme()
+  const insets = useSafeAreaInsets()
   const [editing, setEditing] = useState(false)
   const [showSupport, setShowSupport] = useState(false)
+  const [showLogOutSheet, setShowLogOutSheet] = useState(false)
+
+  // Log-out sheet animation
+  const sheetY = useRef(new Animated.Value(320)).current
+  const backdropOpacity = useRef(new Animated.Value(0)).current
+  const logoutScale = useRef(new Animated.Value(1)).current
+
+  const openLogOutSheet = useCallback(() => {
+    setShowLogOutSheet(true)
+    Animated.parallel([
+      Animated.spring(sheetY, {
+        toValue: 0,
+        stiffness: 380,
+        damping: 30,
+        mass: 0.8,
+        useNativeDriver: true,
+      }),
+      Animated.timing(backdropOpacity, {
+        toValue: 1,
+        duration: 220,
+        useNativeDriver: true,
+      }),
+    ]).start()
+  }, [sheetY, backdropOpacity])
+
+  const closeLogOutSheet = useCallback(
+    (confirm: boolean) => {
+      Animated.parallel([
+        Animated.timing(sheetY, {
+          toValue: 320,
+          duration: 240,
+          useNativeDriver: true,
+        }),
+        Animated.timing(backdropOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        sheetY.setValue(320)
+        backdropOpacity.setValue(0)
+        setShowLogOutSheet(false)
+        if (confirm) onLogOut()
+      })
+    },
+    [sheetY, backdropOpacity, onLogOut],
+  )
 
   const statusMeta = getStatusMeta(user.account_status)
   const hasStats = !!kpiData
@@ -136,10 +185,7 @@ export function ProfileScreen({
   }
 
   function handleLogOut() {
-    Alert.alert('Log out', 'Are you sure you want to log out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Log out', style: 'destructive', onPress: onLogOut },
-    ])
+    openLogOutSheet()
   }
 
   function Card({
@@ -504,6 +550,107 @@ export function ProfileScreen({
           </View>
         </Card>
       </ScrollView>
+
+      {/* ── Log-out confirmation sheet ──────────────────── */}
+      <Modal
+        transparent
+        visible={showLogOutSheet}
+        animationType="none"
+        onRequestClose={() => closeLogOutSheet(false)}
+        statusBarTranslucent
+      >
+        <View style={sheetStyles.overlay}>
+          {/* Tapable backdrop */}
+          <Animated.View
+            style={[sheetStyles.backdrop, { opacity: backdropOpacity }]}
+          />
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => closeLogOutSheet(false)}
+          />
+
+          {/* Sheet */}
+          <Animated.View
+            style={[
+              sheetStyles.sheet,
+              {
+                backgroundColor: t.surface,
+                paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 24,
+                transform: [{ translateY: sheetY }],
+              },
+            ]}
+          >
+            {/* Handle */}
+            <View style={[sheetStyles.handle, { backgroundColor: t.border }]} />
+
+            {/* Icon */}
+            <View style={[sheetStyles.iconRing, { borderColor: C.red + '28' }]}>
+              <View
+                style={[sheetStyles.iconWrap, { backgroundColor: C.red + '12' }]}
+              >
+                <Ionicons name="log-out-outline" size={30} color={C.red} />
+              </View>
+            </View>
+
+            {/* Copy */}
+            <Text style={[sheetStyles.title, { color: t.text }]}>Log out?</Text>
+            <Text style={[sheetStyles.subtitle, { color: t.textMuted }]}>
+              You'll be signed out and will need to sign in again to access your
+              account.
+            </Text>
+
+            {/* Buttons */}
+            <View style={sheetStyles.buttons}>
+              <Pressable
+                onPress={() => closeLogOutSheet(false)}
+                style={({ pressed }) => [
+                  sheetStyles.btnCancel,
+                  { borderColor: t.border, backgroundColor: t.bgMuted },
+                  pressed && { opacity: 0.7 },
+                ]}
+              >
+                <Text style={[sheetStyles.btnCancelText, { color: t.text }]}>
+                  Cancel
+                </Text>
+              </Pressable>
+
+              <Animated.View
+                style={[
+                  sheetStyles.btnConfirmWrap,
+                  { transform: [{ scale: logoutScale }] },
+                ]}
+              >
+                <Pressable
+                  onPress={() => closeLogOutSheet(true)}
+                  onPressIn={() =>
+                    Animated.spring(logoutScale, {
+                      toValue: 0.96,
+                      stiffness: 400,
+                      damping: 20,
+                      mass: 0.3,
+                      useNativeDriver: true,
+                    }).start()
+                  }
+                  onPressOut={() =>
+                    Animated.spring(logoutScale, {
+                      toValue: 1,
+                      stiffness: 400,
+                      damping: 20,
+                      mass: 0.3,
+                      useNativeDriver: true,
+                    }).start()
+                  }
+                  style={[sheetStyles.btnConfirm, { backgroundColor: C.red }]}
+                >
+                  <View style={sheetStyles.ctaHighlight} />
+                  <Ionicons name="log-out-outline" size={17} color="#fff" />
+                  <Text style={sheetStyles.btnConfirmText}>Log out</Text>
+                </Pressable>
+              </Animated.View>
+            </View>
+          </Animated.View>
+        </View>
+      </Modal>
     </View>
   )
 }
@@ -741,5 +888,115 @@ const styles = StyleSheet.create({
     height: 1,
     opacity: 0.2,
     marginHorizontal: spacing.lg,
+  },
+})
+
+// ── Log-out sheet styles ─────────────────────────────────────
+const sheetStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.52)',
+  },
+  sheet: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    alignItems: 'center',
+    gap: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 16,
+  },
+  handle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    marginBottom: 12,
+  },
+  iconRing: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  iconWrap: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '900',
+    letterSpacing: -0.5,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 21,
+    textAlign: 'center',
+    paddingHorizontal: 12,
+    marginBottom: 8,
+  },
+  buttons: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+    marginTop: 4,
+  },
+  btnCancel: {
+    flex: 1,
+    height: 56,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnCancelText: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  btnConfirmWrap: {
+    flex: 1,
+  },
+  btnConfirm: {
+    height: 56,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    overflow: 'hidden',
+    shadowColor: C.red,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.38,
+    shadowRadius: 14,
+    elevation: 10,
+  },
+  ctaHighlight: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.22)',
+  },
+  btnConfirmText: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#fff',
+    letterSpacing: -0.2,
   },
 })

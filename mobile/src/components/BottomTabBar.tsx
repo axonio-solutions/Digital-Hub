@@ -1,6 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect, useRef } from 'react'
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
+import { useTheme } from '../theme/use-theme'
 
 export type TabId =
   | 'home'
@@ -80,7 +81,6 @@ const SELLER_TABS: Array<TabConfig> = [
 const C = {
   blue: '#2563EB',
   green: '#22C55E',
-  pillBg: '#2563EB16',
 } as const
 
 const PADDING_H = 10
@@ -94,6 +94,9 @@ interface AnimatedTabItemProps {
   onPress: () => void
   showBadge?: boolean
   badgeCount?: number
+  inactiveColor: string
+  activePillBg: string
+  barBg: string
 }
 
 function AnimatedTabItem({
@@ -102,6 +105,9 @@ function AnimatedTabItem({
   onPress,
   showBadge = false,
   badgeCount = 0,
+  inactiveColor,
+  activePillBg,
+  barBg,
 }: AnimatedTabItemProps) {
   const bounceScale = useRef(new Animated.Value(1)).current
   const pillOpacity = useRef(new Animated.Value(isActive ? 1 : 0)).current
@@ -178,18 +184,18 @@ function AnimatedTabItem({
         <Animated.View
           style={[
             styles.activePill,
-            { opacity: pillOpacity, transform: [{ scale: pillScale }] },
+            { backgroundColor: activePillBg, opacity: pillOpacity, transform: [{ scale: pillScale }] },
           ]}
         />
         <Animated.View style={{ transform: [{ scale: bounceScale }] }}>
           <Ionicons
             name={isActive ? tab.iconActive : tab.iconInactive}
             size={22}
-            color={isActive ? C.blue : '#b4b4bc'}
+            color={isActive ? C.blue : inactiveColor}
           />
         </Animated.View>
         {showBadge && (
-          <View style={styles.badge}>
+          <View style={[styles.badge, { borderColor: barBg }]}>
             <Text style={styles.badgeText}>
               {badgeCount > 9 ? '9+' : String(badgeCount)}
             </Text>
@@ -200,7 +206,7 @@ function AnimatedTabItem({
         numberOfLines={1}
         style={[
           styles.tabLabel,
-          isActive ? styles.tabLabelActive : styles.tabLabelInactive,
+          isActive ? styles.tabLabelActive : [styles.tabLabelInactive, { color: inactiveColor }],
         ]}
       >
         {tab.label}
@@ -233,6 +239,7 @@ export function BottomTabBar({
   unreadCount = 0,
   variant = 'buyer',
 }: BottomTabBarProps) {
+  const t = useTheme()
   const tabs = variant === 'seller' ? SELLER_TABS : BUYER_TABS
   const isBuyer = variant === 'buyer'
 
@@ -285,7 +292,7 @@ export function BottomTabBar({
 
   // ── Shared pill ────────────────────────────────────────────────────────────
   return (
-    <View style={styles.pill}>
+    <View style={[styles.pill, { backgroundColor: t.surface }]}>
       {isBuyer ? (
         <>
           {/* Home + Requests */}
@@ -295,6 +302,9 @@ export function BottomTabBar({
               tab={tab}
               isActive={activeTab === tab.id}
               onPress={() => onTabChange(tab.id)}
+              inactiveColor={t.textSubtle}
+              activePillBg={t.primary + '16'}
+              barBg={t.surface}
             />
           ))}
 
@@ -330,6 +340,9 @@ export function BottomTabBar({
               onPress={() => onTabChange(tab.id)}
               showBadge={tab.id === 'notifications' && unreadCount > 0}
               badgeCount={unreadCount}
+              inactiveColor={t.textSubtle}
+              activePillBg={t.primary + '16'}
+              barBg={t.surface}
             />
           ))}
         </>
@@ -342,6 +355,9 @@ export function BottomTabBar({
             onPress={() => onTabChange(tab.id)}
             showBadge={tab.id === 'notifications' && unreadCount > 0}
             badgeCount={unreadCount}
+            inactiveColor={t.textSubtle}
+            activePillBg={t.primary + '16'}
+            barBg={t.surface}
           />
         ))
       )}
@@ -375,7 +391,6 @@ const styles = StyleSheet.create({
     width: 46,
     height: 30,
     borderRadius: 15,
-    backgroundColor: C.pillBg,
   },
   activeIndicator: {
     width: 18,
@@ -393,7 +408,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   tabLabelInactive: {
-    color: '#b4b4bc',
     fontWeight: '400',
   },
   badge: {
@@ -419,8 +433,10 @@ const styles = StyleSheet.create({
   // ── Floating pill ────────────────────────────────────────────
   pill: {
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    borderRadius: BAR_CR,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: BAR_CR,
+    borderBottomRightRadius: BAR_CR,
 
     shadowColor: C.blue,
     shadowOffset: { width: 0, height: 8 },

@@ -35,23 +35,27 @@ Open `mobile/eas.json` and update `EXPO_PUBLIC_API_URL` in all three `env` block
 
 ## Known version pins (do not upgrade without testing)
 
-| Package | Pinned version | Reason |
-|---|---|---|
-| `expo` | `~54.0.33` | SDK 54 |
-| `expo-font` | `~14.0.11` | SDK 56 version (56.0.5) crashes at launch |
-| `react-native-svg` | `15.12.1` | SDK 54 compatible |
-| `zod` | `^3.x` | Must be in mobile deps — not hoisted from root |
+| Package            | Pinned version | Reason                                         |
+| ------------------ | -------------- | ---------------------------------------------- |
+| `expo`             | `~54.0.33`     | SDK 54                                         |
+| `expo-font`        | `~14.0.11`     | SDK 56 version (56.0.5) crashes at launch      |
+| `react-native-svg` | `15.12.1`      | SDK 54 compatible                              |
+| `zod`              | `^3.x`         | Must be in mobile deps — not hoisted from root |
 
 ## Common build errors and fixes
 
-### `Failed to resolve plugin for module "expo-secure-store"` 
+### `Failed to resolve plugin for module "expo-secure-store"`
+
 → Run `npm install` from `mobile/`
 
 ### `java.lang.NoSuchMethodError: getDirectConverter`
+
 → `expo-font` drifted to SDK 56. Run `npm install expo-font@~14.0.11` from `mobile/`
 
 ### `Unable to resolve module zod`
+
 → `zod` is not installed in mobile. Run `npm install zod@^3.24.0` from `mobile/`
 
 ### JS bundle error (Metro)
+
 → Run `npx expo export --platform android --output-dir /tmp/test` from `mobile/` to see the exact error locally before pushing to EAS.

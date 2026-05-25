@@ -3,12 +3,15 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Alert,
   Animated,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import {
   createRequestFn,
@@ -50,6 +53,7 @@ export function CreateRequestScreen({
   initialData,
 }: CreateRequestScreenProps) {
   const t = useTheme()
+  const insets = useSafeAreaInsets()
   const scrollRef = useRef<ScrollView>(null)
   const isEditing = !!editRequestId
 
@@ -327,6 +331,7 @@ export function CreateRequestScreen({
           {
             backgroundColor: t.bg,
             borderBottomColor: t.border,
+            paddingTop: insets.top,
           },
         ]}
       >
@@ -377,87 +382,93 @@ export function CreateRequestScreen({
         </Pressable>
       </View>
 
-      <ScrollView
-        ref={scrollRef}
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        style={styles.kav}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {renderStep()}
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {renderStep()}
 
-        {submitError && (
-          <View
-            style={[
-              styles.errorBanner,
-              { backgroundColor: t.dangerBg, borderColor: t.danger + '30' },
-            ]}
-          >
-            <Ionicons name="alert-circle" size={16} color={t.danger} />
-            <Text style={[styles.errorText, { color: t.danger }]}>
-              {submitError}
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+          {submitError && (
+            <View
+              style={[
+                styles.errorBanner,
+                { backgroundColor: t.dangerBg, borderColor: t.danger + '30' },
+              ]}
+            >
+              <Ionicons name="alert-circle" size={16} color={t.danger} />
+              <Text style={[styles.errorText, { color: t.danger }]}>
+                {submitError}
+              </Text>
+            </View>
+          )}
+        </ScrollView>
 
-      <View
-        style={[
-          styles.footer,
-          {
-            backgroundColor: t.bg,
-            borderTopColor: t.border,
-          },
-        ]}
-      >
-        {currentStep > 0 && (
+        <View
+          style={[
+            styles.footer,
+            {
+              backgroundColor: t.bg,
+              borderTopColor: t.border,
+              paddingBottom: insets.bottom > 0 ? insets.bottom + 4 : spacing.xl,
+            },
+          ]}
+        >
+          {currentStep > 0 && (
+            <Pressable
+              onPress={goBack}
+              disabled={submitting}
+              style={({ pressed }) => [
+                styles.footerBtn,
+                styles.footerBtnOutline,
+                { borderColor: t.border },
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <Ionicons name="chevron-back" size={18} color={t.textMuted} />
+              <Text style={[styles.footerBtnText, { color: t.textMuted }]}>
+                Back
+              </Text>
+            </Pressable>
+          )}
+
+          {currentStep > 0 && <View style={{ width: spacing.md }} />}
+
           <Pressable
-            onPress={goBack}
+            onPress={isLastStep ? handleSubmit : goNext}
             disabled={submitting}
             style={({ pressed }) => [
               styles.footerBtn,
-              styles.footerBtnOutline,
-              { borderColor: t.border },
-              pressed && { opacity: 0.7 },
+              styles.footerBtnPrimary,
+              {
+                backgroundColor: isLastStep ? t.success : t.primary,
+                opacity: submitting ? 0.5 : pressed ? 0.85 : 1,
+              },
+              currentStep === 0 && { flex: 1 },
             ]}
           >
-            <Ionicons name="chevron-back" size={18} color={t.textMuted} />
-            <Text style={[styles.footerBtnText, { color: t.textMuted }]}>
-              Back
-            </Text>
-          </Pressable>
-        )}
-
-        {currentStep > 0 && <View style={{ width: spacing.md }} />}
-
-        <Pressable
-          onPress={isLastStep ? handleSubmit : goNext}
-          disabled={submitting}
-          style={({ pressed }) => [
-            styles.footerBtn,
-            styles.footerBtnPrimary,
-            {
-              backgroundColor: isLastStep ? t.success : t.primary,
-              opacity: submitting ? 0.5 : pressed ? 0.85 : 1,
-            },
-            currentStep === 0 && { flex: 1 },
-          ]}
-        >
-          <Text style={[styles.footerBtnText, { color: t.primaryFg }]}>
-            {submitting
-              ? isEditing
-                ? 'Saving...'
-                : 'Publishing...'
-              : isLastStep
+            <Text style={[styles.footerBtnText, { color: t.primaryFg }]}>
+              {submitting
                 ? isEditing
-                  ? 'Save Changes'
-                  : 'Publish Request'
-                : 'Next'}
-          </Text>
-          {!isLastStep && !submitting && (
-            <Ionicons name="chevron-forward" size={18} color={t.primaryFg} />
-          )}
-        </Pressable>
-      </View>
+                  ? 'Saving...'
+                  : 'Publishing...'
+                : isLastStep
+                  ? isEditing
+                    ? 'Save Changes'
+                    : 'Publish Request'
+                  : 'Next'}
+            </Text>
+            {!isLastStep && !submitting && (
+              <Ionicons name="chevron-forward" size={18} color={t.primaryFg} />
+            )}
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
     </View>
   )
 }
@@ -466,10 +477,12 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
+  kav: {
+    flex: 1,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 56,
     paddingBottom: spacing.md,
     paddingHorizontal: spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -516,7 +529,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.md,
-    paddingBottom: spacing.xl,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
   footerBtn: {

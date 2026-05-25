@@ -11,11 +11,11 @@ import {
   Text,
   View,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from '@expo/vector-icons/Ionicons'
 
 import { Field } from '../components/Field'
 import { signInWithEmail, signUpWithEmail } from '../lib/api-client'
-import { spacing } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
 import type { TextInput } from 'react-native'
 
@@ -37,6 +37,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function LoginScreen({ onSignedIn }: LoginScreenProps) {
   const t = useTheme()
+  const insets = useSafeAreaInsets()
   const [mode, setMode] = useState<Mode>('sign-in')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -44,6 +45,7 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
   const [confirm, setConfirm] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
+  const [tabWidth, setTabWidth] = useState(0)
 
   const emailRef = useRef<TextInput>(null)
   const passwordRef = useRef<TextInput>(null)
@@ -51,7 +53,12 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
   const formAnim = useRef(new Animated.Value(1)).current
   const bannerAnim = useRef(new Animated.Value(0)).current
   const ctaScale = useRef(new Animated.Value(1)).current
+  // Sliding tab indicator — animates to 0 (sign-in) or tabWidth (register)
+  const tabIndicatorX = useRef(new Animated.Value(0)).current
+  // Sweeping shimmer on CTA — loops every ~3s
+  const shimmerX = useRef(new Animated.Value(-100)).current
 
+  // Banner slide-in
   useEffect(() => {
     if (errors.banner) {
       Animated.spring(bannerAnim, {
@@ -64,6 +71,23 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
       bannerAnim.setValue(0)
     }
   }, [errors.banner, bannerAnim])
+
+  // CTA shimmer loop
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.delay(2800),
+        Animated.timing(shimmerX, {
+          toValue: 500,
+          duration: 720,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shimmerX, { toValue: -100, duration: 0, useNativeDriver: true }),
+      ]),
+    )
+    loop.start()
+    return () => loop.stop()
+  }, [shimmerX])
 
   function validate(): FormErrors {
     const next: FormErrors = {}
@@ -102,6 +126,17 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
 
   function switchMode(next: Mode) {
     if (next === mode) return
+
+    // Slide the tab indicator
+    Animated.spring(tabIndicatorX, {
+      toValue: next === 'sign-in' ? 0 : tabWidth,
+      stiffness: 420,
+      damping: 30,
+      mass: 0.8,
+      useNativeDriver: true,
+    }).start()
+
+    // Fade + swap form fields
     Animated.timing(formAnim, {
       toValue: 0,
       duration: 120,
@@ -139,9 +174,6 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
     }).start()
   }, [ctaScale])
 
-  const topInset =
-    Platform.OS === 'ios' ? 60 : (StatusBar.currentHeight ?? 28) + 12
-
   return (
     <View style={[styles.root, { backgroundColor: t.bg }]}>
       <StatusBar barStyle="dark-content" />
@@ -150,11 +182,13 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
         style={styles.kav}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
+        {/* ── Scrollable content ─────────────────────────── */}
         <ScrollView
-          contentContainerStyle={[styles.scroll, { paddingTop: topInset }]}
+          contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          {/* Branding header */}
           <View style={styles.header}>
             <View style={styles.iconArea}>
               <View
@@ -170,12 +204,8 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
                   style={{ transform: [{ rotate: '-45deg' }] }}
                 />
               </View>
-              <View
-                style={[styles.headerAccentDot, { backgroundColor: t.success }]}
-              />
-              <View
-                style={[styles.headerAccentRing, { borderColor: t.primary }]}
-              />
+              <View style={[styles.headerAccentDot, { backgroundColor: t.success }]} />
+              <View style={[styles.headerAccentRing, { borderColor: t.primary }]} />
             </View>
 
             <Text style={[styles.brandName, { color: t.text }]}>mlila</Text>
@@ -188,28 +218,42 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
             </View>
           </View>
 
+          {/* Form card */}
           <View style={[styles.card, { backgroundColor: t.surface + 'F2' }]}>
             <View style={[styles.cardHandle, { backgroundColor: t.border }]} />
 
+            {/* ── Mode toggle with sliding indicator ─────── */}
             <View
-              style={[styles.toggle, { backgroundColor: t.primary + '12' }]}
+              style={[styles.toggle, { backgroundColor: t.primary + '10' }]}
+              onLayout={(e) => {
+                const w = (e.nativeEvent.layout.width - 8) / 2
+                setTabWidth(w)
+              }}
             >
+              {/* Sliding pill indicator */}
+              <Animated.View
+                style={[
+                  styles.tabIndicator,
+                  {
+                    backgroundColor: t.primary,
+                    width: tabWidth || '50%',
+                    shadowColor: t.primary,
+                    transform: [{ translateX: tabIndicatorX }],
+                  },
+                ]}
+              />
+
+              {/* Tab buttons */}
               {(['sign-in', 'sign-up'] as const).map((m) => (
                 <Pressable
                   key={m}
                   onPress={() => switchMode(m)}
                   accessibilityRole="tab"
-                  accessibilityLabel={
-                    m === 'sign-in' ? 'Sign in tab' : 'Register tab'
-                  }
+                  accessibilityLabel={m === 'sign-in' ? 'Sign in tab' : 'Register tab'}
                   accessibilityState={{ selected: mode === m }}
                   style={({ pressed }) => [
                     styles.tab,
-                    mode === m && [
-                      styles.tabActive,
-                      { backgroundColor: t.primary },
-                    ],
-                    pressed && mode !== m && { opacity: 0.6 },
+                    pressed && mode !== m && { opacity: 0.65 },
                   ]}
                 >
                   <Text
@@ -224,13 +268,12 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
               ))}
             </View>
 
+            {/* Heading */}
             <View style={styles.heading}>
               <Text style={[styles.title, { color: t.text }]}>
                 {mode === 'sign-in' ? 'Welcome back' : 'Create account'}
               </Text>
-              <View
-                style={[styles.titleDivider, { backgroundColor: t.primary }]}
-              />
+              <View style={[styles.titleDivider, { backgroundColor: t.primary }]} />
               <Text style={[styles.subtitle, { color: t.textMuted }]}>
                 {mode === 'sign-in'
                   ? 'Sign in to continue your work.'
@@ -238,6 +281,7 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
               </Text>
             </View>
 
+            {/* Error banner */}
             {errors.banner ? (
               <Animated.View
                 accessibilityRole="alert"
@@ -257,21 +301,18 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
                   },
                 ]}
               >
-                <View
-                  style={[styles.bannerAccent, { backgroundColor: t.danger }]}
-                />
+                <View style={[styles.bannerAccent, { backgroundColor: t.danger }]} />
                 <Ionicons
                   name="alert-circle-outline"
                   size={17}
                   color={t.danger}
                   style={styles.bannerIcon}
                 />
-                <Text style={[styles.bannerText, { color: t.danger }]}>
-                  {errors.banner}
-                </Text>
+                <Text style={[styles.bannerText, { color: t.danger }]}>{errors.banner}</Text>
               </Animated.View>
             ) : null}
 
+            {/* Form fields */}
             <Animated.View style={[styles.form, { opacity: formAnim }]}>
               {mode === 'sign-up' ? (
                 <Field
@@ -287,11 +328,7 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
                   onSubmitEditing={() => emailRef.current?.focus()}
                   error={errors.name}
                   leftIcon={
-                    <Ionicons
-                      name="person-outline"
-                      size={18}
-                      color={t.textSubtle}
-                    />
+                    <Ionicons name="person-outline" size={18} color={t.textSubtle} />
                   }
                 />
               ) : null}
@@ -312,11 +349,7 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
                 onSubmitEditing={() => passwordRef.current?.focus()}
                 error={errors.email}
                 leftIcon={
-                  <Ionicons
-                    name="mail-outline"
-                    size={18}
-                    color={t.textSubtle}
-                  />
+                  <Ionicons name="mail-outline" size={18} color={t.textSubtle} />
                 }
               />
 
@@ -330,24 +363,16 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
                 autoCapitalize="none"
                 autoCorrect={false}
                 autoComplete={mode === 'sign-up' ? 'password-new' : 'password'}
-                textContentType={
-                  mode === 'sign-up' ? 'newPassword' : 'password'
-                }
+                textContentType={mode === 'sign-up' ? 'newPassword' : 'password'}
                 returnKeyType={mode === 'sign-up' ? 'next' : 'go'}
                 editable={!submitting}
                 onSubmitEditing={() =>
-                  mode === 'sign-up'
-                    ? confirmRef.current?.focus()
-                    : handleSubmit()
+                  mode === 'sign-up' ? confirmRef.current?.focus() : handleSubmit()
                 }
                 error={errors.password}
                 hint={mode === 'sign-up' ? 'At least 6 characters.' : undefined}
                 leftIcon={
-                  <Ionicons
-                    name="lock-closed-outline"
-                    size={18}
-                    color={t.textSubtle}
-                  />
+                  <Ionicons name="lock-closed-outline" size={18} color={t.textSubtle} />
                 }
               />
 
@@ -368,64 +393,66 @@ export function LoginScreen({ onSignedIn }: LoginScreenProps) {
                   onSubmitEditing={handleSubmit}
                   error={errors.confirm}
                   leftIcon={
-                    <Ionicons
-                      name="lock-closed-outline"
-                      size={18}
-                      color={t.textSubtle}
-                    />
+                    <Ionicons name="lock-closed-outline" size={18} color={t.textSubtle} />
                   }
                 />
               ) : null}
-
-              <Animated.View style={{ transform: [{ scale: ctaScale }] }}>
-                <Pressable
-                  onPress={submitting ? undefined : handleSubmit}
-                  onPressIn={handleCtaPressIn}
-                  onPressOut={handleCtaPressOut}
-                  disabled={submitting}
-                  accessibilityRole="button"
-                  accessibilityLabel={
-                    mode === 'sign-in' ? 'Sign in' : 'Create account'
-                  }
-                  style={({ pressed }) => [
-                    styles.cta,
-                    { backgroundColor: t.primary, shadowColor: t.primary },
-                    submitting && { opacity: 0.65 },
-                    pressed && { opacity: 0.9 },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.ctaShimmer,
-                      { backgroundColor: t.primaryFg },
-                    ]}
-                  />
-                  {submitting ? (
-                    <ActivityIndicator color={t.primaryFg} />
-                  ) : (
-                    <>
-                      <Text style={[styles.ctaText, { color: t.primaryFg }]}>
-                        {mode === 'sign-in' ? 'Sign in' : 'Create account'}
-                      </Text>
-                      <View
-                        style={[
-                          styles.ctaIconBubble,
-                          { backgroundColor: t.primaryFg + '22' },
-                        ]}
-                      >
-                        <Ionicons
-                          name="arrow-forward-outline"
-                          size={17}
-                          color={t.primaryFg}
-                        />
-                      </View>
-                    </>
-                  )}
-                </Pressable>
-              </Animated.View>
             </Animated.View>
           </View>
         </ScrollView>
+
+        {/* ── Sticky footer — outside ScrollView, inside KAV ── */}
+        <View
+          style={[
+            styles.footer,
+            { paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 20 },
+          ]}
+        >
+          <Animated.View style={[styles.ctaWrap, { transform: [{ scale: ctaScale }] }]}>
+            <Pressable
+              onPress={submitting ? undefined : handleSubmit}
+              onPressIn={handleCtaPressIn}
+              onPressOut={handleCtaPressOut}
+              disabled={submitting}
+              accessibilityRole="button"
+              accessibilityLabel={mode === 'sign-in' ? 'Sign in' : 'Create account'}
+              style={({ pressed }) => [
+                styles.cta,
+                { backgroundColor: t.primary, shadowColor: t.primary },
+                submitting && { opacity: 0.65 },
+                pressed && { opacity: 0.9 },
+              ]}
+            >
+              {/* Top edge highlight for depth */}
+              <View style={styles.ctaHighlight} />
+
+              {/* Sweeping shimmer */}
+              <Animated.View
+                style={[
+                  styles.ctaShimmer,
+                  { transform: [{ translateX: shimmerX }] },
+                ]}
+              />
+
+              {submitting ? (
+                <ActivityIndicator color={t.primaryFg} />
+              ) : (
+                <>
+                  <Text style={[styles.ctaText, { color: t.primaryFg }]}>
+                    {mode === 'sign-in' ? 'Sign in' : 'Create account'}
+                  </Text>
+                  <View style={[styles.ctaIconBubble, { backgroundColor: t.primaryFg + '20' }]}>
+                    <Ionicons
+                      name={mode === 'sign-in' ? 'log-in-outline' : 'person-add-outline'}
+                      size={17}
+                      color={t.primaryFg}
+                    />
+                  </View>
+                </>
+              )}
+            </Pressable>
+          </Animated.View>
+        </View>
       </KeyboardAvoidingView>
     </View>
   )
@@ -456,14 +483,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scroll: {
-    paddingBottom: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
 
+  // ── Header ───────────────────────────────────────────────
   header: {
     alignItems: 'center',
-    paddingHorizontal: 28,
-    paddingBottom: 36,
-    paddingTop: 20,
+    paddingBottom: 32,
+    paddingTop: 16,
   },
   iconArea: {
     width: 128,
@@ -528,13 +556,13 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
 
+  // ── Card ─────────────────────────────────────────────────
   card: {
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderRadius: 28,
     paddingHorizontal: 24,
-    paddingBottom: 16,
+    paddingBottom: 28,
     shadowColor: '#2563EB',
-    shadowOffset: { width: 0, height: -4 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.06,
     shadowRadius: 24,
     elevation: 8,
@@ -548,24 +576,32 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
 
+  // ── Sliding toggle ───────────────────────────────────────
   toggle: {
     flexDirection: 'row',
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 4,
     marginBottom: 28,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  tabIndicator: {
+    position: 'absolute',
+    top: 4,
+    bottom: 4,
+    left: 4,
+    borderRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.28,
+    shadowRadius: 10,
+    elevation: 5,
   },
   tab: {
     flex: 1,
-    paddingVertical: 11,
-    borderRadius: 11,
+    paddingVertical: 12,
+    borderRadius: 12,
     alignItems: 'center',
-  },
-  tabActive: {
-    shadowColor: '#2563EB',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
+    zIndex: 1,
   },
   tabText: {
     fontSize: 14,
@@ -573,6 +609,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
   },
 
+  // ── Heading ──────────────────────────────────────────────
   heading: {
     marginBottom: 24,
   },
@@ -594,6 +631,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
 
+  // ── Error banner ─────────────────────────────────────────
   banner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -623,10 +661,19 @@ const styles = StyleSheet.create({
     lineHeight: 19,
   },
 
+  // ── Form ─────────────────────────────────────────────────
   form: {
     gap: 16,
   },
 
+  // ── Sticky footer ────────────────────────────────────────
+  footer: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+  },
+  ctaWrap: {
+    width: '100%',
+  },
   cta: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -638,17 +685,26 @@ const styles = StyleSheet.create({
     width: '100%',
     overflow: 'hidden',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.38,
-    shadowRadius: 20,
-    elevation: 12,
+    shadowOpacity: 0.4,
+    shadowRadius: 22,
+    elevation: 14,
+  },
+  ctaHighlight: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   ctaShimmer: {
     position: 'absolute',
-    left: '35%',
     top: -10,
     bottom: -10,
-    width: 28,
-    opacity: 0.07,
+    left: 0,
+    width: 56,
+    backgroundColor: '#ffffff',
+    opacity: 0.1,
     transform: [{ skewX: '-18deg' }],
   },
   ctaText: {
@@ -662,13 +718,5 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-
-  legal: {
-    fontSize: 12,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginTop: 20,
-    lineHeight: 18,
   },
 })

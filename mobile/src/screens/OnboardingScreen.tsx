@@ -1,9 +1,16 @@
+/* Hallmark · macrostructure: single-column progressive form
+ * genre: modern-minimal · theme: Quiet
+ * tone: utilitarian · anchor hue: blue-260
+ * P5 H5 E5 S5 R5 V4
+ */
 import { Ionicons } from '@expo/vector-icons'
+import * as ImagePicker from 'expo-image-picker'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
   Animated,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -13,9 +20,10 @@ import {
   View,
 } from 'react-native'
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
 import { Button } from '../components/Button'
 import { Field } from '../components/Field'
-import { ProgressIndicator } from '../components/ProgressIndicator'
 import { SpecialtiesSheet } from '../components/SpecialtiesSheet'
 import { WilayaPicker } from '../components/WilayaPicker'
 import { completeOnboarding, getPublicTaxonomyFn } from '../lib/api-client'
@@ -74,6 +82,7 @@ export function OnboardingScreen({
   onLogOut,
 }: OnboardingScreenProps) {
   const t = useTheme()
+  const insets = useSafeAreaInsets()
   const scrollRef = useRef<ScrollView>(null)
   const [currentStep, setCurrentStep] = useState(1)
   const [submitting, setSubmitting] = useState(false)
@@ -81,16 +90,14 @@ export function OnboardingScreen({
   const [redirectStatus, setRedirectStatus] = useState('active')
   const [taxonomy, setTaxonomy] = useState<TaxonomyData | null>(null)
   const [loadingTaxonomy, setLoadingTaxonomy] = useState(false)
-  const [sheetType, setSheetType] = useState<'brands' | 'categories' | null>(
-    null,
-  )
+  const [sheetType, setSheetType] = useState<'brands' | 'categories' | null>(null)
+  const [avatarUri, setAvatarUri] = useState<string | null>(null)
 
-  // Step content transition
   const contentOpacity = useRef(new Animated.Value(1)).current
   const contentSlide = useRef(new Animated.Value(0)).current
 
   // Success entrance
-  const successScale = useRef(new Animated.Value(0.75)).current
+  const successScale = useRef(new Animated.Value(0.8)).current
   const successOpacity = useRef(new Animated.Value(0)).current
 
   const [form, setForm] = useState<FormData>({
@@ -110,6 +117,7 @@ export function OnboardingScreen({
   })
 
   const isSeller = form.role === 'seller'
+  const totalSteps = isSeller ? 4 : 3
 
   const updateForm = useCallback(
     <K extends keyof FormData>(field: K, value: FormData[K]) => {
@@ -180,17 +188,17 @@ export function OnboardingScreen({
     Animated.parallel([
       Animated.timing(contentOpacity, {
         toValue: 0,
-        duration: 110,
+        duration: 100,
         useNativeDriver: true,
       }),
       Animated.timing(contentSlide, {
-        toValue: dir * -24,
-        duration: 110,
+        toValue: dir * -20,
+        duration: 100,
         useNativeDriver: true,
       }),
     ]).start(() => {
       scrollRef.current?.scrollTo({ y: 0, animated: false })
-      contentSlide.setValue(dir * 24)
+      contentSlide.setValue(dir * 20)
       setCurrentStep(next)
       Animated.parallel([
         Animated.timing(contentOpacity, {
@@ -250,13 +258,13 @@ export function OnboardingScreen({
       Animated.parallel([
         Animated.spring(successScale, {
           toValue: 1,
-          stiffness: 180,
+          stiffness: 200,
           damping: 18,
           useNativeDriver: true,
         }),
         Animated.timing(successOpacity, {
           toValue: 1,
-          duration: 260,
+          duration: 280,
           useNativeDriver: true,
         }),
       ]).start()
@@ -270,6 +278,30 @@ export function OnboardingScreen({
   function handleGoNext() {
     onComplete(redirectStatus === 'waitlisted' ? 'waitlisted' : 'active')
   }
+
+  const pickAvatar = useCallback(async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permission needed',
+          'Please allow photo access to add a profile photo.',
+        )
+        return
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.85,
+      })
+      if (!result.canceled && result.assets[0]) {
+        setAvatarUri(result.assets[0].uri)
+      }
+    } catch {
+      Alert.alert('Error', 'Could not open photo library.')
+    }
+  }, [])
 
   function toggleBrand(id: string) {
     setForm((prev) => ({
@@ -293,38 +325,68 @@ export function OnboardingScreen({
   if (success) {
     const isWaitlisted = redirectStatus === 'waitlisted'
     return (
-      <View style={[styles.root, styles.centered, { backgroundColor: t.bg }]}>
+      <View
+        style={[
+          styles.root,
+          styles.centered,
+          { backgroundColor: t.bg, paddingTop: insets.top, paddingBottom: insets.bottom },
+        ]}
+      >
         <Animated.View
           style={[
             styles.successWrap,
-            { opacity: successOpacity, transform: [{ scale: successScale }] },
+            {
+              opacity: successOpacity,
+              transform: [{ scale: successScale }],
+            },
           ]}
         >
-          <View
-            style={[
-              styles.successRing,
-              {
-                borderColor: isWaitlisted ? t.primary + '30' : t.success + '30',
-              },
-            ]}
-          >
+          {/* Avatar or icon */}
+          {avatarUri ? (
             <View
               style={[
-                styles.successCircle,
+                styles.successAvatarRing,
                 {
-                  backgroundColor: isWaitlisted
-                    ? t.primary + '14'
-                    : t.success + '14',
+                  borderColor: isWaitlisted
+                    ? t.primary + '25'
+                    : t.success + '25',
                 },
               ]}
             >
-              <Ionicons
-                name={isWaitlisted ? 'time-outline' : 'checkmark-circle'}
-                size={52}
-                color={isWaitlisted ? t.primary : t.success}
+              <Image
+                source={{ uri: avatarUri }}
+                style={styles.successAvatarImage}
               />
             </View>
-          </View>
+          ) : (
+            <View
+              style={[
+                styles.successIconRing,
+                {
+                  borderColor: isWaitlisted
+                    ? t.primary + '25'
+                    : t.success + '25',
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.successIconCircle,
+                  {
+                    backgroundColor: isWaitlisted
+                      ? t.primary + '12'
+                      : t.success + '12',
+                  },
+                ]}
+              >
+                <Ionicons
+                  name={isWaitlisted ? 'time-outline' : 'checkmark-circle'}
+                  size={48}
+                  color={isWaitlisted ? t.primary : t.success}
+                />
+              </View>
+            </View>
+          )}
 
           <View style={styles.successCopy}>
             <Text style={[styles.successTitle, { color: t.text }]}>
@@ -366,11 +428,15 @@ export function OnboardingScreen({
   return (
     <View style={[styles.root, { backgroundColor: t.bg }]}>
       {/* Top bar */}
-      <View style={[styles.topBar, { borderBottomColor: t.border }]}>
-        <Text style={[styles.topBarBrand, { color: t.text }]}>mlila</Text>
+      <View style={[styles.topBar, { paddingTop: insets.top + spacing.md }]}>
+        <View style={styles.brandMark}>
+          <View style={[styles.brandDot, { backgroundColor: t.primary }]} />
+          <Text style={[styles.brandName, { color: t.text }]}>mlila</Text>
+        </View>
         <Pressable
           onPress={onLogOut}
           hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+          style={({ pressed }) => pressed && { opacity: 0.6 }}
         >
           <Text style={[styles.logOutText, { color: t.textSubtle }]}>
             Log out
@@ -378,18 +444,13 @@ export function OnboardingScreen({
         </Pressable>
       </View>
 
+      {/* Step progress bar */}
+      <StepBar total={totalSteps} current={currentStep} theme={t} />
+
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <ProgressIndicator
-          steps={STEPS_ALL}
-          currentStep={currentStep}
-          sellerMode={isSeller}
-        />
-
-        <View style={[styles.divider, { backgroundColor: t.border }]} />
-
         <ScrollView
           ref={scrollRef}
           style={styles.flex}
@@ -411,7 +472,11 @@ export function OnboardingScreen({
         <View
           style={[
             styles.footer,
-            { borderTopColor: t.border, backgroundColor: t.bg },
+            {
+              borderTopColor: t.border,
+              backgroundColor: t.bg,
+              paddingBottom: spacing.md,
+            },
           ]}
         >
           {currentStep > 1 ? (
@@ -420,15 +485,13 @@ export function OnboardingScreen({
               disabled={submitting}
               style={({ pressed }) => [
                 styles.backBtn,
-                { borderColor: t.border },
+                { borderColor: t.border, backgroundColor: t.bg },
                 pressed && { opacity: 0.5 },
               ]}
             >
               <Ionicons name="chevron-back" size={18} color={t.textMuted} />
             </Pressable>
-          ) : (
-            <View style={styles.backBtnPlaceholder} />
-          )}
+          ) : null}
 
           <Pressable
             onPress={handleNext}
@@ -437,6 +500,7 @@ export function OnboardingScreen({
               styles.nextBtn,
               {
                 backgroundColor: stepValid ? t.primary : t.border,
+                shadowColor: stepValid ? t.primary : 'transparent',
               },
               pressed && stepValid && !submitting && { opacity: 0.88 },
             ]}
@@ -455,7 +519,7 @@ export function OnboardingScreen({
                 </Text>
                 <Ionicons
                   name={isLastStep ? 'checkmark' : 'arrow-forward'}
-                  size={17}
+                  size={16}
                   color={stepValid ? t.primaryFg : t.textSubtle}
                 />
               </>
@@ -504,7 +568,8 @@ export function OnboardingScreen({
     return (
       <View style={styles.stepPad}>
         <StepHeading
-          icon="person-outline"
+          step={1}
+          total={totalSteps}
           title="Choose your role"
           subtitle="How will you use mlila? This can't be changed later."
           theme={t}
@@ -514,8 +579,8 @@ export function OnboardingScreen({
             icon="car-outline"
             title="Buyer"
             subtitle="For vehicle owners"
-            description="Find spare parts, post requests, and receive competitive quotes."
             features={BUYER_FEATURES}
+            accentColor={t.primary}
             selected={form.role === 'buyer'}
             onSelect={() => updateForm('role', 'buyer')}
             theme={t}
@@ -524,8 +589,8 @@ export function OnboardingScreen({
             icon="storefront-outline"
             title="Seller"
             subtitle="For parts businesses"
-            description="Connect with buyers, respond to leads, and grow your revenue."
             features={SELLER_FEATURES}
+            accentColor={t.success}
             selected={form.role === 'seller'}
             onSelect={() => updateForm('role', 'seller')}
             theme={t}
@@ -539,11 +604,16 @@ export function OnboardingScreen({
     return (
       <View style={styles.stepPad}>
         <StepHeading
-          icon="call-outline"
+          step={2}
+          total={totalSteps}
           title="Contact info"
           subtitle="How buyers and mlila can reach you."
           theme={t}
         />
+
+        {/* Avatar picker */}
+        <AvatarPicker uri={avatarUri} onPress={pickAvatar} theme={t} />
+
         <View style={styles.fields}>
           <Field
             label="Full name"
@@ -590,7 +660,8 @@ export function OnboardingScreen({
     return (
       <View style={styles.stepPad}>
         <StepHeading
-          icon={isSeller ? 'business-outline' : 'location-outline'}
+          step={3}
+          total={totalSteps}
           title={isSeller ? 'Store & location' : 'Your location'}
           subtitle={
             isSeller
@@ -656,40 +727,41 @@ export function OnboardingScreen({
     return (
       <View style={styles.stepPad}>
         <StepHeading
-          icon="construct-outline"
+          step={4}
+          total={totalSteps}
           title="Your specialties"
-          subtitle="Brands and categories you work with. Update these any time."
+          subtitle="Brands and categories you work with. Update any time."
           theme={t}
         />
         {loadingTaxonomy ? (
-          <View style={styles.loadingBlock}>
-            <ActivityIndicator size="large" color={t.primary} />
-            <Text style={[styles.loadingText, { color: t.textMuted }]}>
-              Loading catalog…
-            </Text>
+          <View style={[styles.listWrap, { borderTopColor: t.border, borderBottomColor: t.border }]}>
+            <SkeletonRow theme={t} />
+            <View style={[styles.listDivider, { backgroundColor: t.border }]} />
+            <SkeletonRow theme={t} />
           </View>
         ) : (
-          <View style={styles.specialtiesWrap}>
-            <SpecialtyPicker
+          <View style={[styles.listWrap, { borderTopColor: t.border, borderBottomColor: t.border }]}>
+            <SpecialtyRow
               label="Brands"
               icon="ribbon-outline"
               count={form.brandIds.length}
-              emptyHint="Tap to select vehicle brands"
               onPress={() => setSheetType('brands')}
               selectedItems={(taxonomy?.brands || []).filter((b) =>
                 form.brandIds.includes(b.id),
               )}
+              accentColor={t.primary}
               theme={t}
             />
-            <SpecialtyPicker
-              label="Part categories"
+            <View style={[styles.listDivider, { backgroundColor: t.border }]} />
+            <SpecialtyRow
+              label="Categories"
               icon="layers-outline"
               count={form.categoryIds.length}
-              emptyHint="Tap to select part categories"
               onPress={() => setSheetType('categories')}
               selectedItems={(taxonomy?.categories || []).filter((c) =>
                 form.categoryIds.includes(c.id),
               )}
+              accentColor={t.success}
               theme={t}
             />
           </View>
@@ -699,26 +771,73 @@ export function OnboardingScreen({
   }
 }
 
-// ─── Sub-components ────────────────────────────────────────────────────────────
+// ─── StepBar ───────────────────────────────────────────────────────────────────
+
+function StepBar({
+  total,
+  current,
+  theme: t,
+}: {
+  total: number
+  current: number
+  theme: any
+}) {
+  return (
+    <View style={stepBarStyles.row}>
+      {Array.from({ length: total }).map((_, i) => (
+        <View
+          key={i}
+          style={[
+            stepBarStyles.segment,
+            {
+              backgroundColor:
+                i < current
+                  ? t.primary
+                  : t.border,
+              opacity: i === current - 1 ? 1 : i < current - 1 ? 0.5 : 0.25,
+            },
+          ]}
+        />
+      ))}
+    </View>
+  )
+}
+
+const stepBarStyles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    gap: 4,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.sm,
+  },
+  segment: {
+    flex: 1,
+    height: 3,
+    borderRadius: 2,
+  },
+})
+
+// ─── StepHeading ───────────────────────────────────────────────────────────────
 
 function StepHeading({
-  icon,
+  step,
+  total,
   title,
   subtitle,
   theme: t,
 }: {
-  icon: keyof typeof Ionicons.glyphMap
+  step: number
+  total: number
   title: string
   subtitle: string
   theme: any
 }) {
   return (
     <View style={headingStyles.wrap}>
-      <View
-        style={[headingStyles.badge, { backgroundColor: t.primary + '12' }]}
-      >
-        <Ionicons name={icon} size={20} color={t.primary} />
-      </View>
+      <Text style={[headingStyles.counter, { color: t.textSubtle }]}>
+        {step < 10 ? `0${step}` : step} / {total < 10 ? `0${total}` : total}
+      </Text>
       <Text style={[headingStyles.title, { color: t.text }]}>{title}</Text>
       <Text style={[headingStyles.subtitle, { color: t.textMuted }]}>
         {subtitle}
@@ -728,42 +847,179 @@ function StepHeading({
 }
 
 const headingStyles = StyleSheet.create({
-  wrap: { gap: 6 },
-  badge: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
+  wrap: { gap: 4 },
+  counter: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    marginBottom: 2,
   },
   title: {
-    fontSize: 26,
+    fontSize: 27,
     fontWeight: '700',
-    letterSpacing: -0.4,
+    letterSpacing: -0.5,
+    lineHeight: 33,
   },
   subtitle: {
     fontSize: 15,
     lineHeight: 22,
+    marginTop: 2,
   },
 })
+
+// ─── AvatarPicker ──────────────────────────────────────────────────────────────
+
+const AVATAR_SIZE = 88
+
+function AvatarPicker({
+  uri,
+  onPress,
+  theme: t,
+}: {
+  uri: string | null
+  onPress: () => void
+  theme: any
+}) {
+  const scale = useRef(new Animated.Value(1)).current
+
+  return (
+    <View style={avatarStyles.wrap}>
+      <Pressable
+        onPress={onPress}
+        onPressIn={() =>
+          Animated.spring(scale, {
+            toValue: 0.93,
+            stiffness: 420,
+            damping: 22,
+            useNativeDriver: true,
+          }).start()
+        }
+        onPressOut={() =>
+          Animated.spring(scale, {
+            toValue: 1,
+            stiffness: 420,
+            damping: 22,
+            useNativeDriver: true,
+          }).start()
+        }
+        accessibilityLabel="Set profile photo"
+        accessibilityRole="button"
+      >
+        <Animated.View style={{ transform: [{ scale }] }}>
+          <View
+            style={[
+              avatarStyles.circle,
+              {
+                backgroundColor: t.bgMuted,
+                borderColor: uri ? t.primary + '40' : t.border,
+              },
+            ]}
+          >
+            {uri ? (
+              <Image
+                source={{ uri }}
+                style={avatarStyles.image}
+                accessibilityLabel="Profile photo"
+              />
+            ) : (
+              <Ionicons
+                name="person-outline"
+                size={34}
+                color={t.textSubtle}
+              />
+            )}
+          </View>
+          {/* Camera badge */}
+          <View
+            style={[
+              avatarStyles.badge,
+              {
+                backgroundColor: t.primary,
+                borderColor: t.bg,
+              },
+            ]}
+          >
+            <Ionicons name="camera" size={12} color={t.primaryFg} />
+          </View>
+        </Animated.View>
+      </Pressable>
+
+      <View style={avatarStyles.labelGroup}>
+        <Text style={[avatarStyles.label, { color: t.text }]}>
+          {uri ? 'Change photo' : 'Profile photo'}
+        </Text>
+        <Text style={[avatarStyles.hint, { color: t.textSubtle }]}>
+          Optional
+        </Text>
+      </View>
+    </View>
+  )
+}
+
+const avatarStyles = StyleSheet.create({
+  wrap: {
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+  },
+  circle: {
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: AVATAR_SIZE / 2,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  image: {
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: AVATAR_SIZE / 2,
+  },
+  badge: {
+    position: 'absolute',
+    bottom: 1,
+    right: 1,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  labelGroup: {
+    alignItems: 'center',
+    gap: 1,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  hint: {
+    fontSize: 12,
+    fontWeight: '400',
+  },
+})
+
+// ─── RoleCard ──────────────────────────────────────────────────────────────────
 
 function RoleCard({
   icon,
   title,
   subtitle,
-  description,
   features,
   selected,
+  accentColor,
   onSelect,
   theme: t,
 }: {
   icon: keyof typeof Ionicons.glyphMap
   title: string
   subtitle: string
-  description: string
   features: Array<string>
   selected: boolean
+  accentColor: string
   onSelect: () => void
   theme: any
 }) {
@@ -775,90 +1031,116 @@ function RoleCard({
         onPress={onSelect}
         onPressIn={() =>
           Animated.spring(scale, {
-            toValue: 0.975,
-            stiffness: 400,
-            damping: 25,
+            toValue: 0.972,
+            stiffness: 420,
+            damping: 28,
             useNativeDriver: true,
           }).start()
         }
         onPressOut={() =>
           Animated.spring(scale, {
             toValue: 1,
-            stiffness: 400,
-            damping: 25,
+            stiffness: 420,
+            damping: 28,
             useNativeDriver: true,
           }).start()
         }
+        accessibilityRole="radio"
+        accessibilityState={{ selected }}
         style={[
           cardStyles.card,
           {
-            backgroundColor: selected ? t.primary + '08' : t.surface,
-            borderColor: selected ? t.primary : t.border,
-            shadowColor: selected ? t.primary : '#000',
-            shadowOpacity: selected ? 0.14 : 0.04,
-            shadowRadius: selected ? 14 : 4,
-            shadowOffset: { width: 0, height: 4 },
-            elevation: selected ? 5 : 1,
+            backgroundColor: t.surface,
+            borderTopWidth: 1,
+            borderRightWidth: 1,
+            borderBottomWidth: 1,
+            borderLeftWidth: 5,
+            borderTopColor: t.border,
+            borderRightColor: t.border,
+            borderBottomColor: t.border,
+            borderLeftColor: selected ? accentColor : 'transparent',
+            shadowColor: '#000',
+            shadowOpacity: 0.04,
+            shadowRadius: 6,
+            shadowOffset: { width: 0, height: 2 },
+            elevation: 1,
           },
         ]}
       >
-        {/* Card header row */}
+        {/* Header: large icon circle + radio */}
         <View style={cardStyles.header}>
           <View
             style={[
-              cardStyles.iconWrap,
+              cardStyles.iconCircle,
               {
-                backgroundColor: selected ? t.primary + '18' : t.bgMuted,
+                backgroundColor: selected
+                  ? accentColor + '16'
+                  : t.bgMuted,
+                borderWidth: selected ? 1.5 : 1,
+                borderColor: selected
+                  ? accentColor + '38'
+                  : t.border,
               },
             ]}
           >
             <Ionicons
               name={icon}
-              size={24}
-              color={selected ? t.primary : t.textMuted}
+              size={28}
+              color={selected ? accentColor : t.textMuted}
             />
           </View>
+
+          {/* Selection indicator */}
           <View
             style={[
               cardStyles.radio,
               {
-                borderColor: selected ? t.primary : t.borderStrong,
-                backgroundColor: selected ? t.primary : 'transparent',
+                borderColor: selected ? accentColor : t.borderStrong,
+                backgroundColor: selected ? accentColor : 'transparent',
               },
             ]}
           >
             {selected && (
-              <Ionicons name="checkmark" size={11} color={t.primaryFg} />
+              <Ionicons name="checkmark" size={12} color={t.primaryFg} />
             )}
           </View>
         </View>
 
-        {/* Text */}
-        <Text style={[cardStyles.roleTag, { color: t.primary }]}>
+        {/* Eyebrow + title */}
+        <Text style={[cardStyles.eyebrow, { color: accentColor }]}>
           {subtitle}
         </Text>
         <Text style={[cardStyles.title, { color: t.text }]}>{title}</Text>
-        <Text style={[cardStyles.desc, { color: t.textMuted }]}>
-          {description}
-        </Text>
 
-        {/* Feature pills */}
-        <View style={cardStyles.features}>
+        {/* Divider */}
+        <View
+          style={[
+            cardStyles.divider,
+            {
+              backgroundColor: selected
+                ? accentColor + '22'
+                : t.border,
+            },
+          ]}
+        />
+
+        {/* Feature rows */}
+        <View style={cardStyles.featureList}>
           {features.map((f) => (
-            <View
-              key={f}
-              style={[
-                cardStyles.featurePill,
-                {
-                  backgroundColor: selected ? t.primary + '14' : t.bgMuted,
-                  borderColor: selected ? t.primary + '30' : t.border,
-                },
-              ]}
-            >
+            <View key={f} style={cardStyles.featureRow}>
+              <View
+                style={[
+                  cardStyles.featureDot,
+                  {
+                    backgroundColor: selected ? accentColor : t.textSubtle,
+                    opacity: selected ? 1 : 0.45,
+                  },
+                ]}
+              />
               <Text
                 style={[
                   cardStyles.featureText,
-                  { color: selected ? t.primary : t.textMuted },
+                  { color: selected ? t.text : t.textMuted },
                 ]}
               >
                 {f}
@@ -874,20 +1156,18 @@ function RoleCard({
 const cardStyles = StyleSheet.create({
   card: {
     borderRadius: radius.xl,
-    borderWidth: 1.5,
-    padding: spacing.xl,
-    gap: 4,
+    padding: spacing.lg,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
   },
-  iconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: radius.lg,
+  iconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -899,176 +1179,200 @@ const cardStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  roleTag: {
+  eyebrow: {
     fontSize: 10,
     fontWeight: '700',
-    letterSpacing: 1,
+    letterSpacing: 1.1,
     textTransform: 'uppercase',
-    marginBottom: 2,
+    marginBottom: 4,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    letterSpacing: -0.2,
-  },
-  desc: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 2,
+    fontSize: 22,
+    fontWeight: '800',
+    letterSpacing: -0.4,
     marginBottom: spacing.sm,
   },
-  features: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-    marginTop: 4,
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    marginBottom: spacing.md,
   },
-  featurePill: {
-    borderWidth: 1,
-    borderRadius: radius.pill,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+  featureList: {
+    gap: spacing.sm,
+  },
+  featureRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  featureDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
   },
   featureText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '500',
   },
 })
 
-function SpecialtyPicker({
+/* Hallmark · component: specialty-row · genre: modern-minimal · theme: catalog-existing
+ * states: default · active · loading · pressed
+ * contrast: pass (46–50)
+ * P5 H5 E5 S5 R5 V5
+ */
+
+// ─── SpecialtyRow ─────────────────────────────────────────────────────────────
+
+function SpecialtyRow({
   label,
   icon,
   count,
-  emptyHint,
   onPress,
   selectedItems,
+  accentColor,
   theme: t,
 }: {
   label: string
   icon: keyof typeof Ionicons.glyphMap
   count: number
-  emptyHint: string
   onPress: () => void
   selectedItems: Array<TaxItem>
+  accentColor: string
   theme: any
 }) {
+  const opacity = useRef(new Animated.Value(1)).current
   const hasItems = count > 0
-  return (
-    <View style={pickerStyles.wrap}>
-      {/* Section label */}
-      <View style={pickerStyles.labelRow}>
-        <Ionicons name={icon} size={13} color={t.textMuted} />
-        <Text style={[pickerStyles.label, { color: t.textMuted }]}>
-          {label}
-        </Text>
-        {hasItems && (
-          <View style={[pickerStyles.badge, { backgroundColor: t.primary }]}>
-            <Text style={[pickerStyles.badgeText, { color: t.primaryFg }]}>
-              {count}
-            </Text>
-          </View>
-        )}
-      </View>
 
-      {/* Trigger button */}
+  return (
+    <View>
       <Pressable
         onPress={onPress}
-        style={({ pressed }) => [
-          pickerStyles.trigger,
-          {
-            backgroundColor: t.surface,
-            borderColor: hasItems ? t.primary + '60' : t.border,
-          },
-          pressed && { opacity: 0.7 },
-        ]}
+        onPressIn={() =>
+          Animated.timing(opacity, { toValue: 0.5, duration: 70, useNativeDriver: true }).start()
+        }
+        onPressOut={() =>
+          Animated.timing(opacity, { toValue: 1, duration: 140, useNativeDriver: true }).start()
+        }
+        accessibilityRole="button"
+        accessibilityLabel={`${label}, ${count} selected. Tap to edit.`}
       >
-        <Text
-          style={[
-            pickerStyles.triggerText,
-            { color: hasItems ? t.text : t.textSubtle },
-          ]}
-        >
-          {hasItems ? `${count} selected` : emptyHint}
-        </Text>
-        <Ionicons name="chevron-forward" size={16} color={t.textSubtle} />
+        <Animated.View style={[rowStyles.row, { opacity }]}>
+          <View
+            style={[
+              rowStyles.iconWrap,
+              { backgroundColor: hasItems ? accentColor + '14' : t.bgMuted },
+            ]}
+          >
+            <Ionicons
+              name={icon}
+              size={15}
+              color={hasItems ? accentColor : t.textSubtle}
+            />
+          </View>
+
+          <Text style={[rowStyles.label, { color: t.text }]}>{label}</Text>
+
+          <View style={rowStyles.trailing}>
+            {hasItems ? (
+              <View style={[rowStyles.badge, { backgroundColor: accentColor }]}>
+                <Text style={rowStyles.badgeText}>{count}</Text>
+              </View>
+            ) : (
+              <Text style={[rowStyles.none, { color: t.textSubtle }]}>None</Text>
+            )}
+            <Ionicons name="chevron-forward" size={15} color={t.textSubtle} />
+          </View>
+        </Animated.View>
       </Pressable>
 
-      {/* Selected chips */}
-      {selectedItems.length > 0 && (
-        <View style={pickerStyles.chips}>
-          {selectedItems.map((item) => (
+      {hasItems && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={rowStyles.chipScroll}
+          contentContainerStyle={rowStyles.chipContent}
+        >
+          {selectedItems.slice(0, 8).map((item) => (
             <View
               key={item.id}
               style={[
-                pickerStyles.chip,
-                {
-                  backgroundColor: t.primary + '12',
-                  borderColor: t.primary + '30',
-                },
+                rowStyles.chip,
+                { backgroundColor: accentColor + '10', borderColor: accentColor + '26' },
               ]}
             >
               <Text
-                style={[pickerStyles.chipText, { color: t.primary }]}
+                style={[rowStyles.chipText, { color: accentColor }]}
                 numberOfLines={1}
               >
                 {item.name}
               </Text>
             </View>
           ))}
-        </View>
+          {count > 8 && (
+            <View style={[rowStyles.chip, { backgroundColor: t.bgMuted, borderColor: t.border }]}>
+              <Text style={[rowStyles.chipText, { color: t.textMuted }]}>
+                +{count - 8}
+              </Text>
+            </View>
+          )}
+        </ScrollView>
       )}
     </View>
   )
 }
 
-const pickerStyles = StyleSheet.create({
-  wrap: { gap: spacing.sm },
-  labelRow: {
+const rowStyles = StyleSheet.create({
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    paddingVertical: spacing.lg,
+    gap: spacing.sm,
+  },
+  iconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   label: {
-    fontSize: 12,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
     flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: -0.2,
+  },
+  trailing: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
   },
   badge: {
     borderRadius: radius.pill,
-    minWidth: 20,
-    height: 20,
+    minWidth: 24,
+    height: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
   },
   badgeText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
+    color: '#fff',
   },
-  trigger: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: radius.lg,
-    paddingHorizontal: spacing.md,
-    minHeight: 52,
-    gap: spacing.sm,
+  none: {
+    fontSize: 14,
   },
-  triggerText: {
-    flex: 1,
-    fontSize: 15,
+  chipScroll: {
+    marginBottom: spacing.md,
   },
-  chips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  chipContent: {
     gap: spacing.xs,
+    flexDirection: 'row',
   },
   chip: {
     borderRadius: radius.pill,
     borderWidth: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 11,
     paddingVertical: 5,
   },
   chipText: {
@@ -1077,27 +1381,68 @@ const pickerStyles = StyleSheet.create({
   },
 })
 
+// ─── SkeletonRow ──────────────────────────────────────────────────────────────
+
+function SkeletonRow({ theme: t }: { theme: any }) {
+  const pulse = useRef(new Animated.Value(0.4)).current
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1, duration: 680, useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 0.4, duration: 680, useNativeDriver: true }),
+      ]),
+    ).start()
+  }, [])
+
+  return (
+    <Animated.View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: spacing.lg,
+        gap: spacing.sm,
+        opacity: pulse,
+      }}
+    >
+      <View style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: t.bgMuted }} />
+      <View style={{ flex: 1, height: 14, borderRadius: 7, backgroundColor: t.bgMuted }} />
+      <View style={{ width: 28, height: 22, borderRadius: radius.pill, backgroundColor: t.bgMuted }} />
+      <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: t.bgMuted }} />
+    </Animated.View>
+  )
+}
+
 // ─── Screen-level styles ───────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
   flex: { flex: 1 },
   centered: { alignItems: 'center', justifyContent: 'center' },
-  divider: { height: StyleSheet.hairlineWidth },
 
-  // Top bar
+  // Top bar — minimal, no border
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.sm,
   },
-  topBarBrand: {
+  brandMark: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+  },
+  brandDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  brandName: {
     fontSize: 17,
     fontWeight: '800',
-    letterSpacing: -0.3,
+    letterSpacing: -0.4,
   },
   logOutText: {
     fontSize: 14,
@@ -1114,8 +1459,16 @@ const styles = StyleSheet.create({
   fields: { gap: spacing.lg },
   roleGrid: { gap: spacing.md },
 
-  // Specialties
-  specialtiesWrap: { gap: spacing.xxl },
+  // Specialties list
+  listWrap: {
+    marginHorizontal: -spacing.xl,
+    paddingHorizontal: spacing.xl,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  listDivider: {
+    height: StyleSheet.hairlineWidth,
+  },
   loadingBlock: {
     paddingVertical: 48,
     alignItems: 'center',
@@ -1130,7 +1483,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
+    paddingTop: spacing.md,
     borderTopWidth: StyleSheet.hairlineWidth,
     gap: spacing.sm,
   },
@@ -1152,7 +1505,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: radius.lg,
     minHeight: 52,
-    gap: 6,
+    gap: 7,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.22,
+    shadowRadius: 14,
+    elevation: 6,
   },
   nextBtnLabel: {
     fontSize: 16,
@@ -1166,18 +1523,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.xl,
   },
-  successRing: {
-    width: 128,
-    height: 128,
-    borderRadius: 64,
+  successAvatarRing: {
+    width: 112,
+    height: 112,
+    borderRadius: 56,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  successAvatarImage: {
+    width: 108,
+    height: 108,
+    borderRadius: 54,
+  },
+  successIconRing: {
+    width: 112,
+    height: 112,
+    borderRadius: 56,
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  successCircle: {
-    width: 92,
-    height: 92,
-    borderRadius: 46,
+  successIconCircle: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1186,9 +1557,9 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   successTitle: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
-    letterSpacing: -0.5,
+    letterSpacing: -0.4,
     textAlign: 'center',
   },
   successBody: {
