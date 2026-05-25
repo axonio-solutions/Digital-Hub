@@ -3,18 +3,18 @@ import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
-  ShieldCheck,
-  Zap,
-  Truck,
-  Search,
-  MessageSquare,
-  DollarSign,
   Clock,
+  DollarSign,
+  MessageSquare,
+  Search,
+  ShieldCheck,
   Sparkles,
+  Truck,
+  Zap,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { fadeUp } from '@/lib/motion'
-import { BUYER_ROUTES, AUTH_ROUTES } from '@/lib/routes'
+import { AUTH_ROUTES, BUYER_ROUTES } from '@/lib/routes'
 
 export function HeroSection() {
   const { t: tHero } = useTranslation('home/hero')

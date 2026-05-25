@@ -1,7 +1,6 @@
-import { Await, getRouteApi } from '@tanstack/react-router'
-import { Link } from '@tanstack/react-router'
+import { Await, Link, getRouteApi  } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
-import { ArrowRight, Coins, BadgeCheck } from 'lucide-react'
+import { ArrowRight, BadgeCheck, Coins } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { fadeUp } from '@/lib/motion'
 import { AUTH_ROUTES } from '@/lib/routes'
@@ -12,7 +11,7 @@ function formatPrice(price: number) {
   return new Intl.NumberFormat('fr-DZ').format(price) + ' DA'
 }
 
-const perks: Record<number, string[]> = {
+const perks: Record<number, Array<string>> = {
   0: ['Post part requests', 'Compare seller quotes'],
   1: ['Everything in Starter', 'Priority listing', 'Seller dashboard access'],
   2: ['Everything in Pro', 'Dedicated support', 'Featured request badge'],

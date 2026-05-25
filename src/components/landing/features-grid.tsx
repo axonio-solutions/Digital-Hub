@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import {
-  Rss,
   Brain,
-  MessageSquareQuote,
-  ShieldCheck,
-  LayoutDashboard,
-  UserRound,
-  Languages,
   Coins,
+  Languages,
+  LayoutDashboard,
+  MessageSquareQuote,
+  Rss,
+  ShieldCheck,
+  UserRound,
 } from 'lucide-react'
 import { fadeUp } from '@/lib/motion'
 
