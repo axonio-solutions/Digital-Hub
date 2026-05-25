@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils'
 import { Tabs as BaseTabs } from '@base-ui/react/tabs'
+import { cn } from '@/lib/utils'
 
 const TabsRoot = BaseTabs.Root
 

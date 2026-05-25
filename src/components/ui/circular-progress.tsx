@@ -87,7 +87,7 @@ function useCircularProgressContext(consumerName: string) {
 
 interface CircularProgressProps extends React.ComponentProps<'div'> {
   value?: number | null | undefined
-  getValueText?(value: number, min: number, max: number): string
+  getValueText?: (value: number, min: number, max: number) => string
   min?: number
   max?: number
   size?: number

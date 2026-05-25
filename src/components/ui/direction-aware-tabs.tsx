@@ -1,6 +1,7 @@
-import { ReactNode, useMemo, useState } from 'react'
-import { AnimatePresence, motion, MotionConfig } from 'motion/react'
+import { useMemo, useState } from 'react'
+import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import useMeasure from 'react-use-measure'
+import type { ReactNode} from 'react';
 
 import { cn } from '@/lib/utils'
 
@@ -11,7 +12,7 @@ type Tab = {
 }
 
 interface OgImageSectionProps {
-  tabs: Tab[]
+  tabs: Array<Tab>
   className?: string
   /** Outer container radius (e.g. `rounded-lg`) */
   rounded?: string
