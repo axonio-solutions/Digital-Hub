@@ -3,6 +3,7 @@ import { NotificationService } from './notification-service'
 import { notifications, sparePartRequests, users } from '@/db/schema'
 import { db } from '@/db'
 import { resend } from '@/lib/resend'
+import { BUYER_ROUTES } from '@/lib/routes'
 
 /**
  * Logic for background/recurring tasks (Cron Jobs)
@@ -94,7 +95,7 @@ export class BackgroundJobs {
         title: 'No Offers Yet on Your Request',
         message: `Your request for ${request.partName} has been open for over 48 hours with no offers. Consider updating the details or closing it if you no longer need it.`,
         referenceId: request.id,
-        linkUrl: `/dashboard/requests/${request.id}`,
+        linkUrl: BUYER_ROUTES.REQUEST_DETAIL(request.id),
         isPriority: true,
         metadata: { requestId: request.id },
       })
