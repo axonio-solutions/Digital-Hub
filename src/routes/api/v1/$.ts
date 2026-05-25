@@ -7,6 +7,7 @@ import { quotes } from '@/db/schema'
 import { quoteSchema } from '@/types/quote-schemas'
 import { NotificationTriggers } from '@/services/notification-triggers'
 import { updateSellerSpecialties } from '@/data-access/vendors'
+import { fetchAnonymousQuotesQuery } from '@/data-access/quotes'
 import {
   cancelRequestUseCase,
   createRequestUseCase,
@@ -216,6 +217,16 @@ async function handleGetUnreadNotifications(
   const user = await getSessionUser(request)
   if (!user) return unauthorized()
   return json(await getUnreadNotificationsUseCase(user.id, 10))
+}
+
+async function handleGetAnonymousQuotes(request: Request): Promise<Response> {
+  const user = await getSessionUser(request)
+  if (!user) return unauthorized()
+  if (user.role !== 'seller' && user.role !== 'admin') return forbidden()
+  const requestId = parseGetPayload(request) as string
+  if (!requestId) return badRequest('Missing requestId')
+  const data = await fetchAnonymousQuotesQuery(requestId)
+  return json({ success: true, data })
 }
 
 async function handleGetCreditBalance(request: Request): Promise<Response> {
@@ -522,6 +533,7 @@ const GET_ROUTES: Record<string, Handler> = {
   '/api/v1/requests/details': handleGetRequestDetails,
   '/api/v1/quotes/seller': handleGetSellerQuotes,
   '/api/v1/quotes/stats': handleGetSellerStats,
+  '/api/v1/quotes/anonymous': handleGetAnonymousQuotes,
   '/api/v1/notifications/unread': handleGetUnreadNotifications,
   '/api/v1/credits/balance': handleGetCreditBalance,
   '/api/v1/credits/packages': handleGetCreditPackages,
