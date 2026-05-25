@@ -39,11 +39,16 @@ interface SellerQuotesScreenProps {
     request: OpenRequestRow,
     existingQuote: ExistingQuoteData,
   ) => void
+  onSelectQuote: (
+    request: OpenRequestRow,
+    existingQuote: ExistingQuoteData,
+  ) => void
 }
 
 interface QuoteCardProps {
   item: SellerQuote
   index: number
+  onSelect: () => void
   onEdit: (q: SellerQuote) => void
   onRetract: (id: string) => void
   onRemind: (id: string) => void
@@ -163,6 +168,7 @@ function buyerRowToOpenRequest(row: BuyerRequestRow): OpenRequestRow {
 const QuoteCard = React.memo(function QuoteCard({
   item,
   index,
+  onSelect,
   onEdit,
   onRetract,
   onRemind,
@@ -173,6 +179,7 @@ const QuoteCard = React.memo(function QuoteCard({
   const isPending = item.status === 'pending'
   const isRejected = item.status === 'rejected'
   const isAccepted = item.status === 'accepted'
+  const isRequestOpen = item.request.status === 'open'
   const canRetract = isPending || isRejected
 
   const opacity = useRef(new Animated.Value(0)).current
@@ -198,6 +205,10 @@ const QuoteCard = React.memo(function QuoteCard({
   return (
     <Animated.View style={{ opacity, transform: [{ translateY }] }}>
       <View style={[{ shadowColor: '#000' }, styles.qCardShadow]}>
+        <Pressable
+          onPress={onSelect}
+          style={({ pressed }) => [pressed && { opacity: 0.92 }]}
+        >
         <View
           style={[
             styles.qCard,
@@ -366,7 +377,7 @@ const QuoteCard = React.memo(function QuoteCard({
                 { backgroundColor: t.bgMuted + '60', borderColor: t.border },
               ]}
             >
-              {isPending && (
+              {isPending && isRequestOpen && (
                 <Pressable
                   onPress={() => onEdit(item)}
                   disabled={actionLoading === `edit-${item.id}`}
@@ -425,7 +436,7 @@ const QuoteCard = React.memo(function QuoteCard({
                   )}
                 </Pressable>
               )}
-              {isAccepted && (
+              {isAccepted && isRequestOpen && (
                 <Pressable
                   onPress={() => onRemind(item.id)}
                   disabled={actionLoading === `remind-${item.id}`}
@@ -458,6 +469,7 @@ const QuoteCard = React.memo(function QuoteCard({
             </View>
           </View>
         </View>
+        </Pressable>
       </View>
     </Animated.View>
   )
@@ -467,6 +479,7 @@ export function SellerQuotesScreen({
   user,
   refreshKey,
   onEditQuote,
+  onSelectQuote,
 }: SellerQuotesScreenProps) {
   const t = useTheme()
   const [quotes, setQuotes] = useState<Array<SellerQuote>>([])
@@ -746,6 +759,31 @@ export function SellerQuotesScreen({
     })
   }
 
+  function handleSelectQuote(quote: SellerQuote) {
+    const openRequest: OpenRequestRow = {
+      id: quote.request.id,
+      partName: quote.request.partName,
+      oemNumber: null,
+      vehicleBrand: quote.request.vehicleBrand,
+      modelYear: quote.request.modelYear,
+      imageUrls: quote.request.imageUrls ?? null,
+      notes: null,
+      createdAt: quote.createdAt,
+      quotesCount: 0,
+      isPriority: false,
+      category: quote.category
+        ? { id: quote.category.id, name: quote.category.name, imageUrl: null }
+        : null,
+      brand: null,
+    }
+    onSelectQuote(openRequest, {
+      id: quote.id,
+      price: quote.price,
+      condition: quote.condition,
+      warranty: quote.warranty,
+    })
+  }
+
   function openFilterSheet() {
     setPendingTab(tab)
     setPendingTime(timeWindow)
@@ -897,6 +935,7 @@ export function SellerQuotesScreen({
             item={item}
             index={index}
             t={t}
+            onSelect={() => handleSelectQuote(item)}
             onEdit={handleEditQuote}
             onRetract={handleRetract}
             onRemind={handleRemind}

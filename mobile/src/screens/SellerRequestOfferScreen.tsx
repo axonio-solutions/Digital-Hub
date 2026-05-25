@@ -1,6 +1,6 @@
 /* Hallmark · genre: modern-minimal · screen: SellerRequestOfferScreen
  * Mobile — React Native / Expo · design-system: tokens.ts
- * Pre-emit: P5 H4 E4 S4 R5 V4
+ * Pre-emit: P5 H5 E5 S5 R5 V5
  */
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect, useRef, useState } from 'react'
@@ -17,11 +17,15 @@ import {
   View,
 } from 'react-native'
 
-import { fetchRequestDetails } from '../lib/api-client'
+import {
+  fetchAnonymousQuotes,
+  fetchRequestDetails,
+  retractQuoteFn,
+} from '../lib/api-client'
+import type { AnonymousQuote } from '../lib/api-client'
 import { radius, spacing } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
 import { SellerQuoteForm } from './SellerQuoteForm'
-import type { Quote } from '../types/buyer'
 import type { OpenRequestRow } from '../types/seller'
 
 export interface ExistingQuoteData {
@@ -45,7 +49,8 @@ type Tab = 'details' | 'quotes' | 'offer'
 
 const TABS: Array<Tab> = ['details', 'quotes', 'offer']
 const ACCEPTED_COLOR = '#059669'
-const PENDING_COLOR = '#2563eb'
+const PENDING_COLOR = '#D97706'
+const REJECTED_COLOR = '#6b7280'
 
 // ── Status dot — static, no pulse ────────────────────────────────────────────
 
@@ -77,7 +82,7 @@ const dotStyles = StyleSheet.create({
 
 // ── Anonymous competitor quote card ──────────────────────────────────────────
 
-function AnonymousQuoteCard({ quote }: { quote: Quote }) {
+function AnonymousQuoteCard({ quote }: { quote: AnonymousQuote }) {
   const t = useTheme()
 
   const isAccepted = quote.status === 'accepted'
@@ -247,12 +252,28 @@ export function SellerRequestOfferScreen({
   const [segWidth, setSegWidth] = useState(0)
   const tabSlide = useRef(new Animated.Value(0)).current
 
-  const [quotes, setQuotes] = useState<Array<Quote>>([])
+  // Quotes state
+  const [allQuotes, setAllQuotes] = useState<Array<AnonymousQuote>>([])
   const [quotesLoading, setQuotesLoading] = useState(false)
   const [quotesLoaded, setQuotesLoaded] = useState(false)
+  const [quotesError, setQuotesError] = useState<string | null>(null)
+
+  // Request status (OpenRequestRow has no status — load from API)
+  const [requestStatus, setRequestStatus] = useState<string>('open')
+
+  // Retract confirm overlay
+  const [retractConfirmId, setRetractConfirmId] = useState<string | null>(null)
+  const [retractLoading, setRetractLoading] = useState(false)
+  const retractBgOpacity = useRef(new Animated.Value(0)).current
+  const retractCardScale = useRef(new Animated.Value(0.88)).current
+  const retractCardOpacity = useRef(new Animated.Value(0)).current
+
+  // Edit from Offers tab — track own quote data for the form
+  const [localExistingQuote, setLocalExistingQuote] =
+    useState<ExistingQuoteData | null>(existingQuote ?? null)
 
   const images = request.imageUrls ?? []
-  const isEditing = !!existingQuote
+  const isEditing = !!localExistingQuote
   const tabLabels = [
     'Details',
     'Offers',
@@ -263,6 +284,15 @@ export function SellerRequestOfferScreen({
     'people-outline',
     isEditing ? 'pencil-outline' : 'add-circle-outline',
   ]
+
+  // Load request status on mount
+  useEffect(() => {
+    fetchRequestDetails(request.id)
+      .then((row) => {
+        if (row?.status) setRequestStatus(row.status)
+      })
+      .catch(() => {})
+  }, [request.id])
 
   function switchTab(newTab: Tab) {
     const idx = TABS.indexOf(newTab)
@@ -285,17 +315,133 @@ export function SellerRequestOfferScreen({
   useEffect(() => {
     if (activeTab !== 'quotes' || quotesLoaded) return
     setQuotesLoading(true)
-    fetchRequestDetails(request.id)
-      .then((row) => {
-        setQuotes((row?.quotes ?? []).filter((q) => q.status !== 'rejected'))
+    setQuotesError(null)
+    fetchAnonymousQuotes(request.id)
+      .then((data) => {
+        setAllQuotes(data)
         setQuotesLoaded(true)
       })
-      .catch(() => setQuotesLoaded(true))
+      .catch((err: any) => {
+        setQuotesError(err?.message ?? 'Failed to load offers')
+        setQuotesLoaded(true)
+      })
       .finally(() => setQuotesLoading(false))
   }, [activeTab, quotesLoaded, request.id])
 
-  const acceptedCount = quotes.filter((q) => q.status === 'accepted').length
-  const pendingCount = quotes.filter((q) => q.status === 'pending').length
+  // Derived quote values
+  const ownQuote = allQuotes.find((q) => q.sellerId === sellerId) ?? null
+  const otherQuotes = allQuotes.filter((q) => q.sellerId !== sellerId)
+  const sortedOthers = [...otherQuotes].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+  )
+  const isRequestActive = requestStatus === 'open'
+  const canActOnOwnOffer = isRequestActive && ownQuote?.status === 'pending'
+
+  const total = allQuotes.length
+  const inDiscussionCount = allQuotes.filter((q) => q.status === 'accepted').length
+  const pendingCount = allQuotes.filter((q) => q.status === 'pending').length
+  const rejectedCount = allQuotes.filter((q) => q.status === 'rejected').length
+
+  // Stats strip config per request status
+  const statsConfig = (() => {
+    if (requestStatus === 'fulfilled') {
+      return [
+        { num: total, label: 'Total', color: t.text },
+        { num: inDiscussionCount, label: 'Selected', color: ACCEPTED_COLOR },
+        { num: rejectedCount, label: 'Rejected', color: REJECTED_COLOR },
+      ]
+    }
+    if (requestStatus === 'cancelled') {
+      return [
+        { num: total, label: 'Total', color: t.textMuted },
+        { num: 0, label: '', color: 'transparent' },
+        { num: 0, label: '', color: 'transparent' },
+      ]
+    }
+    // open
+    return [
+      { num: total, label: 'Total', color: t.text },
+      { num: pendingCount, label: 'Pending', color: PENDING_COLOR },
+      { num: inDiscussionCount, label: 'In discussion', color: '#2563eb' },
+    ]
+  })()
+
+  // Retract helpers
+  function openRetractConfirm(id: string) {
+    setRetractConfirmId(id)
+    Animated.parallel([
+      Animated.timing(retractBgOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.spring(retractCardScale, {
+        toValue: 1,
+        friction: 7,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+      Animated.timing(retractCardOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start()
+  }
+
+  function closeRetractConfirm() {
+    Animated.parallel([
+      Animated.timing(retractBgOpacity, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(retractCardScale, {
+        toValue: 0.88,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(retractCardOpacity, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setRetractConfirmId(null))
+  }
+
+  async function confirmRetract() {
+    if (!retractConfirmId) return
+    setRetractLoading(true)
+    try {
+      await retractQuoteFn(retractConfirmId)
+      setAllQuotes((prev) => prev.filter((q) => q.id !== retractConfirmId))
+      setQuotesLoaded(false)
+      closeRetractConfirm()
+    } catch {
+      // ignore
+    } finally {
+      setRetractLoading(false)
+    }
+  }
+
+  function handleEditFromOffers() {
+    if (!ownQuote) return
+    setLocalExistingQuote({
+      id: ownQuote.id,
+      price: ownQuote.price,
+      condition: ownQuote.condition as 'new' | 'used',
+      warranty: ownQuote.warranty,
+    })
+    switchTab('offer')
+  }
+
+  // Status badge display for Details tab
+  const statusBadgeColor =
+    requestStatus === 'fulfilled' ? '#D97706' : '#dc2626'
+  const statusBadgeBg =
+    requestStatus === 'fulfilled' ? '#fef3c7' : '#fef2f2'
+  const statusBadgeBorder =
+    requestStatus === 'fulfilled' ? '#fde68a' : '#fecdd3'
 
   return (
     <View style={[styles.root, { backgroundColor: t.bg }]}>
@@ -379,23 +525,6 @@ export function SellerRequestOfferScreen({
                 >
                   {tabLabels[idx]}
                 </Text>
-                {tab === 'quotes' && request.quotesCount > 0 && (
-                  <View
-                    style={[
-                      styles.segBadge,
-                      { backgroundColor: isActive ? t.accent : t.border },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.segBadgeText,
-                        { color: isActive ? t.accentFg : t.textSubtle },
-                      ]}
-                    >
-                      {request.quotesCount}
-                    </Text>
-                  </View>
-                )}
               </Pressable>
             )
           })}
@@ -498,22 +627,47 @@ export function SellerRequestOfferScreen({
             </View>
           )}
 
-          {/* Part name + priority */}
+          {/* Part name + priority + status badge */}
           <View style={styles.partNameRow}>
             <Text style={[styles.partName, { color: t.text }]}>
               {request.partName}
             </Text>
-            {request.isPriority && (
-              <View
-                style={[
-                  styles.priorityBadge,
-                  { backgroundColor: '#fef2f2', borderColor: '#fecdd3' },
-                ]}
-              >
-                <Ionicons name="flash" size={11} color="#e11d48" />
-                <Text style={styles.priorityText}>Priority</Text>
-              </View>
-            )}
+            <View style={styles.partNameBadges}>
+              {request.isPriority && (
+                <View
+                  style={[
+                    styles.priorityBadge,
+                    { backgroundColor: '#fef2f2', borderColor: '#fecdd3' },
+                  ]}
+                >
+                  <Ionicons name="flash" size={11} color="#e11d48" />
+                  <Text style={styles.priorityText}>Priority</Text>
+                </View>
+              )}
+              {requestStatus !== 'open' && (
+                <View
+                  style={[
+                    styles.statusBadge,
+                    {
+                      backgroundColor: statusBadgeBg,
+                      borderColor: statusBadgeBorder,
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.statusDot,
+                      { backgroundColor: statusBadgeColor },
+                    ]}
+                  />
+                  <Text
+                    style={[styles.statusBadgeText, { color: statusBadgeColor }]}
+                  >
+                    {requestStatus === 'fulfilled' ? 'Fulfilled' : 'Cancelled'}
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
 
           {/* Spec table */}
@@ -572,24 +726,26 @@ export function SellerRequestOfferScreen({
             </View>
           )}
 
-          {/* CTA */}
-          <Pressable
-            onPress={() => switchTab('offer')}
-            style={({ pressed }) => [
-              styles.ctaBtn,
-              { backgroundColor: t.accent },
-              pressed && { opacity: 0.85 },
-            ]}
-          >
-            <Ionicons
-              name={isEditing ? 'pencil-outline' : 'add-circle-outline'}
-              size={16}
-              color={t.accentFg}
-            />
-            <Text style={[styles.ctaBtnText, { color: t.accentFg }]}>
-              {isEditing ? 'Edit my offer' : 'Submit an offer'}
-            </Text>
-          </Pressable>
+          {/* CTA — hidden if request not active */}
+          {isRequestActive && (
+            <Pressable
+              onPress={() => switchTab('offer')}
+              style={({ pressed }) => [
+                styles.ctaBtn,
+                { backgroundColor: t.accent },
+                pressed && { opacity: 0.85 },
+              ]}
+            >
+              <Ionicons
+                name={isEditing ? 'pencil-outline' : 'add-circle-outline'}
+                size={16}
+                color={t.accentFg}
+              />
+              <Text style={[styles.ctaBtnText, { color: t.accentFg }]}>
+                {isEditing ? 'Edit my offer' : 'Submit an offer'}
+              </Text>
+            </Pressable>
+          )}
         </ScrollView>
       )}
 
@@ -600,14 +756,35 @@ export function SellerRequestOfferScreen({
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {quotesLoading ? (
+          {quotesLoading || !quotesLoaded ? (
             <View style={styles.centeredState}>
               <ActivityIndicator size="small" color={t.accent} />
               <Text style={[styles.centeredStateText, { color: t.textMuted }]}>
                 Loading offers…
               </Text>
             </View>
-          ) : quotes.length === 0 ? (
+          ) : quotesError ? (
+            <View style={styles.centeredState}>
+              <Ionicons name="alert-circle-outline" size={32} color={t.danger} />
+              <Text style={[styles.emptyTitle, { color: t.text }]}>
+                Failed to load offers
+              </Text>
+              <Text style={[styles.emptyDesc, { color: t.textMuted }]}>
+                {quotesError}
+              </Text>
+              <Pressable
+                onPress={() => { setQuotesLoaded(false); setQuotesError(null) }}
+                style={({ pressed }) => [
+                  styles.ctaBtn,
+                  { backgroundColor: t.accent },
+                  pressed && { opacity: 0.85 },
+                ]}
+              >
+                <Ionicons name="refresh-outline" size={16} color={t.accentFg} />
+                <Text style={[styles.ctaBtnText, { color: t.accentFg }]}>Retry</Text>
+              </Pressable>
+            </View>
+          ) : allQuotes.length === 0 ? (
             <View style={styles.centeredState}>
               <Text style={[styles.emptyTitle, { color: t.text }]}>
                 No offers yet
@@ -615,71 +792,285 @@ export function SellerRequestOfferScreen({
               <Text style={[styles.emptyDesc, { color: t.textMuted }]}>
                 Be the first to submit an offer on this request.
               </Text>
-              <Pressable
-                onPress={() => switchTab('offer')}
-                style={({ pressed }) => [
-                  styles.ctaBtn,
-                  { backgroundColor: t.accent },
-                  pressed && { opacity: 0.85 },
-                ]}
-              >
-                <Ionicons
-                  name="add-circle-outline"
-                  size={16}
-                  color={t.accentFg}
-                />
-                <Text style={[styles.ctaBtnText, { color: t.accentFg }]}>
-                  Submit an offer
-                </Text>
-              </Pressable>
+              {isRequestActive && (
+                <Pressable
+                  onPress={() => switchTab('offer')}
+                  style={({ pressed }) => [
+                    styles.ctaBtn,
+                    { backgroundColor: t.accent },
+                    pressed && { opacity: 0.85 },
+                  ]}
+                >
+                  <Ionicons
+                    name="add-circle-outline"
+                    size={16}
+                    color={t.accentFg}
+                  />
+                  <Text style={[styles.ctaBtnText, { color: t.accentFg }]}>
+                    Submit an offer
+                  </Text>
+                </Pressable>
+              )}
             </View>
           ) : (
             <>
               {/* Stats strip */}
               <View style={[styles.statsStrip, { borderColor: t.border }]}>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNum, { color: ACCEPTED_COLOR }]}>
-                    {acceptedCount}
-                  </Text>
-                  <Text style={[styles.statLabel, { color: t.textMuted }]}>
-                    In discussion
-                  </Text>
-                </View>
-                <View
-                  style={[styles.statDivider, { backgroundColor: t.border }]}
-                />
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNum, { color: PENDING_COLOR }]}>
-                    {pendingCount}
-                  </Text>
-                  <Text style={[styles.statLabel, { color: t.textMuted }]}>
-                    Pending
-                  </Text>
-                </View>
-                <View
-                  style={[styles.statDivider, { backgroundColor: t.border }]}
-                />
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNum, { color: t.text }]}>
-                    {quotes.length}
-                  </Text>
-                  <Text style={[styles.statLabel, { color: t.textMuted }]}>
-                    Total
-                  </Text>
-                </View>
+                {statsConfig.map((s, i) => (
+                  <View key={i} style={styles.statItem}>
+                    {i > 0 && (
+                      <View
+                        style={[
+                          styles.statDivider,
+                          { backgroundColor: t.border, position: 'absolute', left: 0, top: 8, bottom: 8 },
+                        ]}
+                      />
+                    )}
+                    {s.label ? (
+                      <>
+                        <Text style={[styles.statNum, { color: s.color }]}>
+                          {s.num}
+                        </Text>
+                        <Text style={[styles.statLabel, { color: t.textMuted }]}>
+                          {s.label}
+                        </Text>
+                      </>
+                    ) : null}
+                  </View>
+                ))}
               </View>
 
-              {[...quotes]
-                .sort((a, b) => {
-                  if (a.status === 'accepted' && b.status !== 'accepted')
-                    return -1
-                  if (b.status === 'accepted' && a.status !== 'accepted')
-                    return 1
-                  return 0
-                })
-                .map((q) => (
-                  <AnonymousQuoteCard key={q.id} quote={q} />
-                ))}
+              {/* Own offer row */}
+              {ownQuote && (
+                <View
+                  style={[
+                    ownOfferStyles.card,
+                    {
+                      backgroundColor: t.accent + '08',
+                      borderColor: t.accent + '30',
+                      borderLeftColor: t.accent,
+                    },
+                  ]}
+                >
+                  {/* Row 1: My offer badge + status */}
+                  <View style={ownOfferStyles.topRow}>
+                    <View
+                      style={[
+                        ownOfferStyles.myBadge,
+                        { backgroundColor: t.accent, },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          ownOfferStyles.myBadgeText,
+                          { color: t.accentFg },
+                        ]}
+                      >
+                        My offer
+                      </Text>
+                    </View>
+                    <View
+                      style={[
+                        ownOfferStyles.statusPill,
+                        {
+                          backgroundColor:
+                            ownQuote.status === 'accepted'
+                              ? ACCEPTED_COLOR + '12'
+                              : ownQuote.status === 'rejected'
+                                ? REJECTED_COLOR + '12'
+                                : PENDING_COLOR + '12',
+                          borderColor:
+                            ownQuote.status === 'accepted'
+                              ? ACCEPTED_COLOR + '30'
+                              : ownQuote.status === 'rejected'
+                                ? REJECTED_COLOR + '30'
+                                : PENDING_COLOR + '30',
+                        },
+                      ]}
+                    >
+                      <StatusDot
+                        color={
+                          ownQuote.status === 'accepted'
+                            ? ACCEPTED_COLOR
+                            : ownQuote.status === 'rejected'
+                              ? REJECTED_COLOR
+                              : PENDING_COLOR
+                        }
+                      />
+                      <Text
+                        style={[
+                          ownOfferStyles.statusText,
+                          {
+                            color:
+                              ownQuote.status === 'accepted'
+                                ? ACCEPTED_COLOR
+                                : ownQuote.status === 'rejected'
+                                  ? REJECTED_COLOR
+                                  : PENDING_COLOR,
+                          },
+                        ]}
+                      >
+                        {ownQuote.status === 'accepted'
+                          ? 'In discussion'
+                          : ownQuote.status === 'rejected'
+                            ? 'Rejected'
+                            : 'Pending'}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Row 2: price + condition + warranty */}
+                  <View style={ownOfferStyles.priceRow}>
+                    <Text style={[ownOfferStyles.price, { color: t.text }]}>
+                      {ownQuote.price.toLocaleString()}
+                      <Text
+                        style={[ownOfferStyles.priceCurrency, { color: t.textMuted }]}
+                      >
+                        {' '}DA
+                      </Text>
+                    </Text>
+                    <View style={ownOfferStyles.pills}>
+                      <View
+                        style={[
+                          ownOfferStyles.pill,
+                          { backgroundColor: t.bgMuted, borderColor: t.border },
+                        ]}
+                      >
+                        <Text
+                          style={[ownOfferStyles.pillText, { color: t.textMuted }]}
+                        >
+                          {ownQuote.condition === 'new' ? 'New' : 'Used'}
+                        </Text>
+                      </View>
+                      {ownQuote.warranty && (
+                        <View
+                          style={[
+                            ownOfferStyles.pill,
+                            {
+                              backgroundColor: ACCEPTED_COLOR + '0a',
+                              borderColor: ACCEPTED_COLOR + '28',
+                            },
+                          ]}
+                        >
+                          <Ionicons
+                            name="shield-checkmark-outline"
+                            size={10}
+                            color={ACCEPTED_COLOR}
+                          />
+                          <Text
+                            style={[
+                              ownOfferStyles.pillText,
+                              { color: ACCEPTED_COLOR },
+                            ]}
+                          >
+                            {ownQuote.warranty}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* Row 3: actions or locked callout */}
+                  {canActOnOwnOffer ? (
+                    <View style={ownOfferStyles.actionsRow}>
+                      <Pressable
+                        onPress={handleEditFromOffers}
+                        style={({ pressed }) => [
+                          ownOfferStyles.actionBtn,
+                          {
+                            backgroundColor: t.accent + '12',
+                            borderColor: t.accent + '30',
+                          },
+                          pressed && { opacity: 0.7 },
+                        ]}
+                      >
+                        <Ionicons name="pencil-outline" size={13} color={t.accent} />
+                        <Text
+                          style={[ownOfferStyles.actionBtnText, { color: t.accent }]}
+                        >
+                          Edit
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={() => openRetractConfirm(ownQuote.id)}
+                        style={({ pressed }) => [
+                          ownOfferStyles.actionBtn,
+                          {
+                            backgroundColor: '#fef2f2',
+                            borderColor: '#fecdd3',
+                          },
+                          pressed && { opacity: 0.7 },
+                        ]}
+                      >
+                        <Ionicons
+                          name="trash-outline"
+                          size={13}
+                          color="#dc2626"
+                        />
+                        <Text
+                          style={[
+                            ownOfferStyles.actionBtnText,
+                            { color: '#dc2626' },
+                          ]}
+                        >
+                          Withdraw
+                        </Text>
+                      </Pressable>
+                    </View>
+                  ) : (
+                    <View
+                      style={[
+                        ownOfferStyles.lockedCallout,
+                        { backgroundColor: t.bgMuted, borderColor: t.border },
+                      ]}
+                    >
+                      <Ionicons
+                        name="lock-closed-outline"
+                        size={12}
+                        color={t.textSubtle}
+                      />
+                      <Text
+                        style={[
+                          ownOfferStyles.lockedText,
+                          { color: t.textSubtle },
+                        ]}
+                      >
+                        {ownQuote.status === 'accepted'
+                          ? 'Your offer is in discussion. The buyer may contact you.'
+                          : requestStatus !== 'open'
+                            ? `Request is ${requestStatus}. No further actions available.`
+                            : 'Your offer is locked and cannot be edited.'}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              )}
+
+              {/* Other sellers (anonymous) */}
+              {sortedOthers.map((q) => (
+                <AnonymousQuoteCard key={q.id} quote={q} />
+              ))}
+
+              {/* Anonymization notice */}
+              {sortedOthers.length > 0 && (
+                <View
+                  style={[
+                    styles.anonNotice,
+                    { borderTopColor: t.border },
+                  ]}
+                >
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={11}
+                    color={t.textSubtle}
+                  />
+                  <Text
+                    style={[styles.anonNoticeText, { color: t.textSubtle }]}
+                  >
+                    Prices are anonymized to protect competition
+                  </Text>
+                </View>
+              )}
             </>
           )}
         </ScrollView>
@@ -738,11 +1129,83 @@ export function SellerRequestOfferScreen({
           <SellerQuoteForm
             requestId={request.id}
             sellerId={sellerId}
-            existingQuote={existingQuote ?? undefined}
+            existingQuote={localExistingQuote ?? undefined}
             onSuccess={onSuccess}
             onRequestCredits={onRequestCredits}
           />
         </ScrollView>
+      )}
+
+      {/* ── Retract confirm overlay ────────────────────────────────────────── */}
+      {retractConfirmId !== null && (
+        <Animated.View
+          style={[styles.overlayBg, { opacity: retractBgOpacity }]}
+          pointerEvents="auto"
+        >
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={closeRetractConfirm}
+          />
+          <Animated.View
+            style={[
+              styles.overlayCard,
+              {
+                backgroundColor: t.surface,
+                borderColor: t.border,
+                transform: [{ scale: retractCardScale }],
+                opacity: retractCardOpacity,
+              },
+            ]}
+          >
+            <View
+              style={[styles.overlayIconWrap, { backgroundColor: '#fef2f2' }]}
+            >
+              <Ionicons name="trash-outline" size={22} color="#dc2626" />
+            </View>
+            <Text style={[styles.overlayTitle, { color: t.text }]}>
+              Withdraw offer?
+            </Text>
+            <Text style={[styles.overlayDesc, { color: t.textMuted }]}>
+              This will permanently remove your offer from this request. You can
+              submit a new one if the request is still open.
+            </Text>
+            <View style={styles.overlayBtns}>
+              <Pressable
+                onPress={closeRetractConfirm}
+                style={({ pressed }) => [
+                  styles.overlayBtn,
+                  styles.overlayBtnCancel,
+                  { borderColor: t.border, backgroundColor: t.bgMuted },
+                  pressed && { opacity: 0.7 },
+                ]}
+              >
+                <Text style={[styles.overlayBtnText, { color: t.text }]}>
+                  Keep it
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={confirmRetract}
+                disabled={retractLoading}
+                style={({ pressed }) => [
+                  styles.overlayBtn,
+                  styles.overlayBtnConfirm,
+                  { backgroundColor: '#dc2626' },
+                  pressed && { opacity: 0.85 },
+                ]}
+              >
+                {retractLoading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text
+                    style={[styles.overlayBtnText, { color: '#fff' }]}
+                  >
+                    Withdraw
+                  </Text>
+                )}
+              </Pressable>
+            </View>
+          </Animated.View>
+        </Animated.View>
       )}
     </View>
   )
@@ -811,6 +1274,82 @@ const specStyles = StyleSheet.create({
   valueWrap: { alignItems: 'flex-end', gap: 1 },
   value: { fontSize: 14, fontWeight: '600' },
   sub: { fontSize: 11, fontWeight: '400' },
+})
+
+// ── Own offer card styles ─────────────────────────────────────────────────────
+
+const ownOfferStyles = StyleSheet.create({
+  card: {
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderLeftWidth: 3,
+    overflow: 'hidden',
+    padding: spacing.lg,
+    gap: spacing.md,
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    flexWrap: 'wrap',
+  },
+  myBadge: {
+    borderRadius: radius.pill,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  myBadgeText: { fontSize: 10, fontWeight: '700', letterSpacing: 0.3 },
+  statusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    borderWidth: 1,
+    borderRadius: radius.pill,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  statusText: { fontSize: 11, fontWeight: '500' },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  price: { fontSize: 22, fontWeight: '700', letterSpacing: -0.5 },
+  priceCurrency: { fontSize: 13, fontWeight: '500' },
+  pills: { flexDirection: 'row', gap: spacing.xs, flexWrap: 'wrap' },
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingHorizontal: 7,
+    paddingVertical: 4,
+  },
+  pillText: { fontSize: 11, fontWeight: '500' },
+  actionsRow: { flexDirection: 'row', gap: spacing.sm },
+  actionBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingVertical: 10,
+  },
+  actionBtnText: { fontSize: 13, fontWeight: '600' },
+  lockedCallout: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 6,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  lockedText: { flex: 1, fontSize: 12, fontWeight: '400', lineHeight: 18 },
 })
 
 // ── Styles ────────────────────────────────────────────────────────────────────
@@ -937,17 +1476,19 @@ const styles = StyleSheet.create({
 
   // Part name
   partNameRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
     gap: spacing.sm,
-    flexWrap: 'wrap',
   },
   partName: {
     fontSize: 22,
     fontWeight: '600',
     letterSpacing: -0.4,
     lineHeight: 28,
-    flex: 1,
+  },
+  partNameBadges: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+    alignItems: 'center',
   },
   priorityBadge: {
     flexDirection: 'row',
@@ -960,6 +1501,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   priorityText: { fontSize: 11, fontWeight: '600', color: '#e11d48' },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    alignSelf: 'flex-start',
+    borderRadius: radius.md,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderWidth: 1,
+  },
+  statusDot: { width: 6, height: 6, borderRadius: 3 },
+  statusBadgeText: { fontSize: 11, fontWeight: '600' },
 
   // Spec table
   specTable: {
@@ -1021,10 +1574,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.md,
     gap: 2,
+    position: 'relative',
   },
   statDivider: { width: 1, height: 32 },
   statNum: { fontSize: 20, fontWeight: '600', letterSpacing: -0.3 },
   statLabel: { fontSize: 11, fontWeight: '400' },
+
+  // Anonymization notice
+  anonNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+  },
+  anonNoticeText: { fontSize: 11, fontWeight: '400' },
 
   // Submit tab
   contextCard: {
@@ -1048,4 +1612,48 @@ const styles = StyleSheet.create({
   formHeader: { gap: spacing.xs },
   formTitle: { fontSize: 20, fontWeight: '600', letterSpacing: -0.3 },
   formDesc: { fontSize: 14, fontWeight: '400', lineHeight: 20 },
+
+  // Retract overlay
+  overlayBg: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 100,
+    padding: spacing.xl,
+  },
+  overlayCard: {
+    width: '100%',
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    padding: spacing.xl,
+    gap: spacing.lg,
+    alignItems: 'center',
+  },
+  overlayIconWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: radius.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  overlayTitle: { fontSize: 17, fontWeight: '700', textAlign: 'center' },
+  overlayDesc: {
+    fontSize: 13,
+    fontWeight: '400',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  overlayBtns: { flexDirection: 'row', gap: spacing.sm, width: '100%' },
+  overlayBtn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.lg,
+    paddingVertical: 13,
+    minHeight: 46,
+  },
+  overlayBtnCancel: { borderWidth: 1 },
+  overlayBtnConfirm: {},
+  overlayBtnText: { fontSize: 14, fontWeight: '600' },
 })

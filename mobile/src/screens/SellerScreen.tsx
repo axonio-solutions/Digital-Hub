@@ -53,6 +53,10 @@ export function SellerScreen({
     request: OpenRequestRow
     existingQuote: ExistingQuoteData
   } | null>(null)
+  const [selectedViewData, setSelectedViewData] = useState<{
+    request: OpenRequestRow
+    existingQuote: ExistingQuoteData
+  } | null>(null)
   const prevNotifIdsRef = useRef<Set<string>>(new Set())
 
   function bumpRefresh() {
@@ -160,6 +164,36 @@ export function SellerScreen({
           activeTab={activeTab}
           onTabChange={(tab) => {
             setSelectedMarketplaceRequest(null)
+            handleTabChange(tab)
+          }}
+          unreadCount={unreadCount}
+          variant="seller"
+        />
+      </View>
+    )
+  }
+
+  if (selectedViewData) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.screenArea}>
+          <SellerRequestOfferScreen
+            request={selectedViewData.request}
+            existingQuote={selectedViewData.existingQuote}
+            sellerId={user.id}
+            initialTab="details"
+            onBack={() => setSelectedViewData(null)}
+            onSuccess={() => {
+              setSelectedViewData(null)
+              bumpRefresh()
+            }}
+            onRequestCredits={handleNavigateBilling}
+          />
+        </View>
+        <BottomTabBar
+          activeTab={activeTab}
+          onTabChange={(tab) => {
+            setSelectedViewData(null)
             handleTabChange(tab)
           }}
           unreadCount={unreadCount}
@@ -278,6 +312,9 @@ export function SellerScreen({
             refreshKey={refreshKey}
             onEditQuote={(request, existingQuote) =>
               setSelectedEditData({ request, existingQuote })
+            }
+            onSelectQuote={(request, existingQuote) =>
+              setSelectedViewData({ request, existingQuote })
             }
           />
         )
