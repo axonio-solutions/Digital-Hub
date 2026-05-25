@@ -1,8 +1,8 @@
-import { ReactNode, useMemo, useState } from "react"
-import { AnimatePresence, motion, MotionConfig } from "motion/react"
-import useMeasure from "react-use-measure"
+import { ReactNode, useMemo, useState } from 'react'
+import { AnimatePresence, motion, MotionConfig } from 'motion/react'
+import useMeasure from 'react-use-measure'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 type Tab = {
   id: number
@@ -50,17 +50,17 @@ function DirectionAwareTabs({
     initial: (direction: number) => ({
       x: 300 * direction,
       opacity: 0,
-      filter: "blur(4px)",
+      filter: 'blur(4px)',
     }),
     active: {
       x: 0,
       opacity: 1,
-      filter: "blur(0px)",
+      filter: 'blur(0px)',
     },
     exit: (direction: number) => ({
       x: -300 * direction,
       opacity: 0,
-      filter: "blur(4px)",
+      filter: 'blur(4px)',
     }),
   }
 
@@ -68,9 +68,9 @@ function DirectionAwareTabs({
     <div className=" flex flex-col items-center w-full">
       <div
         className={cn(
-          "flex space-x-1 rtl:space-x-reverse border border-none rounded-full cursor-pointer bg-neutral-600 px-[3px] py-[3.2px] shadow-inner-shadow",
+          'flex space-x-1 rtl:space-x-reverse border border-none rounded-full cursor-pointer bg-neutral-600 px-[3px] py-[3.2px] shadow-inner-shadow',
           className,
-          rounded
+          rounded,
         )}
       >
         {tabs.map((tab) => (
@@ -78,22 +78,22 @@ function DirectionAwareTabs({
             key={tab.id}
             onClick={() => handleTabClick(tab.id)}
             className={cn(
-              "relative rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-medium text-neutral-200  transition focus-visible:outline-1 focus-visible:ring-1  focus-visible:outline-none flex gap-2 items-center ",
+              'relative rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-medium text-neutral-200  transition focus-visible:outline-1 focus-visible:ring-1  focus-visible:outline-none flex gap-2 items-center ',
               activeTab === tab.id
-                ? "text-white"
-                : "hover:text-neutral-300/60  text-neutral-200/80",
-              rounded ? roundedInner : undefined
+                ? 'text-white'
+                : 'hover:text-neutral-300/60  text-neutral-200/80',
+              rounded ? roundedInner : undefined,
             )}
-            style={{ WebkitTapHighlightColor: "transparent" }}
+            style={{ WebkitTapHighlightColor: 'transparent' }}
           >
             {activeTab === tab.id && (
               <motion.span
                 layoutId="bubble"
                 className={cn(
-                  "absolute inset-0 z-10 bg-neutral-700 mix-blend-difference shadow-inner-shadow border border-white/10",
-                  rounded ? roundedInner : "rounded-full"
+                  'absolute inset-0 z-10 bg-neutral-700 mix-blend-difference shadow-inner-shadow border border-white/10',
+                  rounded ? roundedInner : 'rounded-full',
                 )}
-                transition={{ type: "spring", bounce: 0.19, duration: 0.4 }}
+                transition={{ type: 'spring', bounce: 0.19, duration: 0.4 }}
               />
             )}
 
@@ -101,7 +101,7 @@ function DirectionAwareTabs({
           </button>
         ))}
       </div>
-      <MotionConfig transition={{ duration: 0.4, type: "spring", bounce: 0.2 }}>
+      <MotionConfig transition={{ duration: 0.4, type: 'spring', bounce: 0.2 }}>
         <motion.div
           className="relative mx-auto w-full h-full overflow-hidden"
           initial={false}

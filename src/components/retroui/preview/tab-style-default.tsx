@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { Tabs } from "@/components/retroui/Tab";
+import { Tabs } from '@/components/retroui/Tab'
 
 export default function TabStyleDefault() {
   return (
@@ -11,11 +11,13 @@ export default function TabStyleDefault() {
         <Tabs.Trigger value="contact">Contact</Tabs.Trigger>
       </Tabs.List>
       <Tabs.Content value="home">
-        Welcome to RetroUI, a retro styled UI library built with React,
-        Tailwind CSS & Headless UI.
+        Welcome to RetroUI, a retro styled UI library built with React, Tailwind
+        CSS & Headless UI.
       </Tabs.Content>
       <Tabs.Content value="about">This is the about section!</Tabs.Content>
-      <Tabs.Content value="contact">And, this is the contact section!</Tabs.Content>
+      <Tabs.Content value="contact">
+        And, this is the contact section!
+      </Tabs.Content>
     </Tabs>
-  );
+  )
 }

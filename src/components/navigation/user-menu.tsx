@@ -67,11 +67,31 @@ export function UserMenu({
   const roleLinks = useMemo(() => {
     if (role === 'admin') {
       return [
-        { to: DASHBOARD_ROUTES.ROOT, label: t('nav.global_metrics'), icon: Activity },
-        { to: ADMIN_ROUTES.USERS, label: t('nav.user_moderation'), icon: Users },
-        { to: ADMIN_ROUTES.CATEGORIES, label: t('nav.categories'), icon: Layers },
-        { to: ADMIN_ROUTES.AUDIT_LOG, label: t('nav.request_audit'), icon: Archive },
-        { to: DASHBOARD_ROUTES.PROFILE, label: t('nav.admin_settings'), icon: Settings },
+        {
+          to: DASHBOARD_ROUTES.ROOT,
+          label: t('nav.global_metrics'),
+          icon: Activity,
+        },
+        {
+          to: ADMIN_ROUTES.USERS,
+          label: t('nav.user_moderation'),
+          icon: Users,
+        },
+        {
+          to: ADMIN_ROUTES.CATEGORIES,
+          label: t('nav.categories'),
+          icon: Layers,
+        },
+        {
+          to: ADMIN_ROUTES.AUDIT_LOG,
+          label: t('nav.request_audit'),
+          icon: Archive,
+        },
+        {
+          to: DASHBOARD_ROUTES.PROFILE,
+          label: t('nav.admin_settings'),
+          icon: Settings,
+        },
       ]
     }
     if (role === 'seller') {
@@ -81,7 +101,11 @@ export function UserMenu({
       ]
     }
     return [
-      { to: BUYER_ROUTES.REQUESTS, label: t('user_dropdown.my_requests'), icon: ClipboardList },
+      {
+        to: BUYER_ROUTES.REQUESTS,
+        label: t('user_dropdown.my_requests'),
+        icon: ClipboardList,
+      },
     ]
   }, [role, t])
 
