@@ -127,8 +127,7 @@ const ActionCell = ({
         title={t('dialogs.cancel.title')}
         description={t('dialogs.cancel.description')}
         confirmLabel={t('dialogs.cancel.confirm')}
-        confirmIcon={<XCircle className="size-4" />}
-        variant="destructive"
+        actionVariant="cancel"
         isLoading={isCancelling}
         loadingLabel={t('dialogs.cancel.cancelling')}
         onConfirm={() =>
@@ -144,8 +143,7 @@ const ActionCell = ({
         title={t('dialogs.delete.title')}
         description={t('dialogs.delete.description')}
         confirmLabel={t('dialogs.delete.confirm')}
-        confirmIcon={<Trash2 className="size-4" />}
-        variant="destructive"
+        actionVariant="delete"
         isLoading={isDeleting}
         loadingLabel={t('dialogs.delete.deleting')}
         onConfirm={() =>
@@ -161,7 +159,7 @@ const ActionCell = ({
         title={t('dialogs.reopen.title')}
         description={t('dialogs.reopen.description')}
         confirmLabel={t('dialogs.reopen.confirm')}
-        confirmIcon={<RefreshCcw className="size-4" />}
+        actionVariant="reopen"
         isLoading={isReopening}
         loadingLabel={t('dialogs.reopen.reopening')}
         onConfirm={() =>

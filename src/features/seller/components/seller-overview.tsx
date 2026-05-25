@@ -32,6 +32,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import type { ChartConfig } from '@/components/ui/chart'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useSellerCreditBalance } from '@/features/seller/hooks/use-billing'
 import { useSellerDashboardStats } from '@/features/marketplace/hooks/use-marketplace'
@@ -40,7 +41,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
-import type { ChartConfig } from '@/components/ui/chart'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'

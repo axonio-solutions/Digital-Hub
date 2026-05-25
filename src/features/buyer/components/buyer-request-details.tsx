@@ -40,7 +40,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -152,8 +151,7 @@ function ImageSlider({ images, alt }: { images: Array<string>; alt: string }) {
 }
 
 export function BuyerRequestDetails() {
-  const { t, i18n } = useTranslation(['requests/details', 'requests/list'])
-  const isRtl = i18n.dir() === 'rtl'
+  const { t } = useTranslation(['requests/details', 'requests/list'])
   const { requestId } = useParams({
     from: '/_authed/buyer/requests/$requestId',
   })
@@ -175,6 +173,9 @@ export function BuyerRequestDetails() {
   )
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false)
+  const [isReopenDialogOpen, setIsReopenDialogOpen] = useState(false)
+  const [isFulfillDialogOpen, setIsFulfillDialogOpen] = useState(false)
   const [contactingSeller, setContactingSeller] = useState<any>(null)
 
   const { toast } = useToast('requests/details')
@@ -202,11 +203,6 @@ export function BuyerRequestDetails() {
       onError: (err: any) =>
         toast.error('toasts.error', { error: err.message }),
     })
-
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href)
-    toast.success('toasts.link_copied')
-  }
 
   const handleAccept = (quoteId: string) => {
     setProcessingQuoteId(quoteId)
@@ -375,12 +371,12 @@ export function BuyerRequestDetails() {
               <Edit className="size-4" />
               {t('actions.edit')}
             </Button>
-            {request.quotes?.some((q: any) => q.status === 'accepted') && (
+            {request.quotes.some((q: any) => q.status === 'accepted') && (
               <Button
                 variant="default"
                 disabled={isFulfilling}
-                onClick={handleFulfill}
-                className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white"
+                onClick={() => setIsFulfillDialogOpen(true)}
+                className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
               >
                 {isFulfilling ? (
                   <Loader2 className="size-4 animate-spin" />
@@ -393,8 +389,8 @@ export function BuyerRequestDetails() {
             <Button
               variant="outline"
               disabled={isCancelling}
-              onClick={handleCancel}
-              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-orange-200 text-orange-600 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-400 dark:hover:bg-orange-950"
+              onClick={() => setIsCancelDialogOpen(true)}
+              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-orange-200 text-orange-600 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-400 dark:hover:bg-orange-950 cursor-pointer"
             >
               {isCancelling ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -417,8 +413,8 @@ export function BuyerRequestDetails() {
             <Button
               variant="outline"
               disabled={isReopening}
-              onClick={handleReopen}
-              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950"
+              onClick={() => setIsReopenDialogOpen(true)}
+              className="flex-1 gap-1.5 h-10 px-3 rounded-lg text-sm font-medium border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950 cursor-pointer"
             >
               {isReopening ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -542,12 +538,12 @@ export function BuyerRequestDetails() {
                 <Edit className="size-3.5 shrink-0" />
                 {t('actions.edit')}
               </Button>
-              {request.quotes?.some((q: any) => q.status === 'accepted') && (
+              {request.quotes.some((q: any) => q.status === 'accepted') && (
                 <Button
                   variant="default"
                   disabled={isFulfilling}
-                  onClick={handleFulfill}
-                  className="flex-1 gap-1 h-9 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap bg-emerald-600 hover:bg-emerald-700 text-white"
+                  onClick={() => setIsFulfillDialogOpen(true)}
+                  className="flex-1 gap-1 h-9 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
                 >
                   {isFulfilling ? (
                     <Loader2 className="size-3.5 animate-spin shrink-0" />
@@ -560,8 +556,8 @@ export function BuyerRequestDetails() {
               <Button
                 variant="outline"
                 disabled={isCancelling}
-                onClick={handleCancel}
-                className="flex-1 gap-1 h-9 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap border-orange-200 text-orange-600 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-400 dark:hover:bg-orange-950"
+                onClick={() => setIsCancelDialogOpen(true)}
+                className="flex-1 gap-1 h-9 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap border-orange-200 text-orange-600 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-400 dark:hover:bg-orange-950 cursor-pointer"
               >
                 {isCancelling ? (
                   <Loader2 className="size-3.5 animate-spin shrink-0" />
@@ -584,8 +580,8 @@ export function BuyerRequestDetails() {
               <Button
                 variant="outline"
                 disabled={isReopening}
-                onClick={handleReopen}
-                className="flex-1 gap-1 h-9 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950"
+                onClick={() => setIsReopenDialogOpen(true)}
+                className="flex-1 gap-1 h-9 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950 cursor-pointer"
               >
                 {isReopening ? (
                   <Loader2 className="size-3.5 animate-spin shrink-0" />
@@ -621,13 +617,54 @@ export function BuyerRequestDetails() {
         request={request}
       />
       <ActionConfirmDialog
+        open={isCancelDialogOpen}
+        onOpenChange={setIsCancelDialogOpen}
+        title={t('dialogs.cancel.title', 'Close this request?')}
+        description={t(
+          'dialogs.cancel.description',
+          'Closing will stop new offers. You can reopen it later if needed.',
+        )}
+        confirmLabel={t('dialogs.cancel.confirm', 'Close Request')}
+        actionVariant="cancel"
+        isLoading={isCancelling}
+        loadingLabel={t('actions.closing', 'Closing…')}
+        onConfirm={handleCancel}
+      />
+      <ActionConfirmDialog
+        open={isReopenDialogOpen}
+        onOpenChange={setIsReopenDialogOpen}
+        title={t('dialogs.reopen.title', 'Reopen this request?')}
+        description={t(
+          'dialogs.reopen.description',
+          'Reopening will make your request visible to sellers again.',
+        )}
+        confirmLabel={t('dialogs.reopen.confirm', 'Reopen Request')}
+        actionVariant="reopen"
+        isLoading={isReopening}
+        loadingLabel={t('actions.reopening', 'Reopening…')}
+        onConfirm={handleReopen}
+      />
+      <ActionConfirmDialog
+        open={isFulfillDialogOpen}
+        onOpenChange={setIsFulfillDialogOpen}
+        title={t('dialogs.fulfill.title', 'Mark as fulfilled?')}
+        description={t(
+          'dialogs.fulfill.description',
+          'Confirm that the accepted offer was completed successfully. This will close your request permanently.',
+        )}
+        confirmLabel={t('dialogs.fulfill.confirm', 'Mark Fulfilled')}
+        actionVariant="fulfill"
+        isLoading={isFulfilling}
+        loadingLabel={t('actions.fulfilling', 'Processing…')}
+        onConfirm={handleFulfill}
+      />
+      <ActionConfirmDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         title={t('dialogs.delete.title')}
         description={t('dialogs.delete.description', { ns: 'requests/list' })}
         confirmLabel={t('actions.delete')}
-        confirmIcon={<Trash2 className="size-4" />}
-        variant="destructive"
+        actionVariant="delete"
         isLoading={isDeleting}
         loadingLabel={t('actions.deleting')}
         onConfirm={handleDelete}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense, lazy } from 'react'
+import { Suspense, lazy, useState } from 'react'
 import { FileText, Loader2, ShoppingBag, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 

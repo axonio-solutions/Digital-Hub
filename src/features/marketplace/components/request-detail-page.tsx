@@ -5,12 +5,13 @@
  * theme: brand blue hue 260° · design-system: design.md
  */
 
-import { useState, useMemo, useEffect, useRef } from 'react'
-import { useParams } from '@tanstack/react-router'
-import { formatDistanceToNow, type Locale } from 'date-fns'
-import { enUS, fr, arSA } from 'date-fns/locale'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useParams  } from '@tanstack/react-router'
+import {  formatDistanceToNow } from 'date-fns'
+import { arSA, enUS, fr } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
 import {
+  AlertTriangle,
   BadgeCheck,
   Calendar,
   ChevronDown,
@@ -30,10 +31,12 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
+import { SubmitOfferTab } from './submit-offer-tab'
+import type {Locale} from 'date-fns';
 import Navbar from '@/components/layout/navbar'
 import {
-  useRequestDetails,
   usePublicTaxonomy,
+  useRequestDetails,
 } from '@/features/requests/hooks/use-requests'
 import {
   useAnonymousQuotes,
@@ -41,7 +44,6 @@ import {
   useMyQuoteForRequest,
 } from '@/features/marketplace/hooks/use-marketplace'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import { SubmitOfferTab } from './submit-offer-tab'
 import { ImageSlider } from '@/components/ui/image-slider'
 import { CategoryDisplay } from '@/components/ui/category-display'
 import { Button } from '@/components/ui/button'
@@ -55,7 +57,6 @@ import {
 import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
-import { Link } from '@tanstack/react-router'
 import { PUBLIC_ROUTES } from '@/lib/routes'
 
 const dateFnsLocales: Record<string, Locale> = { en: enUS, fr, ar: arSA }
@@ -141,6 +142,7 @@ function OfferRow({
   rank,
   isOwn,
   isLocked,
+  isInactive,
   onEdit,
   onDelete,
   isDeleting,
@@ -151,13 +153,33 @@ function OfferRow({
   rank: number
   isOwn: boolean
   isLocked: boolean
+  isInactive: boolean
   onEdit: () => void
   onDelete: () => void
   isDeleting: boolean
   t: (key: string) => string
   dateLocale?: Locale
 }) {
-  const accepted = quote.status === 'accepted'
+  const status = quote.status
+  const isAccepted = status === 'accepted'
+  const isRejected = status === 'rejected'
+
+  const statusLabel = isAccepted
+    ? isInactive
+      ? t('detail_page.offer_selected')
+      : t('offer_dialog.offers_in_discussion')
+    : isRejected
+      ? t('statuses.rejected')
+      : t('statuses.pending')
+
+  const statusStyle = isAccepted
+    ? isInactive
+      ? 'bg-emerald-50 text-emerald-700 border-emerald-200/50 dark:bg-emerald-950/40 dark:border-emerald-800/40'
+      : 'bg-blue-50 text-[#0369A1] border-blue-200/50 dark:bg-blue-950/40 dark:border-blue-800/40'
+    : isRejected
+      ? 'bg-muted text-muted-foreground/50 border-border/50'
+      : 'bg-amber-50 text-amber-700 border-amber-200/50 dark:bg-amber-950/40 dark:border-amber-800/40'
+
   return (
     <div
       className={cn(
@@ -182,18 +204,16 @@ function OfferRow({
         <span
           className={cn(
             'px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wide border leading-none justify-self-start',
-            accepted
-              ? 'bg-blue-50 text-[#0369A1] border-blue-200/50 dark:bg-blue-950/40 dark:border-blue-800/40'
-              : 'bg-amber-50 text-amber-700 border-amber-200/50 dark:bg-amber-950/40 dark:border-amber-800/40',
+            statusStyle,
           )}
         >
-          {accepted
-            ? t('offer_dialog.offers_in_discussion')
-            : t('statuses.pending')}
+          {statusLabel}
         </span>
         {isOwn && (
           <span className="text-[9px] font-semibold text-primary/50 justify-self-end">
-            {t('offer_dialog.my_offer_badge')}
+            {isAccepted && isInactive
+              ? t('detail_page.offer_selected')
+              : t('offer_dialog.my_offer_badge')}
           </span>
         )}
 
@@ -244,7 +264,7 @@ function OfferRow({
               <Button
                 size="sm"
                 variant="outline"
-                className="flex-1 sm:flex-none h-8 sm:h-8 px-3 sm:px-3 text-xs font-semibold rounded-lg gap-1.5 cursor-pointer border-border hover:border-primary/40 hover:text-primary transition-all"
+                className="flex-1 sm:flex-none h-8 sm:h-8 px-3 text-xs font-semibold rounded-lg gap-1.5 cursor-pointer border-border hover:border-primary/40 hover:text-primary transition-all"
                 onClick={onEdit}
                 disabled={isLocked}
                 title={isLocked ? t('detail_page.locked_title') : undefined}
@@ -254,17 +274,17 @@ function OfferRow({
               </Button>
               <Button
                 size="sm"
-                variant="ghost"
-                className="h-8 w-9 sm:w-8 p-0 rounded-lg text-muted-foreground/40 hover:text-destructive hover:bg-destructive/8 cursor-pointer transition-all"
+                variant="outline"
+                className="flex-1 sm:flex-none h-8 sm:h-8 px-3 text-xs font-semibold rounded-lg gap-1.5 cursor-pointer border-border text-muted-foreground/50 hover:text-destructive hover:border-destructive/30 hover:bg-destructive/5 transition-all"
                 onClick={onDelete}
                 disabled={isDeleting || isLocked}
-                title={t('detail_page.withdraw_btn')}
               >
                 {isDeleting ? (
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <Loader2 className="size-3 animate-spin" />
                 ) : (
-                  <Trash2 className="size-3.5" />
+                  <Trash2 className="size-3" />
                 )}
+                <span>{t('detail_page.withdraw_btn')}</span>
               </Button>
             </div>
           )}
@@ -292,6 +312,8 @@ export function RequestDetailPage() {
   const { requestId } = useParams({ from: '/_authed/requests/$requestId' })
   const { toast } = useToast('marketplace')
   const [offerDialogOpen, setOfferDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const { data: user } = useAuth()
@@ -312,7 +334,7 @@ export function RequestDetailPage() {
 
   const brandLogos = useMemo<Record<string, string>>(() => {
     if (!taxonomy?.brands) return {}
-    return (taxonomy.brands as any[]).reduce(
+    return (taxonomy.brands as Array<any>).reduce(
       (acc, b) => {
         if (b.brand && b.imageUrl) acc[b.brand] = b.imageUrl
         return acc
@@ -327,6 +349,8 @@ export function RequestDetailPage() {
   const inDiscussion = allQuotes.filter(
     (q: any) => q.status === 'accepted',
   ).length
+  const selected = inDiscussion
+  const rejected = allQuotes.filter((q: any) => q.status === 'rejected').length
 
   const sortedQuotes = useMemo(
     () =>
@@ -383,13 +407,20 @@ export function RequestDetailPage() {
     }
   }, [offerDialogOpen])
 
-  const handleDelete = (quoteId: string) => {
-    if (!window.confirm(t('detail_page.withdraw_confirm'))) return
-    setDeletingId(quoteId)
-    deleteQuote(quoteId, {
+  const handleDeleteClick = (quoteId: string) => {
+    setDeleteTargetId(quoteId)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (!deleteTargetId) return
+    setDeletingId(deleteTargetId)
+    setDeleteDialogOpen(false)
+    deleteQuote(deleteTargetId, {
       onSuccess: () => {
         toast.success('toasts.withdraw_success')
         setDeletingId(null)
+        setDeleteTargetId(null)
         void refetchMyQuote()
         void refetchQuotes()
       },
@@ -398,6 +429,11 @@ export function RequestDetailPage() {
         setDeletingId(null)
       },
     })
+  }
+
+  const handleDeleteDialogCancel = () => {
+    setDeleteDialogOpen(false)
+    setDeleteTargetId(null)
   }
 
   const req = !requestLoading && request ? (request as any) : null
@@ -422,6 +458,25 @@ export function RequestDetailPage() {
   // Derived status signals
   const reqStatus: string = req?.status || 'open'
   const isInactive = reqStatus === 'fulfilled' || reqStatus === 'cancelled'
+
+  // Stats definitions based on request lifecycle
+  const statItems = isInactive
+    ? reqStatus === 'fulfilled'
+      ? [
+          { key: 'total', icon: Users, count: total, label: t('detail_page.stats_total'), valueColor: 'text-foreground', iconCls: 'bg-muted text-muted-foreground', statColor: 'default' as const },
+          { key: 'selected', icon: BadgeCheck, count: selected, label: t('detail_page.stats_selected'), valueColor: 'text-emerald-600', iconCls: 'bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40', statColor: 'default' as const },
+          { key: 'rejected', icon: FileSearch, count: rejected, label: t('detail_page.stats_rejected'), valueColor: 'text-muted-foreground/50', iconCls: 'bg-muted text-muted-foreground/40', statColor: 'default' as const },
+        ]
+      : [
+          { key: 'total', icon: Users, count: total, label: t('detail_page.stats_total'), valueColor: 'text-foreground', iconCls: 'bg-muted text-muted-foreground', statColor: 'default' as const },
+          { key: 'cancelled', icon: FileSearch, count: total, label: t('statuses.cancelled'), valueColor: 'text-muted-foreground/50', iconCls: 'bg-muted text-muted-foreground/40', statColor: 'default' as const },
+          { key: 'empty', icon: FileSearch, count: 0, label: '', valueColor: 'text-transparent', iconCls: 'invisible', statColor: 'default' as const },
+        ]
+    : [
+        { key: 'total', icon: Users, count: total, label: t('detail_page.stats_total'), valueColor: 'text-foreground', iconCls: 'bg-muted text-muted-foreground', statColor: 'default' as const },
+        { key: 'pending', icon: Clock, count: pending, label: t('detail_page.stats_pending'), valueColor: 'text-amber-600', iconCls: 'bg-amber-50 text-amber-500 dark:bg-amber-950/40', statColor: 'warning' as const },
+        { key: 'inDiscussion', icon: MessageSquare, count: selected, label: t('detail_page.stats_in_discussion'), valueColor: 'text-[#0369A1]', iconCls: 'bg-blue-50 text-[#0369A1] dark:bg-blue-950/40', statColor: 'info' as const },
+      ]
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -466,6 +521,26 @@ export function RequestDetailPage() {
                       {t('detail_page.priority')}
                     </span>
                   )}
+                  {reqStatus !== 'open' && (
+                    <span
+                      className={cn(
+                        'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border',
+                        reqStatus === 'fulfilled'
+                          ? 'bg-blue-50 text-[#0369A1] border-blue-200/50 dark:bg-blue-950/30 dark:border-blue-800/30'
+                          : 'bg-muted text-muted-foreground/50 border-border/50',
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          'size-1.5 rounded-full shrink-0',
+                          reqStatus === 'fulfilled'
+                            ? 'bg-[#0369A1]'
+                            : 'bg-muted-foreground/40',
+                        )}
+                      />
+                      {t('statuses.' + reqStatus)}
+                    </span>
+                  )}
                 </div>
 
                 <h1 className="text-2xl md:text-[28px] font-bold text-foreground tracking-tight leading-tight break-words">
@@ -508,31 +583,9 @@ export function RequestDetailPage() {
             <div className="bg-card border border-border rounded-xl overflow-hidden">
               {/* Mobile */}
               <div className="grid grid-cols-3 gap-0 sm:hidden">
-                {[
-                  {
-                    icon: Users,
-                    count: total,
-                    label: t('detail_page.stats_total'),
-                    valueColor: 'text-foreground',
-                    iconCls: 'bg-muted text-muted-foreground',
-                  },
-                  {
-                    icon: Clock,
-                    count: pending,
-                    label: t('detail_page.stats_pending'),
-                    valueColor: 'text-amber-600',
-                    iconCls: 'bg-amber-50 text-amber-500 dark:bg-amber-950/40',
-                  },
-                  {
-                    icon: MessageSquare,
-                    count: inDiscussion,
-                    label: t('detail_page.stats_in_discussion'),
-                    valueColor: 'text-[#0369A1]',
-                    iconCls: 'bg-blue-50 text-[#0369A1] dark:bg-blue-950/40',
-                  },
-                ].map((s, i) => (
+                {statItems.map((s, i) => (
                   <div
-                    key={s.label}
+                    key={s.key}
                     className={cn(
                       'flex flex-col items-center gap-1 justify-center px-2 py-3',
                       'border-r border-border/40 last:border-r-0',
@@ -568,37 +621,12 @@ export function RequestDetailPage() {
               </div>
               {/* Desktop */}
               <div className="hidden sm:grid grid-cols-3 gap-3 p-3">
-                {[
-                  {
-                    icon: Users,
-                    count: total,
-                    label: t('detail_page.stats_total'),
-                    iconCls: 'bg-muted text-muted-foreground',
-                  },
-                  {
-                    icon: Clock,
-                    count: pending,
-                    label: t('detail_page.stats_pending'),
-                    iconCls: 'bg-amber-50 text-amber-500 dark:bg-amber-950/40',
-                  },
-                  {
-                    icon: MessageSquare,
-                    count: inDiscussion,
-                    label: t('detail_page.stats_in_discussion'),
-                    iconCls: 'bg-blue-50 text-[#0369A1] dark:bg-blue-950/40',
-                  },
-                ].map((s) => (
-                  <Stat key={s.label}>
+                {statItems.map((s) => (
+                  <Stat key={s.key}>
                     <StatLabel>{s.label}</StatLabel>
                     <StatIndicator
                       variant="icon"
-                      color={
-                        s.iconCls.includes('amber')
-                          ? 'warning'
-                          : s.iconCls.includes('blue')
-                            ? 'info'
-                            : 'default'
-                      }
+                      color={s.statColor}
                     >
                       <s.icon />
                     </StatIndicator>
@@ -810,16 +838,18 @@ export function RequestDetailPage() {
                         quote={quote}
                         rank={i + 1}
                         isOwn={isOwn}
-                        isLocked={isOwn && quote.status !== 'pending'}
+                        isLocked={isOwn && (isInactive || quote.status !== 'pending')}
+                        isInactive={isInactive}
                         onEdit={() => openEdit(quote.id)}
-                        onDelete={() => handleDelete(quote.id)}
+                        onDelete={() => handleDeleteClick(quote.id)}
                         isDeleting={deletingId === quote.id}
                         t={t}
                         dateLocale={dateLocale}
                       />
                     )
                   })
-                )}
+                  )
+                }
 
                 {total > 0 && (
                   <div className="px-4 py-2.5 bg-muted/10 border-t border-border/30">
@@ -839,60 +869,94 @@ export function RequestDetailPage() {
                   </h2>
                 </div>
                 <div className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      {inDiscussion > 0 ? (
-                        <span className="size-2 rounded-full bg-[#0369A1] shrink-0" />
-                      ) : total > 2 ? (
-                        <span className="size-2 rounded-full bg-amber-500 shrink-0" />
-                      ) : (
-                        <span className="size-2 rounded-full bg-emerald-500 shrink-0" />
-                      )}
-                      <span
-                        className={cn(
-                          'text-sm font-bold',
-                          inDiscussion > 0
-                            ? 'text-[#0369A1]'
-                            : total > 2
-                              ? 'text-amber-600'
-                              : 'text-emerald-600',
-                        )}
-                      >
-                        {inDiscussion > 0
-                          ? t('detail_page.competition_hot')
-                          : total === 0
-                            ? t('detail_page.competition_open')
-                            : total <= 2
-                              ? t('detail_page.competition_low')
-                              : t('detail_page.competition_active')}
-                      </span>
-                    </div>
-                    <div className="flex gap-3 text-[11px] text-muted-foreground/60 font-semibold">
-                      {total > 0 && (
-                        <span>
-                          {t('detail_page.seller_count', { count: total })}
+                  {isInactive ? (
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            'size-2 rounded-full shrink-0',
+                            reqStatus === 'fulfilled'
+                              ? 'bg-emerald-500'
+                              : 'bg-muted-foreground/40',
+                          )}
+                        />
+                        <span
+                          className={cn(
+                            'text-sm font-bold',
+                            reqStatus === 'fulfilled'
+                              ? 'text-emerald-600'
+                              : 'text-muted-foreground/50',
+                          )}
+                        >
+                          {reqStatus === 'fulfilled'
+                            ? t('statuses.fulfilled')
+                            : t('statuses.cancelled')}
                         </span>
-                      )}
-                      {inDiscussion > 0 && (
-                        <span className="text-[#0369A1]">
-                          {t('detail_page.in_discussion_count', {
-                            count: inDiscussion,
-                          })}
-                        </span>
-                      )}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
+                        {reqStatus === 'fulfilled'
+                          ? t('detail_page.competition_fulfilled')
+                          : t('detail_page.competition_cancelled')}
+                      </p>
                     </div>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
-                    {total === 0
-                      ? t('detail_page.competition_no_offers')
-                      : inDiscussion > 0
-                        ? t('detail_page.competition_in_discussion')
-                        : total === 1
-                          ? t('detail_page.competition_waiting', { count: 1 })
-                          : t('detail_page.competition_waiting_plural', {
-                              count: total,
-                            })}
-                  </p>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          {inDiscussion > 0 ? (
+                            <span className="size-2 rounded-full bg-[#0369A1] shrink-0" />
+                          ) : total > 2 ? (
+                            <span className="size-2 rounded-full bg-amber-500 shrink-0" />
+                          ) : (
+                            <span className="size-2 rounded-full bg-emerald-500 shrink-0" />
+                          )}
+                          <span
+                            className={cn(
+                              'text-sm font-bold',
+                              inDiscussion > 0
+                                ? 'text-[#0369A1]'
+                                : total > 2
+                                  ? 'text-amber-600'
+                                  : 'text-emerald-600',
+                            )}
+                          >
+                            {inDiscussion > 0
+                              ? t('detail_page.competition_hot')
+                              : total === 0
+                                ? t('detail_page.competition_open')
+                                : total <= 2
+                                  ? t('detail_page.competition_low')
+                                  : t('detail_page.competition_active')}
+                          </span>
+                        </div>
+                        <div className="flex gap-3 text-[11px] text-muted-foreground/60 font-semibold">
+                          {total > 0 && (
+                            <span>
+                              {t('detail_page.seller_count', { count: total })}
+                            </span>
+                          )}
+                          {inDiscussion > 0 && (
+                            <span className="text-[#0369A1]">
+                              {t('detail_page.in_discussion_count', {
+                                count: inDiscussion,
+                              })}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
+                        {total === 0
+                          ? t('detail_page.competition_no_offers')
+                          : inDiscussion > 0
+                            ? t('detail_page.competition_in_discussion')
+                            : total === 1
+                              ? t('detail_page.competition_waiting', { count: 1 })
+                              : t('detail_page.competition_waiting_plural', {
+                                  count: total,
+                                })}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -1098,9 +1162,10 @@ export function RequestDetailPage() {
                           quote={quote}
                           rank={i + 1}
                           isOwn={isOwn}
-                          isLocked={isOwn && quote.status !== 'pending'}
+                          isLocked={isOwn && (isInactive || quote.status !== 'pending')}
+                          isInactive={isInactive}
                           onEdit={() => openEdit(quote.id)}
-                          onDelete={() => handleDelete(quote.id)}
+                          onDelete={() => handleDeleteClick(quote.id)}
                           isDeleting={deletingId === quote.id}
                           t={t}
                           dateLocale={dateLocale}
@@ -1140,60 +1205,92 @@ export function RequestDetailPage() {
                     </h2>
                   </div>
                   <div className="p-5">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        {inDiscussion > 0 ? (
-                          <span className="size-2 rounded-full bg-[#0369A1] shrink-0" />
-                        ) : total > 2 ? (
-                          <span className="size-2 rounded-full bg-amber-500 shrink-0" />
-                        ) : (
-                          <span className="size-2 rounded-full bg-emerald-500 shrink-0" />
-                        )}
+                    {isInactive ? (
+                      <div className="flex flex-col gap-2">
                         <span
                           className={cn(
-                            'text-sm font-bold',
-                            inDiscussion > 0
-                              ? 'text-[#0369A1]'
-                              : total > 2
-                                ? 'text-amber-600'
-                                : 'text-emerald-600',
+                            'text-sm font-bold flex items-center gap-2',
+                            reqStatus === 'fulfilled'
+                              ? 'text-emerald-600'
+                              : 'text-muted-foreground/50',
                           )}
                         >
-                          {inDiscussion > 0
-                            ? t('detail_page.competition_hot')
-                            : total === 0
-                              ? t('detail_page.competition_open')
-                              : total <= 2
-                                ? t('detail_page.competition_low')
-                                : t('detail_page.competition_active')}
+                          <span
+                            className={cn(
+                              'size-2 rounded-full shrink-0',
+                              reqStatus === 'fulfilled'
+                                ? 'bg-emerald-500'
+                                : 'bg-muted-foreground/40',
+                            )}
+                          />
+                          {reqStatus === 'fulfilled'
+                            ? t('statuses.fulfilled')
+                            : t('statuses.cancelled')}
                         </span>
+                        <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
+                          {reqStatus === 'fulfilled'
+                            ? t('detail_page.competition_fulfilled')
+                            : t('detail_page.competition_cancelled')}
+                        </p>
                       </div>
-                      <div className="flex gap-3 text-[11px] text-muted-foreground/60 font-semibold">
-                        {total > 0 && (
-                          <span>
-                            {t('detail_page.seller_count', { count: total })}
-                          </span>
-                        )}
-                        {inDiscussion > 0 && (
-                          <span className="text-[#0369A1]">
-                            {t('detail_page.in_discussion_count', {
-                              count: inDiscussion,
-                            })}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
-                      {total === 0
-                        ? t('detail_page.competition_no_offers')
-                        : inDiscussion > 0
-                          ? t('detail_page.competition_in_discussion')
-                          : total === 1
-                            ? t('detail_page.competition_waiting', { count: 1 })
-                            : t('detail_page.competition_waiting_plural', {
-                                count: total,
-                              })}
-                    </p>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            {inDiscussion > 0 ? (
+                              <span className="size-2 rounded-full bg-[#0369A1] shrink-0" />
+                            ) : total > 2 ? (
+                              <span className="size-2 rounded-full bg-amber-500 shrink-0" />
+                            ) : (
+                              <span className="size-2 rounded-full bg-emerald-500 shrink-0" />
+                            )}
+                            <span
+                              className={cn(
+                                'text-sm font-bold',
+                                inDiscussion > 0
+                                  ? 'text-[#0369A1]'
+                                  : total > 2
+                                    ? 'text-amber-600'
+                                    : 'text-emerald-600',
+                              )}
+                            >
+                              {inDiscussion > 0
+                                ? t('detail_page.competition_hot')
+                                : total === 0
+                                  ? t('detail_page.competition_open')
+                                  : total <= 2
+                                    ? t('detail_page.competition_low')
+                                    : t('detail_page.competition_active')}
+                            </span>
+                          </div>
+                          <div className="flex gap-3 text-[11px] text-muted-foreground/60 font-semibold">
+                            {total > 0 && (
+                              <span>
+                                {t('detail_page.seller_count', { count: total })}
+                              </span>
+                            )}
+                            {inDiscussion > 0 && (
+                              <span className="text-[#0369A1]">
+                                {t('detail_page.in_discussion_count', {
+                                  count: inDiscussion,
+                                })}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
+                          {total === 0
+                            ? t('detail_page.competition_no_offers')
+                            : inDiscussion > 0
+                              ? t('detail_page.competition_in_discussion')
+                              : total === 1
+                                ? t('detail_page.competition_waiting', { count: 1 })
+                                : t('detail_page.competition_waiting_plural', {
+                                    count: total,
+                                  })}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1241,6 +1338,42 @@ export function RequestDetailPage() {
               showLifecycle={false}
               onSuccess={handleOfferSuccess}
             />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Delete confirmation dialog ─────────────────────────────────── */}
+      <Dialog open={deleteDialogOpen} onOpenChange={handleDeleteDialogCancel}>
+        <DialogContent className="sm:max-w-md rounded-2xl p-0 overflow-hidden">
+          <div className="p-6 sm:p-8 flex flex-col items-center text-center gap-4">
+            <div className="size-14 rounded-2xl bg-destructive/10 flex items-center justify-center shrink-0">
+              <AlertTriangle className="size-6 text-destructive" />
+            </div>
+            <div className="space-y-1.5">
+              <DialogTitle className="text-base font-bold tracking-tight">
+                {t('alerts.withdraw_title')}
+              </DialogTitle>
+              <p className="text-sm text-muted-foreground/70 leading-relaxed max-w-sm">
+                {t('alerts.delete_confirm')}
+              </p>
+            </div>
+            <div className="flex items-center gap-3 w-full pt-2">
+              <Button
+                variant="outline"
+                className="flex-1 h-10 rounded-xl text-sm font-semibold cursor-pointer"
+                onClick={handleDeleteDialogCancel}
+              >
+                {t('dialog_form.cancel')}
+              </Button>
+              <Button
+                variant="destructive"
+                className="flex-1 h-10 rounded-xl text-sm font-semibold gap-2 cursor-pointer"
+                onClick={handleDeleteConfirm}
+              >
+                <Trash2 className="size-4" />
+                {t('alerts.withdraw_confirm_btn')}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

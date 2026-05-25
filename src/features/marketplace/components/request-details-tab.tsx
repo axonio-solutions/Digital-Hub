@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { CategoryDisplay } from '@/components/ui/category-display'
 import { ImageSlider } from '@/components/ui/image-slider'
 import { tCategory } from '@/utils/category-utils'
+
 interface RequestDetailsTabProps {
   request: any
 }

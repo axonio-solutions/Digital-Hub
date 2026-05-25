@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { NavMain } from '@/features/dashboard/components/layout/nav-main'
 import { NavSecondary } from '@/features/dashboard/components/layout/nav-secondary'
 import { DashboardShell } from '@/features/dashboard/components/layout/dashboard-shell'
-import { SELLER_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from '@/lib/routes'
+import { DASHBOARD_ROUTES, PUBLIC_ROUTES, SELLER_ROUTES } from '@/lib/routes'
 
 export function SellerLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation('dashboard/layout')

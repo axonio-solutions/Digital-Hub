@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
 interface OfferTabProps {
-  quotes: any[]
+  quotes: Array<any>
   isLoading: boolean
   currentSellerId?: string
   onEditOffer?: (quote: any) => void

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   CheckCircle2,
@@ -132,7 +132,7 @@ export function SubmitOfferTab({
     }
     if (isEditing) {
       updateQuote(
-        { id: editData!.id, data },
+        { id: editData.id, data },
         {
           onSuccess: () => {
             toast.success('toasts.update_success')
