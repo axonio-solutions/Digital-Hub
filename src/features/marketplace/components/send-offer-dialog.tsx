@@ -26,12 +26,7 @@ import {
 import { ImageSlider } from '@/components/ui/image-slider'
 import { CategoryDisplay } from '@/components/ui/category-display'
 import { tCategory } from '@/utils/category-utils'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 
 const SubmitQuoteForm = lazy(() =>

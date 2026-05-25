@@ -52,12 +52,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { Link } from '@tanstack/react-router'

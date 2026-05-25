@@ -8,12 +8,7 @@ import {
   Store,
   TrendingUp,
 } from 'lucide-react'
-import {
-  Stat,
-  StatIndicator,
-  StatLabel,
-  StatValue,
-} from '@/components/ui/stat'
+import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
