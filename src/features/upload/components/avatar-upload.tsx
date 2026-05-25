@@ -5,8 +5,9 @@ import { Camera, Loader2, Trash2, User } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/use-toast'
-import { supabase } from '@/lib/supabase-client'
 import { updateProfileServerFn } from '@/fn/users'
+import { uploadImageFn } from '@/fn/upload'
+import { compressToWebP, fileToBase64 } from '@/lib/compress-image'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -54,33 +55,21 @@ export function AvatarUpload({
 
     try {
       setIsUploading(true)
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${userId}/avatar-${Date.now()}.${fileExt}`
 
-      const { error: uploadError } = await supabase.storage
-        .from('profiles')
-        .upload(fileName, file, {
-          upsert: true,
-          cacheControl: '3600',
-        })
+      const compressed = await compressToWebP(file)
+      const base64 = await fileToBase64(compressed)
 
-      if (uploadError) throw uploadError
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('profiles').getPublicUrl(fileName)
+      const { publicUrl } = await uploadImageFn({
+        data: { base64, folder: 'profiles' },
+      })
 
       await updateProfileServerFn({
-        data: {
-          userId,
-          image: publicUrl,
-        },
+        data: { userId, image: publicUrl },
       })
 
       setDisplayImage(publicUrl)
       onUploadComplete?.(publicUrl)
 
-      // Force sync navigation bar and other auth-dependent UIs
       await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
 
       toast.success('avatar.upload_success')
@@ -89,6 +78,7 @@ export function AvatarUpload({
       toast.error('avatar.upload_failed', { error: error.message })
     } finally {
       setIsUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
@@ -96,14 +86,10 @@ export function AvatarUpload({
     try {
       setIsUploading(true)
       await updateProfileServerFn({
-        data: {
-          userId,
-          updates: { image: null },
-        },
+        data: { userId, updates: { image: null } },
       })
       setDisplayImage(null)
 
-      // Force sync navigation bar
       await queryClient.invalidateQueries({ queryKey: ['auth', 'user'] })
 
       toast.success('avatar.remove_success')
@@ -135,18 +121,15 @@ export function AvatarUpload({
             </AvatarFallback>
           </Avatar>
 
-          {/* Loading Spinner */}
           {isUploading && (
             <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-[2px] z-10">
               <Loader2 className="size-6 text-primary animate-spin" />
             </div>
           )}
 
-          {/* Simple Hover Fade */}
           <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity z-0" />
         </div>
 
-        {/* Floating Action Button - Now correctly anchored to the profile photo container */}
         {!isUploading && (
           <button
             type="button"

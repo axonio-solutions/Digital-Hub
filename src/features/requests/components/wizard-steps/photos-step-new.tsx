@@ -3,33 +3,25 @@
 import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFormContext } from 'react-hook-form'
-import {
-  Camera,
-  CheckCircle2,
-  Loader2,
-  Trash2,
-  UploadCloud,
-} from 'lucide-react'
+import { Camera, Loader2, Trash2, UploadCloud } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { RequestFormData } from '@/types/request-schemas'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { supabase } from '@/lib/supabase-client'
+import { uploadImageFn } from '@/fn/upload'
+import { compressToWebP, fileToBase64 } from '@/lib/compress-image'
 import { useAuth } from '@/features/auth/hooks/use-auth'
-import { cn } from '@/lib/utils'
 
 export function PhotosStep() {
   const { t } = useTranslation('requests/form')
   const { data: user } = useAuth()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const dropZoneRef = useRef<HTMLDivElement>(null)
 
   const { setValue, watch } = useFormContext<RequestFormData>()
 
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [selectedImages, setSelectedImages] = useState<Array<File>>([])
-  const [isDragOver, setIsDragOver] = useState(false)
 
   const imageUrls = watch('imageUrls') || []
 
@@ -78,19 +70,13 @@ export function PhotosStep() {
       try {
         for (let i = 0; i < filesToUpload.length; i++) {
           const file = filesToUpload[i]
-          const fileExt = file.name.split('.').pop()
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-          const filePath = `${user.id}/${fileName}`
 
-          const { error: uploadError } = await supabase.storage
-            .from('requests-photos')
-            .upload(filePath, file)
+          const compressed = await compressToWebP(file)
+          const base64 = await fileToBase64(compressed)
 
-          if (uploadError) throw uploadError
-
-          const {
-            data: { publicUrl },
-          } = supabase.storage.from('requests-photos').getPublicUrl(filePath)
+          const { publicUrl } = await uploadImageFn({
+            data: { base64, folder: `requests/${user.id}` },
+          })
 
           finalImageUrls.push(publicUrl)
           setUploadProgress(Math.round(((i + 1) / filesToUpload.length) * 100))
@@ -128,7 +114,6 @@ export function PhotosStep() {
       </div>
 
       <div className="space-y-4">
-        {/* Upload Status */}
         <AnimatePresence>
           {isUploading && (
             <motion.div
@@ -149,7 +134,6 @@ export function PhotosStep() {
           )}
         </AnimatePresence>
 
-        {/* Photo Grid */}
         <AnimatePresence mode="popLayout">
           {allImages.length > 0 && (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
@@ -195,7 +179,6 @@ export function PhotosStep() {
           )}
         </AnimatePresence>
 
-        {/* Add Photos Button */}
         <div className="flex flex-col gap-3">
           <input
             type="file"
@@ -209,6 +192,7 @@ export function PhotosStep() {
             type="button"
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
             className="w-full gap-2 h-12 border-2 border-dashed hover:border-primary hover:bg-primary/5"
           >
             <UploadCloud className="size-5" />
@@ -217,7 +201,6 @@ export function PhotosStep() {
               : t('steps.photos.add_photos', 'Add Photos')}
           </Button>
 
-          {/* Upload indicator */}
           {selectedImages.length > 0 && (
             <p className="text-xs text-muted-foreground text-center">
               {t('steps.photos.uploading', { count: selectedImages.length })}

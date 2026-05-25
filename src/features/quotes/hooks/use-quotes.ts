@@ -65,9 +65,14 @@ export function useAcceptQuote() {
         queryClient.setQueryData(quoteKeys.all, context.previousQuotes)
     },
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: quoteKeys.all })
       queryClient.invalidateQueries({
-        queryKey: quoteKeys.all,
-        refetchType: 'inactive',
+        queryKey: ['requests', 'details'],
+        exact: false,
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['buyer', 'requests'],
+        exact: false,
       })
     },
   })
@@ -105,9 +110,14 @@ export function useRevokeQuote() {
         queryClient.setQueryData(quoteKeys.all, context.previousQuotes)
     },
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: quoteKeys.all })
       queryClient.invalidateQueries({
-        queryKey: quoteKeys.all,
-        refetchType: 'inactive',
+        queryKey: ['requests', 'details'],
+        exact: false,
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['buyer', 'requests'],
+        exact: false,
       })
     },
   })
@@ -145,9 +155,14 @@ export function useRejectQuote() {
         queryClient.setQueryData(quoteKeys.all, context.previousQuotes)
     },
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: quoteKeys.all })
       queryClient.invalidateQueries({
-        queryKey: quoteKeys.all,
-        refetchType: 'inactive',
+        queryKey: ['requests', 'details'],
+        exact: false,
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['buyer', 'requests'],
+        exact: false,
       })
     },
   })
@@ -185,9 +200,14 @@ export function useUnrejectQuote() {
         queryClient.setQueryData(quoteKeys.all, context.previousQuotes)
     },
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: quoteKeys.all })
       queryClient.invalidateQueries({
-        queryKey: quoteKeys.all,
-        refetchType: 'inactive',
+        queryKey: ['requests', 'details'],
+        exact: false,
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['buyer', 'requests'],
+        exact: false,
       })
     },
   })
@@ -249,11 +269,19 @@ export function useFulfillRequest() {
     onSettled: (_data, _error, requestId) => {
       queryClient.invalidateQueries({
         queryKey: ['requests', 'details', requestId],
-        refetchType: 'inactive',
+      })
+      queryClient.invalidateQueries({ queryKey: quoteKeys.all })
+      queryClient.invalidateQueries({
+        queryKey: ['buyer', 'requests'],
+        exact: false,
       })
       queryClient.invalidateQueries({
-        queryKey: quoteKeys.all,
-        refetchType: 'inactive',
+        queryKey: ['seller', 'quotes'],
+        exact: false,
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['seller', 'dashboard'],
+        exact: false,
       })
     },
   })
