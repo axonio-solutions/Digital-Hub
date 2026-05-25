@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { PutObjectCommand } from '@aws-sdk/client-s3'
 import { authMiddleware } from '@/features/auth/guards/auth'
-import { r2, R2_BUCKET, R2_PUBLIC_URL } from '@/lib/r2'
+import { R2_BUCKET, R2_PUBLIC_URL, r2 } from '@/lib/r2'
 
 function nanoid(len: number) {
   return Math.random()
