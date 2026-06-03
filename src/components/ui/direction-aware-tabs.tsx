@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import useMeasure from 'react-use-measure'
-import type { ReactNode} from 'react';
+import type { ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 

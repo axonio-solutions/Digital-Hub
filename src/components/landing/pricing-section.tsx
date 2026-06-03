@@ -1,4 +1,4 @@
-import { Await, Link, getRouteApi  } from '@tanstack/react-router'
+import { Await, Link, getRouteApi } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { ArrowRight, BadgeCheck, Coins } from 'lucide-react'
 import { Button } from '@/components/ui/button'

@@ -53,7 +53,7 @@ const res = await fetch(
   },
 )
 
-const body = (await res.json())
+const body = await res.json()
 
 if (!res.ok) {
   console.error('Failed:', JSON.stringify(body, null, 2))

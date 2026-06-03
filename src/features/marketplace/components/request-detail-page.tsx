@@ -6,8 +6,8 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useParams  } from '@tanstack/react-router'
-import {  formatDistanceToNow } from 'date-fns'
+import { Link, useParams } from '@tanstack/react-router'
+import { formatDistanceToNow } from 'date-fns'
 import { arSA, enUS, fr } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
 import {
@@ -32,7 +32,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { SubmitOfferTab } from './submit-offer-tab'
-import type {Locale} from 'date-fns';
+import type { Locale } from 'date-fns'
 import Navbar from '@/components/layout/navbar'
 import {
   usePublicTaxonomy,
@@ -463,19 +463,91 @@ export function RequestDetailPage() {
   const statItems = isInactive
     ? reqStatus === 'fulfilled'
       ? [
-          { key: 'total', icon: Users, count: total, label: t('detail_page.stats_total'), valueColor: 'text-foreground', iconCls: 'bg-muted text-muted-foreground', statColor: 'default' as const },
-          { key: 'selected', icon: BadgeCheck, count: selected, label: t('detail_page.stats_selected'), valueColor: 'text-emerald-600', iconCls: 'bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40', statColor: 'default' as const },
-          { key: 'rejected', icon: FileSearch, count: rejected, label: t('detail_page.stats_rejected'), valueColor: 'text-muted-foreground/50', iconCls: 'bg-muted text-muted-foreground/40', statColor: 'default' as const },
+          {
+            key: 'total',
+            icon: Users,
+            count: total,
+            label: t('detail_page.stats_total'),
+            valueColor: 'text-foreground',
+            iconCls: 'bg-muted text-muted-foreground',
+            statColor: 'default' as const,
+          },
+          {
+            key: 'selected',
+            icon: BadgeCheck,
+            count: selected,
+            label: t('detail_page.stats_selected'),
+            valueColor: 'text-emerald-600',
+            iconCls: 'bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40',
+            statColor: 'default' as const,
+          },
+          {
+            key: 'rejected',
+            icon: FileSearch,
+            count: rejected,
+            label: t('detail_page.stats_rejected'),
+            valueColor: 'text-muted-foreground/50',
+            iconCls: 'bg-muted text-muted-foreground/40',
+            statColor: 'default' as const,
+          },
         ]
       : [
-          { key: 'total', icon: Users, count: total, label: t('detail_page.stats_total'), valueColor: 'text-foreground', iconCls: 'bg-muted text-muted-foreground', statColor: 'default' as const },
-          { key: 'cancelled', icon: FileSearch, count: total, label: t('statuses.cancelled'), valueColor: 'text-muted-foreground/50', iconCls: 'bg-muted text-muted-foreground/40', statColor: 'default' as const },
-          { key: 'empty', icon: FileSearch, count: 0, label: '', valueColor: 'text-transparent', iconCls: 'invisible', statColor: 'default' as const },
+          {
+            key: 'total',
+            icon: Users,
+            count: total,
+            label: t('detail_page.stats_total'),
+            valueColor: 'text-foreground',
+            iconCls: 'bg-muted text-muted-foreground',
+            statColor: 'default' as const,
+          },
+          {
+            key: 'cancelled',
+            icon: FileSearch,
+            count: total,
+            label: t('statuses.cancelled'),
+            valueColor: 'text-muted-foreground/50',
+            iconCls: 'bg-muted text-muted-foreground/40',
+            statColor: 'default' as const,
+          },
+          {
+            key: 'empty',
+            icon: FileSearch,
+            count: 0,
+            label: '',
+            valueColor: 'text-transparent',
+            iconCls: 'invisible',
+            statColor: 'default' as const,
+          },
         ]
     : [
-        { key: 'total', icon: Users, count: total, label: t('detail_page.stats_total'), valueColor: 'text-foreground', iconCls: 'bg-muted text-muted-foreground', statColor: 'default' as const },
-        { key: 'pending', icon: Clock, count: pending, label: t('detail_page.stats_pending'), valueColor: 'text-amber-600', iconCls: 'bg-amber-50 text-amber-500 dark:bg-amber-950/40', statColor: 'warning' as const },
-        { key: 'inDiscussion', icon: MessageSquare, count: selected, label: t('detail_page.stats_in_discussion'), valueColor: 'text-[#0369A1]', iconCls: 'bg-blue-50 text-[#0369A1] dark:bg-blue-950/40', statColor: 'info' as const },
+        {
+          key: 'total',
+          icon: Users,
+          count: total,
+          label: t('detail_page.stats_total'),
+          valueColor: 'text-foreground',
+          iconCls: 'bg-muted text-muted-foreground',
+          statColor: 'default' as const,
+        },
+        {
+          key: 'pending',
+          icon: Clock,
+          count: pending,
+          label: t('detail_page.stats_pending'),
+          valueColor: 'text-amber-600',
+          iconCls: 'bg-amber-50 text-amber-500 dark:bg-amber-950/40',
+          statColor: 'warning' as const,
+        },
+        {
+          key: 'inDiscussion',
+          icon: MessageSquare,
+          count: selected,
+          label: t('detail_page.stats_in_discussion'),
+          valueColor: 'text-[#0369A1]',
+          iconCls: 'bg-blue-50 text-[#0369A1] dark:bg-blue-950/40',
+          statColor: 'info' as const,
+        },
       ]
 
   return (
@@ -624,10 +696,7 @@ export function RequestDetailPage() {
                 {statItems.map((s) => (
                   <Stat key={s.key}>
                     <StatLabel>{s.label}</StatLabel>
-                    <StatIndicator
-                      variant="icon"
-                      color={s.statColor}
-                    >
+                    <StatIndicator variant="icon" color={s.statColor}>
                       <s.icon />
                     </StatIndicator>
                     <StatValue>
@@ -838,7 +907,9 @@ export function RequestDetailPage() {
                         quote={quote}
                         rank={i + 1}
                         isOwn={isOwn}
-                        isLocked={isOwn && (isInactive || quote.status !== 'pending')}
+                        isLocked={
+                          isOwn && (isInactive || quote.status !== 'pending')
+                        }
                         isInactive={isInactive}
                         onEdit={() => openEdit(quote.id)}
                         onDelete={() => handleDeleteClick(quote.id)}
@@ -848,8 +919,7 @@ export function RequestDetailPage() {
                       />
                     )
                   })
-                  )
-                }
+                )}
 
                 {total > 0 && (
                   <div className="px-4 py-2.5 bg-muted/10 border-t border-border/30">
@@ -950,7 +1020,9 @@ export function RequestDetailPage() {
                           : inDiscussion > 0
                             ? t('detail_page.competition_in_discussion')
                             : total === 1
-                              ? t('detail_page.competition_waiting', { count: 1 })
+                              ? t('detail_page.competition_waiting', {
+                                  count: 1,
+                                })
                               : t('detail_page.competition_waiting_plural', {
                                   count: total,
                                 })}
@@ -1162,7 +1234,9 @@ export function RequestDetailPage() {
                           quote={quote}
                           rank={i + 1}
                           isOwn={isOwn}
-                          isLocked={isOwn && (isInactive || quote.status !== 'pending')}
+                          isLocked={
+                            isOwn && (isInactive || quote.status !== 'pending')
+                          }
                           isInactive={isInactive}
                           onEdit={() => openEdit(quote.id)}
                           onDelete={() => handleDeleteClick(quote.id)}
@@ -1266,7 +1340,9 @@ export function RequestDetailPage() {
                           <div className="flex gap-3 text-[11px] text-muted-foreground/60 font-semibold">
                             {total > 0 && (
                               <span>
-                                {t('detail_page.seller_count', { count: total })}
+                                {t('detail_page.seller_count', {
+                                  count: total,
+                                })}
                               </span>
                             )}
                             {inDiscussion > 0 && (
@@ -1284,7 +1360,9 @@ export function RequestDetailPage() {
                             : inDiscussion > 0
                               ? t('detail_page.competition_in_discussion')
                               : total === 1
-                                ? t('detail_page.competition_waiting', { count: 1 })
+                                ? t('detail_page.competition_waiting', {
+                                    count: 1,
+                                  })
                                 : t('detail_page.competition_waiting_plural', {
                                     count: total,
                                   })}

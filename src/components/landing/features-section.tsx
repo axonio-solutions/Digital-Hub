@@ -88,8 +88,7 @@ export function StatsStrip() {
           {(statsData) => (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
               {statsConfig.map((stat) => {
-                const value =
-                  statsData?.[stat.key] ?? 0
+                const value = statsData?.[stat.key] ?? 0
                 return (
                   <div
                     key={stat.key}
