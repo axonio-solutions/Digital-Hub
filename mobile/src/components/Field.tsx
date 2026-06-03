@@ -1,9 +1,12 @@
 import { forwardRef } from 'react'
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { View, Text, TextInput } from 'expo-rtl'
+import { Controller } from 'react-hook-form'
+import type { Control, FieldValues, Path } from 'react-hook-form'
 
-import { radius, spacing, typography } from '../theme/tokens'
+import { spacing, typography } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
-import type { TextInputProps } from 'react-native'
+import type { TextInput as RNTextInput, TextInputProps } from 'react-native'
 
 interface FieldProps extends TextInputProps {
   label: string
@@ -12,7 +15,7 @@ interface FieldProps extends TextInputProps {
   leftIcon?: React.ReactNode
 }
 
-export const Field = forwardRef<TextInput, FieldProps>(function Field(
+export const Field = forwardRef<RNTextInput, FieldProps>(function Field(
   { label, error, hint, leftIcon, style, ...rest },
   ref,
 ) {
@@ -49,6 +52,45 @@ export const Field = forwardRef<TextInput, FieldProps>(function Field(
     </View>
   )
 })
+
+interface ControlledFieldProps<T extends FieldValues> extends Omit<
+  FieldProps,
+  'value' | 'onChangeText' | 'onBlur' | 'error'
+> {
+  control: Control<T>
+  name: Path<T>
+}
+
+export function ControlledField<T extends FieldValues>({
+  control,
+  name,
+  label,
+  leftIcon,
+  hint,
+  ...rest
+}: ControlledFieldProps<T>) {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({
+        field: { onChange, onBlur, value },
+        fieldState: { error },
+      }) => (
+        <Field
+          label={label}
+          value={value ?? ''}
+          onChangeText={onChange}
+          onBlur={onBlur}
+          error={error?.message}
+          leftIcon={leftIcon}
+          hint={hint}
+          {...rest}
+        />
+      )}
+    />
+  )
+}
 
 const styles = StyleSheet.create({
   wrap: { width: '100%' },

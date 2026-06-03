@@ -59,6 +59,9 @@ const ENDPOINT_PATHS = {
 
   // Taxonomy
   getPublicTaxonomy: '/api/v1/taxonomy',
+
+  // Upload
+  uploadImage: '/api/v1/upload',
 } as const
 
 export function apiUrl(key: ServerFnKey): string {

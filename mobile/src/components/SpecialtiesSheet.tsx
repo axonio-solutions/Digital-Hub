@@ -1,12 +1,7 @@
-import {
-  FlatList,
-  Image,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Image } from 'expo-image'
+import { FlashList } from '@shopify/flash-list'
+import { useTranslation } from 'react-i18next'
 
 import { radius, spacing, typography } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
@@ -35,6 +30,7 @@ export function SpecialtiesSheet({
   onClose,
 }: SpecialtiesSheetProps) {
   const t = useTheme()
+  const { t: i18n } = useTranslation()
 
   return (
     <Modal
@@ -59,12 +55,14 @@ export function SpecialtiesSheet({
           {selectedIds.length > 0 && (
             <View style={styles.selectionBadge}>
               <Text style={[styles.selectionBadgeText, { color: t.primary }]}>
-                {selectedIds.length} selected
+                {i18n('specialtiesSheet.nSelected', {
+                  count: selectedIds.length,
+                })}
               </Text>
             </View>
           )}
 
-          <FlatList
+          <FlashList
             data={data}
             keyExtractor={(item) => item.id}
             style={styles.list}
@@ -90,7 +88,7 @@ export function SpecialtiesSheet({
                       <Image
                         source={{ uri: item.imageUrl }}
                         style={styles.rowImage}
-                        resizeMode="contain"
+                        contentFit="contain"
                       />
                     </View>
                   ) : null}
@@ -132,7 +130,9 @@ export function SpecialtiesSheet({
               { backgroundColor: t.primary, opacity: pressed ? 0.85 : 1 },
             ]}
           >
-            <Text style={[styles.doneText, { color: t.primaryFg }]}>Done</Text>
+            <Text style={[styles.doneText, { color: t.primaryFg }]}>
+              {i18n('specialtiesSheet.done')}
+            </Text>
           </Pressable>
         </View>
       </Pressable>

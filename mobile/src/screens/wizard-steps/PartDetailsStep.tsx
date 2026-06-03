@@ -1,55 +1,69 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { Text, TextInput, View, useIsRTL } from 'expo-rtl'
+import { useFormContext, Controller } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { radius, spacing, typography } from '../../theme/tokens'
 import { useTheme } from '../../theme/use-theme'
+import type { RequestFormData } from '../NewRequestScreen'
 
-interface Props {
-  partName: string
-  description: string
-  onChangePartName: (v: string) => void
-  onChangeDescription: (v: string) => void
-}
-
-export function PartDetailsStep({
-  partName,
-  description,
-  onChangePartName,
-  onChangeDescription,
-}: Props) {
+export function PartDetailsStep() {
+  const { t: translate } = useTranslation()
   const t = useTheme()
+  const isRTL = useIsRTL()
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<RequestFormData>()
 
   return (
     <View style={styles.step}>
       <View style={styles.header}>
         <Ionicons name="document-text-outline" size={20} color={t.primary} />
-        <Text style={[styles.title, { color: t.text }]}>Part Details</Text>
+        <Text style={[styles.title, { color: t.text }]}>
+          {translate('wizard.step.partDetails')}
+        </Text>
       </View>
       <Text style={[styles.subtitle, { color: t.textMuted }]}>
-        Describe the part you're looking for in detail.
+        {translate('wizard.partDetailsDescription')}
       </Text>
 
       <View style={styles.field}>
         <View style={styles.labelRow}>
           <Ionicons name="pricetag-outline" size={14} color={t.primary} />
-          <Text style={[styles.label, { color: t.textMuted }]}>Part Name</Text>
+          <Text style={[styles.label, { color: t.textMuted }]}>
+            {translate('wizard.partName')}
+          </Text>
         </View>
-        <TextInput
-          value={partName}
-          onChangeText={onChangePartName}
-          placeholder="e.g. Brake Pads, Front Bumper"
-          placeholderTextColor={t.textSubtle}
-          style={[
-            styles.input,
-            {
-              color: t.text,
-              backgroundColor: t.surface,
-              borderColor: t.border,
-            },
-          ]}
-          autoCapitalize="sentences"
-          returnKeyType="next"
+        <Controller
+          control={control}
+          name="partName"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder={translate('wizard.partNamePlaceholder')}
+              placeholderTextColor={t.textSubtle}
+              style={[
+                styles.input,
+                {
+                  color: t.text,
+                  backgroundColor: t.surface,
+                  borderColor: errors.partName ? t.danger : t.border,
+                },
+              ]}
+              autoCapitalize="sentences"
+              returnKeyType="next"
+            />
+          )}
         />
+        {errors.partName && (
+          <Text style={[styles.errorText, { color: t.danger }]}>
+            {errors.partName.message}
+          </Text>
+        )}
       </View>
 
       <View style={styles.field}>
@@ -60,26 +74,33 @@ export function PartDetailsStep({
             color={t.primary}
           />
           <Text style={[styles.label, { color: t.textMuted }]}>
-            Description
+            {translate('wizard.description')}
           </Text>
         </View>
-        <TextInput
-          value={description}
-          onChangeText={onChangeDescription}
-          placeholder="Include any specific requirements, OEM numbers, or condition preferences."
-          placeholderTextColor={t.textSubtle}
-          style={[
-            styles.textarea,
-            {
-              color: t.text,
-              backgroundColor: t.surface,
-              borderColor: t.border,
-            },
-          ]}
-          multiline
-          numberOfLines={4}
-          textAlignVertical="top"
-          autoCapitalize="sentences"
+        <Controller
+          control={control}
+          name="description"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder={translate('wizard.descriptionPlaceholder')}
+              placeholderTextColor={t.textSubtle}
+              style={[
+                styles.textarea,
+                {
+                  color: t.text,
+                  backgroundColor: t.surface,
+                  borderColor: t.border,
+                },
+              ]}
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+              autoCapitalize="sentences"
+            />
+          )}
         />
         <View style={styles.hintRow}>
           <Ionicons
@@ -88,8 +109,7 @@ export function PartDetailsStep({
             color={t.textSubtle}
           />
           <Text style={[styles.hint, { color: t.textSubtle }]}>
-            Specify the variant, engine type, or whether you need OEM or
-            aftermarket parts.
+            {translate('wizard.descriptionHint')}
           </Text>
         </View>
       </View>
@@ -149,5 +169,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     flex: 1,
     lineHeight: 17,
+  },
+  errorText: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: 2,
   },
 })

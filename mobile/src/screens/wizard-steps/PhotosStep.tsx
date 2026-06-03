@@ -1,30 +1,22 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useCallback, useState } from 'react'
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { ActivityIndicator, Alert, Pressable, StyleSheet } from 'react-native'
+import { Text, View, useIsRTL } from 'expo-rtl'
+import { Image } from 'expo-image'
+import { useFormContext } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
+import { compressAndUpload } from '../../lib/compress-image'
 import { radius, spacing, typography } from '../../theme/tokens'
 import { useTheme } from '../../theme/use-theme'
+import type { RequestFormData } from '../NewRequestScreen'
 
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || ''
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || ''
-
-const BUCKET_NAME = 'requests-photos'
-
-interface Props {
-  imageUrls: Array<string>
-  onChange: (urls: Array<string>) => void
-}
-
-export function PhotosStep({ imageUrls, onChange }: Props) {
+export function PhotosStep() {
+  const { t: translate } = useTranslation()
   const t = useTheme()
+  const isRTL = useIsRTL()
+  const { watch, setValue } = useFormContext<RequestFormData>()
+  const imageUrls = watch('imageUrls')
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
 
@@ -34,7 +26,10 @@ export function PhotosStep({ imageUrls, onChange }: Props) {
       try {
         ImagePicker = require('expo-image-picker')
       } catch {
-        Alert.alert('Error', 'Image picker is not available.')
+        Alert.alert(
+          translate('common.error'),
+          translate('wizard.pickerNotAvailable'),
+        )
         return
       }
 
@@ -44,10 +39,10 @@ export function PhotosStep({ imageUrls, onChange }: Props) {
 
       if (!permission.granted) {
         Alert.alert(
-          'Permission needed',
+          translate('wizard.permissionNeeded'),
           useCamera
-            ? 'Camera access is required to take photos.'
-            : 'Photo library access is required to upload images.',
+            ? translate('wizard.cameraPermissionRequired')
+            : translate('wizard.libraryPermissionRequired'),
         )
         return
       }
@@ -58,7 +53,7 @@ export function PhotosStep({ imageUrls, onChange }: Props) {
 
       const result = await launch({
         mediaTypes: ['images'],
-        quality: 0.8,
+        quality: 0.7,
         allowsMultipleSelection: !useCamera,
       })
 
@@ -72,63 +67,46 @@ export function PhotosStep({ imageUrls, onChange }: Props) {
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i]
         try {
-          const ext = asset.uri.split('.').pop() || 'jpg'
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
-          const filePath = `temp/${fileName}`
-
-          const formData = new FormData()
-          formData.append('file', {
-            uri: asset.uri,
-            type: `image/${ext === 'jpg' || ext === 'jpeg' ? 'jpeg' : ext === 'png' ? 'png' : 'jpeg'}`,
-            name: fileName,
-          } as any)
-
-          const uploadRes = await fetch(
-            `${SUPABASE_URL}/storage/v1/object/${BUCKET_NAME}/${filePath}`,
-            {
-              method: 'POST',
-              headers: {
-                apikey: SUPABASE_ANON_KEY,
-                Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-              },
-              body: formData,
-            },
-          )
-
-          if (!uploadRes.ok) {
-            const errText = await uploadRes.text().catch(() => '')
-            console.log(JSON.stringify(errText))
-            continue
-          }
-
-          const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${filePath}`
+          const publicUrl = await compressAndUpload(asset.uri, 'requests')
           newUrls.push(publicUrl)
           setProgress(Math.round(((i + 1) / assets.length) * 100))
-        } catch (err) {
-          console.log(JSON.stringify(err))
+        } catch (err: any) {
+          if (__DEV__)
+            console.log(
+              '\n❌ photo upload error:',
+              err?.message,
+              JSON.stringify(err),
+              '\n',
+            )
+          Alert.alert(
+            translate('wizard.uploadFailed'),
+            err?.message || translate('wizard.couldNotUpload'),
+          )
         }
       }
 
-      onChange([...imageUrls, ...newUrls])
+      setValue('imageUrls', [...imageUrls, ...newUrls], { shouldDirty: true })
       setUploading(false)
       setProgress(0)
     },
-    [imageUrls, onChange],
+    [imageUrls, setValue],
   )
 
   function removeImage(index: number) {
     const next = imageUrls.filter((_, i) => i !== index)
-    onChange(next)
+    setValue('imageUrls', next, { shouldDirty: true })
   }
 
   return (
     <View style={styles.step}>
       <View style={styles.header}>
         <Ionicons name="camera-outline" size={20} color={t.primary} />
-        <Text style={[styles.title, { color: t.text }]}>Photos & Media</Text>
+        <Text style={[styles.title, { color: t.text }]}>
+          {translate('wizard.step.photos')}
+        </Text>
       </View>
       <Text style={[styles.subtitle, { color: t.textMuted }]}>
-        Upload photos to help sellers identify the correct part.
+        {translate('wizard.photosDescription')}
       </Text>
 
       {imageUrls.length > 0 && (
@@ -138,13 +116,14 @@ export function PhotosStep({ imageUrls, onChange }: Props) {
               <Image
                 source={{ uri: url }}
                 style={styles.thumb}
-                resizeMode="cover"
+                contentFit="cover"
               />
               <Pressable
                 onPress={() => removeImage(i)}
                 style={({ pressed }) => [
                   styles.removeBtn,
                   { backgroundColor: t.danger },
+                  isRTL ? { left: 4 } : { right: 4 },
                   pressed && { opacity: 0.8 },
                 ]}
               >
@@ -160,7 +139,7 @@ export function PhotosStep({ imageUrls, onChange }: Props) {
           <View style={styles.progressRow}>
             <ActivityIndicator size="small" color={t.primary} />
             <Text style={[styles.progressText, { color: t.textMuted }]}>
-              Uploading... {progress}%
+              {translate('wizard.uploading')} {progress}%
             </Text>
           </View>
           <View style={[styles.progressBar, { backgroundColor: t.border }]}>
@@ -190,7 +169,7 @@ export function PhotosStep({ imageUrls, onChange }: Props) {
       >
         <Ionicons name="camera-outline" size={20} color={t.primaryFg} />
         <Text style={[styles.uploadBtnText, { color: t.primaryFg }]}>
-          Take Photo
+          {translate('wizard.addPhoto')}
         </Text>
       </Pressable>
 
@@ -208,7 +187,7 @@ export function PhotosStep({ imageUrls, onChange }: Props) {
       >
         <Ionicons name="images-outline" size={20} color={t.text} />
         <Text style={[styles.uploadBtnText, { color: t.text }]}>
-          Choose from Gallery
+          {translate('wizard.chooseFromGallery')}
         </Text>
       </Pressable>
     </View>
@@ -250,7 +229,6 @@ const styles = StyleSheet.create({
   removeBtn: {
     position: 'absolute',
     top: 4,
-    right: 4,
     width: 24,
     height: 24,
     borderRadius: 12,

@@ -1,11 +1,29 @@
 import { Platform } from 'react-native'
 import * as Notifications from 'expo-notifications'
+import * as TaskManager from 'expo-task-manager'
 import Constants from 'expo-constants'
 import type { SessionUser } from './api-client'
 
 const EDGE_FN_URL =
   'https://hfilegaukynyagypmuwf.supabase.co/functions/v1/send-push'
 const ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || ''
+
+const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND_NOTIFICATION_TASK'
+
+TaskManager.defineTask(
+  BACKGROUND_NOTIFICATION_TASK,
+  async ({ data, error }) => {
+    if (error) {
+      console.warn('Background notification task error:', error)
+      return
+    }
+    const notif = (data as any)?.notification
+    if (notif?.request?.content?.data) {
+      const d = notif.request.content.data as Record<string, unknown>
+      console.log('Background notification data:', d)
+    }
+  },
+)
 
 export function initNotificationHandler() {
   try {
@@ -14,6 +32,8 @@ export function initNotificationHandler() {
         shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
       }),
     })
   } catch (e) {
@@ -21,7 +41,24 @@ export function initNotificationHandler() {
   }
 }
 
+export async function registerBackgroundNotificationTask() {
+  try {
+    await Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK)
+  } catch (e) {
+    console.warn('Failed to register background notification task:', e)
+  }
+}
+
+export async function unregisterBackgroundNotificationTask() {
+  try {
+    await Notifications.unregisterTaskAsync(BACKGROUND_NOTIFICATION_TASK)
+  } catch (e) {
+    console.warn('Failed to unregister background notification task:', e)
+  }
+}
+
 let responseSubscription: Notifications.EventSubscription | null = null
+let receivedSubscription: Notifications.EventSubscription | null = null
 
 export function setupNotificationResponseListener(
   onNavigateToRequest: (requestId: string) => void,
@@ -39,15 +76,29 @@ export function setupNotificationResponseListener(
   )
 }
 
+export function setupNotificationForegroundListener(
+  onReceived?: (data: Record<string, unknown>) => void,
+) {
+  receivedSubscription?.remove()
+  receivedSubscription = Notifications.addNotificationReceivedListener(
+    (notification) => {
+      const data = notification.request.content.data as
+        | Record<string, unknown>
+        | undefined
+      onReceived?.(data ?? {})
+    },
+  )
+}
+
 export function cleanupNotificationResponseListener() {
   responseSubscription?.remove()
   responseSubscription = null
+  receivedSubscription?.remove()
+  receivedSubscription = null
 }
 
 export async function registerPushToken(user: SessionUser) {
   try {
-    // expo-modules-core is not in the mobile node_modules so the inherited
-    // PermissionResponse properties (granted, status) are invisible to tsc.
     const existing = (await Notifications.getPermissionsAsync()) as any
     let granted: boolean = existing.granted
 

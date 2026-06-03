@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import {
-  FlatList,
   Modal,
   Pressable,
   StyleSheet,
@@ -8,6 +7,8 @@ import {
   TextInput,
   View,
 } from 'react-native'
+import { FlashList } from '@shopify/flash-list'
+import { useTranslation } from 'react-i18next'
 
 import { WILAYAS } from '../lib/constants/wilayas'
 
@@ -28,6 +29,7 @@ export function WilayaPicker({
   error,
 }: WilayaPickerProps) {
   const t = useTheme()
+  const { t: i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
 
@@ -56,7 +58,7 @@ export function WilayaPicker({
         <Text
           style={[styles.triggerText, { color: value ? t.text : t.textSubtle }]}
         >
-          {value || 'Select your wilaya'}
+          {value || i18n('wilayaPicker.select')}
         </Text>
         <Text style={[styles.chevron, { color: t.textMuted }]}>▾</Text>
       </Pressable>
@@ -70,12 +72,12 @@ export function WilayaPicker({
         transparent
         onRequestClose={() => setOpen(false)}
       >
-        <Pressable
-          style={[styles.backdrop, { backgroundColor: t.overlay }]}
-          onPress={() => setOpen(false)}
-        >
+        <View style={[styles.backdrop, { backgroundColor: t.overlay }]}>
           <Pressable
-            onPress={() => {}}
+            style={styles.dismissArea}
+            onPress={() => setOpen(false)}
+          />
+          <View
             style={[
               styles.sheet,
               { backgroundColor: t.bg, borderColor: t.border },
@@ -85,7 +87,7 @@ export function WilayaPicker({
               style={[styles.handle, { backgroundColor: t.borderStrong }]}
             />
             <Text style={[styles.sheetTitle, { color: t.text }]}>
-              Choose wilaya
+              {i18n('wilayaPicker.choose')}
             </Text>
             <View
               style={[
@@ -96,56 +98,60 @@ export function WilayaPicker({
               <TextInput
                 value={query}
                 onChangeText={setQuery}
-                placeholder="Search by name or number"
+                placeholder={i18n('wilayaPicker.search')}
                 placeholderTextColor={t.textSubtle}
                 autoCorrect={false}
                 autoCapitalize="none"
                 style={[styles.searchInput, { color: t.text }]}
               />
             </View>
-            <FlatList
-              data={filtered}
-              keyboardShouldPersistTaps="handled"
-              keyExtractor={(item) => item.id}
-              ItemSeparatorComponent={() => (
-                <View
-                  style={[styles.separator, { backgroundColor: t.border }]}
-                />
-              )}
-              ListEmptyComponent={
-                <Text style={[styles.empty, { color: t.textSubtle }]}>
-                  No wilayas match.
-                </Text>
-              }
-              renderItem={({ item }) => {
-                const selected = item.name === value
-                return (
-                  <Pressable
-                    onPress={() => {
-                      onChange(item.name)
-                      setOpen(false)
-                      setQuery('')
-                    }}
-                    style={({ pressed }) => [
-                      styles.row,
-                      pressed && { backgroundColor: t.bgMuted },
-                    ]}
-                  >
-                    <Text style={[styles.rowId, { color: t.textMuted }]}>
-                      {item.id}
-                    </Text>
-                    <Text style={[styles.rowName, { color: t.text }]}>
-                      {item.name}
-                    </Text>
-                    {selected ? (
-                      <Text style={[styles.check, { color: t.accent }]}>✓</Text>
-                    ) : null}
-                  </Pressable>
-                )
-              }}
-            />
-          </Pressable>
-        </Pressable>
+            <View style={styles.listWrapper}>
+              <FlashList
+                data={filtered}
+                keyboardShouldPersistTaps="handled"
+                keyExtractor={(item) => item.id}
+                ItemSeparatorComponent={() => (
+                  <View
+                    style={[styles.separator, { backgroundColor: t.border }]}
+                  />
+                )}
+                ListEmptyComponent={
+                  <Text style={[styles.empty, { color: t.textSubtle }]}>
+                    {i18n('wilayaPicker.noMatch')}
+                  </Text>
+                }
+                renderItem={({ item }) => {
+                  const selected = item.name === value
+                  return (
+                    <Pressable
+                      onPress={() => {
+                        onChange(item.name)
+                        setOpen(false)
+                        setQuery('')
+                      }}
+                      style={({ pressed }) => [
+                        styles.row,
+                        pressed && { backgroundColor: t.bgMuted },
+                      ]}
+                    >
+                      <Text style={[styles.rowId, { color: t.textMuted }]}>
+                        {item.id}
+                      </Text>
+                      <Text style={[styles.rowName, { color: t.text }]}>
+                        {i18n('wilaya.' + item.id)}
+                      </Text>
+                      {selected ? (
+                        <Text style={[styles.check, { color: t.accent }]}>
+                          ✓
+                        </Text>
+                      ) : null}
+                    </Pressable>
+                  )
+                }}
+              />
+            </View>
+          </View>
+        </View>
       </Modal>
     </View>
   )
@@ -169,8 +175,10 @@ const styles = StyleSheet.create({
   chevron: { fontSize: 16, marginLeft: spacing.sm },
   helper: { ...typography.caption, marginTop: 6 },
   backdrop: { flex: 1, justifyContent: 'flex-end' },
+  dismissArea: { flex: 1 },
   sheet: {
     maxHeight: '85%',
+    flex: 1,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
     borderTopWidth: 1,
@@ -178,6 +186,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.xl,
   },
+  listWrapper: { flex: 1 },
   handle: {
     width: 40,
     height: 4,

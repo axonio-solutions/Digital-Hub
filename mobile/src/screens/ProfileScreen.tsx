@@ -1,22 +1,19 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  Animated,
-  Image,
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { Animated, Modal, Pressable, StyleSheet } from 'react-native'
+import { ScrollView, Text, View, useIsRTL } from 'expo-rtl'
+import { Image } from 'expo-image'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useTranslation } from 'react-i18next'
 
-import { radius, spacing, typography } from '../theme/tokens'
+import { AnimatedPressable } from '../components/AnimatedPressable'
+import { radius, spacing, typography, type Theme } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
-import { EditProfileScreen } from './EditProfileScreen'
-import { SupportScreen } from './SupportScreen'
-import type { SessionUser } from '../lib/api-client'
+import { useUserStore } from '../lib/stores/user-store'
+import type { BuyerProfileStackParamList } from '../navigation/types'
+import { changeLanguage } from '../i18n'
 
 interface ProfileKpiData {
   pipelineValue: number
@@ -25,9 +22,6 @@ interface ProfileKpiData {
 }
 
 interface ProfileScreenProps {
-  user: SessionUser
-  onLogOut: () => void
-  onUserUpdate: (user: SessionUser) => void
   kpiData?: ProfileKpiData
   onNavigateBilling?: () => void
   creditBalance?: number
@@ -48,14 +42,20 @@ const C = {
   credits: '#2563eb',
 }
 
-function getStatusMeta(status: string | null | undefined) {
-  return (
-    STATUS_META[status ?? ''] ?? {
-      dot: C.green,
-      bg: C.green + '15',
-      label: status || 'Active',
-    }
-  )
+function getStatusMeta(
+  status: string | null | undefined,
+  t: (key: string) => string,
+) {
+  const fallbackKey = status || 'active'
+  const meta = STATUS_META[status ?? '']
+  if (meta) {
+    return { ...meta, label: t('profile.status.' + status) }
+  }
+  return {
+    dot: C.green,
+    bg: C.green + '15',
+    label: t('profile.status.' + fallbackKey),
+  }
 }
 
 function formatCurrency(n: number): string {
@@ -65,24 +65,30 @@ function formatCurrency(n: number): string {
 }
 
 export function ProfileScreen({
-  user,
-  onLogOut,
-  onUserUpdate,
   kpiData,
   onNavigateBilling,
   creditBalance,
 }: ProfileScreenProps) {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<BuyerProfileStackParamList>>()
+  const user = useUserStore((s) => s.user)
+  const logout = useUserStore((s) => s.logout)
+  const setUser = useUserStore((s) => s.setUser)
+  if (!user) return null
   const t = useTheme()
+  const { t: i18n } = useTranslation()
+  const isRTL = useIsRTL()
+  const styles = makeStyles(t)
+  const sheetStyles = makeSheetStyles(t)
   const insets = useSafeAreaInsets()
-  const [editing, setEditing] = useState(false)
-  const [showSupport, setShowSupport] = useState(false)
   const [showLogOutSheet, setShowLogOutSheet] = useState(false)
+  const [showLangSheet, setShowLangSheet] = useState(false)
+  const [imgError, setImgError] = useState(false)
+  const chevron = isRTL ? 'chevron-back' : 'chevron-forward'
 
   // Log-out sheet animation
   const sheetY = useRef(new Animated.Value(320)).current
   const backdropOpacity = useRef(new Animated.Value(0)).current
-  const logoutScale = useRef(new Animated.Value(1)).current
-
   const openLogOutSheet = useCallback(() => {
     setShowLogOutSheet(true)
     Animated.parallel([
@@ -118,13 +124,13 @@ export function ProfileScreen({
         sheetY.setValue(320)
         backdropOpacity.setValue(0)
         setShowLogOutSheet(false)
-        if (confirm) onLogOut()
+        if (confirm) logout()
       })
     },
-    [sheetY, backdropOpacity, onLogOut],
+    [sheetY, backdropOpacity, logout],
   )
 
-  const statusMeta = getStatusMeta(user.account_status)
+  const statusMeta = getStatusMeta(user?.account_status, i18n)
   const hasStats = !!kpiData
   const cardCount = hasStats ? 4 : 3
 
@@ -167,21 +173,11 @@ export function ProfileScreen({
   const avatarUrl = user.image || null
   const initial = (user.name || user.email || 'U')[0].toUpperCase()
 
-  if (showSupport) {
-    return <SupportScreen onBack={() => setShowSupport(false)} />
-  }
-
-  if (editing) {
-    return (
-      <EditProfileScreen
-        user={user}
-        onSave={(updated) => {
-          onUserUpdate(updated)
-          setEditing(false)
-        }}
-        onCancel={() => setEditing(false)}
-      />
-    )
+  // Reset image error state when the URL changes (e.g. after profile update)
+  const prevAvatarUrlRef = useRef(avatarUrl)
+  if (prevAvatarUrlRef.current !== avatarUrl) {
+    prevAvatarUrlRef.current = avatarUrl
+    if (imgError) setImgError(false)
   }
 
   function handleLogOut() {
@@ -212,71 +208,79 @@ export function ProfileScreen({
     label: string
     value: string | null | undefined
   }> = [
-    { icon: 'mail-outline', label: 'Email', value: user.email },
-    { icon: 'call-outline', label: 'Phone', value: user.phoneNumber },
-    { icon: 'logo-whatsapp', label: 'WhatsApp', value: user.whatsappNumber },
-    { icon: 'location-outline', label: 'Wilaya', value: user.wilaya },
-    { icon: 'storefront-outline', label: 'Store', value: user.storeName },
+    {
+      icon: 'mail-outline',
+      label: i18n('editProfile.email'),
+      value: user.email,
+    },
+    {
+      icon: 'call-outline',
+      label: i18n('editProfile.phone'),
+      value: user.phoneNumber,
+    },
+    {
+      icon: 'logo-whatsapp',
+      label: i18n('editProfile.whatsapp'),
+      value: user.whatsappNumber,
+    },
+    {
+      icon: 'location-outline',
+      label: i18n('editProfile.wilaya'),
+      value: user.wilaya,
+    },
+    {
+      icon: 'storefront-outline',
+      label: i18n('editProfile.name'),
+      value: user.storeName,
+    },
   ].filter((r) => r.value)
 
   return (
-    <View style={[styles.root, { backgroundColor: t.bg }]}>
+    <View style={styles.root}>
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Header Card */}
         <Card index={0}>
-          <View
-            style={[
-              styles.headerCard,
-              { backgroundColor: t.surface, borderColor: t.border },
-            ]}
-          >
+          <View style={styles.headerCard}>
             <Animated.View style={{ transform: [{ scale: avatarScale }] }}>
               <View style={styles.avatarWrap}>
-                {avatarUrl ? (
+                {avatarUrl && !imgError ? (
                   <Image
+                    key={avatarUrl}
                     source={{ uri: avatarUrl }}
                     style={styles.avatar}
-                    resizeMode="cover"
+                    contentFit="cover"
+                    onError={() => setImgError(true)}
                   />
                 ) : (
-                  <View
-                    style={[
-                      styles.avatar,
-                      styles.avatarPlaceholder,
-                      { backgroundColor: t.accent + '15' },
-                    ]}
-                  >
-                    <Text style={[styles.avatarInitial, { color: t.accent }]}>
-                      {initial}
-                    </Text>
+                  <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                    <Text style={styles.avatarInitial}>{initial}</Text>
                   </View>
                 )}
                 <View
                   style={[
                     styles.statusDot,
-                    { backgroundColor: statusMeta.dot, borderColor: t.surface },
+                    { backgroundColor: statusMeta.dot },
+                    isRTL ? { left: 2 } : { right: 2 },
                   ]}
                 />
               </View>
             </Animated.View>
 
-            <Text style={[styles.name, { color: t.text }]}>
-              {user.name || 'User'}
+            <Text style={styles.name}>
+              {user.name || i18n('profile.title')}
             </Text>
 
             <View style={styles.badgeRow}>
-              <View
-                style={[styles.roleBadge, { backgroundColor: t.accent + '12' }]}
-              >
-                <Text style={[styles.roleText, { color: t.accent }]}>
+              <View style={styles.roleBadge}>
+                <Text style={styles.roleText}>
                   {user.role === 'buyer'
-                    ? 'Buyer'
+                    ? i18n('onboarding.role.buyer')
                     : user.role === 'seller'
-                      ? 'Seller'
-                      : user.role || 'User'}
+                      ? i18n('onboarding.role.seller')
+                      : user.role || i18n('profile.title')}
                 </Text>
               </View>
               <View
@@ -314,9 +318,9 @@ export function ProfileScreen({
               >
                 <Ionicons name="wallet-outline" size={14} color={C.credits} />
                 <Text style={[styles.creditText, { color: C.credits }]}>
-                  {creditBalance} Credit{creditBalance !== 1 ? 's' : ''}
+                  {creditBalance} {i18n('profile.creditsBalance')}
                 </Text>
-                <Ionicons name="chevron-forward" size={12} color={C.credits} />
+                <Ionicons name={chevron} size={12} color={C.credits} />
               </Pressable>
             )}
           </View>
@@ -325,12 +329,7 @@ export function ProfileScreen({
         {/* Stats Card */}
         {hasStats && (
           <Card index={1}>
-            <View
-              style={[
-                styles.statsCard,
-                { backgroundColor: t.surface, borderColor: t.border },
-              ]}
-            >
+            <View style={styles.statsCard}>
               <View style={styles.statsRow}>
                 <View style={styles.statTile}>
                   <View
@@ -345,16 +344,14 @@ export function ProfileScreen({
                       color={C.blue}
                     />
                   </View>
-                  <Text style={[styles.statValue, { color: t.text }]}>
+                  <Text style={styles.statValue}>
                     DA {formatCurrency(kpiData.pipelineValue)}
                   </Text>
-                  <Text style={[styles.statLabel, { color: t.textMuted }]}>
-                    Pipeline
+                  <Text style={styles.statLabel}>
+                    {i18n('profile.pipelineValue')}
                   </Text>
                 </View>
-                <View
-                  style={[styles.statDivider, { backgroundColor: t.border }]}
-                />
+                <View style={styles.statDivider} />
                 <View style={styles.statTile}>
                   <View
                     style={[
@@ -364,16 +361,14 @@ export function ProfileScreen({
                   >
                     <Ionicons name="wallet-outline" size={16} color={C.green} />
                   </View>
-                  <Text style={[styles.statValue, { color: t.text }]}>
+                  <Text style={styles.statValue}>
                     DA {formatCurrency(kpiData.revenue)}
                   </Text>
-                  <Text style={[styles.statLabel, { color: t.textMuted }]}>
-                    Revenue
+                  <Text style={styles.statLabel}>
+                    {i18n('profile.revenue')}
                   </Text>
                 </View>
-                <View
-                  style={[styles.statDivider, { backgroundColor: t.border }]}
-                />
+                <View style={styles.statDivider} />
                 <View style={styles.statTile}>
                   <View
                     style={[
@@ -383,11 +378,9 @@ export function ProfileScreen({
                   >
                     <Ionicons name="trophy-outline" size={16} color={C.amber} />
                   </View>
-                  <Text style={[styles.statValue, { color: t.text }]}>
-                    {kpiData.winRate}%
-                  </Text>
-                  <Text style={[styles.statLabel, { color: t.textMuted }]}>
-                    Win Rate
+                  <Text style={styles.statValue}>{kpiData.winRate}%</Text>
+                  <Text style={styles.statLabel}>
+                    {i18n('profile.winRate')}
                   </Text>
                 </View>
               </View>
@@ -397,23 +390,16 @@ export function ProfileScreen({
 
         {/* Personal Info Card */}
         <Card index={hasStats ? 2 : 1}>
-          <View
-            style={[
-              styles.sectionCard,
-              { backgroundColor: t.surface, borderColor: t.border },
-            ]}
-          >
-            <View
-              style={[styles.sectionHeader, { borderBottomColor: t.border }]}
-            >
+          <View style={styles.sectionCard}>
+            <View style={styles.sectionHeader}>
               <Ionicons name="person-outline" size={14} color={t.textSubtle} />
-              <Text style={[styles.sectionTitle, { color: t.textMuted }]}>
-                Personal Information
+              <Text style={styles.sectionTitle}>
+                {i18n('editProfile.name')}
               </Text>
             </View>
             {infoRows.map((row, i) => (
               <View
-                key={row.label}
+                key={row.icon}
                 style={[
                   styles.infoRow,
                   i < infoRows.length - 1 && {
@@ -422,7 +408,7 @@ export function ProfileScreen({
                   },
                 ]}
               >
-                <View style={[styles.infoIcon, { backgroundColor: t.bgMuted }]}>
+                <View style={styles.infoIcon}>
                   <Ionicons
                     name={row.icon as any}
                     size={16}
@@ -430,12 +416,8 @@ export function ProfileScreen({
                   />
                 </View>
                 <View style={styles.infoContent}>
-                  <Text style={[styles.infoLabel, { color: t.textSubtle }]}>
-                    {row.label}
-                  </Text>
-                  <Text style={[styles.infoValue, { color: t.text }]}>
-                    {row.value}
-                  </Text>
+                  <Text style={styles.infoLabel}>{row.label}</Text>
+                  <Text style={styles.infoValue}>{row.value}</Text>
                 </View>
               </View>
             ))}
@@ -444,36 +426,28 @@ export function ProfileScreen({
 
         {/* Account Card */}
         <Card index={hasStats ? 3 : 2}>
-          <View
-            style={[
-              styles.sectionCard,
-              { backgroundColor: t.surface, borderColor: t.border },
-            ]}
-          >
-            <View
-              style={[styles.sectionHeader, { borderBottomColor: t.border }]}
-            >
+          <View style={styles.sectionCard}>
+            <View style={styles.sectionHeader}>
               <Ionicons
                 name="settings-outline"
                 size={14}
                 color={t.textSubtle}
               />
-              <Text style={[styles.sectionTitle, { color: t.textMuted }]}>
-                Account
+              <Text style={styles.sectionTitle}>
+                {i18n('profile.myAccount')}
               </Text>
             </View>
 
             <Pressable
-              onPress={() => setEditing(true)}
+              onPress={() => navigation.navigate('EditProfile')}
               style={({ pressed }) => [
                 styles.primaryBtn,
-                { backgroundColor: t.accent },
                 pressed && { opacity: 0.85 },
               ]}
             >
               <Ionicons name="create-outline" size={16} color={t.accentFg} />
-              <Text style={[styles.primaryBtnText, { color: t.accentFg }]}>
-                Edit Profile
+              <Text style={styles.primaryBtnText}>
+                {i18n('profile.editProfile')}
               </Text>
             </Pressable>
 
@@ -486,51 +460,63 @@ export function ProfileScreen({
                     pressed && { opacity: 0.7 },
                   ]}
                 >
-                  <View
-                    style={[styles.menuIcon, { backgroundColor: t.bgMuted }]}
-                  >
+                  <View style={styles.menuIcon}>
                     <Ionicons
                       name="wallet-outline"
                       size={16}
                       color={t.textMuted}
                     />
                   </View>
-                  <Text style={[styles.menuLabel, { color: t.text }]}>
-                    Credits & Billing
+                  <Text style={styles.menuLabel}>
+                    {i18n('profile.billing')}
                   </Text>
-                  <Ionicons
-                    name="chevron-forward"
-                    size={16}
-                    color={t.textSubtle}
-                  />
+                  <Ionicons name={chevron} size={16} color={t.textSubtle} />
                 </Pressable>
-                <View
-                  style={[styles.menuDivider, { backgroundColor: t.border }]}
-                />
+                <View style={styles.menuDivider} />
               </>
             )}
 
             <Pressable
-              onPress={() => setShowSupport(true)}
+              onPress={() => navigation.navigate('Help')}
               style={({ pressed }) => [
                 styles.menuRow,
                 pressed && { opacity: 0.7 },
               ]}
             >
-              <View style={[styles.menuIcon, { backgroundColor: t.bgMuted }]}>
+              <View style={styles.menuIcon}>
                 <Ionicons
                   name="help-buoy-outline"
                   size={16}
                   color={t.textMuted}
                 />
               </View>
-              <Text style={[styles.menuLabel, { color: t.text }]}>
-                Help & Support
-              </Text>
-              <Ionicons name="chevron-forward" size={16} color={t.textSubtle} />
+              <Text style={styles.menuLabel}>{i18n('profile.help')}</Text>
+              <Ionicons name={chevron} size={16} color={t.textSubtle} />
             </Pressable>
 
-            <View style={[styles.menuDivider, { backgroundColor: t.border }]} />
+            <View style={styles.menuDivider} />
+
+            <Pressable
+              onPress={() => setShowLangSheet(true)}
+              style={({ pressed }) => [
+                styles.menuRow,
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <View style={styles.menuIcon}>
+                <Ionicons
+                  name="language-outline"
+                  size={16}
+                  color={t.textMuted}
+                />
+              </View>
+              <Text style={styles.menuLabel}>
+                {i18n('splash.changeLanguage')}
+              </Text>
+              <Ionicons name={chevron} size={16} color={t.textSubtle} />
+            </Pressable>
+
+            <View style={styles.menuDivider} />
 
             <Pressable
               onPress={handleLogOut}
@@ -544,12 +530,75 @@ export function ProfileScreen({
               >
                 <Ionicons name="log-out-outline" size={16} color={C.red} />
               </View>
-              <Text style={[styles.menuLabel, { color: C.red }]}>Log Out</Text>
-              <Ionicons name="chevron-forward" size={16} color={t.textSubtle} />
+              <Text style={[styles.menuLabel, { color: C.red }]}>
+                {i18n('profile.logOut')}
+              </Text>
+              <Ionicons name={chevron} size={16} color={t.textSubtle} />
             </Pressable>
           </View>
         </Card>
       </ScrollView>
+
+      {/* ── Language selection sheet ──────────────────── */}
+      <Modal
+        transparent
+        visible={showLangSheet}
+        animationType="none"
+        onRequestClose={() => setShowLangSheet(false)}
+        statusBarTranslucent
+      >
+        <View style={sheetStyles.overlay}>
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => setShowLangSheet(false)}
+          />
+          <Animated.View
+            style={[
+              sheetStyles.sheet,
+              { paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 24 },
+            ]}
+          >
+            <View style={sheetStyles.handle} />
+            <Text style={sheetStyles.title}>
+              {i18n('splash.changeLanguage')}
+            </Text>
+            {[
+              { code: 'en', label: 'English', flag: '🇬🇧' },
+              { code: 'fr', label: 'Français', flag: '🇫🇷' },
+              { code: 'ar', label: 'العربية', flag: '🇩🇿' },
+            ].map((lang) => (
+              <Pressable
+                key={lang.code}
+                onPress={() => {
+                  changeLanguage(lang.code)
+                  setShowLangSheet(false)
+                }}
+                style={({ pressed }) => [
+                  styles.menuRow,
+                  { flexDirection: isRTL ? 'row-reverse' : 'row' },
+                  pressed && { opacity: 0.7 },
+                ]}
+              >
+                <Text
+                  style={{
+                    fontSize: 22,
+                    marginRight: isRTL ? 0 : 12,
+                    marginLeft: isRTL ? 12 : 0,
+                  }}
+                >
+                  {lang.flag}
+                </Text>
+                <Text style={styles.menuLabel}>{lang.label}</Text>
+                <Ionicons
+                  name="checkmark-outline"
+                  size={18}
+                  color={t.primary}
+                />
+              </Pressable>
+            ))}
+          </Animated.View>
+        </View>
+      </Modal>
 
       {/* ── Log-out confirmation sheet ──────────────────── */}
       <Modal
@@ -574,29 +623,30 @@ export function ProfileScreen({
             style={[
               sheetStyles.sheet,
               {
-                backgroundColor: t.surface,
                 paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 24,
                 transform: [{ translateY: sheetY }],
               },
             ]}
           >
             {/* Handle */}
-            <View style={[sheetStyles.handle, { backgroundColor: t.border }]} />
+            <View style={sheetStyles.handle} />
 
             {/* Icon */}
             <View style={[sheetStyles.iconRing, { borderColor: C.red + '28' }]}>
               <View
-                style={[sheetStyles.iconWrap, { backgroundColor: C.red + '12' }]}
+                style={[
+                  sheetStyles.iconWrap,
+                  { backgroundColor: C.red + '12' },
+                ]}
               >
                 <Ionicons name="log-out-outline" size={30} color={C.red} />
               </View>
             </View>
 
             {/* Copy */}
-            <Text style={[sheetStyles.title, { color: t.text }]}>Log out?</Text>
-            <Text style={[sheetStyles.subtitle, { color: t.textMuted }]}>
-              You'll be signed out and will need to sign in again to access your
-              account.
+            <Text style={sheetStyles.title}>{i18n('profile.logOut')}?</Text>
+            <Text style={sheetStyles.subtitle}>
+              {i18n('profile.myAccount')}
             </Text>
 
             {/* Buttons */}
@@ -605,48 +655,26 @@ export function ProfileScreen({
                 onPress={() => closeLogOutSheet(false)}
                 style={({ pressed }) => [
                   sheetStyles.btnCancel,
-                  { borderColor: t.border, backgroundColor: t.bgMuted },
                   pressed && { opacity: 0.7 },
                 ]}
               >
-                <Text style={[sheetStyles.btnCancelText, { color: t.text }]}>
-                  Cancel
+                <Text style={sheetStyles.btnCancelText}>
+                  {i18n('common.cancel')}
                 </Text>
               </Pressable>
 
-              <Animated.View
-                style={[
-                  sheetStyles.btnConfirmWrap,
-                  { transform: [{ scale: logoutScale }] },
-                ]}
+              <AnimatedPressable
+                onPress={() => closeLogOutSheet(true)}
+                scaleTo={0.96}
+                containerStyle={sheetStyles.btnConfirmWrap}
+                style={[sheetStyles.btnConfirm, { backgroundColor: C.red }]}
               >
-                <Pressable
-                  onPress={() => closeLogOutSheet(true)}
-                  onPressIn={() =>
-                    Animated.spring(logoutScale, {
-                      toValue: 0.96,
-                      stiffness: 400,
-                      damping: 20,
-                      mass: 0.3,
-                      useNativeDriver: true,
-                    }).start()
-                  }
-                  onPressOut={() =>
-                    Animated.spring(logoutScale, {
-                      toValue: 1,
-                      stiffness: 400,
-                      damping: 20,
-                      mass: 0.3,
-                      useNativeDriver: true,
-                    }).start()
-                  }
-                  style={[sheetStyles.btnConfirm, { backgroundColor: C.red }]}
-                >
-                  <View style={sheetStyles.ctaHighlight} />
-                  <Ionicons name="log-out-outline" size={17} color="#fff" />
-                  <Text style={sheetStyles.btnConfirmText}>Log out</Text>
-                </Pressable>
-              </Animated.View>
+                <View style={sheetStyles.ctaHighlight} />
+                <Ionicons name="log-out-outline" size={17} color="#fff" />
+                <Text style={sheetStyles.btnConfirmText}>
+                  {i18n('profile.logOut')}
+                </Text>
+              </AnimatedPressable>
             </View>
           </Animated.View>
         </View>
@@ -657,346 +685,382 @@ export function ProfileScreen({
 
 const AVATAR_SIZE = 96
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  scroll: {
-    paddingHorizontal: 20,
-    paddingTop: spacing.xxl + spacing.lg,
-    paddingBottom: spacing.md,
-    gap: spacing.lg,
-  },
+function makeStyles(t: Theme) {
+  return StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor: t.bg,
+    },
+    scroll: {
+      paddingHorizontal: 20,
+      paddingTop: spacing.xxl + spacing.lg,
+      paddingBottom: spacing.md,
+      gap: spacing.lg,
+    },
 
-  /* Header Card */
-  headerCard: {
-    alignItems: 'center',
-    padding: spacing.xl,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  avatarWrap: {
-    position: 'relative',
-    marginBottom: spacing.md,
-  },
-  avatar: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
-  },
-  avatarPlaceholder: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarInitial: {
-    fontSize: 36,
-    fontWeight: '700',
-  },
-  statusDot: {
-    position: 'absolute',
-    bottom: 2,
-    right: 2,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    borderWidth: 2.5,
-  },
-  name: {
-    ...typography.display,
-    fontSize: 24,
-    marginBottom: spacing.sm,
-  },
-  badgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  roleBadge: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: 5,
-    borderRadius: radius.pill,
-  },
-  roleText: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-  },
-  statusDotSmall: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  creditBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
-    gap: 6,
-    marginTop: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 8,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    minHeight: 36,
-  },
-  creditText: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
+    /* Header Card */
+    headerCard: {
+      alignItems: 'center',
+      padding: spacing.xl,
+      borderRadius: 12,
+      borderWidth: 1,
+      backgroundColor: t.surface,
+      borderColor: t.border,
+    },
+    avatarWrap: {
+      position: 'relative',
+      marginBottom: spacing.md,
+    },
+    avatar: {
+      width: AVATAR_SIZE,
+      height: AVATAR_SIZE,
+      borderRadius: AVATAR_SIZE / 2,
+    },
+    avatarPlaceholder: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.accent + '15',
+    },
+    avatarInitial: {
+      fontSize: 36,
+      fontWeight: '700',
+      color: t.accent,
+    },
+    statusDot: {
+      position: 'absolute',
+      bottom: 2,
+      width: 14,
+      height: 14,
+      borderRadius: 7,
+      borderWidth: 2.5,
+      borderColor: t.surface,
+    },
+    name: {
+      ...typography.display,
+      fontSize: 24,
+      marginBottom: spacing.sm,
+      color: t.text,
+    },
+    badgeRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    roleBadge: {
+      paddingHorizontal: spacing.md,
+      paddingVertical: 5,
+      borderRadius: radius.pill,
+      backgroundColor: t.accent + '12',
+    },
+    roleText: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: t.accent,
+    },
+    statusBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 5,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+    },
+    statusDotSmall: {
+      width: 7,
+      height: 7,
+      borderRadius: 4,
+    },
+    statusText: {
+      fontSize: 12,
+      fontWeight: '700',
+    },
+    creditBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      alignSelf: 'center',
+      gap: 6,
+      marginTop: spacing.md,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 8,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      minHeight: 36,
+    },
+    creditText: {
+      fontSize: 13,
+      fontWeight: '700',
+    },
 
-  /* Stats Card */
-  statsCard: {
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: spacing.lg,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statTile: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 4,
-  },
-  statIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 2,
-  },
-  statValue: {
-    fontSize: 16,
-    fontWeight: '800',
-    letterSpacing: -0.3,
-  },
-  statLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-  },
-  statDivider: {
-    width: 1,
-    height: 40,
-    opacity: 0.3,
-  },
+    /* Stats Card */
+    statsCard: {
+      borderRadius: 12,
+      borderWidth: 1,
+      padding: spacing.lg,
+      backgroundColor: t.surface,
+      borderColor: t.border,
+    },
+    statsRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    statTile: {
+      flex: 1,
+      alignItems: 'center',
+      gap: 4,
+    },
+    statIcon: {
+      width: 32,
+      height: 32,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 2,
+    },
+    statValue: {
+      fontSize: 16,
+      fontWeight: '800',
+      letterSpacing: -0.3,
+      color: t.text,
+    },
+    statLabel: {
+      fontSize: 11,
+      fontWeight: '600',
+      textTransform: 'uppercase',
+      letterSpacing: 0.4,
+      color: t.textMuted,
+    },
+    statDivider: {
+      width: 1,
+      height: 40,
+      opacity: 0.3,
+      backgroundColor: t.border,
+    },
 
-  /* Section Card */
-  sectionCard: {
-    borderRadius: 12,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-  },
-  sectionTitle: {
-    fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-  },
+    /* Section Card */
+    sectionCard: {
+      borderRadius: 12,
+      borderWidth: 1,
+      overflow: 'hidden',
+      backgroundColor: t.surface,
+      borderColor: t.border,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: t.border,
+    },
+    sectionTitle: {
+      fontSize: 11,
+      fontWeight: '700',
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+      color: t.textMuted,
+    },
 
-  /* Info Rows */
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: 14,
-    minHeight: 52,
-  },
-  infoIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  infoContent: {
-    flex: 1,
-    gap: 2,
-  },
-  infoLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.3,
-  },
-  infoValue: {
-    fontSize: 15,
-    fontWeight: '600',
-  },
+    /* Info Rows */
+    infoRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: 14,
+      minHeight: 52,
+    },
+    infoIcon: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.bgMuted,
+    },
+    infoContent: {
+      flex: 1,
+      gap: 2,
+    },
+    infoLabel: {
+      fontSize: 11,
+      fontWeight: '600',
+      textTransform: 'uppercase',
+      letterSpacing: 0.3,
+      color: t.textSubtle,
+    },
+    infoValue: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: t.text,
+    },
 
-  /* Account Actions */
-  primaryBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.md,
-    marginBottom: spacing.sm,
-    borderRadius: 12,
-    paddingVertical: 14,
-    minHeight: 48,
-  },
-  primaryBtnText: {
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  menuRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: 16,
-    minHeight: 52,
-  },
-  menuIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  menuLabel: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  menuDivider: {
-    height: 1,
-    opacity: 0.2,
-    marginHorizontal: spacing.lg,
-  },
-})
+    /* Account Actions */
+    primaryBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacing.sm,
+      marginHorizontal: spacing.lg,
+      marginTop: spacing.md,
+      marginBottom: spacing.sm,
+      borderRadius: 12,
+      paddingVertical: 14,
+      minHeight: 48,
+      backgroundColor: t.accent,
+    },
+    primaryBtnText: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: t.accentFg,
+    },
+    menuRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: 16,
+      minHeight: 52,
+    },
+    menuIcon: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.bgMuted,
+    },
+    menuLabel: {
+      flex: 1,
+      fontSize: 15,
+      fontWeight: '600',
+      color: t.text,
+    },
+    menuDivider: {
+      height: 1,
+      opacity: 0.2,
+      marginHorizontal: spacing.lg,
+      backgroundColor: t.border,
+    },
+  })
+}
 
 // ── Log-out sheet styles ─────────────────────────────────────
-const sheetStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.52)',
-  },
-  sheet: {
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    alignItems: 'center',
-    gap: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
-    elevation: 16,
-  },
-  handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    marginBottom: 12,
-  },
-  iconRing: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
-  },
-  iconWrap: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '900',
-    letterSpacing: -0.5,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 14,
-    fontWeight: '400',
-    lineHeight: 21,
-    textAlign: 'center',
-    paddingHorizontal: 12,
-    marginBottom: 8,
-  },
-  buttons: {
-    flexDirection: 'row',
-    gap: 12,
-    width: '100%',
-    marginTop: 4,
-  },
-  btnCancel: {
-    flex: 1,
-    height: 56,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnCancelText: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  btnConfirmWrap: {
-    flex: 1,
-  },
-  btnConfirm: {
-    height: 56,
-    borderRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    overflow: 'hidden',
-    shadowColor: C.red,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.38,
-    shadowRadius: 14,
-    elevation: 10,
-  },
-  ctaHighlight: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.22)',
-  },
-  btnConfirmText: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: '#fff',
-    letterSpacing: -0.2,
-  },
-})
+function makeSheetStyles(t: Theme) {
+  return StyleSheet.create({
+    overlay: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.52)',
+    },
+    sheet: {
+      borderTopLeftRadius: 28,
+      borderTopRightRadius: 28,
+      paddingHorizontal: 24,
+      paddingTop: 12,
+      alignItems: 'center',
+      gap: 10,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: -4 },
+      shadowOpacity: 0.08,
+      shadowRadius: 24,
+      elevation: 16,
+      backgroundColor: t.surface,
+    },
+    handle: {
+      width: 40,
+      height: 4,
+      borderRadius: 2,
+      marginBottom: 12,
+      backgroundColor: t.border,
+    },
+    iconRing: {
+      width: 96,
+      height: 96,
+      borderRadius: 48,
+      borderWidth: 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 4,
+    },
+    iconWrap: {
+      width: 76,
+      height: 76,
+      borderRadius: 38,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    title: {
+      fontSize: 22,
+      fontWeight: '900',
+      letterSpacing: -0.5,
+      textAlign: 'center',
+      color: t.text,
+    },
+    subtitle: {
+      fontSize: 14,
+      fontWeight: '400',
+      lineHeight: 21,
+      textAlign: 'center',
+      paddingHorizontal: 12,
+      marginBottom: 8,
+      color: t.textMuted,
+    },
+    buttons: {
+      flexDirection: 'row',
+      gap: 12,
+      width: '100%',
+      marginTop: 4,
+    },
+    btnCancel: {
+      flex: 1,
+      height: 56,
+      borderRadius: 16,
+      borderWidth: 1.5,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderColor: t.border,
+      backgroundColor: t.bgMuted,
+    },
+    btnCancelText: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: t.text,
+    },
+    btnConfirmWrap: {
+      flex: 1,
+    },
+    btnConfirm: {
+      height: 56,
+      borderRadius: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      overflow: 'hidden',
+      shadowColor: C.red,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.38,
+      shadowRadius: 14,
+      elevation: 10,
+    },
+    ctaHighlight: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: 1,
+      backgroundColor: 'rgba(255,255,255,0.22)',
+    },
+    btnConfirmText: {
+      fontSize: 16,
+      fontWeight: '900',
+      color: '#fff',
+      letterSpacing: -0.2,
+    },
+  })
+}

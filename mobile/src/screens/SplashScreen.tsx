@@ -2,19 +2,24 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   AccessibilityInfo,
   Animated,
-  FlatList,
-  Platform,
+  Dimensions,
+  PanResponder,
   Pressable,
   StyleSheet,
   Text,
   View,
-  useWindowDimensions,
 } from 'react-native'
+import PagerView from 'react-native-pager-view'
+import { useIsRTL } from 'expo-rtl'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { useNavigation } from '@react-navigation/native'
+import { useTranslation } from 'react-i18next'
 
 import SplashBg from '../components/SplashBg'
 import SplashDots from '../components/SplashDots'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import type { RootStackParamList } from '../navigation/types'
 
 const C = {
   blue: '#2563EB',
@@ -24,102 +29,180 @@ const C = {
 
 interface Slide {
   icon: keyof typeof Ionicons.glyphMap
-  title: string
-  description: string
-  badge?: string
+  titleKey: string
+  descKey: string
+  badgeKey?: string
 }
 
 const SLIDES: Array<Slide> = [
   {
     icon: 'infinite-outline',
-    title: "Don't search for parts.",
-    description:
-      'Let the parts find you. Post what you need and let verified sellers across Algeria compete to give the best quotes.',
-    badge: 'First Reverse-Marketplace in Algeria',
+    titleKey: 'splash.slide1.title',
+    descKey: 'splash.slide1.description',
+    badgeKey: 'splash.slide1.badge',
   },
   {
     icon: 'camera-outline',
-    title: 'Request a Part',
-    description:
-      'Submit the exact details of the spare part you need, including vehicle brand, year, and photos. Sellers receive your request instantly.',
+    titleKey: 'splash.slide2.title',
+    descKey: 'splash.slide2.description',
   },
   {
     icon: 'pricetags-outline',
-    title: 'Receive Quotes',
-    description:
-      'Verified sellers across the network respond with competitive quotes for New or Used parts. Compare prices, warranties, and reviews.',
+    titleKey: 'splash.slide3.title',
+    descKey: 'splash.slide3.description',
   },
   {
     icon: 'checkmark-circle-outline',
-    title: 'Accept & Connect',
-    description:
-      'Select the best offer and connect with the seller directly via Call or WhatsApp. Join thousands already using mlila.',
+    titleKey: 'splash.slide4.title',
+    descKey: 'splash.slide4.description',
   },
 ]
 
 interface SplashScreenProps {
-  onComplete: () => void
+  onComplete?: () => void
 }
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
-  const { width } = useWindowDimensions()
+  const { t } = useTranslation()
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const insets = useSafeAreaInsets()
-  const scrollX = useRef(new Animated.Value(0)).current
-  const flatListRef = useRef<FlatList>(null)
+  const pagerRef = useRef<PagerView>(null)
+  const currentIndexRef = useRef(0)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [reduced, setReduced] = useState(false)
+  const isRTL = useIsRTL()
+  const isRTLRef = useRef(isRTL)
+  useEffect(() => {
+    isRTLRef.current = isRTL
+  }, [isRTL])
+
+  // Shimmer animation
+  const shimmerX = useRef(new Animated.Value(isRTL ? 100 : -100)).current
+
+  // CTA press scale
   const ctaScale = useRef(new Animated.Value(1)).current
-  const shimmerX = useRef(new Animated.Value(-100)).current
+
+  const rtlGestureX = useRef(new Animated.Value(0)).current
+  const { width: screenWidth } = Dimensions.get('window')
+  const slideOffset = screenWidth * 0.3
 
   useEffect(() => {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduced)
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduced)
+    const sub = AccessibilityInfo.addEventListener(
+      'reduceMotionChanged',
+      setReduced,
+    )
     return () => sub.remove()
   }, [])
 
+  // Shimmer loop
   useEffect(() => {
+    const start = isRTL ? 100 : -100
+    const end = isRTL ? -500 : 500
     const loop = Animated.loop(
       Animated.sequence([
         Animated.delay(2800),
         Animated.timing(shimmerX, {
-          toValue: 500,
-          duration: 720,
+          toValue: end,
+          duration: reduced ? 0 : 720,
           useNativeDriver: true,
         }),
-        Animated.timing(shimmerX, { toValue: -100, duration: 0, useNativeDriver: true }),
+        Animated.timing(shimmerX, {
+          toValue: start,
+          duration: 0,
+          useNativeDriver: true,
+        }),
       ]),
     )
     loop.start()
     return () => loop.stop()
-  }, [shimmerX])
+  }, [shimmerX, reduced])
 
   const isLastSlide = currentIndex === SLIDES.length - 1
 
-  const handleScroll = useCallback(
-    (event: any) => {
-      Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
-        useNativeDriver: false,
-      })(event)
-    },
-    [scrollX],
-  )
-
-  const handleMomentumEnd = useCallback(
-    (event: any) => {
-      const index = Math.round(event.nativeEvent.contentOffset.x / width)
+  const onPageSelected = useCallback(
+    (e: { nativeEvent: { position: number } }) => {
+      const index = e.nativeEvent.position
+      currentIndexRef.current = index
       setCurrentIndex(index)
     },
-    [width],
+    [],
   )
 
   const handleNext = useCallback(() => {
     if (isLastSlide) {
-      onComplete()
+      onComplete?.()
+      navigation.navigate('Login')
     } else {
-      flatListRef.current?.scrollToIndex({ index: currentIndex + 1, animated: true })
-      setCurrentIndex(currentIndex + 1)
+      const nextIndex = currentIndex + 1
+      currentIndexRef.current = nextIndex
+      setCurrentIndex(nextIndex)
+      Animated.timing(rtlGestureX, {
+        toValue: nextIndex,
+        duration: reduced ? 0 : 280,
+        useNativeDriver: false,
+      }).start(() => {
+        pagerRef.current?.setPageWithoutAnimation(nextIndex)
+      })
     }
-  }, [isLastSlide, currentIndex, onComplete])
+  }, [isLastSlide, currentIndex, rtlGestureX, reduced, onComplete, navigation])
+
+  // PanResponder overlay captures all touches (both RTL & LTR)
+  // Maps finger dx → virtual scroll position for real-time gesture-driven animation.
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        rtlGestureX.setValue(currentIndexRef.current)
+      },
+      onPanResponderMove: (_, gs) => {
+        const cur = currentIndexRef.current
+        const rtl = isRTLRef.current
+        // RTL: right swipe (dx > 0) → advance; LTR: right swipe → go back
+        const virtualPos = cur + (rtl ? 1 : -1) * (gs.dx / screenWidth)
+        rtlGestureX.setValue(
+          Math.max(-0.5, Math.min(SLIDES.length - 1 + 0.5, virtualPos)),
+        )
+      },
+      onPanResponderRelease: (_, gs) => {
+        const cur = currentIndexRef.current
+        if (Math.abs(gs.dx) < 50) {
+          // Snap back to current page
+          Animated.spring(rtlGestureX, {
+            toValue: cur,
+            stiffness: 200,
+            damping: 20,
+            mass: 0.3,
+            useNativeDriver: false,
+          }).start()
+          return
+        }
+        const rtl = isRTLRef.current
+        // RTL:  right swipe → NEXT;  left swipe → PREVIOUS
+        // LTR:  right swipe → PREVIOUS;  left swipe → NEXT
+        const target =
+          gs.dx > 50 ? (rtl ? cur + 1 : cur - 1) : rtl ? cur - 1 : cur + 1
+        if (target >= 0 && target < SLIDES.length) {
+          Animated.timing(rtlGestureX, {
+            toValue: target,
+            duration: reduced ? 0 : 200,
+            useNativeDriver: false,
+          }).start(() => {
+            pagerRef.current?.setPageWithoutAnimation(target)
+          })
+        } else {
+          Animated.spring(rtlGestureX, {
+            toValue: cur,
+            stiffness: 200,
+            damping: 20,
+            mass: 0.3,
+            useNativeDriver: false,
+          }).start()
+        }
+      },
+    }),
+  ).current
 
   const handleCtaPressIn = useCallback(() => {
     if (reduced) return
@@ -151,200 +234,269 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       <SplashBg reduced={reduced} />
 
       {/* Top bar */}
-      <View style={styles.topBar}>
+      <View
+        style={[
+          styles.topBar,
+          { flexDirection: isRTL ? 'row-reverse' : 'row' },
+        ]}
+      >
         <View style={styles.brandMark}>
           <View style={styles.brandDot} />
           <Text style={styles.brandName}>mlila</Text>
         </View>
-        {!isLastSlide && (
-          <Pressable
-            onPress={onComplete}
-            hitSlop={12}
-            accessibilityLabel="Skip onboarding"
-            accessibilityRole="button"
-            style={({ pressed }) => [styles.skipBtn, pressed && !reduced && { opacity: 0.6 }]}
-          >
-            <Text style={styles.skipText}>Skip</Text>
-          </Pressable>
-        )}
+        <View style={styles.topRight}>
+          {!isLastSlide && (
+            <Pressable
+              onPress={() => {
+                onComplete?.()
+                navigation.navigate('Login')
+              }}
+              accessibilityRole="button"
+              style={({ pressed }) => [
+                styles.skipBtn,
+                pressed && !reduced && { opacity: 0.6 },
+              ]}
+            >
+              <Text style={styles.skipText}>{t('splash.skip')}</Text>
+            </Pressable>
+          )}
+        </View>
       </View>
 
-      {/* Carousel */}
-      <FlatList
-        ref={flatListRef}
-        data={SLIDES}
-        keyExtractor={(_, i) => String(i)}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        decelerationRate="fast"
-        bounces={false}
-        onScroll={handleScroll}
-        onMomentumScrollEnd={handleMomentumEnd}
-        scrollEventThrottle={16}
-        style={{ flex: 1 }}
-        renderItem={({ item, index }) => {
-          const inputRange = [width * (index - 1), width * index, width * (index + 1)]
+      {/* Carousel area */}
+      <View style={{ flex: 1 }}>
+        {/* PagerView: always LTR, native scroll in LTR mode */}
+        <PagerView
+          ref={pagerRef}
+          style={StyleSheet.absoluteFill}
+          initialPage={0}
+          layoutDirection="ltr"
+          scrollEnabled={false}
+          onPageSelected={onPageSelected}
+        >
+          {SLIDES.map((item, index) => {
+            const pos = rtlGestureX
 
-          const iconScale = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.55, 1, 0.55],
-            extrapolate: 'clamp',
-          })
+            const iconScale = pos.interpolate({
+              inputRange: [index - 1, index, index + 1],
+              outputRange: [0.55, 1, 0.55],
+              extrapolate: 'clamp',
+            })
 
-          const textOpacity = scrollX.interpolate({
-            inputRange,
-            outputRange: [0, 1, 0],
-            extrapolate: 'clamp',
-          })
+            const textOpacity = pos.interpolate({
+              inputRange: [index - 1, index, index + 1],
+              outputRange: [0, 1, 0],
+              extrapolate: 'clamp',
+            })
 
-          const textTranslateY = scrollX.interpolate({
-            inputRange,
-            outputRange: [18, 0, 18],
-            extrapolate: 'clamp',
-          })
+            const textTranslateY = pos.interpolate({
+              inputRange: [index - 1, index, index + 1],
+              outputRange: [18, 0, 18],
+              extrapolate: 'clamp',
+            })
 
-          const descTranslateY = scrollX.interpolate({
-            inputRange,
-            outputRange: [28, 0, 28],
-            extrapolate: 'clamp',
-          })
+            const descTranslateY = pos.interpolate({
+              inputRange: [index - 1, index, index + 1],
+              outputRange: [28, 0, 28],
+              extrapolate: 'clamp',
+            })
 
-          const ghostOpacity = scrollX.interpolate({
-            inputRange,
-            outputRange: [0, 0.055, 0],
-            extrapolate: 'clamp',
-          })
+            const ghostOpacity = pos.interpolate({
+              inputRange: [index - 1, index, index + 1],
+              outputRange: [0, 0.055, 0],
+              extrapolate: 'clamp',
+            })
 
-          const slideNumber = `0${index + 1}`
-          const isGreenSlide = index >= 2
+            // RTL: new from left (+offset → 0), old goes right (0 → +offset)
+            // LTR: new from right (-offset → 0), old goes left (0 → -offset)
+            const translateX = pos.interpolate({
+              inputRange: [index - 1, index, index + 1],
+              outputRange: isRTL
+                ? [-slideOffset, 0, slideOffset]
+                : [slideOffset, 0, -slideOffset],
+              extrapolate: 'clamp',
+            })
 
-          return (
-            <View style={[styles.slide, { width }]}>
-              {/* Ghost step number */}
-              <Animated.Text style={[styles.ghostNumber, { opacity: ghostOpacity }]}>
-                {slideNumber}
-              </Animated.Text>
+            const slideNumber = `0${index + 1}`
+            const isGreenSlide = index >= 2
 
-              {/* Badge — slide 1 only */}
-              {item.badge && (
-                <Animated.View
-                  style={[
-                    styles.badge,
-                    { opacity: textOpacity, transform: [{ translateY: textTranslateY }] },
-                  ]}
+            return (
+              <View key={String(index)} style={styles.slide}>
+                <Animated.Text
+                  style={[styles.ghostNumber, { opacity: ghostOpacity }]}
                 >
-                  <View style={styles.badgeDot} />
-                  <Text style={styles.badgeText}>{item.badge}</Text>
-                </Animated.View>
-              )}
+                  {slideNumber}
+                </Animated.Text>
 
-              {/* Icon diamond */}
-              <View style={styles.iconArea}>
-                <Animated.View
-                  style={[
-                    styles.iconDiamond,
-                    isGreenSlide && styles.iconDiamondGreen,
-                    { transform: [{ scale: iconScale }, { rotate: '45deg' }] },
-                  ]}
-                >
-                  <Ionicons
-                    name={item.icon}
-                    size={36}
-                    color="#fff"
-                    style={{ transform: [{ rotate: '-45deg' }] }}
+                <Animated.View style={{ transform: [{ translateX }] }}>
+                  {item.badgeKey && (
+                    <Animated.View
+                      style={[
+                        styles.badge,
+                        {
+                          opacity: textOpacity,
+                          transform: [{ translateY: textTranslateY }],
+                        },
+                      ]}
+                    >
+                      <View style={styles.badgeDot} />
+                      <Text style={styles.badgeText}>{t(item.badgeKey)}</Text>
+                    </Animated.View>
+                  )}
+
+                  <View
+                    style={[
+                      styles.iconArea,
+                      { alignSelf: isRTL ? 'flex-end' : 'flex-start' },
+                    ]}
+                  >
+                    <Animated.View
+                      style={[
+                        styles.iconDiamond,
+                        isGreenSlide && styles.iconDiamondGreen,
+                        {
+                          transform: [
+                            { scale: iconScale },
+                            { rotate: '45deg' },
+                          ],
+                        },
+                      ]}
+                    >
+                      <Ionicons
+                        name={item.icon}
+                        size={36}
+                        color="#fff"
+                        style={{ transform: [{ rotate: '-45deg' }] }}
+                      />
+                    </Animated.View>
+
+                    <Animated.View
+                      style={[
+                        styles.accentDot,
+                        isGreenSlide && styles.accentDotBlue,
+                        { transform: [{ scale: iconScale }] },
+                      ]}
+                    />
+                    <Animated.View
+                      style={[
+                        styles.accentRing,
+                        isGreenSlide && styles.accentRingGreen,
+                        { transform: [{ scale: iconScale }] },
+                      ]}
+                    />
+                  </View>
+
+                  <Animated.Text
+                    style={[
+                      styles.title,
+                      {
+                        opacity: textOpacity,
+                        transform: [{ translateY: textTranslateY }],
+                      },
+                    ]}
+                  >
+                    {t(item.titleKey)}
+                  </Animated.Text>
+
+                  <Animated.View
+                    style={[
+                      styles.divider,
+                      isGreenSlide && styles.dividerGreen,
+                      {
+                        opacity: textOpacity,
+                        transform: [{ translateY: textTranslateY }],
+                        alignSelf: isRTL ? 'flex-end' : 'flex-start',
+                      },
+                    ]}
                   />
+
+                  <Animated.Text
+                    style={[
+                      styles.description,
+                      {
+                        opacity: textOpacity,
+                        transform: [{ translateY: descTranslateY }],
+                      },
+                    ]}
+                  >
+                    {t(item.descKey)}
+                  </Animated.Text>
                 </Animated.View>
-
-                <Animated.View
-                  style={[
-                    styles.accentDot,
-                    isGreenSlide && styles.accentDotBlue,
-                    { transform: [{ scale: iconScale }] },
-                  ]}
-                />
-                <Animated.View
-                  style={[
-                    styles.accentRing,
-                    isGreenSlide && styles.accentRingGreen,
-                    { transform: [{ scale: iconScale }] },
-                  ]}
-                />
               </View>
+            )
+          })}
+        </PagerView>
 
-              {/* Title */}
-              <Animated.Text
-                style={[
-                  styles.title,
-                  { opacity: textOpacity, transform: [{ translateY: textTranslateY }] },
-                ]}
-              >
-                {item.title}
-              </Animated.Text>
-
-              {/* Accent divider */}
-              <Animated.View
-                style={[
-                  styles.divider,
-                  isGreenSlide && styles.dividerGreen,
-                  { opacity: textOpacity, transform: [{ translateY: textTranslateY }] },
-                ]}
-              />
-
-              {/* Description */}
-              <Animated.Text
-                style={[
-                  styles.description,
-                  { opacity: textOpacity, transform: [{ translateY: descTranslateY }] },
-                ]}
-              >
-                {item.description}
-              </Animated.Text>
-            </View>
-          )
-        }}
-      />
+        {/* Transparent overlay ON TOP of PagerView captures all touches */}
+        <View style={StyleSheet.absoluteFill} {...panResponder.panHandlers} />
+      </View>
 
       {/* Bottom area */}
       <View style={[styles.bottom, { paddingBottom: bottomPadding }]}>
-        {/* Sign in link */}
         <Pressable
-          onPress={onComplete}
+          onPress={() => {
+            onComplete?.()
+            navigation.navigate('Login')
+          }}
           hitSlop={8}
-          accessibilityLabel="Sign in to existing account"
+          accessibilityLabel={t('splash.signIn')}
           accessibilityRole="button"
-          style={({ pressed }) => [styles.signInRow, pressed && !reduced && { opacity: 0.6 }]}
+          style={({ pressed }) => [
+            styles.signInRow,
+            { flexDirection: isRTL ? 'row-reverse' : 'row' },
+            pressed && !reduced && { opacity: 0.6 },
+          ]}
         >
-          <Text style={styles.signInPrefix}>Already have an account? </Text>
-          <Text style={styles.signInLink}>Sign in</Text>
+          <Text style={styles.signInPrefix}>
+            {t('splash.alreadyHaveAccount')}
+          </Text>
+          <Text style={styles.signInLink}>{t('splash.signIn')}</Text>
         </Pressable>
 
         <SplashDots
           count={SLIDES.length}
           activeIndex={currentIndex}
-          scrollX={scrollX}
-          width={width}
           reduced={reduced}
         />
 
-        {/* CTA */}
-        <Animated.View style={[styles.ctaWrap, { transform: [{ scale: ctaScale }] }]}>
+        <Animated.View
+          style={[styles.ctaWrap, { transform: [{ scale: ctaScale }] }]}
+        >
           <Pressable
             onPress={handleNext}
             onPressIn={handleCtaPressIn}
             onPressOut={handleCtaPressOut}
-            accessibilityLabel={isLastSlide ? 'Get started with mlila' : 'Go to next slide'}
+            accessibilityLabel={
+              isLastSlide ? t('splash.getStarted') : t('common.next')
+            }
             accessibilityRole="button"
-            style={styles.cta}
+            style={[
+              styles.cta,
+              { flexDirection: isRTL ? 'row-reverse' : 'row' },
+            ]}
           >
             <View style={styles.ctaHighlight} />
             <Animated.View
-              style={[styles.ctaShimmer, { transform: [{ translateX: shimmerX }] }]}
+              style={[
+                styles.ctaShimmer,
+                isRTL ? { right: 0 } : { left: 0 },
+                {
+                  transform: [{ skewX: '-18deg' }, { translateX: shimmerX }],
+                },
+              ]}
             />
-            <Text style={styles.ctaText}>{isLastSlide ? 'Get Started' : 'Next'}</Text>
+            <Text style={styles.ctaText}>
+              {isLastSlide ? t('splash.getStarted') : t('common.next')}
+            </Text>
             <View style={styles.ctaIconBubble}>
               <Ionicons
-                name={isLastSlide ? 'checkmark-outline' : 'arrow-forward-outline'}
+                name={
+                  isLastSlide
+                    ? 'checkmark-outline'
+                    : isRTL
+                      ? 'arrow-back-outline'
+                      : 'arrow-forward-outline'
+                }
                 size={17}
                 color="#fff"
               />
@@ -362,7 +514,6 @@ const styles = StyleSheet.create({
     backgroundColor: C.bg,
   },
 
-  // ── Top bar ──────────────────────────────────────────────
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -389,6 +540,11 @@ const styles = StyleSheet.create({
     color: '#0a0a0a',
     letterSpacing: -0.6,
   },
+  topRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   skipBtn: {
     paddingVertical: 7,
     paddingHorizontal: 16,
@@ -404,7 +560,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
   },
 
-  // ── Slide ────────────────────────────────────────────────
   slide: {
     flex: 1,
     alignItems: 'center',
@@ -424,10 +579,10 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
 
-  // ── Badge ────────────────────────────────────────────────
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 7,
     paddingVertical: 7,
     paddingHorizontal: 14,
@@ -450,7 +605,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
 
-  // ── Icon ─────────────────────────────────────────────────
   iconArea: {
     width: 148,
     height: 148,
@@ -505,7 +659,6 @@ const styles = StyleSheet.create({
     borderColor: C.green,
   },
 
-  // ── Text ─────────────────────────────────────────────────
   title: {
     fontSize: 36,
     fontWeight: '900',
@@ -535,7 +688,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
 
-  // ── Bottom ───────────────────────────────────────────────
   bottom: {
     paddingHorizontal: 24,
     gap: 16,
@@ -557,7 +709,6 @@ const styles = StyleSheet.create({
     color: C.blue,
   },
 
-  // ── CTA ──────────────────────────────────────────────────
   ctaWrap: {
     width: '100%',
   },
@@ -588,13 +739,11 @@ const styles = StyleSheet.create({
   },
   ctaShimmer: {
     position: 'absolute',
-    left: 0,
     top: -10,
     bottom: -10,
     width: 56,
     backgroundColor: '#ffffff',
     opacity: 0.1,
-    transform: [{ skewX: '-18deg' }],
   },
   ctaText: {
     fontSize: 18,

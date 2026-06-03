@@ -1,13 +1,12 @@
 import { useEffect, useRef } from 'react'
-import { Animated, StyleSheet, Text, View } from 'react-native'
+import { Animated, StyleSheet, Text } from 'react-native'
+import { View } from 'expo-rtl'
 
 const C = { blue: '#2563EB' } as const
 
 interface SplashDotsProps {
   count: number
   activeIndex: number
-  scrollX: Animated.Value
-  width: number
   reduced: boolean
 }
 
@@ -35,16 +34,18 @@ export default function SplashDots({
     })
   }, [activeIndex, reduced])
 
-  const step = String(activeIndex + 1).padStart(2, '0')
-  const total = String(count).padStart(2, '0')
-
   return (
     <View style={styles.container}>
-      <Text style={styles.stepLabel}>
-        <Text style={styles.stepActive}>{step}</Text>
-        <Text style={styles.stepSep}> — </Text>
-        <Text style={styles.stepTotal}>{total}</Text>
-      </Text>
+      <View style={styles.numbers}>
+        {Array.from({ length: count }, (_, i) => (
+          <Text
+            key={i}
+            style={[styles.number, i === activeIndex && styles.numberActive]}
+          >
+            {i + 1}
+          </Text>
+        ))}
+      </View>
 
       <View style={styles.bars}>
         {barAnims.current.map((anim, i) => {
@@ -76,21 +77,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
-  stepLabel: {
-    fontSize: 11,
-    letterSpacing: 1.5,
+  numbers: {
+    flexDirection: 'row',
+    gap: 10,
   },
-  stepActive: {
-    fontWeight: '800',
+  number: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#a1a1aa',
+  },
+  numberActive: {
     color: C.blue,
-  },
-  stepSep: {
-    fontWeight: '400',
-    color: '#a1a1aa',
-  },
-  stepTotal: {
-    fontWeight: '600',
-    color: '#a1a1aa',
   },
   bars: {
     flexDirection: 'row',

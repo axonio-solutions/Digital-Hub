@@ -1,6 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect, useRef } from 'react'
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Animated, Pressable, StyleSheet } from 'react-native'
+import { Text, View } from 'expo-rtl'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '../theme/use-theme'
 
 export type TabId =
@@ -86,6 +88,15 @@ const C = {
 const PADDING_H = 10
 const BAR_CR = 26
 
+const TAB_LABEL_KEYS: Record<string, { buyer: string; seller: string }> = {
+  home: { buyer: 'nav.buyer.home', seller: 'nav.seller.home' },
+  requests: { buyer: 'nav.buyer.requests', seller: 'nav.seller.market' },
+  notifications: { buyer: 'nav.buyer.alerts', seller: 'nav.seller.alerts' },
+  profile: { buyer: 'nav.buyer.profile', seller: 'nav.seller.profile' },
+  quotes: { buyer: 'nav.seller.quotes', seller: 'nav.seller.quotes' },
+  billing: { buyer: 'nav.seller.billing', seller: 'nav.seller.billing' },
+}
+
 // ── Animated tab item ─────────────────────────────────────────────────────────
 
 interface AnimatedTabItemProps {
@@ -97,6 +108,7 @@ interface AnimatedTabItemProps {
   inactiveColor: string
   activePillBg: string
   barBg: string
+  variant: 'buyer' | 'seller'
 }
 
 function AnimatedTabItem({
@@ -108,7 +120,9 @@ function AnimatedTabItem({
   inactiveColor,
   activePillBg,
   barBg,
+  variant,
 }: AnimatedTabItemProps) {
+  const { t } = useTranslation()
   const bounceScale = useRef(new Animated.Value(1)).current
   const pillOpacity = useRef(new Animated.Value(isActive ? 1 : 0)).current
   const pillScale = useRef(new Animated.Value(isActive ? 1 : 0.6)).current
@@ -172,7 +186,7 @@ function AnimatedTabItem({
       onPress={onPress}
       accessibilityRole="tab"
       accessibilityState={{ selected: isActive }}
-      accessibilityLabel={tab.label}
+      accessibilityLabel={t(TAB_LABEL_KEYS[tab.id]?.[variant] ?? tab.label)}
       style={({ pressed }) => [
         styles.tabItem,
         pressed && !isActive && styles.tabItemPressed,
@@ -184,7 +198,11 @@ function AnimatedTabItem({
         <Animated.View
           style={[
             styles.activePill,
-            { backgroundColor: activePillBg, opacity: pillOpacity, transform: [{ scale: pillScale }] },
+            {
+              backgroundColor: activePillBg,
+              opacity: pillOpacity,
+              transform: [{ scale: pillScale }],
+            },
           ]}
         />
         <Animated.View style={{ transform: [{ scale: bounceScale }] }}>
@@ -206,10 +224,12 @@ function AnimatedTabItem({
         numberOfLines={1}
         style={[
           styles.tabLabel,
-          isActive ? styles.tabLabelActive : [styles.tabLabelInactive, { color: inactiveColor }],
+          isActive
+            ? styles.tabLabelActive
+            : [styles.tabLabelInactive, { color: inactiveColor }],
         ]}
       >
-        {tab.label}
+        {t(TAB_LABEL_KEYS[tab.id]?.[variant] ?? tab.label)}
       </Text>
       {/* Active indicator bar */}
       <Animated.View
@@ -240,6 +260,7 @@ export function BottomTabBar({
   variant = 'buyer',
 }: BottomTabBarProps) {
   const t = useTheme()
+  const { t: tr } = useTranslation()
   const tabs = variant === 'seller' ? SELLER_TABS : BUYER_TABS
   const isBuyer = variant === 'buyer'
 
@@ -305,6 +326,7 @@ export function BottomTabBar({
               inactiveColor={t.textSubtle}
               activePillBg={t.primary + '16'}
               barBg={t.surface}
+              variant={variant}
             />
           ))}
 
@@ -323,12 +345,12 @@ export function BottomTabBar({
                   pressed && { backgroundColor: '#1D4ED8' },
                 ]}
                 accessibilityRole="button"
-                accessibilityLabel="Create new request"
+                accessibilityLabel={tr('nav.createRequest')}
               >
                 <Ionicons name="add" size={26} color="#fff" />
               </Pressable>
             </Animated.View>
-            <Text style={styles.fabTabLabel}>New</Text>
+            <Text style={styles.fabTabLabel}>{tr('nav.new')}</Text>
           </View>
 
           {/* Alerts + Profile */}
@@ -343,6 +365,7 @@ export function BottomTabBar({
               inactiveColor={t.textSubtle}
               activePillBg={t.primary + '16'}
               barBg={t.surface}
+              variant={variant}
             />
           ))}
         </>
@@ -358,6 +381,7 @@ export function BottomTabBar({
             inactiveColor={t.textSubtle}
             activePillBg={t.primary + '16'}
             barBg={t.surface}
+            variant={variant}
           />
         ))
       )}

@@ -1,12 +1,6 @@
-import { useCallback, useRef } from 'react'
-import {
-  ActivityIndicator,
-  Animated,
-  Pressable,
-  StyleSheet,
-  Text,
-} from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native'
 
+import { AnimatedPressable } from './AnimatedPressable'
 import { radius, spacing, typography } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
 import type { PressableProps } from 'react-native'
@@ -30,7 +24,6 @@ export function Button({
 }: ButtonProps) {
   const t = useTheme()
   const isDisabled = disabled || loading
-  const scaleAnim = useRef(new Animated.Value(1)).current
 
   const colors = (() => {
     switch (variant) {
@@ -45,54 +38,28 @@ export function Button({
     }
   })()
 
-  const handlePressIn = useCallback(() => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.96,
-      stiffness: 300,
-      damping: 20,
-      mass: 0.3,
-      useNativeDriver: true,
-    }).start()
-  }, [scaleAnim])
-
-  const handlePressOut = useCallback(() => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      stiffness: 300,
-      damping: 20,
-      mass: 0.3,
-      useNativeDriver: true,
-    }).start()
-  }, [scaleAnim])
-
   return (
-    <Animated.View
-      style={[
-        fullWidth && styles.fullWidth,
-        { transform: [{ scale: scaleAnim }] },
+    <AnimatedPressable
+      disabled={isDisabled}
+      scaleTo={0.96}
+      springConfig={{ stiffness: 300, damping: 20, mass: 0.3 }}
+      containerStyle={fullWidth && styles.fullWidth}
+      {...rest}
+      style={({ pressed }) => [
+        styles.button,
+        {
+          backgroundColor: colors.bg,
+          borderColor: colors.border,
+          opacity: isDisabled ? 0.55 : pressed ? 0.85 : 1,
+        },
       ]}
     >
-      <Pressable
-        disabled={isDisabled}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        {...rest}
-        style={({ pressed }) => [
-          styles.button,
-          {
-            backgroundColor: colors.bg,
-            borderColor: colors.border,
-            opacity: isDisabled ? 0.55 : pressed ? 0.85 : 1,
-          },
-        ]}
-      >
-        {loading ? (
-          <ActivityIndicator color={colors.fg} />
-        ) : (
-          <Text style={[styles.label, { color: colors.fg }]}>{label}</Text>
-        )}
-      </Pressable>
-    </Animated.View>
+      {loading ? (
+        <ActivityIndicator color={colors.fg} />
+      ) : (
+        <Text style={[styles.label, { color: colors.fg }]}>{label}</Text>
+      )}
+    </AnimatedPressable>
   )
 }
 

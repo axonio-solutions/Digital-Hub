@@ -1,51 +1,42 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet } from 'react-native'
+import { Text, View, useIsRTL } from 'expo-rtl'
+import { Image } from 'expo-image'
+import { useFormContext } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { radius, spacing, typography } from '../../theme/tokens'
 import { useTheme } from '../../theme/use-theme'
 import type { TaxBrand } from '../../types/taxonomy'
-
-const POPULAR_BRANDS = [
-  'Renault',
-  'Peugeot',
-  'Toyota',
-  'Hyundai',
-  'Volkswagen',
-  'Dacia',
-  'Ford',
-  'Nissan',
-  'BMW',
-  'Mercedes-Benz',
-]
+import type { RequestFormData } from '../NewRequestScreen'
 
 interface Props {
   brands: Array<TaxBrand>
-  selectedId: string | null
-  onSelect: (id: string, brandName: string) => void
+  popularBrands: Array<string>
   loading?: boolean
 }
 
-export function BrandStep({ brands, selectedId, onSelect, loading }: Props) {
+export function BrandStep({ brands, popularBrands, loading }: Props) {
+  const { t: translate } = useTranslation()
   const t = useTheme()
+  const isRTL = useIsRTL()
+  const { watch, setValue } = useFormContext<RequestFormData>()
+  const brandId = watch('brandId')
 
-  const popular = brands.filter((b) => POPULAR_BRANDS.includes(b.brand))
+  const popular = brands.filter((b) => popularBrands.includes(b.brand))
   const others = brands
-    .filter((b) => !POPULAR_BRANDS.includes(b.brand))
+    .filter((b) => !popularBrands.includes(b.brand))
     .sort((a, b) => a.brand.localeCompare(b.brand))
 
   const renderBrand = (brand: TaxBrand) => {
-    const selected = selectedId === brand.id
+    const selected = brandId === brand.id
     return (
       <Pressable
         key={brand.id}
-        onPress={() => onSelect(brand.id, brand.brand)}
+        onPress={() => {
+          setValue('brandId', brand.id, { shouldDirty: true })
+          setValue('vehicleBrand', brand.brand, { shouldDirty: true })
+        }}
         style={({ pressed }) => [
           styles.brandCard,
           {
@@ -71,7 +62,7 @@ export function BrandStep({ brands, selectedId, onSelect, loading }: Props) {
                 styles.brandLogo,
                 !selected && { opacity: 0.5, tintColor: t.textMuted },
               ]}
-              resizeMode="contain"
+              contentFit="contain"
             />
           ) : (
             <Text
@@ -97,7 +88,13 @@ export function BrandStep({ brands, selectedId, onSelect, loading }: Props) {
           {brand.brand}
         </Text>
         {selected && (
-          <View style={[styles.brandCheck, { backgroundColor: t.primary }]}>
+          <View
+            style={[
+              styles.brandCheck,
+              { backgroundColor: t.primary },
+              isRTL ? { left: 6 } : { right: 6 },
+            ]}
+          >
             <Ionicons name="checkmark" size={10} color={t.primaryFg} />
           </View>
         )}
@@ -134,18 +131,18 @@ export function BrandStep({ brands, selectedId, onSelect, loading }: Props) {
       <View style={styles.header}>
         <Ionicons name="business-outline" size={20} color={t.primary} />
         <Text style={[styles.title, { color: t.text }]}>
-          Select Vehicle Brand
+          {translate('wizard.step.brand')}
         </Text>
       </View>
       <Text style={[styles.subtitle, { color: t.textMuted }]}>
-        Choose your vehicle's manufacturer for accurate part matching.
+        {translate('wizard.brandDescription')}
       </Text>
 
       <View style={styles.list}>
         {popular.length > 0 && (
           <>
             <Text style={[styles.sectionLabel, { color: t.textSubtle }]}>
-              POPULAR
+              {translate('wizard.popular')}
             </Text>
             <View style={styles.grid}>{popular.map(renderBrand)}</View>
           </>
@@ -159,7 +156,7 @@ export function BrandStep({ brands, selectedId, onSelect, loading }: Props) {
                 { color: t.textSubtle, marginTop: spacing.sm },
               ]}
             >
-              ALL BRANDS
+              {translate('wizard.allBrands')}
             </Text>
             <View style={styles.grid}>{others.map(renderBrand)}</View>
           </>
@@ -247,7 +244,6 @@ const styles = StyleSheet.create({
   brandCheck: {
     position: 'absolute',
     top: 6,
-    right: 6,
     width: 18,
     height: 18,
     borderRadius: 9,

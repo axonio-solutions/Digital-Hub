@@ -1,28 +1,36 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Animated, StyleSheet, Text, View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import {
+  NavigationContainer,
+  createNavigationContainerRef,
+} from '@react-navigation/native'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { DirectionProvider, directionForLocale } from 'expo-rtl'
 
 import {
   clearAuthToken,
   fetchSession,
   getAuthToken,
 } from './src/lib/api-client'
-import { LoginScreen } from './src/screens/LoginScreen'
-import { OnboardingScreen } from './src/screens/OnboardingScreen'
-import SplashScreen from './src/screens/SplashScreen'
-import { WaitlistScreen } from './src/screens/WaitlistScreen'
-import { BuyerScreen } from './src/screens/BuyerScreen'
-import { SellerScreen } from './src/screens/SellerScreen'
+import { queryClient } from './src/lib/query-client'
+import { useUserStore } from './src/lib/stores/user-store'
+import { RootNavigator } from './src/navigation/RootNavigator'
 import {
   cleanupNotificationResponseListener,
   initNotificationHandler,
+  registerBackgroundNotificationTask,
   registerPushToken,
+  unregisterBackgroundNotificationTask,
+  setupNotificationForegroundListener,
   setupNotificationResponseListener,
 } from './src/lib/push-notifications'
-import type { SessionUser } from './src/lib/api-client'
+import type { RootStackParamList } from './src/navigation/types'
+import { initI18n } from './src/i18n'
+import i18next from './src/i18n'
 
-type AuthState = 'checking' | 'signed-out' | 'session-loading' | 'ready'
+export const navigationRef = createNavigationContainerRef<RootStackParamList>()
 
 function ErrorFallback({ error }: { error: Error }) {
   return (
@@ -113,14 +121,41 @@ function LoadingScreen({ message }: { message: string }) {
 }
 
 function AppContent() {
-  const [authState, setAuthState] = useState<AuthState>('checking')
-  const [user, setUser] = useState<SessionUser | null>(null)
-  const [showSplash, setShowSplash] = useState(true)
-  const [checkingStatus, setCheckingStatus] = useState(false)
-  const pendingRequestRef = useRef<string | null>(null)
+  const user = useUserStore((s) => s.user)
+  const authState = useUserStore((s) => s.authState)
+  const checkingStatus = useUserStore((s) => s.checkingStatus)
+  const setAuthState = useUserStore((s) => s.setAuthState)
+  const setUser = useUserStore((s) => s.setUser)
+  const setCheckingStatus = useUserStore((s) => s.setCheckingStatus)
+  const logout = useUserStore((s) => s.logout)
+  const [i18nReady, setI18nReady] = useState(false)
+  const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr')
+
+  useEffect(() => {
+    initI18n()
+      .then(() => {
+        setI18nReady(true)
+        setDirection(directionForLocale(i18next.language))
+      })
+      .catch(() => {
+        setI18nReady(true)
+      })
+  }, [])
+
+  useEffect(() => {
+    const handler = (lng: string) => setDirection(directionForLocale(lng))
+    i18next.on('languageChanged', handler)
+    return () => {
+      i18next.off('languageChanged', handler)
+    }
+  }, [])
 
   useEffect(() => {
     initNotificationHandler()
+    registerBackgroundNotificationTask()
+    return () => {
+      unregisterBackgroundNotificationTask()
+    }
   }, [])
 
   useEffect(() => {
@@ -145,67 +180,26 @@ function AppContent() {
         }
       })
       .catch(() => {
-        if (cancelled) return
-        setAuthState('signed-out')
+        if (!cancelled) setAuthState('signed-out')
       })
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [setAuthState, setUser])
 
-  const handleSignedIn = useCallback(() => {
-    setAuthState('session-loading')
-    fetchSession()
-      .then((sessionUser) => {
-        if (!sessionUser) {
-          console.warn('⚠️ fetchSession returned null — clearing token')
-          clearAuthToken()
-          setAuthState('signed-out')
-          return
-        }
-        setUser(sessionUser)
-        setAuthState('ready')
-      })
-      .catch((err) => {
-        console.error('❌ fetchSession error:', err?.message ?? err)
-        setAuthState('signed-out')
-      })
-  }, [])
-
-  const handleLogOut = useCallback(async () => {
-    await clearAuthToken()
-    setUser(null)
-    setAuthState('signed-out')
-  }, [])
-
-  const handleOnboardingComplete = useCallback((accountStatus: string) => {
-    if (accountStatus === 'waitlisted') {
-      setUser((prev) =>
-        prev ? { ...prev, account_status: 'waitlisted' } : prev,
-      )
-    } else {
-      setUser((prev) => (prev ? { ...prev, account_status: 'active' } : prev))
-    }
-  }, [])
-
-  useEffect(() => {
-    if (
-      authState === 'ready' &&
-      (user?.role === 'buyer' || user?.role === 'seller')
-    ) {
-      registerPushToken(user)
-    }
-  }, [authState, user])
-
-  useEffect(() => {
-    const onNavigateToRequest = (requestId: string) => {
-      pendingRequestRef.current = requestId
-    }
-    setupNotificationResponseListener(onNavigateToRequest)
-    return () => {
-      cleanupNotificationResponseListener()
-    }
-  }, [])
+  const handleOnboardingComplete = useCallback(
+    (role: string, accountStatus: string) => {
+      const currentUser = useUserStore.getState().user
+      if (currentUser) {
+        setUser({
+          ...currentUser,
+          role: role as 'buyer' | 'seller',
+          account_status: accountStatus,
+        })
+      }
+    },
+    [setUser],
+  )
 
   const handleCheckStatus = useCallback(async () => {
     setCheckingStatus(true)
@@ -231,105 +225,116 @@ function AppContent() {
     } finally {
       setCheckingStatus(false)
     }
-  }, [])
+  }, [setAuthState, setUser, setCheckingStatus])
 
-  if (authState === 'checking' || authState === 'session-loading') {
-    return (
-      <LoadingScreen
-        message={
-          authState === 'session-loading' ? 'Signing you in…' : 'Loading…'
-        }
-      />
-    )
-  }
-
-  if (authState === 'signed-out') {
-    if (showSplash) {
-      return (
-        <>
-          <SplashScreen onComplete={() => setShowSplash(false)} />
-          <StatusBar style="dark" />
-        </>
-      )
+  useEffect(() => {
+    if (
+      authState === 'ready' &&
+      (user?.role === 'buyer' || user?.role === 'seller')
+    ) {
+      registerPushToken(user)
     }
-    return (
-      <>
-        <LoginScreen onSignedIn={handleSignedIn} />
-        <StatusBar style="auto" />
-      </>
-    )
-  }
+  }, [authState, user])
 
-  // authState === 'ready'
-  const accountStatus = user?.account_status
+  useEffect(() => {
+    const onNavigateToRequest = (requestId: string) => {
+      if (!navigationRef.isReady()) return
+      if (user?.role === 'buyer') {
+        navigationRef.navigate('BuyerTabs', {
+          screen: 'BuyerNotificationsStack',
+          params: {
+            screen: 'RequestDetails',
+            params: { requestId },
+            initial: false,
+          },
+        })
+      } else {
+        navigationRef.navigate('SellerTabs', {
+          screen: 'SellerNotificationsStack',
+          params: {
+            screen: 'RequestDetails',
+            params: { requestId },
+            initial: false,
+          },
+        })
+      }
+    }
+    setupNotificationResponseListener(onNavigateToRequest)
+    setupNotificationForegroundListener(() => {
+      queryClient.invalidateQueries({ queryKey: ['unread-notifications'] })
+    })
+    return () => {
+      cleanupNotificationResponseListener()
+    }
+  }, [user?.role])
 
-  if (accountStatus === 'new' || !accountStatus) {
-    return (
-      <>
-        <OnboardingScreen
-          user={user!}
-          onComplete={handleOnboardingComplete}
-          onLogOut={handleLogOut}
-        />
-        <StatusBar style="auto" />
-      </>
-    )
-  }
+  const lastResetRef = useRef<string | null>(null)
+  const navInitializedRef = useRef(false)
 
-  if (accountStatus === 'waitlisted') {
-    return (
-      <>
-        <WaitlistScreen
-          onLogOut={handleLogOut}
-          onCheckStatus={handleCheckStatus}
-          checking={checkingStatus}
-        />
-        <StatusBar style="auto" />
-      </>
-    )
-  }
+  useEffect(() => {
+    if (!navigationRef.isReady()) return
+    if (authState === 'checking' || authState === 'session-loading') {
+      lastResetRef.current = null
+      return
+    }
 
-  if (user?.role === 'buyer') {
-    return (
-      <>
-        <BuyerScreen
-          user={user}
-          onLogOut={handleLogOut}
-          onUserUpdate={setUser}
-          pendingRequestId={pendingRequestRef.current}
-          onPendingRequestConsumed={() => {
-            pendingRequestRef.current = null
-          }}
-        />
-        <StatusBar style="auto" />
-      </>
-    )
-  }
+    const accountStatus = user?.account_status
 
-  if (user?.role === 'seller') {
-    return (
-      <>
-        <SellerScreen
-          user={user}
-          onLogOut={handleLogOut}
-          onUserUpdate={setUser}
-          pendingRequestId={pendingRequestRef.current}
-          onPendingRequestConsumed={() => {
-            pendingRequestRef.current = null
-          }}
-        />
-        <StatusBar style="auto" />
-      </>
-    )
-  }
+    let target: string | null = null
+    let params: Record<string, any> | undefined
+
+    if (authState === 'signed-out') {
+      if (!navInitializedRef.current) {
+        navInitializedRef.current = true
+        lastResetRef.current = 'Splash'
+        return
+      }
+      target = 'Splash'
+    } else if (accountStatus === 'new' || !accountStatus) {
+      target = 'Onboarding'
+      params = {
+        user: user!,
+        onComplete: handleOnboardingComplete,
+        onLogOut: logout,
+      }
+    } else if (accountStatus === 'waitlisted') {
+      target = 'Waitlist'
+      params = {
+        onLogOut: logout,
+        onCheckStatus: handleCheckStatus,
+        checking: checkingStatus,
+      }
+    } else if (user?.role === 'buyer') {
+      target = 'BuyerTabs'
+      params = { screen: 'BuyerHomeStack', params: { screen: 'Home' } }
+    } else if (user?.role === 'seller') {
+      target = 'SellerTabs'
+      params = { screen: 'SellerHomeStack', params: { screen: 'SellerHome' } }
+    }
+
+    if (target && target !== lastResetRef.current) {
+      lastResetRef.current = target
+      navigationRef.reset({ index: 0, routes: [{ name: target, params }] })
+    }
+  }, [authState, user?.account_status, user?.role])
 
   return (
-    <View style={styles.fallback}>
-      <Text style={{ color: '#666', fontSize: 16 }}>
-        Your account is active. Mobile dashboard for your role is coming soon.
-      </Text>
-      <StatusBar style="auto" />
-    </View>
+    <DirectionProvider dir={direction}>
+      {!i18nReady ? (
+        <LoadingScreen message="Loading…" />
+      ) : authState === 'checking' || authState === 'session-loading' ? (
+        <LoadingScreen
+          message={
+            authState === 'session-loading' ? 'Signing you in…' : 'Loading…'
+          }
+        />
+      ) : (
+        <NavigationContainer ref={navigationRef}>
+          <StatusBar style="auto" />
+          <RootNavigator />
+        </NavigationContainer>
+      )}
+    </DirectionProvider>
   )
 }
 
@@ -337,9 +342,6 @@ export default function App() {
   const [crashError, setCrashError] = useState<string | null>(null)
 
   useEffect(() => {
-    const handler = (error: ErrorEvent) => {
-      setCrashError(error.message ?? 'Unknown error')
-    }
     if (typeof ErrorUtils !== 'undefined') {
       const prev = ErrorUtils.getGlobalHandler()
       ErrorUtils.setGlobalHandler((error: Error) => {
@@ -359,36 +361,18 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AppContent />
+      <QueryClientProvider client={queryClient}>
+        <Suspense fallback={<LoadingScreen message="Loading…" />}>
+          <AppContent />
+        </Suspense>
+      </QueryClientProvider>
     </SafeAreaProvider>
   )
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fallback: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-})
-
 const loadingStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#EFF6FF',
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  container: { flex: 1, backgroundColor: '#EFF6FF' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   brandMark: {
     width: 72,
     height: 72,
@@ -403,21 +387,12 @@ const loadingStyles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#2563EB',
   },
-  dot: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: '#2563EB',
-  },
+  dot: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#2563EB' },
   brand: {
     fontSize: 28,
     fontWeight: '800',
     color: '#0F172A',
     letterSpacing: -0.5,
   },
-  message: {
-    fontSize: 15,
-    color: '#64748B',
-    fontWeight: '500',
-  },
+  message: { fontSize: 15, color: '#64748B', fontWeight: '500' },
 })

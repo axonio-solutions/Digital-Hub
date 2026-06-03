@@ -1,16 +1,12 @@
-/* Hallmark · macrostructure: single-column progressive form
- * genre: modern-minimal · theme: Quiet
- * tone: utilitarian · anchor hue: blue-260
- * P5 H5 E5 S5 R5 V4
- */
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { TFunction } from 'i18next'
 import {
   ActivityIndicator,
   Alert,
   Animated,
-  Image,
+  I18nManager,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -19,35 +15,25 @@ import {
   Text,
   View,
 } from 'react-native'
-
+import { Image } from 'expo-image'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useForm, Controller } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '../components/Button'
 import { Field } from '../components/Field'
 import { SpecialtiesSheet } from '../components/SpecialtiesSheet'
 import { WilayaPicker } from '../components/WilayaPicker'
 import { completeOnboarding, getPublicTaxonomyFn } from '../lib/api-client'
+import { compressAndUpload } from '../lib/compress-image'
 import { radius, spacing, typography } from '../theme/tokens'
+import type { Theme } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
 import type { SessionUser } from '../lib/api-client'
 
-type Role = 'buyer' | 'seller' | ''
-
-interface FormData {
-  role: Role
-  name: string
-  email: string
-  phoneNumber: string
-  whatsappNumber: string
-  storeName: string
-  wilaya: string
-  city: string
-  address: string
-  companyAddress: string
-  commercialRegister: string
-  brandIds: Array<string>
-  categoryIds: Array<string>
-}
+type Role = 'buyer' | 'seller'
 
 interface TaxItem {
   id: string
@@ -60,19 +46,31 @@ type TaxonomyData = {
   categories: Array<TaxItem>
 }
 
-const STEPS_ALL = [
-  { id: 1, label: 'Role' },
-  { id: 2, label: 'Contact' },
-  { id: 3, label: 'Location' },
-  { id: 4, label: 'Specialties' },
-]
+type OnboardingForm = z.infer<ReturnType<typeof getOnboardingSchema>>
 
-const BUYER_FEATURES = ['Post requests', 'Get quotes', 'Compare offers']
-const SELLER_FEATURES = ['Browse leads', 'Send quotes', 'Track orders']
+function getOnboardingSchema(tTranslate: TFunction) {
+  return z.object({
+    role: z.enum(['buyer', 'seller']),
+    name: z.string().min(2, tTranslate('onboarding.error.shortName')),
+    email: z.string().email(tTranslate('onboarding.error.invalidEmail')),
+    phoneNumber: z.string().min(8, tTranslate('onboarding.error.shortPhone')),
+    whatsappNumber: z
+      .string()
+      .min(8, tTranslate('onboarding.error.shortWhatsapp')),
+    storeName: z.string().optional(),
+    wilaya: z.string().min(1, tTranslate('onboarding.error.wilayaRequired')),
+    city: z.string().min(1, tTranslate('onboarding.error.cityRequired')),
+    address: z.string().min(1, tTranslate('onboarding.error.addressRequired')),
+    companyAddress: z.string().optional(),
+    commercialRegister: z.string().optional(),
+    brandIds: z.array(z.string()),
+    categoryIds: z.array(z.string()),
+  })
+}
 
 interface OnboardingScreenProps {
   user: SessionUser
-  onComplete: (accountStatus: string) => void
+  onComplete: (role: string, accountStatus: string) => void
   onLogOut: () => void
 }
 
@@ -82,7 +80,20 @@ export function OnboardingScreen({
   onLogOut,
 }: OnboardingScreenProps) {
   const t = useTheme()
+  const { t: tI18n, i18n } = useTranslation()
+  const styles = makeStyles(t)
   const insets = useSafeAreaInsets()
+
+  const onboardingSchema = useMemo(
+    () => getOnboardingSchema(tI18n),
+    [i18n.language],
+  )
+  const buyerFeatures = tI18n('onboarding.buyerFeatures', {
+    returnObjects: true,
+  }) as Array<string>
+  const sellerFeatures = tI18n('onboarding.sellerFeatures', {
+    returnObjects: true,
+  }) as Array<string>
   const scrollRef = useRef<ScrollView>(null)
   const [currentStep, setCurrentStep] = useState(1)
   const [submitting, setSubmitting] = useState(false)
@@ -90,67 +101,52 @@ export function OnboardingScreen({
   const [redirectStatus, setRedirectStatus] = useState('active')
   const [taxonomy, setTaxonomy] = useState<TaxonomyData | null>(null)
   const [loadingTaxonomy, setLoadingTaxonomy] = useState(false)
-  const [sheetType, setSheetType] = useState<'brands' | 'categories' | null>(null)
+  const [sheetType, setSheetType] = useState<'brands' | 'categories' | null>(
+    null,
+  )
   const [avatarUri, setAvatarUri] = useState<string | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
   const contentOpacity = useRef(new Animated.Value(1)).current
   const contentSlide = useRef(new Animated.Value(0)).current
 
-  // Success entrance
   const successScale = useRef(new Animated.Value(0.8)).current
   const successOpacity = useRef(new Animated.Value(0)).current
 
-  const [form, setForm] = useState<FormData>({
-    role: (user.role as Role) || '',
-    name: user.name || '',
-    email: user.email || '',
-    phoneNumber: user.phoneNumber || '',
-    whatsappNumber: user.whatsappNumber || '',
-    storeName: user.storeName || '',
-    wilaya: user.wilaya || '',
-    city: user.city || '',
-    address: user.address || '',
-    companyAddress: user.companyAddress || '',
-    commercialRegister: user.commercialRegister || '',
-    brandIds: [],
-    categoryIds: [],
+  const form = useForm<OnboardingForm>({
+    resolver: zodResolver(onboardingSchema),
+    defaultValues: {
+      role: (user.role as Role) || ('' as any),
+      name: user.name || '',
+      email: user.email || '',
+      phoneNumber: user.phoneNumber || '',
+      whatsappNumber: user.whatsappNumber || '',
+      storeName: user.storeName || '',
+      wilaya: user.wilaya || '',
+      city: user.city || '',
+      address: user.address || '',
+      companyAddress: user.companyAddress || '',
+      commercialRegister: user.commercialRegister || '',
+      brandIds: [],
+      categoryIds: [],
+    },
   })
 
-  const isSeller = form.role === 'seller'
+  const watchRole = form.watch('role')
+  const watchName = form.watch('name')
+  const watchEmail = form.watch('email')
+  const watchPhone = form.watch('phoneNumber')
+  const watchWhatsapp = form.watch('whatsappNumber')
+  const watchWilaya = form.watch('wilaya')
+  const watchCity = form.watch('city')
+  const watchAddress = form.watch('address')
+  const watchStoreName = form.watch('storeName')
+  const watchBrandIds = form.watch('brandIds')
+  const watchCategoryIds = form.watch('categoryIds')
+
+  const isSeller = watchRole === 'seller'
   const totalSteps = isSeller ? 4 : 3
-
-  const updateForm = useCallback(
-    <K extends keyof FormData>(field: K, value: FormData[K]) => {
-      setForm((prev) => ({ ...prev, [field]: value }))
-    },
-    [],
-  )
-
-  const stepValid = useMemo(() => {
-    switch (currentStep) {
-      case 1:
-        return form.role === 'buyer' || form.role === 'seller'
-      case 2:
-        return (
-          form.name.length >= 2 &&
-          form.email.includes('@') &&
-          form.phoneNumber.length >= 8 &&
-          form.whatsappNumber.length >= 8
-        )
-      case 3: {
-        const base =
-          form.wilaya.length > 0 &&
-          form.city.length > 0 &&
-          form.address.length > 0
-        if (isSeller) return base && form.storeName.length >= 2
-        return base
-      }
-      case 4:
-        return true
-      default:
-        return true
-    }
-  }, [currentStep, form, isSeller])
 
   const taxonomyFetchedRef = useRef(false)
 
@@ -179,7 +175,12 @@ export function OnboardingScreen({
           })
         }
       })
-      .catch(() => Alert.alert('Error', 'Could not load specialties.'))
+      .catch(() =>
+        Alert.alert(
+          tI18n('onboarding.error.generic'),
+          tI18n('common.somethingWentWrong'),
+        ),
+      )
       .finally(() => setLoadingTaxonomy(false))
   }, [currentStep, taxonomy])
 
@@ -217,10 +218,19 @@ export function OnboardingScreen({
   }
 
   const handleNext = useCallback(async () => {
-    if (!stepValid) {
-      Alert.alert('Incomplete', 'Please fill all required fields.')
-      return
+    const stepFields: Record<number, Array<keyof OnboardingForm>> = {
+      1: ['role'],
+      2: ['name', 'email', 'phoneNumber', 'whatsappNumber'],
+      3: ['wilaya', 'city', 'address'],
+      4: [],
     }
+
+    const fields = stepFields[currentStep] ?? []
+    if (fields.length > 0) {
+      const valid = await form.trigger(fields)
+      if (!valid) return
+    }
+
     if (currentStep === 3 && !isSeller) {
       await doSubmit()
     } else if (currentStep === 4) {
@@ -228,7 +238,7 @@ export function OnboardingScreen({
     } else {
       animateToStep(currentStep + 1)
     }
-  }, [currentStep, stepValid, isSeller])
+  }, [currentStep, isSeller, form])
 
   const handlePrev = useCallback(() => {
     if (currentStep > 1) animateToStep(currentStep - 1)
@@ -237,20 +247,22 @@ export function OnboardingScreen({
   async function doSubmit() {
     setSubmitting(true)
     try {
+      const data = form.getValues()
       const result = await completeOnboarding({
-        name: form.name,
-        email: form.email,
-        role: form.role as 'buyer' | 'seller',
-        phoneNumber: form.phoneNumber,
-        whatsappNumber: form.whatsappNumber,
-        storeName: form.storeName,
-        wilaya: form.wilaya,
-        city: form.city,
-        address: form.address,
-        companyAddress: form.companyAddress,
-        commercialRegister: form.commercialRegister,
-        brandIds: form.brandIds,
-        categoryIds: form.categoryIds,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        phoneNumber: data.phoneNumber,
+        whatsappNumber: data.whatsappNumber,
+        storeName: data.storeName,
+        wilaya: data.wilaya,
+        city: data.city,
+        address: data.address,
+        companyAddress: data.companyAddress,
+        commercialRegister: data.commercialRegister,
+        brandIds: data.brandIds,
+        categoryIds: data.categoryIds,
+        image: avatarUrl || undefined,
       })
       const status = result.account_status || 'active'
       setRedirectStatus(status)
@@ -269,14 +281,21 @@ export function OnboardingScreen({
         }),
       ]).start()
     } catch (err: any) {
-      Alert.alert('Submission failed', err?.message || 'Something went wrong.')
+      Alert.alert(
+        tI18n('onboarding.error.generic'),
+        err?.message || tI18n('common.somethingWentWrong'),
+      )
     } finally {
       setSubmitting(false)
     }
   }
 
   function handleGoNext() {
-    onComplete(redirectStatus === 'waitlisted' ? 'waitlisted' : 'active')
+    const data = form.getValues()
+    onComplete(
+      data.role,
+      redirectStatus === 'waitlisted' ? 'waitlisted' : 'active',
+    )
   }
 
   const pickAvatar = useCallback(async () => {
@@ -284,8 +303,8 @@ export function OnboardingScreen({
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
       if (status !== 'granted') {
         Alert.alert(
-          'Permission needed',
-          'Please allow photo access to add a profile photo.',
+          tI18n('common.somethingWentWrong'),
+          tI18n('onboarding.error.generic'),
         )
         return
       }
@@ -296,52 +315,58 @@ export function OnboardingScreen({
         quality: 0.85,
       })
       if (!result.canceled && result.assets[0]) {
-        setAvatarUri(result.assets[0].uri)
+        const uri = result.assets[0].uri
+        setAvatarUri(uri)
+        setUploadingAvatar(true)
+        try {
+          const url = await compressAndUpload(uri, 'profiles')
+          setAvatarUrl(url)
+        } catch (err: any) {
+          if (__DEV__)
+            console.log(
+              '\n❌ avatar upload error:',
+              JSON.stringify(err),
+              err?.message,
+              '\n',
+            )
+          Alert.alert(
+            tI18n('onboarding.error.generic'),
+            err?.message || tI18n('common.somethingWentWrong'),
+          )
+        } finally {
+          setUploadingAvatar(false)
+        }
       }
     } catch {
-      Alert.alert('Error', 'Could not open photo library.')
+      Alert.alert(
+        tI18n('onboarding.error.generic'),
+        tI18n('common.somethingWentWrong'),
+      )
     }
   }, [])
 
   function toggleBrand(id: string) {
-    setForm((prev) => ({
-      ...prev,
-      brandIds: prev.brandIds.includes(id)
-        ? prev.brandIds.filter((i) => i !== id)
-        : [...prev.brandIds, id],
-    }))
+    const current = form.getValues('brandIds')
+    const next = current.includes(id)
+      ? current.filter((i) => i !== id)
+      : [...current, id]
+    form.setValue('brandIds', next, { shouldDirty: true })
   }
 
   function toggleCategory(id: string) {
-    setForm((prev) => ({
-      ...prev,
-      categoryIds: prev.categoryIds.includes(id)
-        ? prev.categoryIds.filter((i) => i !== id)
-        : [...prev.categoryIds, id],
-    }))
+    const current = form.getValues('categoryIds')
+    const next = current.includes(id)
+      ? current.filter((i) => i !== id)
+      : [...current, id]
+    form.setValue('categoryIds', next, { shouldDirty: true })
   }
 
-  // ─── Success screen ────────────────────────────────────────────────
   if (success) {
     const isWaitlisted = redirectStatus === 'waitlisted'
     return (
-      <View
-        style={[
-          styles.root,
-          styles.centered,
-          { backgroundColor: t.bg, paddingTop: insets.top, paddingBottom: insets.bottom },
-        ]}
-      >
-        <Animated.View
-          style={[
-            styles.successWrap,
-            {
-              opacity: successOpacity,
-              transform: [{ scale: successScale }],
-            },
-          ]}
-        >
-          {/* Avatar or icon */}
+      <View style={styles.root}>
+        <View style={{ flex: 0.85, minHeight: insets.top }} />
+        <View style={styles.successWrap}>
           {avatarUri ? (
             <View
               style={[
@@ -356,6 +381,7 @@ export function OnboardingScreen({
               <Image
                 source={{ uri: avatarUri }}
                 style={styles.successAvatarImage}
+                contentFit="cover"
               />
             </View>
           ) : (
@@ -389,62 +415,60 @@ export function OnboardingScreen({
           )}
 
           <View style={styles.successCopy}>
-            <Text style={[styles.successTitle, { color: t.text }]}>
-              {isWaitlisted ? "You're on the list" : "You're all set!"}
-            </Text>
-            <Text style={[styles.successBody, { color: t.textMuted }]}>
+            <Text style={styles.successTitle}>
               {isWaitlisted
-                ? "Your seller profile is under review. We'll notify you when approved."
-                : "Your account is ready. Let's get started."}
+                ? tI18n('waitlist.title')
+                : tI18n('onboarding.completeSetup')}
+            </Text>
+            <Text style={styles.successBody}>
+              {isWaitlisted
+                ? tI18n('waitlist.description')
+                : tI18n('onboarding.completeSetup')}
             </Text>
           </View>
 
           <Button
-            label={isWaitlisted ? 'Got it' : 'Go to dashboard'}
+            label={isWaitlisted ? tI18n('common.done') : tI18n('common.next')}
             onPress={handleGoNext}
           />
 
           {isWaitlisted && (
             <Pressable onPress={onLogOut} style={styles.logOutLink}>
-              <Text style={[styles.logOutLinkText, { color: t.textSubtle }]}>
-                Log out
+              <Text style={styles.logOutLinkText}>
+                {tI18n('profile.logOut')}
               </Text>
             </Pressable>
           )}
-        </Animated.View>
+        </View>
+        <View style={{ flex: 1 }} />
       </View>
     )
   }
 
-  // ─── Main flow ─────────────────────────────────────────────────────
   const isLastStep = (currentStep === 3 && !isSeller) || currentStep === 4
 
   const nextLabel = (() => {
-    if (currentStep === 1 && !form.role) return 'Select a role'
-    if (isLastStep) return 'Complete'
-    return 'Continue'
+    if (currentStep === 1 && !watchRole) return tI18n('onboarding.selectPhoto')
+    if (isLastStep) return tI18n('onboarding.completeSetup')
+    return tI18n('common.next')
   })()
 
   return (
-    <View style={[styles.root, { backgroundColor: t.bg }]}>
-      {/* Top bar */}
+    <View style={styles.root}>
       <View style={[styles.topBar, { paddingTop: insets.top + spacing.md }]}>
         <View style={styles.brandMark}>
-          <View style={[styles.brandDot, { backgroundColor: t.primary }]} />
-          <Text style={[styles.brandName, { color: t.text }]}>mlila</Text>
+          <View style={styles.brandDot} />
+          <Text style={styles.brandName}>mlila</Text>
         </View>
         <Pressable
           onPress={onLogOut}
           hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
           style={({ pressed }) => pressed && { opacity: 0.6 }}
         >
-          <Text style={[styles.logOutText, { color: t.textSubtle }]}>
-            Log out
-          </Text>
+          <Text style={styles.logOutText}>{tI18n('profile.logOut')}</Text>
         </Pressable>
       </View>
 
-      {/* Step progress bar */}
       <StepBar total={totalSteps} current={currentStep} theme={t} />
 
       <KeyboardAvoidingView
@@ -468,13 +492,10 @@ export function OnboardingScreen({
           </Animated.View>
         </ScrollView>
 
-        {/* Footer */}
         <View
           style={[
             styles.footer,
             {
-              borderTopColor: t.border,
-              backgroundColor: t.bg,
               paddingBottom: spacing.md,
             },
           ]}
@@ -485,7 +506,6 @@ export function OnboardingScreen({
               disabled={submitting}
               style={({ pressed }) => [
                 styles.backBtn,
-                { borderColor: t.border, backgroundColor: t.bg },
                 pressed && { opacity: 0.5 },
               ]}
             >
@@ -495,32 +515,27 @@ export function OnboardingScreen({
 
           <Pressable
             onPress={handleNext}
-            disabled={submitting || !stepValid}
+            disabled={submitting}
             style={({ pressed }) => [
               styles.nextBtn,
               {
-                backgroundColor: stepValid ? t.primary : t.border,
-                shadowColor: stepValid ? t.primary : 'transparent',
+                backgroundColor: t.primary,
+                shadowColor: t.primary,
               },
-              pressed && stepValid && !submitting && { opacity: 0.88 },
+              pressed && !submitting && { opacity: 0.88 },
             ]}
           >
             {submitting ? (
               <ActivityIndicator color={t.primaryFg} />
             ) : (
               <>
-                <Text
-                  style={[
-                    styles.nextBtnLabel,
-                    { color: stepValid ? t.primaryFg : t.textSubtle },
-                  ]}
-                >
+                <Text style={[styles.nextBtnLabel, { color: t.primaryFg }]}>
                   {nextLabel}
                 </Text>
                 <Ionicons
                   name={isLastStep ? 'checkmark' : 'arrow-forward'}
                   size={16}
-                  color={stepValid ? t.primaryFg : t.textSubtle}
+                  color={t.primaryFg}
                 />
               </>
             )}
@@ -529,25 +544,23 @@ export function OnboardingScreen({
       </KeyboardAvoidingView>
 
       <SpecialtiesSheet
-        title="Select brands"
+        title={tI18n('onboarding.selectSpecialties')}
         data={taxonomy?.brands || []}
-        selectedIds={form.brandIds}
+        selectedIds={watchBrandIds}
         onToggle={toggleBrand}
         visible={sheetType === 'brands'}
         onClose={() => setSheetType(null)}
       />
       <SpecialtiesSheet
-        title="Select categories"
+        title={tI18n('onboarding.selectSpecialties')}
         data={taxonomy?.categories || []}
-        selectedIds={form.categoryIds}
+        selectedIds={watchCategoryIds}
         onToggle={toggleCategory}
         visible={sheetType === 'categories'}
         onClose={() => setSheetType(null)}
       />
     </View>
   )
-
-  // ─── Step renderers ────────────────────────────────────────────────
 
   function renderStep() {
     switch (currentStep) {
@@ -570,29 +583,33 @@ export function OnboardingScreen({
         <StepHeading
           step={1}
           total={totalSteps}
-          title="Choose your role"
-          subtitle="How will you use mlila? This can't be changed later."
+          title={tI18n('onboarding.step.role')}
+          subtitle={tI18n('onboarding.role.buyerDescription')}
           theme={t}
         />
         <View style={styles.roleGrid}>
           <RoleCard
             icon="car-outline"
-            title="Buyer"
-            subtitle="For vehicle owners"
-            features={BUYER_FEATURES}
+            title={tI18n('onboarding.role.buyer')}
+            subtitle={tI18n('onboarding.role.buyerDescription')}
+            features={buyerFeatures}
             accentColor={t.primary}
-            selected={form.role === 'buyer'}
-            onSelect={() => updateForm('role', 'buyer')}
+            selected={watchRole === 'buyer'}
+            onSelect={() =>
+              form.setValue('role', 'buyer', { shouldValidate: true })
+            }
             theme={t}
           />
           <RoleCard
             icon="storefront-outline"
-            title="Seller"
-            subtitle="For parts businesses"
-            features={SELLER_FEATURES}
+            title={tI18n('onboarding.role.seller')}
+            subtitle={tI18n('onboarding.role.sellerDescription')}
+            features={sellerFeatures}
             accentColor={t.success}
-            selected={form.role === 'seller'}
-            onSelect={() => updateForm('role', 'seller')}
+            selected={watchRole === 'seller'}
+            onSelect={() =>
+              form.setValue('role', 'seller', { shouldValidate: true })
+            }
             theme={t}
           />
         </View>
@@ -606,50 +623,84 @@ export function OnboardingScreen({
         <StepHeading
           step={2}
           total={totalSteps}
-          title="Contact info"
-          subtitle="How buyers and mlila can reach you."
+          title={tI18n('onboarding.step.contact')}
+          subtitle={tI18n('onboarding.phoneVisible')}
           theme={t}
         />
 
-        {/* Avatar picker */}
-        <AvatarPicker uri={avatarUri} onPress={pickAvatar} theme={t} />
+        <AvatarPicker
+          uri={avatarUri}
+          onPress={pickAvatar}
+          theme={t}
+          uploading={uploadingAvatar}
+        />
 
         <View style={styles.fields}>
-          <Field
-            label="Full name"
-            value={form.name}
-            onChangeText={(v) => updateForm('name', v)}
-            placeholder="Your name"
-            autoCapitalize="words"
-            autoComplete="name"
-            returnKeyType="next"
+          <Controller
+            control={form.control}
+            name="name"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Field
+                label={tI18n('onboarding.name')}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={tI18n('onboarding.name')}
+                autoCapitalize="words"
+                autoComplete="name"
+                returnKeyType="next"
+              />
+            )}
           />
-          <Field
-            label="Email"
-            value={form.email}
-            onChangeText={(v) => updateForm('email', v)}
-            placeholder="you@example.com"
-            autoCapitalize="none"
-            autoCorrect={false}
-            autoComplete="email"
-            keyboardType="email-address"
-            returnKeyType="next"
+          <Controller
+            control={form.control}
+            name="email"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Field
+                label={tI18n('onboarding.email')}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={tI18n('onboarding.emailPlaceholder')}
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="email"
+                keyboardType="email-address"
+                returnKeyType="next"
+              />
+            )}
           />
-          <Field
-            label="Phone number"
-            value={form.phoneNumber}
-            onChangeText={(v) => updateForm('phoneNumber', v)}
-            placeholder="05xx xx xx xx"
-            keyboardType="phone-pad"
-            returnKeyType="next"
+          <Controller
+            control={form.control}
+            name="phoneNumber"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Field
+                label={tI18n('onboarding.phone')}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={tI18n('onboarding.phonePlaceholder')}
+                keyboardType="phone-pad"
+                returnKeyType="next"
+              />
+            )}
           />
-          <Field
-            label="WhatsApp number"
-            value={form.whatsappNumber}
-            onChangeText={(v) => updateForm('whatsappNumber', v)}
-            placeholder="05xx xx xx xx"
-            keyboardType="phone-pad"
-            returnKeyType="done"
+          <Controller
+            control={form.control}
+            name="whatsappNumber"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Field
+                label={
+                  tI18n('onboarding.phone') + tI18n('onboarding.whatsappSuffix')
+                }
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={tI18n('onboarding.phonePlaceholder')}
+                keyboardType="phone-pad"
+                returnKeyType="done"
+              />
+            )}
           />
         </View>
       </View>
@@ -662,60 +713,97 @@ export function OnboardingScreen({
         <StepHeading
           step={3}
           total={totalSteps}
-          title={isSeller ? 'Store & location' : 'Your location'}
+          title={tI18n('onboarding.step.location')}
           subtitle={
             isSeller
-              ? 'Tell buyers where your store is based.'
-              : 'Help sellers find parts near you.'
+              ? tI18n('onboarding.step.location')
+              : tI18n('onboarding.step.location')
           }
           theme={t}
         />
         <View style={styles.fields}>
           {isSeller && (
-            <Field
-              label="Store name"
-              value={form.storeName}
-              onChangeText={(v) => updateForm('storeName', v)}
-              placeholder="Your store name"
-              autoCapitalize="words"
-              returnKeyType="next"
+            <Controller
+              control={form.control}
+              name="storeName"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Field
+                  label={tI18n('onboarding.name')}
+                  value={value ?? ''}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder={tI18n('onboarding.name')}
+                  autoCapitalize="words"
+                  returnKeyType="next"
+                />
+              )}
             />
           )}
           <WilayaPicker
-            label="Wilaya"
-            value={form.wilaya}
-            onChange={(v) => updateForm('wilaya', v)}
+            label={tI18n('onboarding.selectWilaya')}
+            value={watchWilaya}
+            onChange={(v) =>
+              form.setValue('wilaya', v, { shouldValidate: true })
+            }
           />
-          <Field
-            label="City / municipality"
-            value={form.city}
-            onChangeText={(v) => updateForm('city', v)}
-            placeholder="City name"
-            autoCapitalize="words"
-            returnKeyType="next"
+          <Controller
+            control={form.control}
+            name="city"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Field
+                label={tI18n('onboarding.city')}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={tI18n('onboarding.cityPlaceholder')}
+                autoCapitalize="words"
+                returnKeyType="next"
+              />
+            )}
           />
-          <Field
-            label="Address"
-            value={form.address}
-            onChangeText={(v) => updateForm('address', v)}
-            placeholder="Street, building, etc."
-            returnKeyType="next"
+          <Controller
+            control={form.control}
+            name="address"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Field
+                label={tI18n('onboarding.address')}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={tI18n('onboarding.addressPlaceholder')}
+                returnKeyType="next"
+              />
+            )}
           />
-          <Field
-            label="Company address (optional)"
-            value={form.companyAddress}
-            onChangeText={(v) => updateForm('companyAddress', v)}
-            placeholder="If different from above"
-            returnKeyType="next"
+          <Controller
+            control={form.control}
+            name="companyAddress"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Field
+                label={tI18n('onboarding.companyAddress')}
+                value={value ?? ''}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={tI18n('onboarding.companyAddressPlaceholder')}
+                returnKeyType="next"
+              />
+            )}
           />
           {isSeller && (
-            <Field
-              label="Commercial register (optional)"
-              value={form.commercialRegister}
-              onChangeText={(v) => updateForm('commercialRegister', v)}
-              placeholder="RC number"
-              autoCapitalize="characters"
-              returnKeyType="done"
+            <Controller
+              control={form.control}
+              name="commercialRegister"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Field
+                  label={tI18n('onboarding.commercialRegister')}
+                  value={value ?? ''}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder={tI18n('onboarding.rcNumberPlaceholder')}
+                  autoCapitalize="characters"
+                  returnKeyType="done"
+                />
+              )}
             />
           )}
         </View>
@@ -729,37 +817,37 @@ export function OnboardingScreen({
         <StepHeading
           step={4}
           total={totalSteps}
-          title="Your specialties"
-          subtitle="Brands and categories you work with. Update any time."
+          title={tI18n('onboarding.step.specialties')}
+          subtitle={tI18n('onboarding.selectSpecialties')}
           theme={t}
         />
         {loadingTaxonomy ? (
-          <View style={[styles.listWrap, { borderTopColor: t.border, borderBottomColor: t.border }]}>
+          <View style={styles.listWrap}>
             <SkeletonRow theme={t} />
-            <View style={[styles.listDivider, { backgroundColor: t.border }]} />
+            <View style={styles.listDivider} />
             <SkeletonRow theme={t} />
           </View>
         ) : (
-          <View style={[styles.listWrap, { borderTopColor: t.border, borderBottomColor: t.border }]}>
+          <View style={styles.listWrap}>
             <SpecialtyRow
-              label="Brands"
+              label={tI18n('onboarding.brands')}
               icon="ribbon-outline"
-              count={form.brandIds.length}
+              count={watchBrandIds.length}
               onPress={() => setSheetType('brands')}
               selectedItems={(taxonomy?.brands || []).filter((b) =>
-                form.brandIds.includes(b.id),
+                watchBrandIds.includes(b.id),
               )}
               accentColor={t.primary}
               theme={t}
             />
-            <View style={[styles.listDivider, { backgroundColor: t.border }]} />
+            <View style={styles.listDivider} />
             <SpecialtyRow
-              label="Categories"
+              label={tI18n('onboarding.categories')}
               icon="layers-outline"
-              count={form.categoryIds.length}
+              count={watchCategoryIds.length}
               onPress={() => setSheetType('categories')}
               selectedItems={(taxonomy?.categories || []).filter((c) =>
-                form.categoryIds.includes(c.id),
+                watchCategoryIds.includes(c.id),
               )}
               accentColor={t.success}
               theme={t}
@@ -771,8 +859,6 @@ export function OnboardingScreen({
   }
 }
 
-// ─── StepBar ───────────────────────────────────────────────────────────────────
-
 function StepBar({
   total,
   current,
@@ -780,8 +866,9 @@ function StepBar({
 }: {
   total: number
   current: number
-  theme: any
+  theme: Theme
 }) {
+  const stepBarStyles = makeStepBarStyles(t)
   return (
     <View style={stepBarStyles.row}>
       {Array.from({ length: total }).map((_, i) => (
@@ -790,10 +877,7 @@ function StepBar({
           style={[
             stepBarStyles.segment,
             {
-              backgroundColor:
-                i < current
-                  ? t.primary
-                  : t.border,
+              backgroundColor: i < current ? t.primary : t.border,
               opacity: i === current - 1 ? 1 : i < current - 1 ? 0.5 : 0.25,
             },
           ]}
@@ -803,22 +887,22 @@ function StepBar({
   )
 }
 
-const stepBarStyles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    gap: 4,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.sm,
-  },
-  segment: {
-    flex: 1,
-    height: 3,
-    borderRadius: 2,
-  },
-})
-
-// ─── StepHeading ───────────────────────────────────────────────────────────────
+function makeStepBarStyles(t: Theme) {
+  return StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      gap: 4,
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.xs,
+      paddingBottom: spacing.sm,
+    },
+    segment: {
+      flex: 1,
+      height: 3,
+      borderRadius: 2,
+    },
+  })
+}
 
 function StepHeading({
   step,
@@ -831,44 +915,46 @@ function StepHeading({
   total: number
   title: string
   subtitle: string
-  theme: any
+  theme: Theme
 }) {
+  const headingStyles = makeHeadingStyles(t)
   return (
     <View style={headingStyles.wrap}>
-      <Text style={[headingStyles.counter, { color: t.textSubtle }]}>
+      <Text style={headingStyles.counter}>
         {step < 10 ? `0${step}` : step} / {total < 10 ? `0${total}` : total}
       </Text>
-      <Text style={[headingStyles.title, { color: t.text }]}>{title}</Text>
-      <Text style={[headingStyles.subtitle, { color: t.textMuted }]}>
-        {subtitle}
-      </Text>
+      <Text style={headingStyles.title}>{title}</Text>
+      <Text style={headingStyles.subtitle}>{subtitle}</Text>
     </View>
   )
 }
 
-const headingStyles = StyleSheet.create({
-  wrap: { gap: 4 },
-  counter: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
-    marginBottom: 2,
-  },
-  title: {
-    fontSize: 27,
-    fontWeight: '700',
-    letterSpacing: -0.5,
-    lineHeight: 33,
-  },
-  subtitle: {
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 2,
-  },
-})
-
-// ─── AvatarPicker ──────────────────────────────────────────────────────────────
+function makeHeadingStyles(t: Theme) {
+  return StyleSheet.create({
+    wrap: { gap: 4 },
+    counter: {
+      fontSize: 11,
+      fontWeight: '700',
+      letterSpacing: 1.2,
+      textTransform: 'uppercase',
+      marginBottom: 2,
+      color: t.textSubtle,
+    },
+    title: {
+      fontSize: 27,
+      fontWeight: '700',
+      letterSpacing: -0.5,
+      lineHeight: 33,
+      color: t.text,
+    },
+    subtitle: {
+      fontSize: 15,
+      lineHeight: 22,
+      marginTop: 2,
+      color: t.textMuted,
+    },
+  })
+}
 
 const AVATAR_SIZE = 88
 
@@ -876,11 +962,15 @@ function AvatarPicker({
   uri,
   onPress,
   theme: t,
+  uploading,
 }: {
   uri: string | null
   onPress: () => void
-  theme: any
+  theme: Theme
+  uploading?: boolean
 }) {
+  const { t: tI18n } = useTranslation()
+  const avatarStyles = makeAvatarStyles(t)
   const scale = useRef(new Animated.Value(1)).current
 
   return (
@@ -903,7 +993,7 @@ function AvatarPicker({
             useNativeDriver: true,
           }).start()
         }
-        accessibilityLabel="Set profile photo"
+        accessibilityLabel={tI18n('onboarding.selectPhoto')}
         accessibilityRole="button"
       >
         <Animated.View style={{ transform: [{ scale }] }}>
@@ -920,89 +1010,91 @@ function AvatarPicker({
               <Image
                 source={{ uri }}
                 style={avatarStyles.image}
-                accessibilityLabel="Profile photo"
+                contentFit="cover"
+                accessibilityLabel={tI18n('onboarding.selectPhoto')}
               />
             ) : (
-              <Ionicons
-                name="person-outline"
-                size={34}
-                color={t.textSubtle}
-              />
+              <Ionicons name="person-outline" size={34} color={t.textSubtle} />
+            )}
+            {uploading && (
+              <View style={avatarStyles.uploadOverlay}>
+                <ActivityIndicator size="small" color="#fff" />
+              </View>
             )}
           </View>
-          {/* Camera badge */}
-          <View
-            style={[
-              avatarStyles.badge,
-              {
-                backgroundColor: t.primary,
-                borderColor: t.bg,
-              },
-            ]}
-          >
+          <View style={avatarStyles.badge}>
             <Ionicons name="camera" size={12} color={t.primaryFg} />
           </View>
         </Animated.View>
       </Pressable>
 
       <View style={avatarStyles.labelGroup}>
-        <Text style={[avatarStyles.label, { color: t.text }]}>
-          {uri ? 'Change photo' : 'Profile photo'}
+        <Text style={avatarStyles.label}>
+          {tI18n('onboarding.selectPhoto')}
         </Text>
-        <Text style={[avatarStyles.hint, { color: t.textSubtle }]}>
-          Optional
-        </Text>
+        <Text style={avatarStyles.hint}>{tI18n('onboarding.optional')}</Text>
       </View>
     </View>
   )
 }
 
-const avatarStyles = StyleSheet.create({
-  wrap: {
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.sm,
-  },
-  circle: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  image: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
-  },
-  badge: {
-    position: 'absolute',
-    bottom: 1,
-    right: 1,
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  labelGroup: {
-    alignItems: 'center',
-    gap: 1,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  hint: {
-    fontSize: 12,
-    fontWeight: '400',
-  },
-})
-
-// ─── RoleCard ──────────────────────────────────────────────────────────────────
+function makeAvatarStyles(t: Theme) {
+  return StyleSheet.create({
+    wrap: {
+      alignItems: 'center',
+      gap: spacing.sm,
+      paddingVertical: spacing.sm,
+    },
+    circle: {
+      width: AVATAR_SIZE,
+      height: AVATAR_SIZE,
+      borderRadius: AVATAR_SIZE / 2,
+      borderWidth: 1.5,
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+    },
+    image: {
+      width: AVATAR_SIZE,
+      height: AVATAR_SIZE,
+      borderRadius: AVATAR_SIZE / 2,
+    },
+    badge: {
+      position: 'absolute',
+      bottom: 1,
+      right: 1,
+      width: 26,
+      height: 26,
+      borderRadius: 13,
+      borderWidth: 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.primary,
+      borderColor: t.bg,
+    },
+    uploadOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.45)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: AVATAR_SIZE / 2,
+    },
+    labelGroup: {
+      alignItems: 'center',
+      gap: 1,
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: t.text,
+    },
+    hint: {
+      fontSize: 12,
+      fontWeight: '400',
+      color: t.textSubtle,
+    },
+  })
+}
 
 function RoleCard({
   icon,
@@ -1021,8 +1113,9 @@ function RoleCard({
   selected: boolean
   accentColor: string
   onSelect: () => void
-  theme: any
+  theme: Theme
 }) {
+  const cardStyles = makeCardStyles(t)
   const scale = useRef(new Animated.Value(1)).current
 
   return (
@@ -1050,14 +1143,6 @@ function RoleCard({
         style={[
           cardStyles.card,
           {
-            backgroundColor: t.surface,
-            borderTopWidth: 1,
-            borderRightWidth: 1,
-            borderBottomWidth: 1,
-            borderLeftWidth: 5,
-            borderTopColor: t.border,
-            borderRightColor: t.border,
-            borderBottomColor: t.border,
             borderLeftColor: selected ? accentColor : 'transparent',
             shadowColor: '#000',
             shadowOpacity: 0.04,
@@ -1067,19 +1152,14 @@ function RoleCard({
           },
         ]}
       >
-        {/* Header: large icon circle + radio */}
         <View style={cardStyles.header}>
           <View
             style={[
               cardStyles.iconCircle,
               {
-                backgroundColor: selected
-                  ? accentColor + '16'
-                  : t.bgMuted,
+                backgroundColor: selected ? accentColor + '16' : t.bgMuted,
                 borderWidth: selected ? 1.5 : 1,
-                borderColor: selected
-                  ? accentColor + '38'
-                  : t.border,
+                borderColor: selected ? accentColor + '38' : t.border,
               },
             ]}
           >
@@ -1090,7 +1170,6 @@ function RoleCard({
             />
           </View>
 
-          {/* Selection indicator */}
           <View
             style={[
               cardStyles.radio,
@@ -1106,25 +1185,20 @@ function RoleCard({
           </View>
         </View>
 
-        {/* Eyebrow + title */}
         <Text style={[cardStyles.eyebrow, { color: accentColor }]}>
           {subtitle}
         </Text>
-        <Text style={[cardStyles.title, { color: t.text }]}>{title}</Text>
+        <Text style={cardStyles.title}>{title}</Text>
 
-        {/* Divider */}
         <View
           style={[
             cardStyles.divider,
             {
-              backgroundColor: selected
-                ? accentColor + '22'
-                : t.border,
+              backgroundColor: selected ? accentColor + '22' : t.border,
             },
           ]}
         />
 
-        {/* Feature rows */}
         <View style={cardStyles.featureList}>
           {features.map((f) => (
             <View key={f} style={cardStyles.featureRow}>
@@ -1153,75 +1227,78 @@ function RoleCard({
   )
 }
 
-const cardStyles = StyleSheet.create({
-  card: {
-    borderRadius: radius.xl,
-    padding: spacing.lg,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: spacing.md,
-  },
-  iconCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radio: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  eyebrow: {
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 1.1,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '800',
-    letterSpacing: -0.4,
-    marginBottom: spacing.sm,
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    marginBottom: spacing.md,
-  },
-  featureList: {
-    gap: spacing.sm,
-  },
-  featureRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  featureDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-  },
-  featureText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-})
-
-/* Hallmark · component: specialty-row · genre: modern-minimal · theme: catalog-existing
- * states: default · active · loading · pressed
- * contrast: pass (46–50)
- * P5 H5 E5 S5 R5 V5
- */
-
-// ─── SpecialtyRow ─────────────────────────────────────────────────────────────
+function makeCardStyles(t: Theme) {
+  return StyleSheet.create({
+    card: {
+      borderRadius: radius.xl,
+      padding: spacing.lg,
+      backgroundColor: t.surface,
+      borderTopWidth: 1,
+      borderRightWidth: 1,
+      borderBottomWidth: 1,
+      borderLeftWidth: 5,
+      borderTopColor: t.border,
+      borderRightColor: t.border,
+      borderBottomColor: t.border,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: spacing.md,
+    },
+    iconCircle: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    radio: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      borderWidth: 1.5,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    eyebrow: {
+      fontSize: 10,
+      fontWeight: '700',
+      letterSpacing: 1.1,
+      textTransform: 'uppercase',
+      marginBottom: 4,
+    },
+    title: {
+      fontSize: 22,
+      fontWeight: '800',
+      letterSpacing: -0.4,
+      marginBottom: spacing.sm,
+      color: t.text,
+    },
+    divider: {
+      height: StyleSheet.hairlineWidth,
+      marginBottom: spacing.md,
+    },
+    featureList: {
+      gap: spacing.sm,
+    },
+    featureRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    featureDot: {
+      width: 5,
+      height: 5,
+      borderRadius: 3,
+    },
+    featureText: {
+      fontSize: 14,
+      fontWeight: '500',
+    },
+  })
+}
 
 function SpecialtyRow({
   label,
@@ -1238,8 +1315,10 @@ function SpecialtyRow({
   onPress: () => void
   selectedItems: Array<TaxItem>
   accentColor: string
-  theme: any
+  theme: Theme
 }) {
+  const { t: tI18n } = useTranslation()
+  const rowStyles = makeRowStyles(t)
   const opacity = useRef(new Animated.Value(1)).current
   const hasItems = count > 0
 
@@ -1248,13 +1327,21 @@ function SpecialtyRow({
       <Pressable
         onPress={onPress}
         onPressIn={() =>
-          Animated.timing(opacity, { toValue: 0.5, duration: 70, useNativeDriver: true }).start()
+          Animated.timing(opacity, {
+            toValue: 0.5,
+            duration: 70,
+            useNativeDriver: true,
+          }).start()
         }
         onPressOut={() =>
-          Animated.timing(opacity, { toValue: 1, duration: 140, useNativeDriver: true }).start()
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 140,
+            useNativeDriver: true,
+          }).start()
         }
         accessibilityRole="button"
-        accessibilityLabel={`${label}, ${count} selected. Tap to edit.`}
+        accessibilityLabel={`${label}, ${count} ${tI18n('specialtiesSheet.nSelected', { count })}`}
       >
         <Animated.View style={[rowStyles.row, { opacity }]}>
           <View
@@ -1270,7 +1357,7 @@ function SpecialtyRow({
             />
           </View>
 
-          <Text style={[rowStyles.label, { color: t.text }]}>{label}</Text>
+          <Text style={rowStyles.label}>{label}</Text>
 
           <View style={rowStyles.trailing}>
             {hasItems ? (
@@ -1278,9 +1365,13 @@ function SpecialtyRow({
                 <Text style={rowStyles.badgeText}>{count}</Text>
               </View>
             ) : (
-              <Text style={[rowStyles.none, { color: t.textSubtle }]}>None</Text>
+              <Text style={rowStyles.none}>{tI18n('common.skip')}</Text>
             )}
-            <Ionicons name="chevron-forward" size={15} color={t.textSubtle} />
+            <Ionicons
+              name={I18nManager.isRTL ? 'chevron-back' : 'chevron-forward'}
+              size={15}
+              color={t.textSubtle}
+            />
           </View>
         </Animated.View>
       </Pressable>
@@ -1297,7 +1388,10 @@ function SpecialtyRow({
               key={item.id}
               style={[
                 rowStyles.chip,
-                { backgroundColor: accentColor + '10', borderColor: accentColor + '26' },
+                {
+                  backgroundColor: accentColor + '10',
+                  borderColor: accentColor + '26',
+                },
               ]}
             >
               <Text
@@ -1309,10 +1403,8 @@ function SpecialtyRow({
             </View>
           ))}
           {count > 8 && (
-            <View style={[rowStyles.chip, { backgroundColor: t.bgMuted, borderColor: t.border }]}>
-              <Text style={[rowStyles.chipText, { color: t.textMuted }]}>
-                +{count - 8}
-              </Text>
+            <View style={rowStyles.chip}>
+              <Text style={rowStyles.chipText}>+{count - 8}</Text>
             </View>
           )}
         </ScrollView>
@@ -1321,258 +1413,294 @@ function SpecialtyRow({
   )
 }
 
-const rowStyles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.lg,
-    gap: spacing.sm,
-  },
-  iconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  label: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
-    letterSpacing: -0.2,
-  },
-  trailing: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  badge: {
-    borderRadius: radius.pill,
-    minWidth: 24,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 8,
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  none: {
-    fontSize: 14,
-  },
-  chipScroll: {
-    marginBottom: spacing.md,
-  },
-  chipContent: {
-    gap: spacing.xs,
-    flexDirection: 'row',
-  },
-  chip: {
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    paddingHorizontal: 11,
-    paddingVertical: 5,
-  },
-  chipText: {
-    fontSize: 13,
-    fontWeight: '600',
-  },
-})
+function makeRowStyles(t: Theme) {
+  return StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: spacing.lg,
+      gap: spacing.sm,
+    },
+    iconWrap: {
+      width: 34,
+      height: 34,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    label: {
+      flex: 1,
+      fontSize: 16,
+      fontWeight: '600',
+      letterSpacing: -0.2,
+      color: t.text,
+    },
+    trailing: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    badge: {
+      borderRadius: radius.pill,
+      minWidth: 24,
+      height: 24,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 8,
+    },
+    badgeText: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: '#fff',
+    },
+    none: {
+      fontSize: 14,
+      color: t.textSubtle,
+    },
+    chipScroll: {
+      marginBottom: spacing.md,
+    },
+    chipContent: {
+      gap: spacing.xs,
+      flexDirection: 'row',
+    },
+    chip: {
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      paddingHorizontal: 11,
+      paddingVertical: 5,
+      backgroundColor: t.bgMuted,
+      borderColor: t.border,
+    },
+    chipText: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: t.textMuted,
+    },
+  })
+}
 
-// ─── SkeletonRow ──────────────────────────────────────────────────────────────
-
-function SkeletonRow({ theme: t }: { theme: any }) {
+function SkeletonRow({ theme: t }: { theme: Theme }) {
+  const skelStyles = makeSkelStyles(t)
   const pulse = useRef(new Animated.Value(0.4)).current
 
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(pulse, { toValue: 1, duration: 680, useNativeDriver: true }),
-        Animated.timing(pulse, { toValue: 0.4, duration: 680, useNativeDriver: true }),
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 680,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 0.4,
+          duration: 680,
+          useNativeDriver: true,
+        }),
       ]),
     ).start()
   }, [])
 
   return (
-    <Animated.View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: spacing.lg,
-        gap: spacing.sm,
-        opacity: pulse,
-      }}
-    >
-      <View style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: t.bgMuted }} />
-      <View style={{ flex: 1, height: 14, borderRadius: 7, backgroundColor: t.bgMuted }} />
-      <View style={{ width: 28, height: 22, borderRadius: radius.pill, backgroundColor: t.bgMuted }} />
-      <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: t.bgMuted }} />
+    <Animated.View style={[skelStyles.row, { opacity: pulse }]}>
+      <View style={skelStyles.block} />
+      <View style={skelStyles.line} />
+      <View style={skelStyles.pill} />
+      <View style={skelStyles.dot} />
     </Animated.View>
   )
 }
 
-// ─── Screen-level styles ───────────────────────────────────────────────────────
+function makeSkelStyles(t: Theme) {
+  return StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: spacing.lg,
+      gap: spacing.sm,
+    },
+    block: {
+      width: 34,
+      height: 34,
+      borderRadius: 10,
+      backgroundColor: t.bgMuted,
+    },
+    line: { flex: 1, height: 14, borderRadius: 7, backgroundColor: t.bgMuted },
+    pill: {
+      width: 28,
+      height: 22,
+      borderRadius: radius.pill,
+      backgroundColor: t.bgMuted,
+    },
+    dot: { width: 14, height: 14, borderRadius: 7, backgroundColor: t.bgMuted },
+  })
+}
 
-const styles = StyleSheet.create({
-  root: { flex: 1 },
-  flex: { flex: 1 },
-  centered: { alignItems: 'center', justifyContent: 'center' },
+function makeStyles(t: Theme) {
+  return StyleSheet.create({
+    root: { flex: 1, backgroundColor: t.bg },
+    flex: { flex: 1 },
+    centered: { alignItems: 'center', justifyContent: 'center' },
 
-  // Top bar — minimal, no border
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.sm,
-  },
-  brandMark: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 7,
-  },
-  brandDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  brandName: {
-    fontSize: 17,
-    fontWeight: '800',
-    letterSpacing: -0.4,
-  },
-  logOutText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
+    topBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.xl,
+      paddingBottom: spacing.sm,
+    },
+    brandMark: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 7,
+    },
+    brandDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: t.primary,
+    },
+    brandName: {
+      fontSize: 17,
+      fontWeight: '800',
+      letterSpacing: -0.4,
+      color: t.text,
+    },
+    logOutText: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: t.textSubtle,
+    },
 
-  // Step content
-  scrollContent: { paddingBottom: spacing.xl },
-  stepPad: {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xl,
-    gap: spacing.xl,
-  },
-  fields: { gap: spacing.lg },
-  roleGrid: { gap: spacing.md },
+    scrollContent: { paddingBottom: spacing.xl },
+    stepPad: {
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.xl,
+      gap: spacing.xl,
+    },
+    fields: { gap: spacing.lg },
+    roleGrid: { gap: spacing.md },
 
-  // Specialties list
-  listWrap: {
-    marginHorizontal: -spacing.xl,
-    paddingHorizontal: spacing.xl,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  listDivider: {
-    height: StyleSheet.hairlineWidth,
-  },
-  loadingBlock: {
-    paddingVertical: 48,
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  loadingText: {
-    ...typography.body,
-  },
+    listWrap: {
+      marginHorizontal: -spacing.xl,
+      paddingHorizontal: spacing.xl,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderTopColor: t.border,
+      borderBottomColor: t.border,
+    },
+    listDivider: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: t.border,
+    },
+    loadingBlock: {
+      paddingVertical: 48,
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    loadingText: {
+      ...typography.body,
+    },
 
-  // Footer
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    gap: spacing.sm,
-  },
-  backBtn: {
-    width: 48,
-    height: 52,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backBtnPlaceholder: {
-    width: 48,
-  },
-  nextBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.lg,
-    minHeight: 52,
-    gap: 7,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.22,
-    shadowRadius: 14,
-    elevation: 6,
-  },
-  nextBtnLabel: {
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: -0.1,
-  },
+    footer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.md,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: t.border,
+      gap: spacing.sm,
+      backgroundColor: t.bg,
+    },
+    backBtn: {
+      width: 48,
+      height: 52,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: t.border,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.bg,
+    },
+    nextBtn: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: radius.lg,
+      minHeight: 52,
+      gap: 7,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.22,
+      shadowRadius: 14,
+      elevation: 6,
+    },
+    nextBtnLabel: {
+      fontSize: 16,
+      fontWeight: '700',
+      letterSpacing: -0.1,
+    },
 
-  // Success
-  successWrap: {
-    paddingHorizontal: spacing.xxl,
-    alignItems: 'center',
-    gap: spacing.xl,
-  },
-  successAvatarRing: {
-    width: 112,
-    height: 112,
-    borderRadius: 56,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  successAvatarImage: {
-    width: 108,
-    height: 108,
-    borderRadius: 54,
-  },
-  successIconRing: {
-    width: 112,
-    height: 112,
-    borderRadius: 56,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  successIconCircle: {
-    width: 84,
-    height: 84,
-    borderRadius: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  successCopy: {
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  successTitle: {
-    fontSize: 26,
-    fontWeight: '700',
-    letterSpacing: -0.4,
-    textAlign: 'center',
-  },
-  successBody: {
-    ...typography.body,
-    textAlign: 'center',
-    lineHeight: 23,
-    maxWidth: 280,
-  },
-  logOutLink: {
-    paddingVertical: spacing.sm,
-  },
-  logOutLinkText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-})
+    successWrap: {
+      paddingHorizontal: spacing.xxl,
+      alignItems: 'center',
+      gap: spacing.xl,
+    },
+    successAvatarRing: {
+      width: 112,
+      height: 112,
+      borderRadius: 56,
+      borderWidth: 1.5,
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+    },
+    successAvatarImage: {
+      width: 108,
+      height: 108,
+      borderRadius: 54,
+    },
+    successIconRing: {
+      width: 112,
+      height: 112,
+      borderRadius: 56,
+      borderWidth: 1.5,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    successIconCircle: {
+      width: 84,
+      height: 84,
+      borderRadius: 42,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    successCopy: {
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    successTitle: {
+      fontSize: 26,
+      fontWeight: '700',
+      letterSpacing: -0.4,
+      textAlign: 'center',
+      color: t.text,
+    },
+    successBody: {
+      ...typography.body,
+      textAlign: 'center',
+      lineHeight: 23,
+      maxWidth: 280,
+      color: t.textMuted,
+    },
+    logOutLink: {
+      paddingVertical: spacing.sm,
+    },
+    logOutLinkText: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: t.textSubtle,
+    },
+  })
+}

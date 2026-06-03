@@ -1,31 +1,27 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet } from 'react-native'
+import { Text, View, useIsRTL } from 'expo-rtl'
+import { Image } from 'expo-image'
+import { useFormContext } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { radius, spacing, typography } from '../../theme/tokens'
 import { useTheme } from '../../theme/use-theme'
 import type { TaxCategory } from '../../types/taxonomy'
+import type { RequestFormData } from '../NewRequestScreen'
+import { tCategory, tCategoryDescription } from '../../utils/category-utils'
 
 interface Props {
   categories: Array<TaxCategory>
-  selectedId: string | null
-  onSelect: (id: string) => void
   loading?: boolean
 }
 
-export function CategoryStep({
-  categories,
-  selectedId,
-  onSelect,
-  loading,
-}: Props) {
+export function CategoryStep({ categories, loading }: Props) {
+  const { t: translate } = useTranslation()
   const t = useTheme()
+  const isRTL = useIsRTL()
+  const { watch, setValue } = useFormContext<RequestFormData>()
+  const categoryId = watch('categoryId')
 
   if (loading) {
     return (
@@ -43,19 +39,28 @@ export function CategoryStep({
     <View style={styles.step}>
       <View style={styles.header}>
         <Ionicons name="grid-outline" size={20} color={t.primary} />
-        <Text style={[styles.title, { color: t.text }]}>Select Category</Text>
+        <Text style={[styles.title, { color: t.text }]}>
+          {translate('wizard.step.category')}
+        </Text>
       </View>
       <Text style={[styles.subtitle, { color: t.textMuted }]}>
-        Pick the category that best fits the part you need.
+        {translate('wizard.categoryDescription')}
       </Text>
 
       <View style={styles.list}>
         {categories.map((cat) => {
-          const selected = selectedId === cat.id
+          const selected = categoryId === cat.id
+          const displayName = tCategory(cat, translate)
+          const displayDescription =
+            tCategoryDescription(cat, translate) || cat.description
           return (
             <Pressable
               key={cat.id}
-              onPress={() => onSelect(cat.id)}
+              onPress={() =>
+                setValue('categoryId', cat.id === categoryId ? null : cat.id, {
+                  shouldDirty: true,
+                })
+              }
               style={({ pressed }) => [
                 styles.card,
                 {
@@ -77,7 +82,7 @@ export function CategoryStep({
                   <Image
                     source={{ uri: cat.imageUrl }}
                     style={styles.iconImg}
-                    resizeMode="contain"
+                    contentFit="contain"
                   />
                 ) : (
                   <Text
@@ -88,7 +93,7 @@ export function CategoryStep({
                       },
                     ]}
                   >
-                    {cat.name.charAt(0).toUpperCase()}
+                    {displayName.charAt(0).toUpperCase()}
                   </Text>
                 )}
               </View>
@@ -103,14 +108,14 @@ export function CategoryStep({
                   ]}
                   numberOfLines={1}
                 >
-                  {cat.name}
+                  {displayName}
                 </Text>
-                {cat.description && (
+                {displayDescription && (
                   <Text
                     style={[styles.cardDesc, { color: t.textSubtle }]}
                     numberOfLines={1}
                   >
-                    {cat.description}
+                    {displayDescription}
                   </Text>
                 )}
               </View>

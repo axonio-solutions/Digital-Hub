@@ -1,36 +1,32 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { Text, TextInput, View, useIsRTL } from 'expo-rtl'
+import { useFormContext, Controller } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { radius, spacing, typography } from '../../theme/tokens'
 import { useTheme } from '../../theme/use-theme'
+import type { RequestFormData } from '../NewRequestScreen'
 
-interface Props {
-  vehicleModel: string
-  modelYear: string
-  vinNumber: string
-  onChangeModel: (v: string) => void
-  onChangeYear: (v: string) => void
-  onChangeVin: (v: string) => void
-}
-
-export function VehicleInfoStep({
-  vehicleModel,
-  modelYear,
-  vinNumber,
-  onChangeModel,
-  onChangeYear,
-  onChangeVin,
-}: Props) {
+export function VehicleInfoStep() {
+  const { t: translate } = useTranslation()
   const t = useTheme()
+  const isRTL = useIsRTL()
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<RequestFormData>()
 
   return (
     <View style={styles.step}>
       <View style={styles.header}>
         <Ionicons name="car-outline" size={20} color={t.primary} />
-        <Text style={[styles.title, { color: t.text }]}>Vehicle Info</Text>
+        <Text style={[styles.title, { color: t.text }]}>
+          {translate('wizard.step.vehicleInfo')}
+        </Text>
       </View>
       <Text style={[styles.subtitle, { color: t.textMuted }]}>
-        Enter your vehicle's model and year for compatibility.
+        {translate('wizard.vehicleInfoDescription')}
       </Text>
 
       <View style={styles.row}>
@@ -38,24 +34,31 @@ export function VehicleInfoStep({
           <View style={styles.labelRow}>
             <Ionicons name="car-outline" size={14} color={t.primary} />
             <Text style={[styles.label, { color: t.textMuted }]}>
-              Model / Version
+              {translate('wizard.modelVersion')}
             </Text>
           </View>
-          <TextInput
-            value={vehicleModel}
-            onChangeText={onChangeModel}
-            placeholder="e.g. Golf 7 GTI, 320d"
-            placeholderTextColor={t.textSubtle}
-            style={[
-              styles.input,
-              {
-                color: t.text,
-                backgroundColor: t.surface,
-                borderColor: t.border,
-              },
-            ]}
-            autoCapitalize="sentences"
-            returnKeyType="next"
+          <Controller
+            control={control}
+            name="vehicleModel"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={translate('wizard.modelPlaceholder')}
+                placeholderTextColor={t.textSubtle}
+                style={[
+                  styles.input,
+                  {
+                    color: t.text,
+                    backgroundColor: t.surface,
+                    borderColor: t.border,
+                  },
+                ]}
+                autoCapitalize="sentences"
+                returnKeyType="next"
+              />
+            )}
           />
         </View>
 
@@ -63,34 +66,53 @@ export function VehicleInfoStep({
           <View style={styles.labelRow}>
             <Ionicons name="calendar-outline" size={14} color={t.primary} />
             <Text style={[styles.label, { color: t.textMuted }]}>
-              Model Year
+              {translate('wizard.modelYear')}
             </Text>
           </View>
-          <TextInput
-            value={modelYear}
-            onChangeText={onChangeYear}
-            placeholder="e.g. 2022"
-            placeholderTextColor={t.textSubtle}
-            style={[
-              styles.input,
-              {
-                color: t.text,
-                backgroundColor: t.surface,
-                borderColor: t.border,
-              },
-            ]}
-            keyboardType="number-pad"
-            maxLength={4}
-            returnKeyType="next"
+          <Controller
+            control={control}
+            name="modelYear"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder={translate('wizard.yearPlaceholder')}
+                placeholderTextColor={t.textSubtle}
+                style={[
+                  styles.input,
+                  {
+                    color: t.text,
+                    backgroundColor: t.surface,
+                    borderColor: errors.modelYear ? t.danger : t.border,
+                  },
+                ]}
+                keyboardType="number-pad"
+                maxLength={4}
+                returnKeyType="next"
+              />
+            )}
           />
+          {errors.modelYear && (
+            <Text style={[styles.errorText, { color: t.danger }]}>
+              {errors.modelYear.message}
+            </Text>
+          )}
         </View>
       </View>
 
       <View style={styles.field}>
         <View style={styles.labelRow}>
           <Ionicons name="barcode-outline" size={14} color={t.primary} />
-          <Text style={[styles.label, { color: t.textMuted }]}>VIN Number</Text>
-          <View style={styles.vinHint}>
+          <Text style={[styles.label, { color: t.textMuted }]}>
+            {translate('wizard.vinNumber')}
+          </Text>
+          <View
+            style={[
+              styles.vinHint,
+              isRTL ? { marginRight: 'auto' } : { marginLeft: 'auto' },
+            ]}
+          >
             <Ionicons
               name="help-circle-outline"
               size={14}
@@ -98,23 +120,30 @@ export function VehicleInfoStep({
             />
           </View>
         </View>
-        <TextInput
-          value={vinNumber}
-          onChangeText={onChangeVin}
-          placeholder="Enter 17-digit VIN"
-          placeholderTextColor={t.textSubtle}
-          style={[
-            styles.input,
-            styles.vinInput,
-            {
-              color: t.text,
-              backgroundColor: t.surface,
-              borderColor: t.border,
-            },
-          ]}
-          autoCapitalize="characters"
-          maxLength={17}
-          returnKeyType="done"
+        <Controller
+          control={control}
+          name="vinNumber"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              placeholder={translate('wizard.vinPlaceholder')}
+              placeholderTextColor={t.textSubtle}
+              style={[
+                styles.input,
+                styles.vinInput,
+                {
+                  color: t.text,
+                  backgroundColor: t.surface,
+                  borderColor: t.border,
+                },
+              ]}
+              autoCapitalize="characters"
+              maxLength={17}
+              returnKeyType="done"
+            />
+          )}
         />
       </View>
 
@@ -140,11 +169,10 @@ export function VehicleInfoStep({
         </View>
         <View style={styles.infoText}>
           <Text style={[styles.infoTitle, { color: t.accent }]}>
-            Why model and year matter?
+            {translate('wizard.whyModelYear')}
           </Text>
           <Text style={[styles.infoBody, { color: t.textMuted }]}>
-            Accurate vehicle details help sellers find the right part faster and
-            avoid mismatches.
+            {translate('wizard.whyModelYearDescription')}
           </Text>
         </View>
       </View>
@@ -185,9 +213,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
-  vinHint: {
-    marginLeft: 'auto',
-  },
+  vinHint: {},
   input: {
     borderWidth: 1,
     borderRadius: radius.md,
@@ -230,5 +256,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 17,
     fontWeight: '500',
+  },
+  errorText: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: 2,
   },
 })

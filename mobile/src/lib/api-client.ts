@@ -43,7 +43,6 @@ async function fetchApi<TResult, TPayload = unknown>(
     headers['Content-Type'] = 'application/json'
   }
   if (token) {
-    headers['Cookie'] = `${AUTH_COOKIE_NAME}=${token}`
     headers['Authorization'] = `Bearer ${token}`
   }
 
@@ -107,6 +106,7 @@ export interface CompleteOnboardingInput {
   commercialRegister?: string
   brandIds?: Array<string>
   categoryIds?: Array<string>
+  image?: string
 }
 
 export interface CompleteOnboardingResult {
@@ -442,11 +442,27 @@ export interface AnonymousQuote {
 export async function fetchAnonymousQuotes(
   requestId: string,
 ): Promise<Array<AnonymousQuote>> {
-  const result = await fetchApi<{ success: boolean; data: Array<AnonymousQuote> }>(
-    apiUrl('getAnonymousQuotes'),
-    { method: 'GET', payload: requestId },
-  )
+  const result = await fetchApi<{
+    success: boolean
+    data: Array<AnonymousQuote>
+  }>(apiUrl('getAnonymousQuotes'), { method: 'GET', payload: requestId })
   return result?.data ?? []
+}
+
+const R2_BASE = 'https://pub-2c0e06d8b4bd4dad9fba99227f84031b.r2.dev'
+
+export async function uploadImage(
+  base64: string,
+  folder: 'requests' | 'profiles',
+): Promise<string> {
+  const result = await fetchApi<{ success: boolean; publicUrl: string }>(
+    apiUrl('uploadImage'),
+    { method: 'POST', payload: { base64, folder } },
+  )
+  const url = result.publicUrl
+  return url.startsWith('http')
+    ? url
+    : `${R2_BASE}${url.startsWith('/') ? url : `/${url}`}`
 }
 
 // ── Auth ──────────────────────────────────────────────────────

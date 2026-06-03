@@ -1,55 +1,59 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet } from 'react-native'
+import { Text, View, useIsRTL } from 'expo-rtl'
+import { Image } from 'expo-image'
+import { useFormContext } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { radius, spacing, typography } from '../../theme/tokens'
 import { useTheme } from '../../theme/use-theme'
+import type { RequestFormData } from '../NewRequestScreen'
 
 interface Props {
-  partName: string
-  description: string
-  vehicleBrand: string
-  vehicleModel: string
-  modelYear: string
-  vinNumber: string
-  imageUrls: Array<string>
   onEditStep: (step: number) => void
 }
 
-export function ReviewStep({
-  partName,
-  description,
-  vehicleBrand,
-  vehicleModel,
-  modelYear,
-  vinNumber,
-  imageUrls,
-  onEditStep,
-}: Props) {
+export function ReviewStep({ onEditStep }: Props) {
+  const { t: translate } = useTranslation()
   const t = useTheme()
+  const isRTL = useIsRTL()
+  const { watch } = useFormContext<RequestFormData>()
+  const {
+    partName,
+    description,
+    vehicleBrand,
+    vehicleModel,
+    modelYear,
+    vinNumber,
+    imageUrls,
+  } = watch()
 
   return (
     <View style={styles.step}>
       <View style={styles.header}>
         <Ionicons name="checkmark-circle-outline" size={20} color={t.primary} />
-        <Text style={[styles.title, { color: t.text }]}>Review & Publish</Text>
+        <Text style={[styles.title, { color: t.text }]}>
+          {translate('wizard.step.review')}
+        </Text>
       </View>
       <Text style={[styles.subtitle, { color: t.textMuted }]}>
-        Double-check your details before publishing.
+        {translate('wizard.reviewDescription')}
       </Text>
 
       <View style={styles.grid}>
         <ReviewCard
-          title="Part Details"
+          title={translate('wizard.step.partDetails')}
           icon="list-outline"
           editStep={0}
           onEditStep={onEditStep}
           t={t}
+          isRTL={isRTL}
         >
           <Text
             style={[styles.reviewValue, { color: t.text }]}
             numberOfLines={2}
           >
-            {partName || 'Not provided'}
+            {partName || translate('wizard.notProvided')}
           </Text>
           {vehicleBrand ? (
             <View style={[styles.reviewBadge, { backgroundColor: t.bgMuted }]}>
@@ -59,16 +63,17 @@ export function ReviewStep({
             </View>
           ) : null}
           <Text style={[styles.reviewMuted, { color: t.textMuted }]}>
-            {description || 'No additional details provided.'}
+            {description || translate('wizard.noDetails')}
           </Text>
         </ReviewCard>
 
         <ReviewCard
-          title="Vehicle Info"
+          title={translate('wizard.step.vehicleInfo')}
           icon="car-outline"
           editStep={3}
           onEditStep={onEditStep}
           t={t}
+          isRTL={isRTL}
         >
           <View style={styles.reviewInfoRow}>
             <View style={styles.reviewInfoItem}>
@@ -78,22 +83,22 @@ export function ReviewStep({
                 color={t.textSubtle}
               />
               <Text style={[styles.reviewInfoLabel, { color: t.textSubtle }]}>
-                YEAR
+                {translate('wizard.year')}
               </Text>
               <Text style={[styles.reviewInfoValue, { color: t.text }]}>
-                {modelYear || 'Not provided'}
+                {modelYear || translate('wizard.notProvided')}
               </Text>
             </View>
             <View style={styles.reviewInfoItem}>
               <Ionicons name="car-outline" size={12} color={t.textSubtle} />
               <Text style={[styles.reviewInfoLabel, { color: t.textSubtle }]}>
-                MODEL
+                {translate('wizard.model')}
               </Text>
               <Text
                 style={[styles.reviewInfoValue, { color: t.text }]}
                 numberOfLines={1}
               >
-                {vehicleModel || 'Not provided'}
+                {vehicleModel || translate('wizard.notProvided')}
               </Text>
             </View>
           </View>
@@ -106,7 +111,7 @@ export function ReviewStep({
                   { color: t.textSubtle, width: 30 },
                 ]}
               >
-                VIN
+                {translate('wizard.vin')}
               </Text>
               <Text style={[styles.reviewVinValue, { color: t.text }]}>
                 {vinNumber}
@@ -116,11 +121,12 @@ export function ReviewStep({
         </ReviewCard>
 
         <ReviewCard
-          title="Photos"
+          title={translate('wizard.step.photos')}
           icon="image-outline"
           editStep={4}
           onEditStep={onEditStep}
           t={t}
+          isRTL={isRTL}
           wide
         >
           {imageUrls.length > 0 ? (
@@ -133,7 +139,7 @@ export function ReviewStep({
                   <Image
                     source={{ uri: url }}
                     style={styles.reviewThumb}
-                    resizeMode="cover"
+                    contentFit="cover"
                   />
                 </View>
               ))}
@@ -151,7 +157,7 @@ export function ReviewStep({
                   { color: t.textSubtle, marginTop: 0 },
                 ]}
               >
-                No photos added
+                {translate('wizard.noPhotos')}
               </Text>
             </View>
           )}
@@ -169,7 +175,7 @@ export function ReviewStep({
       >
         <View style={[styles.readyDot, { backgroundColor: t.primary }]} />
         <Text style={[styles.readyText, { color: t.primary }]}>
-          Ready to publish.
+          {translate('wizard.readyToPublish')}
         </Text>
       </View>
     </View>
@@ -182,6 +188,7 @@ function ReviewCard({
   editStep,
   onEditStep,
   t,
+  isRTL,
   wide,
   children,
 }: {
@@ -190,6 +197,7 @@ function ReviewCard({
   editStep: number
   onEditStep: (s: number) => void
   t: any
+  isRTL: boolean
   wide?: boolean
   children: React.ReactNode
 }) {
