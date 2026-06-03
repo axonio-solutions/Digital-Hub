@@ -4,6 +4,10 @@ import { notificationPreferences, notifications, users } from '@/db/schema'
 import { resend } from '@/lib/resend'
 import { notificationEvents } from '@/lib/events'
 
+const SUPABASE_URL = import.meta.env.SUPABASE_URL as string
+const SUPABASE_ANON_KEY = import.meta.env.SUPABASE_ANON_KEY as string
+const EDGE_FN_URL = `${SUPABASE_URL}/functions/v1/send-push`
+
 export type NotificationTrigger = {
   userId: string
   type: (typeof notifications.$inferSelect)['type']
@@ -73,6 +77,26 @@ export class NotificationService {
 
       // Emit event for SSE
       notificationEvents.emit('notification', newNotification)
+
+      // 2b. Dispatch push notification via Supabase Edge Function
+      try {
+        await fetch(EDGE_FN_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            title,
+            message,
+            reference_id: referenceId ?? null,
+            metadata: metadata ?? null,
+          }),
+        })
+      } catch (pushErr) {
+        console.error('[NotificationService] Push dispatch failed:', pushErr)
+      }
     }
 
     // 3. Send Email via Resend (Suspended for now)
