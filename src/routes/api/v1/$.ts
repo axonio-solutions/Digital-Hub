@@ -55,8 +55,16 @@ import {
   notFound,
   unauthorized,
 } from '@/lib/api-utils'
+import { PutObjectCommand } from '@aws-sdk/client-s3'
+import { r2, R2_BUCKET, R2_PUBLIC_URL } from '@/lib/r2'
 
 // ─── Payload helpers ─────────────────────────────────────────
+
+function uploadNanoid(len: number) {
+  return Math.random()
+    .toString(36)
+    .slice(2, 2 + len)
+}
 
 async function parseBody(request: Request): Promise<unknown> {
   const text = await request.text()
@@ -227,6 +235,34 @@ async function handleGetAnonymousQuotes(request: Request): Promise<Response> {
   if (!requestId) return badRequest('Missing requestId')
   const data = await fetchAnonymousQuotesQuery(requestId)
   return json({ success: true, data })
+}
+
+async function handlePostUploadImage(request: Request): Promise<Response> {
+  const user = await getSessionUser(request)
+  if (!user) return unauthorized()
+  const body = (await parseBody(request)) as {
+    base64?: string
+    folder?: string
+  }
+  if (!body.base64 || !body.folder)
+    return badRequest('Missing base64 or folder')
+  const ALLOWED = ['requests', 'profiles']
+  if (!ALLOWED.includes(body.folder)) return badRequest('Invalid folder')
+  const folderPath =
+    body.folder === 'profiles' ? `profiles/${user.id}` : `requests/${user.id}`
+  const key = `${folderPath}/${Date.now()}-${uploadNanoid(8)}.webp`
+  const buffer = Buffer.from(body.base64, 'base64')
+  await r2.send(
+    new PutObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: key,
+      Body: buffer,
+      ContentType: 'image/webp',
+    }),
+  )
+  const baseUrl =
+    R2_PUBLIC_URL || 'https://pub-2c0e06d8b4bd4dad9fba99227f84031b.r2.dev'
+  return json({ success: true, publicUrl: `${baseUrl}/${key}` })
 }
 
 async function handleGetCreditBalance(request: Request): Promise<Response> {
@@ -562,6 +598,7 @@ const POST_ROUTES: Record<string, Handler> = {
   '/api/v1/users/delete': handlePostDeleteAccount,
   '/api/v1/credits/request': handlePostRequestCredits,
   '/api/v1/support/ticket': handlePostSupportTicket,
+  '/api/v1/upload': handlePostUploadImage,
 }
 
 async function dispatch(

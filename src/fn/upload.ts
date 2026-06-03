@@ -25,5 +25,7 @@ export const uploadImageFn = createServerFn({ method: 'POST' })
       }),
     )
 
-    return { publicUrl: `${R2_PUBLIC_URL}/${key}` }
+    const baseUrl =
+      R2_PUBLIC_URL || 'https://pub-2c0e06d8b4bd4dad9fba99227f84031b.r2.dev'
+    return { publicUrl: `${baseUrl}/${key}` }
   })
