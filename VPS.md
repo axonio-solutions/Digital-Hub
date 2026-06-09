@@ -86,7 +86,7 @@ pm2 logs cloudflared --lines 50 --nostream | grep trycloudflare
 **On the VPS** — update the runtime env:
 
 ```bash
-NEW_URL=https://xxxx.trycloudflare.com
+NEW_URL=https://representation-carlos-pressing-possibilities.trycloudflare.com
 
 sed -i "s|^BETTER_AUTH_URL=.*|BETTER_AUTH_URL=${NEW_URL}|" ~/mlila/.env
 sed -i "s|^VITE_APP_URL=.*|VITE_APP_URL=${NEW_URL}|" ~/mlila/.env

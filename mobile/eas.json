@@ -9,7 +9,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://language-learn-past-boutique.trycloudflare.com",
+        "EXPO_PUBLIC_API_URL": "https://representation-carlos-pressing-possibilities.trycloudflare.com",
         "EXPO_PUBLIC_SUPABASE_URL": "https://hfilegaukynyagypmuwf.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kfjUJBTObwu61qls3YWAlQ_iSKWJFpZ"
       }
@@ -19,14 +19,14 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://language-learn-past-boutique.trycloudflare.com",
+        "EXPO_PUBLIC_API_URL": "https://representation-carlos-pressing-possibilities.trycloudflare.com",
         "EXPO_PUBLIC_SUPABASE_URL": "https://hfilegaukynyagypmuwf.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kfjUJBTObwu61qls3YWAlQ_iSKWJFpZ"
       }
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://language-learn-past-boutique.trycloudflare.com",
+        "EXPO_PUBLIC_API_URL": "https://representation-carlos-pressing-possibilities.trycloudflare.com",
         "EXPO_PUBLIC_SUPABASE_URL": "https://hfilegaukynyagypmuwf.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kfjUJBTObwu61qls3YWAlQ_iSKWJFpZ"
       }
