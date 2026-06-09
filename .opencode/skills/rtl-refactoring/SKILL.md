@@ -106,14 +106,37 @@ Works for Pressables too:
 ### ⚠️ Important: expo-rtl View vs RN View
 
 - **RN View** / **Pressable** — does **not** auto-flip `flexDirection`. Use `isRTL ? 'row-reverse' : 'row'` explicitly.
-- **expo-rtl View** — **auto-flips** `flexDirection: 'row'` ↔ `row-reverse` in RTL mode.
+- **expo-rtl View** — **auto-flips** `flexDirection: 'row'` ↔ `row-reverse` AND `alignItems` `flex-start` ↔ `flex-end` in RTL mode.
   - Do **NOT** use `isRTL ? 'row-reverse' : 'row'` with expo-rtl View — it causes a **double-flip** (expo-rtl sees `row-reverse` and flips it back to `row`).
   - Instead, just use `flexDirection: 'row'` and let expo-rtl handle the flip automatically.
+  - For `alignItems`, use `'center'` (safe, no flip) or wrap in a `dir="ltr"` View to prevent flipping.
 
 **Rule of thumb:**
 
 - `import { View } from 'expo-rtl'` → `flexDirection: 'row'` (auto-flips)
 - `import { Pressable } from 'react-native'` → `flexDirection: isRTL ? 'row-reverse' : 'row'` (manual)
+
+### Real-world bug: section heading label stuck on the left in RTL
+
+```tsx
+// ❌ BROKEN — double-flip on expo-rtl View
+const styles = StyleSheet.create({
+  sectionHead: {
+    flexDirection: isRTL ? 'row-reverse' : 'row', // ① isRTL=true → 'row-reverse'
+    alignItems: 'center',                           // ② expo-rtl View sees 'row-reverse'
+    justifyContent: 'space-between',                //    and FLIPS it back to 'row'
+  },                                                // ③ Net result: first child on LEFT
+})
+
+// ✅ FIXED — let expo-rtl handle the flip
+const styles = StyleSheet.create({
+  sectionHead: {
+    flexDirection: 'row',  // expo-rtl auto-flips to 'row-reverse' in RTL
+    alignItems: 'center',  // 'center' is direction-agnostic
+    justifyContent: 'space-between',
+  },
+})
+```
 
 ## Pattern 4 — Direction-aware alignment with `alignSelf`
 
@@ -134,7 +157,6 @@ For elements that should never reverse (e.g., pagination numbers 1 2 3 4):
 
 ```tsx
 import { View } from 'expo-rtl'
-
 ;<View dir="ltr" style={styles.numbers}>
   {numbers.map((n) => (
     <Text key={n}>{n}</Text>
@@ -168,19 +190,52 @@ const shimmerX = useRef(new Animated.Value(isRTL ? 100 : -100)).current
 
 The `useRef` initializer runs once — safe because direction doesn't change while this screen is mounted.
 
-## Pattern 8 — Text alignment
+## Pattern 8 — Text alignment with expo-rtl Text
 
-For text that should be start-aligned per direction instead of centered:
+expo-rtl's `Text` component **also auto-flips** `textAlign` values:
+- `textAlign: 'left'` → auto-flips to `'right'` in RTL
+- `textAlign: 'right'` → auto-flips to `'left'` in RTL
+- No `textAlign` set → defaults to `'right'` in RTL, `'left'` in LTR
+
+For start-aligned text per direction:
 
 ```tsx
-<Text
-  style={{
-    textAlign: isRTL ? 'right' : 'left',
-  }}
->
+// ✅ Correct: expo-rtl Text flips 'left' → 'right' in RTL
+<Text style={{ textAlign: 'left' }}>
+  This will be right-aligned in RTL
+</Text>
+
+// ✅ Also correct: no textAlign, expo-rtl auto-defaults
+<Text>
+  This will also be right-aligned in RTL
+</Text>
 ```
 
-Or keep centered (`textAlign: 'center'`) for titles and descriptions that work equally in both directions.
+```tsx
+// ❌ BROKEN: double-flip with conditional
+// In RTL, 'right' gets flipped back to 'left' by expo-rtl
+<Text style={{ textAlign: isRTL ? 'right' : 'left' }}>
+  This stays on the LEFT in RTL
+</Text>
+```
+
+> **Why:** expo-rtl's `VALUE_FLIP` map swaps `left`↔`right` for `textAlign`. The conditional produces `'right'` in RTL, which expo-rtl then flips to `'left'`.
+
+For center-aligned text, use `textAlign: 'center'` (direction-agnostic):
+
+```tsx
+<Text style={{ textAlign: 'center' }}>
+  Works identically in LTR and RTL
+</Text>
+```
+
+To opt out of the flip entirely, use the `noFlip` prop with your own conditional:
+
+```tsx
+<Text noFlip style={{ textAlign: isRTL ? 'right' : 'left' }}>
+  Manually aligned — no expo-rtl interference
+</Text>
+```
 
 ## Pattern 9 — Slide / carousel translateX direction
 
@@ -337,11 +392,12 @@ For each screen:
 3. [ ] Add `isRTLRef` + `useEffect` sync if there's a PanResponder or other ref-based closure
 4. [ ] Replace every `I18nManager.isRTL` with `isRTL` (or `isRTLRef.current` in closures)
 5. [ ] Remove unused `I18nManager` import
-6. [ ] For flex rows that should swap element order: `flexDirection: isRTL ? 'row-reverse' : 'row'`
+6. [ ] For flex rows that should swap element order: `flexDirection: isRTL ? 'row-reverse' : 'row'` on RN Views / Pressables; use plain `flexDirection: 'row'` on expo-rtl Views (auto-flips)
 7. [ ] For cross-axis alignment that should flip: `alignSelf: isRTL ? 'flex-end' : 'flex-start'`
 8. [ ] For decorative absolute positioning (`left`/`right`): add conditional `isRTL ? { left: X } : { right: X }`
 9. [ ] For elements that must stay LTR: import `View` from `expo-rtl` and add `dir="ltr"`
 10. [ ] For animated values (shimmer initial position, gesture): use `isRTL` for start/end values
 11. [ ] For shared primitives (Field, Button, etc.): swap `react-native` imports for `expo-rtl` components
 12. [ ] For tab indicators: animate `left` based on `isRTL` mapping (RTL: sign-in→right)
-13. [ ] Run `npx tsc --noEmit` and verify no errors
+13. [ ] For Text alignment: use `textAlign: 'left'` (expo-rtl flips to 'right' in RTL) or no textAlign at all; do NOT use `isRTL ? 'right' : 'left'` — causes double-flip
+14. [ ] Run `npx tsc --noEmit` and verify no errors
