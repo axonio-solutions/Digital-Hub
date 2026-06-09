@@ -27,12 +27,8 @@ export async function updateUserMetadata(userId: string, data: any) {
     .where(eq(users.id, userId))
 }
 
-export async function fetchAllUsers(page = 1, pageSize = 50) {
-  const offset = (page - 1) * pageSize
-
+export async function fetchAllUsers() {
   return await db.query.users.findMany({
-    limit: pageSize,
-    offset: offset,
     orderBy: (users, { desc }) => [desc(users.createdAt)],
     columns: {
       id: true,

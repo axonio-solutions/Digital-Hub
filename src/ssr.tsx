@@ -6,9 +6,7 @@ import {
 
 import { createRouter } from './router'
 
-const safeHandler = (
-  opts: Parameters<typeof defaultStreamHandler>[0],
-) => {
+const safeHandler = (opts: Parameters<typeof defaultStreamHandler>[0]) => {
   try {
     return defaultStreamHandler(opts)
   } catch (err) {

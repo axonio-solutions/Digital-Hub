@@ -1,8 +1,12 @@
 'use client'
 
-/* Hallmark · genre: modern-minimal · macrostructure: Marketplace-Detail (public-shell page)
+/* Hallmark · genre: modern-minimal · macrostructure: Marketplace-Detail (app-shell page)
+ * laws-of-ux: Fitts's · Hick's · Von Restorff · Goal-Gradient · Peak-End · Aesthetic-Usability
+ *            · Selective Attention · Law of Similarity · Law of Common Region · Miller's
+ *            · Law of Proximity · Serial Position
  * pre-emit critique: P5 H5 E5 S5 R5 V5
  * theme: brand blue hue 260° · design-system: design.md
+ * motion: framer-motion · fade+translateY 360ms ease-out
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -58,6 +62,16 @@ import { Stat, StatIndicator, StatLabel, StatValue } from '@/components/ui/stat'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { PUBLIC_ROUTES } from '@/lib/routes'
+import { motion } from 'framer-motion'
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.36, ease: [0.16, 1, 0.3, 1] },
+  },
+}
 
 const dateFnsLocales: Record<string, Locale> = { en: enUS, fr, ar: arSA }
 
@@ -183,17 +197,20 @@ function OfferRow({
   return (
     <div
       className={cn(
-        'px-4 sm:px-5 py-3 sm:py-4 border-b border-border/40 last:border-b-0 transition-colors duration-150',
+        'px-3 sm:px-4 py-3 sm:py-4 border-b border-border/40 last:border-b-0 transition-all duration-150 relative',
         isOwn
-          ? 'bg-primary/[0.03] border-l-[3px] border-l-primary/50'
+          ? 'bg-gradient-to-r from-primary/[0.04] to-transparent'
           : 'hover:bg-muted/20',
       )}
     >
+      {isOwn && (
+        <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary/60 rounded-r-sm" />
+      )}
       <div className="grid grid-cols-[auto_1fr_auto] gap-x-2 sm:gap-x-3 gap-y-1.5 sm:gap-y-2 items-center">
         {/* Row 1: rank + status + own badge */}
         <span
           className={cn(
-            'size-6 sm:size-7 rounded-full flex items-center justify-center text-[10px] sm:text-[11px] font-bold tabular-nums',
+            'size-7 sm:size-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold tabular-nums',
             isOwn
               ? 'bg-primary text-primary-foreground'
               : 'bg-muted text-muted-foreground/60',
@@ -203,14 +220,14 @@ function OfferRow({
         </span>
         <span
           className={cn(
-            'px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wide border leading-none justify-self-start',
+            'px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wide border leading-none justify-self-start',
             statusStyle,
           )}
         >
           {statusLabel}
         </span>
         {isOwn && (
-          <span className="text-[9px] font-semibold text-primary/50 justify-self-end">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider justify-self-end leading-none">
             {isAccepted && isInactive
               ? t('detail_page.offer_selected')
               : t('offer_dialog.my_offer_badge')}
@@ -242,7 +259,7 @@ function OfferRow({
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted/30 border border-dashed border-border/40 w-full">
                 <span className="font-mono text-sm font-bold text-muted-foreground/30 tracking-widest select-none">
                   ****
                 </span>
@@ -264,18 +281,18 @@ function OfferRow({
               <Button
                 size="sm"
                 variant="outline"
-                className="flex-1 sm:flex-none h-8 sm:h-8 px-3 text-xs font-semibold rounded-lg gap-1.5 cursor-pointer border-border hover:border-primary/40 hover:text-primary transition-all"
+                className="flex-1 sm:flex-none h-9 px-3.5 text-xs font-semibold rounded-lg gap-1.5 cursor-pointer border-border hover:border-primary/40 hover:text-primary transition-all"
                 onClick={onEdit}
                 disabled={isLocked}
                 title={isLocked ? t('detail_page.locked_title') : undefined}
               >
-                <Edit2 className="size-3" />
+                <Edit2 className="size-3.5" />
                 {t('detail_page.edit_btn')}
               </Button>
               <Button
                 size="sm"
                 variant="outline"
-                className="flex-1 sm:flex-none h-8 sm:h-8 px-3 text-xs font-semibold rounded-lg gap-1.5 cursor-pointer border-border text-muted-foreground/50 hover:text-destructive hover:border-destructive/30 hover:bg-destructive/5 transition-all"
+                className="flex-1 sm:flex-none h-9 px-3.5 text-xs font-semibold rounded-lg gap-1.5 cursor-pointer border-border text-muted-foreground/50 hover:text-destructive hover:border-destructive/30 hover:bg-destructive/5 transition-all"
                 onClick={onDelete}
                 disabled={isDeleting || isLocked}
               >
@@ -291,11 +308,13 @@ function OfferRow({
         </div>
       </div>
 
-      {/* Locked next-steps callout */}
+      {/* Locked next-steps callout (Peak-End Rule — end on a positive note) */}
       {isOwn && isLocked && (
-        <div className="mt-2 flex items-start gap-2 bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-800/30 rounded-lg px-3 py-2.5">
-          <MessageSquare className="size-3.5 text-[#0369A1] shrink-0 mt-0.5" />
-          <p className="text-[10px] sm:text-[11px] text-[#0369A1] leading-relaxed">
+        <div className="mt-2 flex items-start gap-2.5 bg-gradient-to-r from-blue-50/80 to-transparent dark:from-blue-950/20 dark:to-transparent border border-blue-200/50 dark:border-blue-800/30 rounded-lg px-3 py-2.5">
+          <div className="size-5 rounded-md bg-[#0369A1]/10 flex items-center justify-center shrink-0 mt-0.5">
+            <MessageSquare className="size-3 text-[#0369A1]" />
+          </div>
+          <p className="text-[11px] font-semibold text-[#0369A1] leading-snug">
             {t('detail_page.locked_callout')}
           </p>
         </div>
@@ -562,7 +581,13 @@ export function RequestDetailPage() {
         <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 lg:px-8 py-6 lg:py-8 pb-24 lg:pb-12">
           <div className="flex flex-col gap-5 lg:gap-6">
             {/* ── Header ─────────────────────────────────────────────────── */}
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="flex flex-col sm:flex-row sm:items-start justify-between gap-4"
+            >
               <div className="min-w-0 flex-1">
                 {/* Chips: brand + year + priority only */}
                 <div className="flex flex-wrap items-center gap-2 mb-2.5">
@@ -649,10 +674,16 @@ export function RequestDetailPage() {
                     : t('detail_page.submit_offer')}
                 </Button>
               </div>
-            </div>
+            </motion.div>
 
             {/* ── Stats strip ────────────────────────────────────────────── */}
-            <div className="bg-card border border-border rounded-xl overflow-hidden">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="bg-card border border-border rounded-xl overflow-hidden"
+            >
               {/* Mobile */}
               <div className="grid grid-cols-3 gap-0 sm:hidden">
                 {statItems.map((s, i) => (
@@ -709,7 +740,38 @@ export function RequestDetailPage() {
                   </Stat>
                 ))}
               </div>
-            </div>
+              {/* Goal-Gradient: funnel progression indicator (desktop only) */}
+              {!isInactive && !quotesLoading && (
+                <div className="hidden sm:block px-3 pb-3">
+                  <div className="relative h-1 rounded-full overflow-hidden bg-muted-foreground/8">
+                    {total > 0 && (
+                      <motion.div
+                        className="absolute inset-y-0 left-0 bg-amber-400/60 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(pending / total) * 100}%` }}
+                        transition={{
+                          duration: 0.6,
+                          ease: [0.16, 1, 0.3, 1],
+                          delay: 0.3,
+                        }}
+                      />
+                    )}
+                    {selected > 0 && (
+                      <motion.div
+                        className="absolute inset-y-0 right-0 bg-[#0369A1]/60 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(selected / total) * 100}%` }}
+                        transition={{
+                          duration: 0.6,
+                          ease: [0.16, 1, 0.3, 1],
+                          delay: 0.45,
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </motion.div>
 
             {/* ── Go to offers (mobile only) ─────────────────────────────── */}
             <button
@@ -726,7 +788,13 @@ export function RequestDetailPage() {
             </button>
 
             {/* ── Mobile layout (lg:hidden) ──────────────────────────────── */}
-            <div className="flex flex-col gap-5 lg:hidden">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="flex flex-col gap-5 lg:hidden"
+            >
               {/* Image */}
               <div className="bg-card border border-border rounded-xl overflow-hidden">
                 <ImageSlider
@@ -805,13 +873,16 @@ export function RequestDetailPage() {
                     </div>
                   )}
                   {req.targetPrice && (
-                    <div className="bg-card px-3.5 py-2.5">
+                    <div className="col-span-2 bg-gradient-to-r from-emerald-50/80 to-transparent dark:from-emerald-950/20 dark:to-transparent px-3.5 py-2.5 border-t border-border/40 -mt-px">
                       <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                        <Coins className="size-3 shrink-0" />
+                        <Coins className="size-3 shrink-0 text-emerald-600" />
                         {t('detail_page.buyer_target_price')}
                       </p>
-                      <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
-                        {Number(req.targetPrice).toLocaleString()} DA
+                      <p className="text-base font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
+                        {Number(req.targetPrice).toLocaleString()}
+                        <span className="text-[11px] font-semibold text-emerald-600/60 ml-1">
+                          DA
+                        </span>
                       </p>
                     </div>
                   )}
@@ -865,7 +936,7 @@ export function RequestDetailPage() {
                     {[1, 2, 3].map((i) => (
                       <div
                         key={i}
-                        className="flex items-center gap-4 px-5 py-4"
+                        className="flex items-center gap-4 px-3 sm:px-4 py-4"
                       >
                         <Skeleton className="size-7 rounded-full shrink-0" />
                         <Skeleton className="h-4 w-24 rounded" />
@@ -875,15 +946,15 @@ export function RequestDetailPage() {
                     ))}
                   </div>
                 ) : sortedQuotes.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center gap-3 py-14">
-                    <div className="size-12 rounded-2xl bg-muted flex items-center justify-center">
-                      <Users className="size-5 text-muted-foreground/30" />
+                  <div className="flex flex-col items-center justify-center gap-4 py-14">
+                    <div className="size-14 rounded-2xl bg-gradient-to-br from-primary/8 to-primary/3 flex items-center justify-center ring-1 ring-primary/10">
+                      <Zap className="size-6 text-primary/40" />
                     </div>
-                    <div className="text-center">
-                      <p className="text-sm font-semibold text-muted-foreground/60">
+                    <div className="text-center max-w-[200px]">
+                      <p className="text-sm font-bold text-foreground">
                         {t('detail_page.no_offers_yet')}
                       </p>
-                      <p className="text-xs text-muted-foreground/40 mt-0.5">
+                      <p className="text-xs text-muted-foreground/50 mt-1 leading-relaxed">
                         {t('detail_page.no_offers_desc')}
                       </p>
                     </div>
@@ -891,7 +962,7 @@ export function RequestDetailPage() {
                       <Button
                         size="sm"
                         onClick={openCreate}
-                        className="h-8 px-4 text-xs font-semibold rounded-lg gap-1.5 cursor-pointer mt-1"
+                        className="h-9 px-5 text-xs font-semibold rounded-full gap-1.5 cursor-pointer shadow-sm"
                       >
                         <Plus className="size-3" />
                         {t('detail_page.submit_offer')}
@@ -970,71 +1041,123 @@ export function RequestDetailPage() {
                       </p>
                     </div>
                   ) : (
-                    <>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          {inDiscussion > 0 ? (
-                            <span className="size-2 rounded-full bg-[#0369A1] shrink-0" />
-                          ) : total > 2 ? (
-                            <span className="size-2 rounded-full bg-amber-500 shrink-0" />
-                          ) : (
-                            <span className="size-2 rounded-full bg-emerald-500 shrink-0" />
-                          )}
-                          <span
-                            className={cn(
-                              'text-sm font-bold',
-                              inDiscussion > 0
-                                ? 'text-[#0369A1]'
-                                : total > 2
-                                  ? 'text-amber-600'
-                                  : 'text-emerald-600',
-                            )}
-                          >
-                            {inDiscussion > 0
-                              ? t('detail_page.competition_hot')
-                              : total === 0
-                                ? t('detail_page.competition_open')
-                                : total <= 2
-                                  ? t('detail_page.competition_low')
-                                  : t('detail_page.competition_active')}
-                          </span>
-                        </div>
-                        <div className="flex gap-3 text-[11px] text-muted-foreground/60 font-semibold">
-                          {total > 0 && (
-                            <span>
-                              {t('detail_page.seller_count', { count: total })}
-                            </span>
-                          )}
-                          {inDiscussion > 0 && (
-                            <span className="text-[#0369A1]">
-                              {t('detail_page.in_discussion_count', {
-                                count: inDiscussion,
-                              })}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
-                        {total === 0
-                          ? t('detail_page.competition_no_offers')
-                          : inDiscussion > 0
-                            ? t('detail_page.competition_in_discussion')
-                            : total === 1
-                              ? t('detail_page.competition_waiting', {
-                                  count: 1,
-                                })
-                              : t('detail_page.competition_waiting_plural', {
-                                  count: total,
-                                })}
-                      </p>
-                    </>
+                    (() => {
+                      const compColor =
+                        inDiscussion > 0
+                          ? 'bg-[#0369A1]'
+                          : total > 2
+                            ? 'bg-amber-500'
+                            : total === 0
+                              ? 'bg-muted-foreground/20'
+                              : 'bg-emerald-500'
+                      const compLabelColor =
+                        inDiscussion > 0
+                          ? 'text-[#0369A1]'
+                          : total > 2
+                            ? 'text-amber-600'
+                            : total === 0
+                              ? 'text-muted-foreground/50'
+                              : 'text-emerald-600'
+                      const compLabel =
+                        inDiscussion > 0
+                          ? t('detail_page.competition_hot')
+                          : total === 0
+                            ? t('detail_page.competition_open')
+                            : total <= 2
+                              ? t('detail_page.competition_low')
+                              : t('detail_page.competition_active')
+                      const gaugePct =
+                        inDiscussion > 0
+                          ? 100
+                          : total === 0
+                            ? 0
+                            : total <= 2
+                              ? 25
+                              : 60
+                      return (
+                        <>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={cn(
+                                  'size-2 rounded-full shrink-0',
+                                  compColor,
+                                )}
+                              />
+                              <span
+                                className={cn(
+                                  'text-sm font-bold',
+                                  compLabelColor,
+                                )}
+                              >
+                                {compLabel}
+                              </span>
+                            </div>
+                            <div className="flex gap-3 text-[11px] text-muted-foreground/60 font-semibold">
+                              {total > 0 && (
+                                <span>
+                                  {t('detail_page.seller_count', {
+                                    count: total,
+                                  })}
+                                </span>
+                              )}
+                              {inDiscussion > 0 && (
+                                <span className="text-[#0369A1]">
+                                  {t('detail_page.in_discussion_count', {
+                                    count: inDiscussion,
+                                  })}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Competition gauge */}
+                          <div className="relative h-1.5 bg-muted-foreground/10 rounded-full mb-3 overflow-hidden">
+                            <motion.div
+                              className={cn(
+                                'absolute inset-y-0 left-0 rounded-full',
+                                compColor,
+                              )}
+                              initial={{ width: 0 }}
+                              animate={{ width: `${gaugePct}%` }}
+                              transition={{
+                                duration: 0.6,
+                                ease: [0.16, 1, 0.3, 1],
+                                delay: 0.15,
+                              }}
+                            />
+                          </div>
+
+                          <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
+                            {total === 0
+                              ? t('detail_page.competition_no_offers')
+                              : inDiscussion > 0
+                                ? t('detail_page.competition_in_discussion')
+                                : total === 1
+                                  ? t('detail_page.competition_waiting', {
+                                      count: 1,
+                                    })
+                                  : t(
+                                      'detail_page.competition_waiting_plural',
+                                      { count: total },
+                                    )}
+                          </p>
+                        </>
+                      )
+                    })()
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* ── Desktop layout (hidden lg:grid) ─────────────────────────── */}
-            <div className="hidden lg:grid lg:grid-cols-12 gap-6 items-start">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="hidden lg:grid lg:grid-cols-12 gap-6 items-start"
+            >
               {/* LEFT 7 cols */}
               <div className="lg:col-span-7 flex flex-col gap-5">
                 {/* ── Request Details ──────────────────────────────────── */}
@@ -1121,16 +1244,19 @@ export function RequestDetailPage() {
                       </div>
                     )}
                     {req.targetPrice && (
-                      <div className="flex items-start gap-3">
-                        <div className="size-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center shrink-0 mt-0.5">
-                          <Coins className="size-3.5 text-emerald-600" />
+                      <div className="sm:col-span-2 flex items-start gap-3 p-3 -m-3 rounded-lg bg-gradient-to-r from-emerald-50/60 to-transparent dark:from-emerald-950/20 dark:to-transparent border border-emerald-200/40 dark:border-emerald-800/30">
+                        <div className="size-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center shrink-0 mt-0.5 ring-1 ring-emerald-200/50 dark:ring-emerald-800/40">
+                          <Coins className="size-4 text-emerald-600" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/55 mb-0.5">
+                          <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-600/70 dark:text-emerald-400/70 mb-0.5">
                             {t('detail_page.buyer_target_price')}
                           </p>
-                          <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
-                            {Number(req.targetPrice).toLocaleString()} DA
+                          <p className="text-base font-bold text-emerald-700 dark:text-emerald-400">
+                            {Number(req.targetPrice).toLocaleString()}
+                            <span className="text-[11px] font-semibold text-emerald-600/60 ml-1">
+                              DA
+                            </span>
                           </p>
                         </div>
                       </div>
@@ -1202,15 +1328,15 @@ export function RequestDetailPage() {
                       ))}
                     </div>
                   ) : sortedQuotes.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center gap-3 py-14">
-                      <div className="size-12 rounded-2xl bg-muted flex items-center justify-center">
-                        <Users className="size-5 text-muted-foreground/30" />
+                    <div className="flex flex-col items-center justify-center gap-4 py-14">
+                      <div className="size-14 rounded-2xl bg-gradient-to-br from-primary/8 to-primary/3 flex items-center justify-center ring-1 ring-primary/10">
+                        <Zap className="size-6 text-primary/40" />
                       </div>
-                      <div className="text-center">
-                        <p className="text-sm font-semibold text-muted-foreground/60">
+                      <div className="text-center max-w-[200px]">
+                        <p className="text-sm font-bold text-foreground">
                           {t('detail_page.no_offers_yet')}
                         </p>
-                        <p className="text-xs text-muted-foreground/40 mt-0.5">
+                        <p className="text-xs text-muted-foreground/50 mt-1 leading-relaxed">
                           {t('detail_page.no_offers_desc')}
                         </p>
                       </div>
@@ -1218,7 +1344,7 @@ export function RequestDetailPage() {
                         <Button
                           size="sm"
                           onClick={openCreate}
-                          className="h-8 px-4 text-xs font-semibold rounded-lg gap-1.5 cursor-pointer mt-1"
+                          className="h-9 px-5 text-xs font-semibold rounded-full gap-1.5 cursor-pointer shadow-sm"
                         >
                           <Plus className="size-3" />
                           {t('detail_page.submit_offer')}
@@ -1308,71 +1434,115 @@ export function RequestDetailPage() {
                         </p>
                       </div>
                     ) : (
-                      <>
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            {inDiscussion > 0 ? (
-                              <span className="size-2 rounded-full bg-[#0369A1] shrink-0" />
-                            ) : total > 2 ? (
-                              <span className="size-2 rounded-full bg-amber-500 shrink-0" />
-                            ) : (
-                              <span className="size-2 rounded-full bg-emerald-500 shrink-0" />
-                            )}
-                            <span
-                              className={cn(
-                                'text-sm font-bold',
-                                inDiscussion > 0
-                                  ? 'text-[#0369A1]'
-                                  : total > 2
-                                    ? 'text-amber-600'
-                                    : 'text-emerald-600',
-                              )}
-                            >
-                              {inDiscussion > 0
-                                ? t('detail_page.competition_hot')
-                                : total === 0
-                                  ? t('detail_page.competition_open')
-                                  : total <= 2
-                                    ? t('detail_page.competition_low')
-                                    : t('detail_page.competition_active')}
-                            </span>
-                          </div>
-                          <div className="flex gap-3 text-[11px] text-muted-foreground/60 font-semibold">
-                            {total > 0 && (
-                              <span>
-                                {t('detail_page.seller_count', {
-                                  count: total,
-                                })}
-                              </span>
-                            )}
-                            {inDiscussion > 0 && (
-                              <span className="text-[#0369A1]">
-                                {t('detail_page.in_discussion_count', {
-                                  count: inDiscussion,
-                                })}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
-                          {total === 0
-                            ? t('detail_page.competition_no_offers')
-                            : inDiscussion > 0
-                              ? t('detail_page.competition_in_discussion')
-                              : total === 1
-                                ? t('detail_page.competition_waiting', {
-                                    count: 1,
-                                  })
-                                : t('detail_page.competition_waiting_plural', {
-                                    count: total,
-                                  })}
-                        </p>
-                      </>
+                      (() => {
+                        const compColor =
+                          inDiscussion > 0
+                            ? 'bg-[#0369A1]'
+                            : total > 2
+                              ? 'bg-amber-500'
+                              : total === 0
+                                ? 'bg-muted-foreground/20'
+                                : 'bg-emerald-500'
+                        const compLabelColor =
+                          inDiscussion > 0
+                            ? 'text-[#0369A1]'
+                            : total > 2
+                              ? 'text-amber-600'
+                              : total === 0
+                                ? 'text-muted-foreground/50'
+                                : 'text-emerald-600'
+                        const compLabel =
+                          inDiscussion > 0
+                            ? t('detail_page.competition_hot')
+                            : total === 0
+                              ? t('detail_page.competition_open')
+                              : total <= 2
+                                ? t('detail_page.competition_low')
+                                : t('detail_page.competition_active')
+                        const gaugePct =
+                          inDiscussion > 0
+                            ? 100
+                            : total === 0
+                              ? 0
+                              : total <= 2
+                                ? 25
+                                : 60
+                        return (
+                          <>
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={cn(
+                                    'size-2 rounded-full shrink-0',
+                                    compColor,
+                                  )}
+                                />
+                                <span
+                                  className={cn(
+                                    'text-sm font-bold',
+                                    compLabelColor,
+                                  )}
+                                >
+                                  {compLabel}
+                                </span>
+                              </div>
+                              <div className="flex gap-3 text-[11px] text-muted-foreground/60 font-semibold">
+                                {total > 0 && (
+                                  <span>
+                                    {t('detail_page.seller_count', {
+                                      count: total,
+                                    })}
+                                  </span>
+                                )}
+                                {inDiscussion > 0 && (
+                                  <span className="text-[#0369A1]">
+                                    {t('detail_page.in_discussion_count', {
+                                      count: inDiscussion,
+                                    })}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Competition gauge */}
+                            <div className="relative h-1.5 bg-muted-foreground/10 rounded-full mb-3 overflow-hidden">
+                              <motion.div
+                                className={cn(
+                                  'absolute inset-y-0 left-0 rounded-full',
+                                  compColor,
+                                )}
+                                initial={{ width: 0 }}
+                                animate={{ width: `${gaugePct}%` }}
+                                transition={{
+                                  duration: 0.6,
+                                  ease: [0.16, 1, 0.3, 1],
+                                  delay: 0.15,
+                                }}
+                              />
+                            </div>
+
+                            <p className="text-[11px] text-muted-foreground/50 leading-relaxed">
+                              {total === 0
+                                ? t('detail_page.competition_no_offers')
+                                : inDiscussion > 0
+                                  ? t('detail_page.competition_in_discussion')
+                                  : total === 1
+                                    ? t('detail_page.competition_waiting', {
+                                        count: 1,
+                                      })
+                                    : t(
+                                        'detail_page.competition_waiting_plural',
+                                        { count: total },
+                                      )}
+                            </p>
+                          </>
+                        )
+                      })()
                     )}
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </main>
       )}
