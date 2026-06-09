@@ -775,7 +775,11 @@ export function MyQuotesScreen({
         quotesCount: 0,
         isPriority: false,
         category: quote.category
-          ? { id: quote.category.id, name: quote.category.name, imageUrl: null }
+          ? {
+              id: quote.category.id,
+              name: quote.category.name,
+              imageUrl: null,
+            }
           : null,
         brand: null,
       }
@@ -799,23 +803,52 @@ export function MyQuotesScreen({
     }
   }
 
-  function handleSelectQuote(quote: SellerQuote) {
-    const openRequest: OpenRequestRow = {
-      id: quote.request.id,
-      partName: quote.request.partName,
-      oemNumber: null,
-      vehicleBrand: quote.request.vehicleBrand,
-      modelYear: quote.request.modelYear,
-      imageUrls: quote.request.imageUrls ?? null,
-      notes: null,
-      createdAt: quote.createdAt,
-      quotesCount: 0,
-      isPriority: false,
-      category: quote.category
-        ? { id: quote.category.id, name: quote.category.name, imageUrl: null }
-        : null,
-      brand: null,
+  async function handleSelectQuote(quote: SellerQuote) {
+    setActionLoading(`view-${quote.id}`)
+    let openRequest: OpenRequestRow
+    try {
+      const row = await fetchRequestDetails(quote.requestId)
+      openRequest = row
+        ? buyerRowToOpenRequest(row)
+        : {
+            id: quote.request.id,
+            partName: quote.request.partName,
+            oemNumber: null,
+            vehicleBrand: quote.request.vehicleBrand,
+            modelYear: quote.request.modelYear,
+            imageUrls: quote.request.imageUrls,
+            notes: null,
+            createdAt: quote.createdAt,
+            quotesCount: 0,
+            isPriority: false,
+            category: quote.category
+              ? {
+                  id: quote.category.id,
+                  name: quote.category.name,
+                  imageUrl: null,
+                }
+              : null,
+            brand: null,
+          }
+    } catch {
+      openRequest = {
+        id: quote.request.id,
+        partName: quote.request.partName,
+        oemNumber: null,
+        vehicleBrand: quote.request.vehicleBrand,
+        modelYear: quote.request.modelYear,
+        imageUrls: quote.request.imageUrls,
+        notes: null,
+        createdAt: quote.createdAt,
+        quotesCount: 0,
+        isPriority: false,
+        category: quote.category
+          ? { id: quote.category.id, name: quote.category.name, imageUrl: null }
+          : null,
+        brand: null,
+      }
     }
+    setActionLoading(null)
     const existingQuoteData = {
       id: quote.id,
       price: quote.price,
@@ -1003,7 +1036,9 @@ export function MyQuotesScreen({
         onPress={openFilterSheet}
         style={({ pressed }) => [
           styles.fab,
-          isRTL ? { left: spacing.xl, right: undefined } : { right: spacing.xl, left: undefined },
+          isRTL
+            ? { left: spacing.xl, right: undefined }
+            : { right: spacing.xl, left: undefined },
           {
             backgroundColor: activeFilterCount() > 0 ? t.accent : t.surface,
             borderColor: activeFilterCount() > 0 ? t.accent : t.border,
@@ -1017,7 +1052,15 @@ export function MyQuotesScreen({
           color={activeFilterCount() > 0 ? t.accentFg : t.textMuted}
         />
         {activeFilterCount() > 0 && (
-          <View style={[styles.fabBadge, isRTL ? { left: -4, right: undefined } : { right: -4, left: undefined }, { backgroundColor: t.accentFg }]}>
+          <View
+            style={[
+              styles.fabBadge,
+              isRTL
+                ? { left: -4, right: undefined }
+                : { right: -4, left: undefined },
+              { backgroundColor: t.accentFg },
+            ]}
+          >
             <Text style={[styles.fabBadgeText, { color: t.accent }]}>
               {activeFilterCount()}
             </Text>

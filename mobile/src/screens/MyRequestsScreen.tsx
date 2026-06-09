@@ -274,6 +274,7 @@ function RequestCard({
   s: ReturnType<typeof makeStyles>
   translate: (k: string) => string
 }) {
+  const isRTL = useIsRTL()
   const cfg = statusConfig(t, translate)[item.status] ?? {
     label: item.status,
     color: t.textSubtle,
@@ -292,7 +293,10 @@ function RequestCard({
         {
           backgroundColor: t.surface,
           borderColor: t.border,
-          borderLeftColor: cfg.color,
+          borderLeftWidth: isRTL ? 1 : 3,
+          borderRightWidth: isRTL ? 3 : 1,
+          borderLeftColor: isRTL ? t.border : cfg.color,
+          borderRightColor: isRTL ? cfg.color : t.border,
         },
       ]}
     >
@@ -321,7 +325,13 @@ function RequestCard({
             </View>
           )}
           {item.isPriority && (
-            <View style={[s.priorityPin, { borderColor: t.bg }]}>
+            <View
+              style={[
+                s.priorityPin,
+                { borderColor: t.bg },
+                isRTL ? { left: -4 } : { right: -4 },
+              ]}
+            >
               <Ionicons name="star" size={8} color="#fff" />
             </View>
           )}
@@ -599,7 +609,6 @@ function makeStyles(t: Theme) {
       borderRadius: radius.lg,
       padding: spacing.md,
       borderWidth: 1,
-      borderLeftWidth: 3,
       ...Platform.select({
         ios: {
           shadowColor: '#000',
@@ -622,7 +631,6 @@ function makeStyles(t: Theme) {
     priorityPin: {
       position: 'absolute',
       top: -4,
-      right: -4,
       width: 18,
       height: 18,
       borderRadius: radius.pill,

@@ -119,7 +119,6 @@ export function EditProfileScreen({
   const navigation = useNavigation()
   const user = useUserStore((s) => s.user)
   const setUser = useUserStore((s) => s.setUser)
-  if (!user) return null
   const t = useTheme()
   const { t: i18n } = useTranslation()
   const isRTL = useIsRTL()
@@ -129,19 +128,19 @@ export function EditProfileScreen({
   const form = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: user.name || '',
-      phoneNumber: user.phoneNumber || '',
-      whatsappNumber: user.whatsappNumber || '',
-      wilaya: user.wilaya || '',
-      city: user.city || '',
-      address: user.address || '',
-      storeName: user.storeName || '',
-      companyAddress: user.companyAddress || '',
-      commercialRegister: user.commercialRegister || '',
+      name: user?.name || '',
+      phoneNumber: user?.phoneNumber || '',
+      whatsappNumber: user?.whatsappNumber || '',
+      wilaya: user?.wilaya || '',
+      city: user?.city || '',
+      address: user?.address || '',
+      storeName: user?.storeName || '',
+      companyAddress: user?.companyAddress || '',
+      commercialRegister: user?.commercialRegister || '',
     },
   })
 
-  const [avatarUrl, setAvatarUrl] = useState(user.image || '')
+  const [avatarUrl, setAvatarUrl] = useState(user?.image || '')
 
   const [saving, setSaving] = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -176,7 +175,7 @@ export function EditProfileScreen({
   const cfScale = useRef(new Animated.Value(0.5)).current
   const cfOpacity = useRef(new Animated.Value(0)).current
 
-  const isSeller = user.role === 'seller'
+  const isSeller = user?.role === 'seller'
 
   const filteredWilayas = useMemo(
     () =>
@@ -254,6 +253,8 @@ export function EditProfileScreen({
       cfOpacity.setValue(0)
     }
   }, [showDeactivateConfirm, showDeleteConfirm])
+
+  if (!user) return null
 
   async function handlePickAvatar() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -703,13 +704,14 @@ export function EditProfileScreen({
               onPress={() => setShowPassword(!showPassword)}
               style={({ pressed }) => [
                 styles.cardHeader,
+                { flexDirection: isRTL ? 'row-reverse' : 'row' },
                 { borderBottomColor: showPassword ? t.border : 'transparent' },
                 pressed && { opacity: 0.7 },
               ]}
             >
               <View
                 style={{
-                  flexDirection: isRTL ? 'row-reverse' : 'row',
+                  flexDirection: 'row',
                   alignItems: 'center',
                   gap: spacing.sm,
                   flex: 1,
@@ -1209,7 +1211,7 @@ function makeStyles(t: Theme, isRTL: boolean) {
     },
 
     header: {
-      flexDirection: isRTL ? 'row-reverse' : 'row',
+      flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: spacing.md,
@@ -1310,7 +1312,7 @@ function makeStyles(t: Theme, isRTL: boolean) {
       overflow: 'hidden',
     },
     cardHeader: {
-      flexDirection: isRTL ? 'row-reverse' : 'row',
+      flexDirection: 'row',
       alignItems: 'center',
       gap: spacing.sm,
       paddingHorizontal: spacing.lg,
@@ -1359,7 +1361,7 @@ function makeStyles(t: Theme, isRTL: boolean) {
       color: t.text,
     },
     fieldValueRow: {
-      flexDirection: isRTL ? 'row-reverse' : 'row',
+      flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
     },
@@ -1445,7 +1447,7 @@ function makeStyles(t: Theme, isRTL: boolean) {
       color: t.text,
     },
     searchWrap: {
-      flexDirection: isRTL ? 'row-reverse' : 'row',
+      flexDirection: 'row',
       alignItems: 'center',
       gap: spacing.sm,
       marginHorizontal: spacing.xl,
@@ -1558,7 +1560,7 @@ function makeStyles(t: Theme, isRTL: boolean) {
       color: '#fff',
     },
     overlayActions: {
-      flexDirection: isRTL ? 'row-reverse' : 'row',
+      flexDirection: 'row',
       gap: spacing.sm,
       marginTop: spacing.sm,
       width: '100%',

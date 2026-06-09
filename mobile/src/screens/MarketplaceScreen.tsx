@@ -388,7 +388,7 @@ export function MarketplaceScreen({
                     { color: filterTab === 'brand' ? '#2563EB' : t.textMuted },
                   ]}
                 >
-                  {tr('marketplace.allWilayas')}
+                  {tr('marketplace.allBrands')}
                 </Text>
               </Pressable>
             </View>

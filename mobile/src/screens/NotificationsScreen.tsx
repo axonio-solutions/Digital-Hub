@@ -10,9 +10,8 @@ import {
   SectionList,
   StatusBar,
   StyleSheet,
-  Text,
-  View,
 } from 'react-native'
+import { View, Text, useIsRTL } from 'expo-rtl'
 import { useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -74,12 +73,12 @@ function formatTime(
   const diffMs = Date.now() - d.getTime()
   const mins = Math.floor(diffMs / 60_000)
   if (mins < 1) return t('common.now')
-  if (mins < 60) return `${mins}m`
+  if (mins < 60) return t('common.minutesAgo', { count: mins })
   const h = Math.floor(mins / 60)
-  if (h < 24) return `${h}h`
+  if (h < 24) return t('common.hoursAgo', { count: h })
   const days = Math.floor(h / 24)
   if (days === 1) return t('common.yesterday')
-  if (days < 7) return `${days}d`
+  if (days < 7) return t('common.daysAgo', { count: days })
   return d.toLocaleDateString(lang, { day: 'numeric', month: 'short' })
 }
 
@@ -288,7 +287,8 @@ export function NotificationsScreen({
   const topInset =
     Platform.OS === 'ios' ? 54 : (StatusBar.currentHeight ?? 28) + 8
 
-  const s = makeStyles(t)
+  const isRTL = useIsRTL()
+  const s = makeStyles(t, isRTL)
 
   return (
     <View style={s.root}>
@@ -357,7 +357,8 @@ function PageHeader({
   t: ReturnType<typeof useTheme>
 }) {
   const { t: i18n } = useTranslation()
-  const s = makeStyles(t)
+  const isRTL = useIsRTL()
+  const s = makeStyles(t, isRTL)
   return (
     <View style={s.pageHeader}>
       <View style={s.pageHeaderTop}>
@@ -394,7 +395,7 @@ function PageHeader({
 
       <Text style={s.pageSubtitle}>
         {unreadCount > 0
-          ? `${unreadCount} ${i18n('notifications.title')}`
+          ? i18n('notifications.unread', { count: unreadCount })
           : i18n('notifications.empty')}
       </Text>
     </View>
@@ -410,7 +411,8 @@ function SectionHeader({
   title: string
   t: ReturnType<typeof useTheme>
 }) {
-  const s = makeStyles(t)
+  const isRTL = useIsRTL()
+  const s = makeStyles(t, isRTL)
   return (
     <View style={s.sectionHeader}>
       <Text style={s.sectionTitle}>{title.toUpperCase()}</Text>
@@ -433,7 +435,8 @@ const NotificationCard = React.memo(function NotificationCard({
   t: ReturnType<typeof useTheme>
 }) {
   const { t: i18n, i18n: i18nInst } = useTranslation()
-  const s = makeStyles(t)
+  const isRTL = useIsRTL()
+  const s = makeStyles(t, isRTL)
   const pressScale = useRef(new Animated.Value(1)).current
 
   const onPressIn = () =>
@@ -463,14 +466,16 @@ const NotificationCard = React.memo(function NotificationCard({
       accessibilityLabel={item.title}
     >
       <Animated.View
-        style={[
-          s.card,
-          isUnread && s.cardUnread,
-          {
-            borderLeftColor: isUnread ? cfg.color : 'transparent',
-            transform: [{ scale: pressScale }],
-          },
-        ]}
+          style={[
+            s.card,
+            isUnread && s.cardUnread,
+            isRTL
+              ? { borderRightColor: isUnread ? cfg.color : 'transparent' }
+              : { borderLeftColor: isUnread ? cfg.color : 'transparent' },
+            {
+              transform: [{ scale: pressScale }],
+            },
+          ]}
       >
         {/* Icon */}
         <View style={[s.iconBox, { backgroundColor: cfg.color + '12' }]}>
@@ -498,7 +503,7 @@ const NotificationCard = React.memo(function NotificationCard({
           {item.isPriority && (
             <View style={s.priorityPill}>
               <View style={[s.priorityDot, { backgroundColor: '#d97706' }]} />
-              <Text style={s.priorityText}>{i18n('notifications.title')}</Text>
+              <Text style={s.priorityText}>{i18n('notifications.priority')}</Text>
             </View>
           )}
         </View>
@@ -516,7 +521,8 @@ const NotificationCard = React.memo(function NotificationCard({
 
 function EmptyState({ t }: { t: ReturnType<typeof useTheme> }) {
   const { t: i18n } = useTranslation()
-  const s = makeStyles(t)
+  const isRTL = useIsRTL()
+  const s = makeStyles(t, isRTL)
   return (
     <View style={s.emptyWrap}>
       <View
@@ -532,7 +538,7 @@ function EmptyState({ t }: { t: ReturnType<typeof useTheme> }) {
         />
       </View>
       <Text style={s.emptyTitle}>{i18n('notifications.empty')}</Text>
-      <Text style={s.emptyDesc}>{i18n('notifications.empty')}</Text>
+      <Text style={s.emptyDesc}>{i18n('notifications.emptyDesc')}</Text>
     </View>
   )
 }
@@ -541,6 +547,7 @@ function EmptyState({ t }: { t: ReturnType<typeof useTheme> }) {
 
 function SkeletonCard({ t }: { t: ReturnType<typeof useTheme> }) {
   const anim = useRef(new Animated.Value(1)).current
+  const isRTL = useIsRTL()
 
   useEffect(() => {
     const loop = Animated.loop(
@@ -561,7 +568,7 @@ function SkeletonCard({ t }: { t: ReturnType<typeof useTheme> }) {
     return () => loop.stop()
   }, [anim])
 
-  const s = makeStyles(t)
+  const s = makeStyles(t, isRTL)
 
   return (
     <Animated.View style={[s.skelCard, { opacity: anim }]}>
@@ -599,7 +606,7 @@ function SkeletonList({ t }: { t: ReturnType<typeof useTheme> }) {
 
 // ── Styles factory ────────────────────────────────────────────────────────────
 
-function makeStyles(t: ReturnType<typeof useTheme>) {
+function makeStyles(t: ReturnType<typeof useTheme>, isRTL: boolean) {
   return StyleSheet.create({
     root: {
       flex: 1,
@@ -664,7 +671,7 @@ function makeStyles(t: ReturnType<typeof useTheme>) {
       fontWeight: '400',
     },
     markAllBtn: {
-      flexDirection: 'row',
+      flexDirection: isRTL ? 'row-reverse' : 'row',
       alignItems: 'center',
       gap: 5,
       paddingHorizontal: 12,
@@ -693,6 +700,7 @@ function makeStyles(t: ReturnType<typeof useTheme>) {
       fontWeight: '600',
       letterSpacing: 1.1,
       color: t.textSubtle,
+      textAlign: isRTL ? 'right' : 'left',
     },
     sectionRule: {
       flex: 1,
@@ -710,8 +718,10 @@ function makeStyles(t: ReturnType<typeof useTheme>) {
       alignItems: 'flex-start',
       borderWidth: 1,
       borderColor: t.border,
-      borderLeftWidth: 3,
+      borderLeftWidth: isRTL ? 0 : 3,
+      borderRightWidth: isRTL ? 3 : 0,
       borderLeftColor: 'transparent',
+      borderRightColor: 'transparent',
       ...Platform.select({
         ios: {
           shadowColor: '#000',

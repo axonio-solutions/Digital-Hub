@@ -11,16 +11,13 @@ import {
   Alert,
   Animated,
   Dimensions,
-  I18nManager,
   Platform,
   Pressable,
   RefreshControl,
-  ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
-  View,
 } from 'react-native'
+import { View, Text, ScrollView, useIsRTL } from 'expo-rtl'
 
 import {
   fetchActiveCreditPackagesFn,
@@ -50,6 +47,7 @@ interface CreditsScreenProps {
 export function CreditsScreen({ refreshKey }: CreditsScreenProps) {
   const t = useTheme()
   const { t: i18n } = useTranslation()
+  const isRTL = useIsRTL()
   const styles = makeStyles(t)
   const [data, setData] = useState<CreditBalance | null>(null)
   const [loading, setLoading] = useState(true)
@@ -137,6 +135,7 @@ export function CreditsScreen({ refreshKey }: CreditsScreenProps) {
             onPress={() => setShowModal(true)}
             style={({ pressed }) => [
               styles.ctaBtn,
+              { flexDirection: isRTL ? 'row-reverse' : 'row' },
               pressed && { opacity: 0.88 },
             ]}
           >
@@ -145,7 +144,7 @@ export function CreditsScreen({ refreshKey }: CreditsScreenProps) {
               {i18n('credits.requestCredits')}
             </Text>
             <Ionicons
-              name={I18nManager.isRTL ? 'chevron-back' : 'chevron-forward'}
+              name={isRTL ? 'chevron-back' : 'chevron-forward'}
               size={16}
               color="rgba(255,255,255,0.6)"
             />
@@ -919,7 +918,7 @@ function makeStyles(t: Theme) {
     },
     heroTop: {
       flexDirection: 'row',
-      alignItems: 'flex-start',
+      alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: spacing.lg,
     },

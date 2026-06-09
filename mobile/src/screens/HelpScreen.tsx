@@ -89,6 +89,7 @@ function makeCatStyles(t: Theme, isRTL: boolean) {
       flex: 1,
       fontSize: 13,
       lineHeight: 18,
+      textAlign: 'left',
     },
     check: {
       width: 18,
@@ -173,7 +174,7 @@ function makeStyles(t: Theme, isRTL: boolean) {
       marginBottom: spacing.xl,
     },
     sectionHead: {
-      flexDirection: isRTL ? 'row-reverse' : 'row',
+      flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: spacing.sm,
@@ -688,6 +689,7 @@ export function HelpScreen({ onBack }: HelpScreenProps) {
                       name="send-outline"
                       size={16}
                       color={t.primaryFg}
+                      style={isRTL ? { transform: [{ rotate: '180deg' }] } : undefined}
                     />
                   </View>
                 </>

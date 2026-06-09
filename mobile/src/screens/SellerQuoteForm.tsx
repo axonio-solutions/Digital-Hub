@@ -182,97 +182,107 @@ export const SellerQuoteForm = forwardRef<
               {translate('submitQuote.condition')}
             </Text>
             <View style={styles.conditionRow}>
-                <Pressable
-                  onPress={() => onChange('new')}
+              <Pressable
+                onPress={() => onChange('new')}
+                style={[
+                  styles.conditionCard,
+                  {
+                    backgroundColor: value === 'new' ? t.accent + '12' : t.bg,
+                    borderColor: value === 'new' ? t.accent : t.border,
+                  },
+                ]}
+              >
+                {value === 'new' && (
+                  <View
+                    style={[
+                      styles.condCheckWrap,
+                      { backgroundColor: t.accent },
+                    ]}
+                  >
+                    <Ionicons name="checkmark" size={11} color={t.accentFg} />
+                  </View>
+                )}
+                <View
                   style={[
-                    styles.conditionCard,
+                    styles.conditionIconBox,
                     {
-                      backgroundColor: value === 'new' ? t.accent + '12' : t.bg,
-                      borderColor: value === 'new' ? t.accent : t.border,
+                      backgroundColor:
+                        value === 'new' ? t.accent + '18' : t.bgMuted,
+                      borderColor: value === 'new' ? t.accent + '30' : t.border,
                     },
                   ]}
                 >
-                  {value === 'new' && (
-                    <View style={[styles.condCheckWrap, { backgroundColor: t.accent }]}>
-                      <Ionicons name="checkmark" size={11} color={t.accentFg} />
-                    </View>
-                  )}
-                  <View
+                  <Ionicons
+                    name="cube-outline"
+                    size={18}
+                    color={value === 'new' ? t.accent : t.textMuted}
+                  />
+                </View>
+                <View>
+                  <Text
                     style={[
-                      styles.conditionIconBox,
-                      {
-                        backgroundColor:
-                          value === 'new' ? t.accent + '18' : t.bgMuted,
-                        borderColor: value === 'new' ? t.accent + '30' : t.border,
-                      },
+                      styles.conditionLabel,
+                      { color: value === 'new' ? t.accent : t.text },
                     ]}
                   >
-                    <Ionicons
-                      name="cube-outline"
-                      size={18}
-                      color={value === 'new' ? t.accent : t.textMuted}
-                    />
+                    {translate('submitQuote.conditionNew')}
+                  </Text>
+                  <Text style={styles.conditionDesc}>
+                    {translate('submitQuote.conditionNewDesc')}
+                  </Text>
+                </View>
+              </Pressable>
+              <Pressable
+                onPress={() => onChange('used')}
+                style={[
+                  styles.conditionCard,
+                  {
+                    backgroundColor: value === 'used' ? t.accent + '12' : t.bg,
+                    borderColor: value === 'used' ? t.accent : t.border,
+                  },
+                ]}
+              >
+                {value === 'used' && (
+                  <View
+                    style={[
+                      styles.condCheckWrap,
+                      { backgroundColor: t.accent },
+                    ]}
+                  >
+                    <Ionicons name="checkmark" size={11} color={t.accentFg} />
                   </View>
-                  <View>
-                    <Text
-                      style={[
-                        styles.conditionLabel,
-                        { color: value === 'new' ? t.accent : t.text },
-                      ]}
-                    >
-                      {translate('submitQuote.conditionNew')}
-                    </Text>
-                    <Text style={styles.conditionDesc}>
-                      {translate('submitQuote.conditionNewDesc')}
-                    </Text>
-                  </View>
-                </Pressable>
-                <Pressable
-                  onPress={() => onChange('used')}
+                )}
+                <View
                   style={[
-                    styles.conditionCard,
+                    styles.conditionIconBox,
                     {
-                      backgroundColor: value === 'used' ? t.accent + '12' : t.bg,
-                      borderColor: value === 'used' ? t.accent : t.border,
+                      backgroundColor:
+                        value === 'used' ? t.accent + '18' : t.bgMuted,
+                      borderColor:
+                        value === 'used' ? t.accent + '30' : t.border,
                     },
                   ]}
                 >
-                  {value === 'used' && (
-                    <View style={[styles.condCheckWrap, { backgroundColor: t.accent }]}>
-                      <Ionicons name="checkmark" size={11} color={t.accentFg} />
-                    </View>
-                  )}
-                  <View
+                  <Ionicons
+                    name="reload-outline"
+                    size={18}
+                    color={value === 'used' ? t.accent : t.textMuted}
+                  />
+                </View>
+                <View>
+                  <Text
                     style={[
-                      styles.conditionIconBox,
-                      {
-                        backgroundColor:
-                          value === 'used' ? t.accent + '18' : t.bgMuted,
-                        borderColor:
-                          value === 'used' ? t.accent + '30' : t.border,
-                      },
+                      styles.conditionLabel,
+                      { color: value === 'used' ? t.accent : t.text },
                     ]}
                   >
-                    <Ionicons
-                      name="reload-outline"
-                      size={18}
-                      color={value === 'used' ? t.accent : t.textMuted}
-                    />
-                  </View>
-                  <View>
-                    <Text
-                      style={[
-                        styles.conditionLabel,
-                        { color: value === 'used' ? t.accent : t.text },
-                      ]}
-                    >
-                      {translate('submitQuote.conditionUsed')}
-                    </Text>
-                    <Text style={styles.conditionDesc}>
-                      {translate('submitQuote.conditionUsedDesc')}
-                    </Text>
-                  </View>
-                </Pressable>
+                    {translate('submitQuote.conditionUsed')}
+                  </Text>
+                  <Text style={styles.conditionDesc}>
+                    {translate('submitQuote.conditionUsedDesc')}
+                  </Text>
+                </View>
+              </Pressable>
             </View>
           </View>
         )}

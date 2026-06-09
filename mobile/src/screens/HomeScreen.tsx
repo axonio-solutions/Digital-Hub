@@ -76,7 +76,6 @@ export function HomeScreen({ onSelectRequest, refreshKey }: HomeScreenProps) {
   const t = useTheme()
   const { t: tr, i18n } = useTranslation()
   const isRTL = useIsRTL()
-  if (!user) return null
   const s = makeStyles(t)
 
   const queryClient = useQueryClient()
@@ -127,6 +126,8 @@ export function HomeScreen({ onSelectRequest, refreshKey }: HomeScreenProps) {
         .slice(0, 5),
     [requests],
   )
+
+  if (!user) return null
 
   const firstName = user.name?.split(' ')[0] ?? ''
   const topInset =
@@ -370,7 +371,10 @@ function RequestCard({
         {
           backgroundColor: t.surface,
           borderColor: t.border,
-          borderLeftColor: cfg.color,
+          borderLeftWidth: isRTL ? 1 : 3,
+          borderRightWidth: isRTL ? 3 : 1,
+          borderLeftColor: isRTL ? t.border : cfg.color,
+          borderRightColor: isRTL ? cfg.color : t.border,
         },
       ]}
     >
@@ -398,11 +402,17 @@ function RequestCard({
               />
             </View>
           )}
-          {item.isPriority && (
-            <View style={[s.priorityPin, { borderColor: t.bg }]}>
-              <Ionicons name="star" size={7} color="#fff" />
-            </View>
-          )}
+            {item.isPriority && (
+              <View
+                style={[
+                  s.priorityPin,
+                  { borderColor: t.bg },
+                  isRTL ? { left: -4 } : { right: -4 },
+                ]}
+              >
+                <Ionicons name="star" size={7} color="#fff" />
+              </View>
+            )}
         </View>
 
         {/* Body */}
@@ -470,15 +480,7 @@ function RequestCard({
               </View>
             )}
 
-            <Text
-              style={[
-                s.cardDate,
-                { color: t.textSubtle },
-                isRTL
-                  ? { marginLeft: 0, marginRight: 'auto' }
-                  : { marginLeft: 'auto' },
-              ]}
-            >
+            <Text style={[s.cardDate, { color: t.textSubtle }]}>
               {formatDate(item.createdAt, tr, i18nInst.language)}
             </Text>
           </View>
@@ -644,7 +646,6 @@ function makeStyles(t: Theme) {
       borderRadius: radius.lg,
       padding: spacing.lg,
       borderWidth: 1,
-      borderLeftWidth: 3,
       ...Platform.select({
         ios: {
           shadowColor: '#000',
@@ -667,7 +668,6 @@ function makeStyles(t: Theme) {
     priorityPin: {
       position: 'absolute',
       top: -4,
-      right: -4,
       width: 17,
       height: 17,
       borderRadius: radius.pill,

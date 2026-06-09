@@ -362,7 +362,7 @@ export function RequestDetailsScreen({
   ): RequestAction[] {
     if (reqStatus === 'open') {
       return accepted
-        ? ['edit', 'fulfill', 'close']
+        ? ['fulfill', 'close']
         : ['edit', 'close', 'delete']
     }
     return REQUEST_ACTIONS[reqStatus] ?? []
@@ -397,49 +397,19 @@ export function RequestDetailsScreen({
 
       {/* ── Header bar ───────────────────────────────────────── */}
       <View style={[s.headerBar, { paddingTop: topInset }]}>
-        {isRTL ? (
-          <>
-            <Text style={s.headerTitleRtl} numberOfLines={1}>
-              {translate('requestDetails.title')}
-            </Text>
-            <Pressable
-              onPress={() => {
-                onBack?.() ?? navigation.goBack()
-              }}
-              hitSlop={10}
-              style={({ pressed }) => [s.backBtn, pressed && { opacity: 0.6 }]}
-              accessibilityRole="button"
-              accessibilityLabel={translate('common.back')}
-            >
-              <View style={s.backIconBox}>
-                <Ionicons name="chevron-forward" size={18} color={t.accent} />
-              </View>
-              <Text style={s.backText}>{translate('common.back')}</Text>
-            </Pressable>
-          </>
-        ) : (
-          <>
-            <Pressable
-              onPress={() => {
-                onBack?.() ?? navigation.goBack()
-              }}
-              hitSlop={10}
-              style={({ pressed }) => [s.backBtn, pressed && { opacity: 0.6 }]}
-              accessibilityRole="button"
-              accessibilityLabel={translate('common.back')}
-            >
-              <View style={s.backIconBox}>
-                <Ionicons name="chevron-back" size={18} color={t.accent} />
-              </View>
-              <Text style={s.backText}>{translate('common.back')}</Text>
-            </Pressable>
-
-            <Text style={s.headerTitle} numberOfLines={1}>
-              {translate('requestDetails.title')}
-            </Text>
-            <View style={s.headerRight} />
-          </>
-        )}
+        <Pressable
+          onPress={() => {
+            onBack?.() ?? navigation.goBack()
+          }}
+          hitSlop={10}
+          style={({ pressed }) => [s.backBtn, pressed && { opacity: 0.6 }]}
+          accessibilityRole="button"
+          accessibilityLabel={translate('common.back')}
+        >
+          <View style={s.backIconBox}>
+            <Ionicons name="chevron-back" size={18} color={t.accent} />
+          </View>
+        </Pressable>
       </View>
 
       {/* ── Scroll content ───────────────────────────────────── */}
@@ -899,7 +869,16 @@ function QuoteCard({
       </View>
 
       {/* Price band */}
-      <View style={[s.priceBand, { backgroundColor: `${qCfg.color}0A` }]}>
+      <View
+        noFlip
+        style={[
+          s.priceBand,
+          {
+            backgroundColor: `${qCfg.color}0A`,
+            flexDirection: isRTL ? 'row-reverse' : 'row',
+          },
+        ]}
+      >
         <Text style={[s.priceValue, { color: qCfg.color }]}>
           {quote.price.toLocaleString('en-DZ')}
         </Text>
@@ -1022,6 +1001,7 @@ function QuoteActionBtn({
 }) {
   const t = useTheme()
   const s = makeStyles(t)
+  const isRTL = useIsRTL()
   const pressScale = useRef(new Animated.Value(1)).current
 
   const bg =
@@ -1061,6 +1041,7 @@ function QuoteActionBtn({
           {
             backgroundColor: bg,
             borderColor: border,
+            flexDirection: isRTL ? 'row-reverse' : 'row',
             transform: [{ scale: pressScale }],
           },
           loading && { opacity: 0.6 },
@@ -1094,6 +1075,7 @@ function ActionBtn({
 }) {
   const t = useTheme()
   const s = makeStyles(t)
+  const isRTL = useIsRTL()
   const pressScale = useRef(new Animated.Value(1)).current
 
   const bg =
@@ -1142,6 +1124,7 @@ function ActionBtn({
           {
             backgroundColor: bg,
             borderColor: border,
+            flexDirection: isRTL ? 'row-reverse' : 'row',
             transform: [{ scale: pressScale }],
           },
           loading && { opacity: 0.6 },
@@ -1175,6 +1158,7 @@ function ContactSellerModal({
 }) {
   const t = useTheme()
   const s = makeStyles(t)
+  const isRTL = useIsRTL()
   const storeName =
     seller?.storeName || seller?.name || translate('requestDetails.seller')
 
@@ -1239,6 +1223,7 @@ function ContactSellerModal({
             style={({ pressed }) => [
               s.sheetBtn,
               s.sheetBtnWa,
+              { flexDirection: isRTL ? 'row-reverse' : 'row' },
               pressed && { opacity: 0.88 },
             ]}
           >
@@ -1251,6 +1236,7 @@ function ContactSellerModal({
             style={({ pressed }) => [
               s.sheetBtn,
               s.sheetBtnCall,
+              { flexDirection: isRTL ? 'row-reverse' : 'row' },
               pressed && { opacity: 0.88 },
             ]}
           >
@@ -1858,6 +1844,7 @@ function makeStyles(t: Theme) {
     headerBar: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'flex-end',
       paddingBottom: spacing.md,
       paddingHorizontal: spacing.xl,
       backgroundColor: t.bg,
@@ -1878,25 +1865,6 @@ function makeStyles(t: Theme) {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    backText: { fontSize: 15, fontWeight: '600', color: t.accent },
-    headerTitle: {
-      flex: 1,
-      fontSize: 17,
-      fontWeight: '700',
-      color: t.text,
-      textAlign: 'center',
-      letterSpacing: -0.3,
-      marginEnd: 72,
-    },
-    headerTitleRtl: {
-      flex: 1,
-      fontSize: 17,
-      fontWeight: '700',
-      color: t.text,
-      textAlign: 'right',
-      letterSpacing: -0.3,
-    },
-    headerRight: { width: 72 },
 
     // ── Scroll ────────────────────────────────────────────────
     scroll: { paddingBottom: 32 },
