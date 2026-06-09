@@ -57,5 +57,11 @@
     "@types/react": "~19.1.0",
     "metro-runtime": "^0.84.4",
     "typescript": "~5.9.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "19.1.0",
+      "react-dom": "19.1.0"
+    }
   }
 }
