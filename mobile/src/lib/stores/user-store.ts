@@ -10,9 +10,11 @@ interface UserStore {
   user: SessionUser | null
   authState: AuthState
   checkingStatus: boolean
+  hasLanguage: boolean
   setUser: (user: SessionUser | null) => void
   setAuthState: (state: AuthState) => void
   setCheckingStatus: (v: boolean) => void
+  setHasLanguage: (v: boolean) => void
   logout: () => void
 }
 
@@ -22,19 +24,20 @@ export const useUserStore = create<UserStore>()(
       user: null,
       authState: 'checking',
       checkingStatus: false,
+      hasLanguage: false,
       setUser: (user) => set({ user }),
       setAuthState: (authState) => set({ authState }),
       setCheckingStatus: (checkingStatus) => set({ checkingStatus }),
+      setHasLanguage: (hasLanguage) => set({ hasLanguage }),
       logout: () => {
         clearAuthToken()
         set({ user: null, authState: 'signed-out' })
       },
     }),
     {
-      name: 'user-store',
+      name: 'user-store-v2',
       storage: createJSONStorage(() => storage),
       partialize: (state) => ({
-        user: state.user,
         checkingStatus: state.checkingStatus,
       }),
     },

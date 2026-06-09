@@ -27,6 +27,7 @@ import {
   setupNotificationResponseListener,
 } from './src/lib/push-notifications'
 import type { RootStackParamList } from './src/navigation/types'
+import { LanguageSelectScreen } from './src/screens/LanguageSelectScreen'
 import { initI18n } from './src/i18n'
 import i18next from './src/i18n'
 
@@ -123,18 +124,23 @@ function LoadingScreen({ message }: { message: string }) {
 function AppContent() {
   const user = useUserStore((s) => s.user)
   const authState = useUserStore((s) => s.authState)
+  const hasLanguage = useUserStore((s) => s.hasLanguage)
   const checkingStatus = useUserStore((s) => s.checkingStatus)
   const setAuthState = useUserStore((s) => s.setAuthState)
   const setUser = useUserStore((s) => s.setUser)
   const setCheckingStatus = useUserStore((s) => s.setCheckingStatus)
+  const setHasLanguage = useUserStore((s) => s.setHasLanguage)
   const logout = useUserStore((s) => s.logout)
   const [i18nReady, setI18nReady] = useState(false)
+  const [showLangSelect, setShowLangSelect] = useState(false)
   const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr')
 
   useEffect(() => {
     initI18n()
-      .then(() => {
+      .then((saved) => {
         setI18nReady(true)
+        if (saved) setHasLanguage(true)
+        setShowLangSelect(saved === null)
         setDirection(directionForLocale(i18next.language))
       })
       .catch(() => {
@@ -269,7 +275,6 @@ function AppContent() {
   }, [user?.role])
 
   const lastResetRef = useRef<string | null>(null)
-  const navInitializedRef = useRef(false)
 
   useEffect(() => {
     if (!navigationRef.isReady()) return
@@ -284,12 +289,7 @@ function AppContent() {
     let params: Record<string, any> | undefined
 
     if (authState === 'signed-out') {
-      if (!navInitializedRef.current) {
-        navInitializedRef.current = true
-        lastResetRef.current = 'Splash'
-        return
-      }
-      target = 'Splash'
+      target = hasLanguage ? 'Login' : 'Splash'
     } else if (accountStatus === 'new' || !accountStatus) {
       target = 'Onboarding'
       params = {
@@ -316,12 +316,17 @@ function AppContent() {
       lastResetRef.current = target
       navigationRef.reset({ index: 0, routes: [{ name: target, params }] })
     }
-  }, [authState, user?.account_status, user?.role])
+  }, [authState, user?.account_status, user?.role, hasLanguage])
 
   return (
     <DirectionProvider dir={direction}>
       {!i18nReady ? (
         <LoadingScreen message="Loading…" />
+      ) : showLangSelect ? (
+        <LanguageSelectScreen onComplete={() => {
+          setAuthState('signed-out')
+          setShowLangSelect(false)
+        }} />
       ) : authState === 'checking' || authState === 'session-loading' ? (
         <LoadingScreen
           message={

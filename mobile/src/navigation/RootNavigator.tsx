@@ -39,6 +39,7 @@ function WaitlistWrapper() {
 export function RootNavigator() {
   const authState = useUserStore((s) => s.authState)
   const user = useUserStore((s) => s.user)
+  const hasLanguage = useUserStore((s) => s.hasLanguage)
 
   let initialRoute: keyof RootStackParamList = 'Splash'
   if (authState === 'ready') {
@@ -53,7 +54,7 @@ export function RootNavigator() {
       initialRoute = 'SellerTabs'
     }
   } else if (authState === 'signed-out') {
-    initialRoute = 'Splash'
+    initialRoute = hasLanguage ? 'Login' : 'Splash'
   }
 
   return (
