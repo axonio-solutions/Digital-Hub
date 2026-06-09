@@ -228,6 +228,7 @@
     "searchPlaceholder": "Rechercher des demandes...",
     "allCategories": "Toutes les Catégories",
     "allWilayas": "Toutes les Wilayas",
+    "allBrands": "Toutes les Marques",
     "viewDetails": "Voir les Détails",
     "submitQuote": "Soumettre un Devis",
     "buyCredits": "Acheter des Crédits",
@@ -420,6 +421,8 @@
   },
   "quotes": {
     "title": "Mes Devis",
+    "totalCount": "{{count}} devis",
+    "activeCount": "{{count}} actif",
     "submitQuote": "Soumettre un Devis",
     "editQuote": "Modifier le Devis",
     "retractQuote": "Retirer le Devis",
@@ -619,7 +622,10 @@
     "earlier": "Plus tôt",
     "markAllRead": "Tout marquer comme lu",
     "empty": "Aucune alerte pour le moment",
-    "viewDetails": "Voir les Détails"
+    "emptyDesc": "Nous vous avertirons quand quelque chose arrive",
+    "viewDetails": "Voir les Détails",
+    "priority": "Priorité",
+    "unread": "{{count}} non lue"
   },
   "waitlist": {
     "title": "Vous êtes sur la liste d'attente !",

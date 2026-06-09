@@ -228,6 +228,7 @@
     "searchPlaceholder": "ابحث عن طلبات...",
     "allCategories": "جميع الفئات",
     "allWilayas": "جميع الولايات",
+    "allBrands": "جميع العلامات التجارية",
     "viewDetails": "عرض التفاصيل",
     "submitQuote": "تقديم عرض سعر",
     "buyCredits": "شراء رصيد",
@@ -420,6 +421,8 @@
   },
   "quotes": {
     "title": "عروض أسعاري",
+    "totalCount": "{{count}} عرض سعر",
+    "activeCount": "{{count}} نشط",
     "submitQuote": "تقديم عرض سعر",
     "editQuote": "تعديل عرض السعر",
     "retractQuote": "سحب عرض السعر",
@@ -625,7 +628,10 @@
     "earlier": "سابقًا",
     "markAllRead": "تحديد الكل كمقروء",
     "empty": "لا توجد تنبيهات بعد",
-    "viewDetails": "عرض التفاصيل"
+    "emptyDesc": "سنخطرك عند وصول شيء جديد",
+    "viewDetails": "عرض التفاصيل",
+    "priority": "أولوية",
+    "unread": "{{count}} غير مقروء"
   },
   "waitlist": {
     "title": "أنت في قائمة الانتظار!",

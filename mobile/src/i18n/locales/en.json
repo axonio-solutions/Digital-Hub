@@ -220,6 +220,7 @@
     "searchPlaceholder": "Search requests...",
     "allCategories": "All Categories",
     "allWilayas": "All Wilayas",
+    "allBrands": "All Brands",
     "viewDetails": "View Details",
     "submitQuote": "Submit Quote",
     "buyCredits": "Buy Credits",
@@ -412,6 +413,8 @@
   },
   "quotes": {
     "title": "My Quotes",
+    "totalCount": "{{count}} quotes",
+    "activeCount": "{{count}} active",
     "submitQuote": "Submit Quote",
     "editQuote": "Edit Quote",
     "retractQuote": "Retract Quote",
@@ -617,7 +620,10 @@
     "earlier": "Earlier",
     "markAllRead": "Mark all as read",
     "empty": "No alerts yet",
-    "viewDetails": "View Details"
+    "emptyDesc": "We'll notify you when something arrives",
+    "viewDetails": "View Details",
+    "priority": "Priority",
+    "unread": "{{count}} unread"
   },
   "waitlist": {
     "title": "You're on the waitlist!",
