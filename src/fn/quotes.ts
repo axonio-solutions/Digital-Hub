@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-import { and, desc, eq, gte, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, isNull, sql } from 'drizzle-orm'
 import type { User } from '@/lib/auth'
 import {
   adminMiddleware,
@@ -151,7 +151,7 @@ export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
         SUM(CASE WHEN ${quotes.status} = 'pending' THEN 1 ELSE 0 END) as pending_quotes,
         SUM(CASE WHEN ${quotes.status} = 'accepted' THEN ${quotes.price} ELSE 0 END) as total_revenue
       FROM ${quotes}
-      WHERE ${quotes.sellerId} = ${context.user.id}
+      WHERE ${quotes.sellerId} = ${context.user.id} AND ${quotes.deletedAt} IS NULL
     `)
 
     const todayIso = today.toISOString()
@@ -162,13 +162,14 @@ export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
         SUM(CASE WHEN ${quotes.status} = 'rejected' AND ${quotes.updatedAt} >= ${todayIso} THEN 1 ELSE 0 END) as today_lost,
         SUM(CASE WHEN ${quotes.status} = 'accepted' AND ${quotes.updatedAt} >= ${todayIso} THEN ${quotes.price} ELSE 0 END) as today_revenue
       FROM ${quotes}
-      WHERE ${quotes.sellerId} = ${context.user.id}
+      WHERE ${quotes.sellerId} = ${context.user.id} AND ${quotes.deletedAt} IS NULL
     `)
 
     const queryRecentSales = db.query.quotes.findMany({
       where: and(
         eq(quotes.sellerId, context.user.id as any),
         eq(quotes.status, 'accepted'),
+        isNull(quotes.deletedAt),
       ),
       with: { request: true },
       orderBy: desc(quotes.updatedAt),
@@ -180,6 +181,7 @@ export const fetchSellerStatsServerFn = createServerFn({ method: 'GET' })
         eq(quotes.sellerId, context.user.id as any),
         eq(quotes.status, 'accepted'),
         gte(quotes.updatedAt, sevenDaysAgo),
+        isNull(quotes.deletedAt),
       ),
       columns: { price: true, updatedAt: true },
     })
