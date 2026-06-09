@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { BottomTabBar } from '../components/BottomTabBar'
 import { fetchUnreadNotifications } from '../lib/api-client'
 import { scheduleLocalNotification } from '../lib/push-notifications'
+import { storage } from '../lib/storage'
 import { useUserStore } from '../lib/stores/user-store'
 import { HomeScreen } from '../screens/HomeScreen'
 import { NewRequestScreen } from '../screens/NewRequestScreen'
@@ -60,6 +61,10 @@ function BuyerRequestsStackScreen() {
         name="RequestDetails"
         component={RequestDetailsScreen}
       />
+      <RequestsStack.Screen
+        name="EditRequest"
+        component={NewRequestScreen}
+      />
     </RequestsStack.Navigator>
   )
 }
@@ -74,6 +79,10 @@ function BuyerNotificationsStackScreen() {
       <NotificationsStack.Screen
         name="RequestDetails"
         component={RequestDetailsScreen}
+      />
+      <NotificationsStack.Screen
+        name="EditRequest"
+        component={NewRequestScreen}
       />
     </NotificationsStack.Navigator>
   )
@@ -132,8 +141,23 @@ export function BuyerNavigator() {
 
   useEffect(() => {
     let cancelled = false
+    let firstRun = true
     async function poll() {
       try {
+        if (firstRun) {
+          firstRun = false
+          try {
+            const raw = await storage.getItem('seen-notif-ids')
+            if (raw) {
+              const ids: string[] = JSON.parse(raw)
+              for (const id of ids) {
+                prevNotifIdsRef.current.add(id)
+              }
+            }
+          } catch {
+            // ignore parse errors
+          }
+        }
         const data = await fetchUnreadNotifications()
         if (cancelled) return
         const items = Array.isArray(data) ? data : []
@@ -147,6 +171,10 @@ export function BuyerNavigator() {
           })
         }
         prevNotifIdsRef.current = new Set(items.map((n: any) => n.id))
+        await storage.setItem(
+          'seen-notif-ids',
+          JSON.stringify([...prevNotifIdsRef.current]),
+        )
       } catch {
         // silently fail
       }

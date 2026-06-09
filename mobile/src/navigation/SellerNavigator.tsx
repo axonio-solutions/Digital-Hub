@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { BottomTabBar } from '../components/BottomTabBar'
 import { fetchUnreadNotifications } from '../lib/api-client'
 import { scheduleLocalNotification } from '../lib/push-notifications'
+import { storage } from '../lib/storage'
 import { useUserStore } from '../lib/stores/user-store'
 import { NotificationsScreen } from '../screens/NotificationsScreen'
 import { ProfileScreen } from '../screens/ProfileScreen'
@@ -136,8 +137,23 @@ export function SellerNavigator() {
 
   useEffect(() => {
     let cancelled = false
+    let firstRun = true
     async function poll() {
       try {
+        if (firstRun) {
+          firstRun = false
+          try {
+            const raw = await storage.getItem('seen-notif-ids')
+            if (raw) {
+              const ids: string[] = JSON.parse(raw)
+              for (const id of ids) {
+                prevNotifIdsRef.current.add(id)
+              }
+            }
+          } catch {
+            // ignore parse errors
+          }
+        }
         const data = await fetchUnreadNotifications()
         if (cancelled) return
         const items = Array.isArray(data) ? data : []
@@ -151,6 +167,10 @@ export function SellerNavigator() {
           })
         }
         prevNotifIdsRef.current = new Set(items.map((n: any) => n.id))
+        await storage.setItem(
+          'seen-notif-ids',
+          JSON.stringify([...prevNotifIdsRef.current]),
+        )
       } catch {
         // silently fail
       }

@@ -47,11 +47,21 @@ export type BuyerHomeStackParamList = {
 export type BuyerRequestsStackParamList = {
   MyRequests: undefined
   RequestDetails: { requestId: string }
+  EditRequest: {
+    buyerId: string
+    requestId: string
+    prefetchedRequest: BuyerRequestRow
+  }
 }
 
 export type BuyerNotificationsStackParamList = {
   Notifications: { userRole?: string }
   RequestDetails: { requestId: string }
+  EditRequest: {
+    buyerId: string
+    requestId: string
+    prefetchedRequest: BuyerRequestRow
+  }
 }
 
 export type BuyerProfileStackParamList = {
