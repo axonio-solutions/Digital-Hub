@@ -517,7 +517,12 @@ export function LoginScreen() {
             />
 
             {submitting ? (
-              <ActivityIndicator color={t.primaryFg} />
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <ActivityIndicator color={t.primaryFg} />
+                <Text style={styles.ctaText}>
+                  {tI18n('auth.signingIn')}
+                </Text>
+              </View>
             ) : (
               <>
                 <Text style={styles.ctaText}>
@@ -534,6 +539,7 @@ export function LoginScreen() {
                     }
                     size={17}
                     color={t.primaryFg}
+                    style={isRTL && mode === 'sign-in' ? { transform: [{ rotate: '180deg' }] } : undefined}
                   />
                 </View>
               </>

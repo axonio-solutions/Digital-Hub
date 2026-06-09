@@ -8,12 +8,15 @@ import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useTranslation } from 'react-i18next'
 
+import { useQuery } from '@tanstack/react-query'
 import { AnimatedPressable } from '../components/AnimatedPressable'
 import { radius, spacing, typography, type Theme } from '../theme/tokens'
 import { useTheme } from '../theme/use-theme'
 import { useUserStore } from '../lib/stores/user-store'
+import { creditBalanceQueryOptions } from '../features/seller/queries/dashboard'
 import type { BuyerProfileStackParamList } from '../navigation/types'
 import { changeLanguage } from '../i18n'
+
 
 interface ProfileKpiData {
   pipelineValue: number
@@ -23,8 +26,6 @@ interface ProfileKpiData {
 
 interface ProfileScreenProps {
   kpiData?: ProfileKpiData
-  onNavigateBilling?: () => void
-  creditBalance?: number
 }
 
 const STATUS_META: Record<string, { dot: string; bg: string; label: string }> =
@@ -64,29 +65,25 @@ function formatCurrency(n: number): string {
   return n.toLocaleString()
 }
 
-export function ProfileScreen({
-  kpiData,
-  onNavigateBilling,
-  creditBalance,
-}: ProfileScreenProps) {
+export function ProfileScreen({ kpiData }: ProfileScreenProps) {
   const navigation =
     useNavigation<NativeStackNavigationProp<BuyerProfileStackParamList>>()
   const user = useUserStore((s) => s.user)
   const logout = useUserStore((s) => s.logout)
   const setUser = useUserStore((s) => s.setUser)
-  if (!user) return null
   const t = useTheme()
   const { t: i18n } = useTranslation()
   const isRTL = useIsRTL()
   const styles = makeStyles(t)
   const sheetStyles = makeSheetStyles(t)
   const insets = useSafeAreaInsets()
+  const { data: creditsData } = useQuery(creditBalanceQueryOptions)
+  const creditBalance = creditsData?.balance ?? 0
   const [showLogOutSheet, setShowLogOutSheet] = useState(false)
   const [showLangSheet, setShowLangSheet] = useState(false)
   const [imgError, setImgError] = useState(false)
   const chevron = isRTL ? 'chevron-back' : 'chevron-forward'
-
-  // Log-out sheet animation
+  // Animation refs — must be declared before early return
   const sheetY = useRef(new Animated.Value(320)).current
   const backdropOpacity = useRef(new Animated.Value(0)).current
   const openLogOutSheet = useCallback(() => {
@@ -130,7 +127,6 @@ export function ProfileScreen({
     [sheetY, backdropOpacity, logout],
   )
 
-  const statusMeta = getStatusMeta(user?.account_status, i18n)
   const hasStats = !!kpiData
   const cardCount = hasStats ? 4 : 3
 
@@ -170,11 +166,14 @@ export function ProfileScreen({
     }).start()
   }, [])
 
+  const prevAvatarUrlRef = useRef<string | null>(null)
+
+  if (!user) return null
+
+  const statusMeta = getStatusMeta(user.account_status, i18n)
   const avatarUrl = user.image || null
   const initial = (user.name || user.email || 'U')[0].toUpperCase()
 
-  // Reset image error state when the URL changes (e.g. after profile update)
-  const prevAvatarUrlRef = useRef(avatarUrl)
   if (prevAvatarUrlRef.current !== avatarUrl) {
     prevAvatarUrlRef.current = avatarUrl
     if (imgError) setImgError(false)
@@ -304,25 +303,23 @@ export function ProfileScreen({
               </View>
             </View>
 
-            {creditBalance !== undefined && (
+            {user.role === 'seller' && creditBalance >= 0 && (
               <Pressable
-                onPress={onNavigateBilling}
+                onPress={() => (navigation as any).navigate('Credits')}
                 style={({ pressed }) => [
                   styles.creditBadge,
-                  {
-                    backgroundColor: C.credits + '12',
-                    borderColor: C.credits + '25',
-                  },
+                  { flexDirection: isRTL ? 'row-reverse' : 'row' },
                   pressed && { opacity: 0.7 },
                 ]}
               >
                 <Ionicons name="wallet-outline" size={14} color={C.credits} />
                 <Text style={[styles.creditText, { color: C.credits }]}>
-                  {creditBalance} {i18n('profile.creditsBalance')}
+                  {creditBalance} {i18n('credits.title')}
                 </Text>
-                <Ionicons name={chevron} size={12} color={C.credits} />
+                <Ionicons name={chevron} size={14} color={C.credits} />
               </Pressable>
             )}
+
           </View>
         </Card>
 
@@ -451,28 +448,29 @@ export function ProfileScreen({
               </Text>
             </Pressable>
 
-            {!!onNavigateBilling && (
+            {user.role === 'seller' && (
               <>
-                <Pressable
-                  onPress={onNavigateBilling}
-                  style={({ pressed }) => [
-                    styles.menuRow,
-                    pressed && { opacity: 0.7 },
-                  ]}
-                >
-                  <View style={styles.menuIcon}>
-                    <Ionicons
-                      name="wallet-outline"
-                      size={16}
-                      color={t.textMuted}
-                    />
-                  </View>
-                  <Text style={styles.menuLabel}>
-                    {i18n('profile.billing')}
-                  </Text>
-                  <Ionicons name={chevron} size={16} color={t.textSubtle} />
-                </Pressable>
-                <View style={styles.menuDivider} />
+            <Pressable
+              onPress={() => (navigation as any).navigate('Credits')}
+              style={({ pressed }) => [
+                styles.menuRow,
+                { flexDirection: isRTL ? 'row-reverse' : 'row' },
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <View style={styles.menuIcon}>
+                <Ionicons
+                  name="wallet-outline"
+                  size={16}
+                  color={t.textMuted}
+                />
+              </View>
+              <Text style={styles.menuLabel}>
+                {i18n('profile.billing')}
+              </Text>
+              <Ionicons name={chevron} size={16} color={t.textSubtle} />
+            </Pressable>
+            <View style={styles.menuDivider} />
               </>
             )}
 
@@ -480,6 +478,7 @@ export function ProfileScreen({
               onPress={() => navigation.navigate('Help')}
               style={({ pressed }) => [
                 styles.menuRow,
+                { flexDirection: isRTL ? 'row-reverse' : 'row' },
                 pressed && { opacity: 0.7 },
               ]}
             >
@@ -500,6 +499,7 @@ export function ProfileScreen({
               onPress={() => setShowLangSheet(true)}
               style={({ pressed }) => [
                 styles.menuRow,
+                { flexDirection: isRTL ? 'row-reverse' : 'row' },
                 pressed && { opacity: 0.7 },
               ]}
             >
@@ -522,13 +522,14 @@ export function ProfileScreen({
               onPress={handleLogOut}
               style={({ pressed }) => [
                 styles.menuRow,
+                { flexDirection: isRTL ? 'row-reverse' : 'row' },
                 pressed && { opacity: 0.7 },
               ]}
             >
               <View
                 style={[styles.menuIcon, { backgroundColor: C.red + '10' }]}
               >
-                <Ionicons name="log-out-outline" size={16} color={C.red} />
+                <Ionicons name="log-out-outline" size={16} color={C.red} style={isRTL ? { transform: [{ rotate: '180deg' }] } : undefined} />
               </View>
               <Text style={[styles.menuLabel, { color: C.red }]}>
                 {i18n('profile.logOut')}
@@ -639,7 +640,7 @@ export function ProfileScreen({
                   { backgroundColor: C.red + '12' },
                 ]}
               >
-                <Ionicons name="log-out-outline" size={30} color={C.red} />
+                <Ionicons name="log-out-outline" size={30} color={C.red} style={isRTL ? { transform: [{ rotate: '180deg' }] } : undefined} />
               </View>
             </View>
 
@@ -670,7 +671,7 @@ export function ProfileScreen({
                 style={[sheetStyles.btnConfirm, { backgroundColor: C.red }]}
               >
                 <View style={sheetStyles.ctaHighlight} />
-                <Ionicons name="log-out-outline" size={17} color="#fff" />
+                <Ionicons name="log-out-outline" size={17} color="#fff" style={isRTL ? { transform: [{ rotate: '180deg' }] } : undefined} />
                 <Text style={sheetStyles.btnConfirmText}>
                   {i18n('profile.logOut')}
                 </Text>

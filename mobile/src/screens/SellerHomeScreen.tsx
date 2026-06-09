@@ -75,7 +75,6 @@ export function SellerHomeScreen({
   const t = useTheme()
   const { t: tr, i18n } = useTranslation()
   const isRTL = useIsRTL()
-  if (!user) return null
   const styles = makeStyles(t)
   const queryClient = useQueryClient()
   const { data, isLoading, refetch, isRefetching } = useQuery(
@@ -92,6 +91,8 @@ export function SellerHomeScreen({
       queryClient.invalidateQueries({ queryKey: ['credit-balance'] })
     }
   }, [refreshKey, queryClient])
+
+  if (!user) return null
 
   const handleNavigateBilling =
     onNavigateBilling ?? (() => navigation.navigate('Credits'))
@@ -155,9 +156,7 @@ export function SellerHomeScreen({
           />
 
           {/* ── Weekly Revenue Chart ── */}
-          {data.chartQuotes?.length > 0 && (
-            <ChartSection chartQuotes={data.chartQuotes} t={t} />
-          )}
+          <ChartSection chartQuotes={data.chartQuotes ?? []} t={t} />
         </>
       ) : (
         <EmptyState
@@ -520,6 +519,7 @@ function ChartSection({
   )
   const maxVal = Math.max(...bars.map((b) => b.value), 1)
   const totalWeek = bars.reduce((s, b) => s + b.value, 0)
+  const hasData = chartQuotes.length > 0
   const styles = makeStyles(t)
 
   return (
@@ -536,33 +536,39 @@ function ChartSection({
           </View>
           <Text style={styles.chartTitle}>{tr('home.thisWeek')}</Text>
         </View>
-        <Text style={styles.chartTotal}>{totalWeek.toLocaleString()} DA</Text>
+        {hasData && (
+          <Text style={styles.chartTotal}>{totalWeek.toLocaleString()} DA</Text>
+        )}
       </View>
 
-      <View dir="ltr" style={styles.chartBarsRow}>
-        {bars.map((bar, i) => {
-          const h = Math.max((bar.value / maxVal) * 90, 4)
-          return (
-            <View key={i} style={styles.chartCol}>
-              <Text style={styles.chartBarValue}>
-                {bar.value > 0 ? (bar.value / 1000).toFixed(0) + 'k' : ''}
-              </Text>
-              <View
-                style={[
-                  styles.chartBar,
-                  {
-                    height: h,
-                    backgroundColor: bar.value > 0 ? C.revenue : t.border,
-                    opacity:
-                      bar.value > 0 ? 0.6 + (bar.value / maxVal) * 0.4 : 0.3,
-                  },
-                ]}
-              />
-              <Text style={styles.chartBarLabel}>{bar.day.slice(0, 3)}</Text>
-            </View>
-          )
-        })}
-      </View>
+      {hasData ? (
+        <View dir="ltr" style={styles.chartBarsRow}>
+          {bars.map((bar, i) => {
+            const h = Math.max((bar.value / maxVal) * 90, 4)
+            return (
+              <View key={i} style={styles.chartCol}>
+                <Text style={styles.chartBarValue}>
+                  {bar.value > 0 ? (bar.value / 1000).toFixed(0) + 'k' : ''}
+                </Text>
+                <View
+                  style={[
+                    styles.chartBar,
+                    {
+                      height: h,
+                      backgroundColor: bar.value > 0 ? C.revenue : t.border,
+                      opacity:
+                        bar.value > 0 ? 0.6 + (bar.value / maxVal) * 0.4 : 0.3,
+                    },
+                  ]}
+                />
+                <Text style={styles.chartBarLabel}>{bar.day.slice(0, 3)}</Text>
+              </View>
+            )
+          })}
+        </View>
+      ) : (
+        <Text style={styles.chartEmptyText}>{tr('home.noData')}</Text>
+      )}
     </View>
   )
 }
@@ -856,6 +862,13 @@ function makeStyles(t: Theme, isRTL?: boolean) {
       fontSize: 10,
       fontWeight: '600',
       color: t.textSubtle,
+    },
+    chartEmptyText: {
+      textAlign: 'center',
+      fontSize: 14,
+      fontWeight: '500',
+      color: t.textMuted,
+      paddingVertical: spacing.lg,
     },
 
     /* Today Card */
