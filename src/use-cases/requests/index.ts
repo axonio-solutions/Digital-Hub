@@ -276,6 +276,15 @@ export async function updateRequestUseCase(requestId: string, data: any) {
         error: 'Cannot edit a fulfilled or cancelled request',
       }
     }
+    const hasAcceptedQuote = request.quotes?.some(
+      (q: any) => q.status === 'accepted',
+    )
+    if (hasAcceptedQuote) {
+      return {
+        success: false,
+        error: 'Cannot edit a request with an accepted quote. Revoke the accepted quote first.',
+      }
+    }
     const { status, ...safeData } = data
     const result = await updateRequestFullQuery(requestId, safeData)
     if (!result || result.length === 0) {

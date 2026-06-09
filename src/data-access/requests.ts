@@ -24,6 +24,7 @@ export async function fetchBuyerRequestsQuery(
       category: true,
       brand: true,
       quotes: {
+        where: isNull(quotes.deletedAt),
         with: {
           seller: true,
         },
@@ -42,6 +43,7 @@ export async function fetchRequestDetailsQuery(requestId: string) {
       category: true,
       brand: true,
       quotes: {
+        where: isNull(quotes.deletedAt),
         with: {
           seller: true,
         },
@@ -157,7 +159,9 @@ export async function fetchAllRequestsQuery(limit?: number) {
     with: {
       category: true,
       brand: true,
-      quotes: true,
+      quotes: {
+        where: isNull(quotes.deletedAt),
+      },
       buyer: true,
     },
   })
@@ -206,7 +210,7 @@ export async function updateRequestStatusQuery(
 ) {
   return await db
     .update(sparePartRequests)
-    .set({ status })
+    .set({ status, updatedAt: new Date() })
     .where(eq(sparePartRequests.id, requestId))
     .returning()
 }
@@ -231,6 +235,7 @@ export async function updateRequestFullQuery(requestId: string, data: any) {
       modelYear: data.modelYear,
       notes: data.notes,
       imageUrls: data.imageUrls || [],
+      updatedAt: new Date(),
     })
     .where(eq(sparePartRequests.id, requestId))
     .returning()
