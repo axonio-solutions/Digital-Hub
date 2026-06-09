@@ -288,20 +288,6 @@ export function NewRequestScreen({
             },
           ]}
         >
-          <Pressable
-            onPress={goBack}
-            style={({ pressed }) => [
-              styles.backBtn,
-              pressed && { opacity: 0.7 },
-            ]}
-          >
-            <Ionicons
-              name={isRTL ? 'arrow-forward' : 'arrow-back'}
-              size={22}
-              color={t.text}
-            />
-          </Pressable>
-
           <View style={styles.headerCenter}>
             <Text
               style={[styles.stepLabel, { color: t.textMuted }]}

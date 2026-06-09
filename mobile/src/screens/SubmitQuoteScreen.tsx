@@ -152,6 +152,201 @@ function QuoteRow({
       ? t.textSubtle
       : C.pending
 
+  const pricePart = (
+    <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 4 }}>
+      <Text style={[styles.ownPrice, { color: t.text }]}>
+        {quote.price.toLocaleString()}
+      </Text>
+      <Text style={[styles.priceCurrency, { color: t.textMuted }]}>
+        {translate('submitQuote.da')}
+      </Text>
+    </View>
+  )
+
+  const condPart = (
+    <View style={[styles.condChip, { backgroundColor: t.accent + '10' }]}>
+      <Text style={[styles.condChipText, { color: t.accent }]}>
+        {quote.condition === 'new'
+          ? translate('submitQuote.conditionNew')
+          : translate('submitQuote.conditionUsed')}
+      </Text>
+    </View>
+  )
+
+  const priceContent = isOwn ? (
+    <View>
+      <View
+        noFlip
+        style={[
+          styles.ownPriceRow,
+          { backgroundColor: t.bgMuted, borderColor: t.border },
+        ]}
+      >
+        {isRTL ? condPart : pricePart}
+        {isRTL ? pricePart : condPart}
+        {quote.warranty && (
+          <View style={[styles.warrantyChip, { flexDirection: 'row' }]}>
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={11}
+              color={C.won}
+            />
+            <Text style={[styles.warrantyText, { color: t.textMuted }]}>
+              {quote.warranty}
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {/* Edit / Withdraw */}
+      <View style={[styles.ownActions, { flexDirection: 'row' }]}>
+        <Pressable
+          onPress={onEdit}
+          disabled={isLocked}
+          style={({ pressed }) => [
+            styles.editBtn,
+            { backgroundColor: isLocked ? t.bgMuted : t.accent },
+            pressed && !isLocked && { opacity: 0.85 },
+          ]}
+        >
+          <Ionicons
+            name="pencil-outline"
+            size={13}
+            color={isLocked ? t.textMuted : t.accentFg}
+          />
+          <Text
+            style={[
+              styles.editBtnText,
+              { color: isLocked ? t.textMuted : t.accentFg },
+            ]}
+          >
+            {translate('submitQuote.edit')}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={onWithdraw}
+          disabled={isLocked}
+          style={({ pressed }) => [
+            styles.withdrawBtn,
+            { borderColor: isLocked ? t.border : t.border },
+            pressed && !isLocked && { opacity: 0.7 },
+          ]}
+        >
+          <Ionicons
+            name="close-outline"
+            size={13}
+            color={isLocked ? t.textSubtle + '50' : t.textMuted}
+          />
+          <Text
+            style={[
+              styles.withdrawBtnText,
+              { color: isLocked ? t.textSubtle + '50' : t.textMuted },
+            ]}
+          >
+            {translate('submitQuote.withdraw')}
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* Locked callout */}
+      {isLocked && (
+        <View
+          style={[
+            styles.lockedCallout,
+            {
+              backgroundColor: C.pending + '10',
+              borderColor: C.pending + '20',
+            },
+          ]}
+        >
+          <Ionicons
+            name="chatbubble-ellipses-outline"
+            size={12}
+            color={C.pending}
+          />
+          <Text style={[styles.lockedCalloutText, { color: C.pending }]}>
+            {quote.status === 'accepted'
+              ? translate('submitQuote.lockedInDiscussion')
+              : translate('submitQuote.lockedCannotEdit')}
+          </Text>
+        </View>
+      )}
+    </View>
+  ) : (
+    <View
+      dir="ltr"
+      style={[
+        styles.maskedRow,
+        { backgroundColor: t.bgMuted, borderColor: t.border },
+      ]}
+    >
+      <Text style={[styles.maskedPrice, { color: t.textSubtle }]}>
+        ••••
+      </Text>
+      <Text style={[styles.priceCurrency, { color: t.textSubtle + '60' }]}>
+        DA
+      </Text>
+      <Text style={[styles.maskedMeta, { color: t.textSubtle + '50' }]}>
+        · •••• · ••••
+      </Text>
+    </View>
+  )
+
+  const statusRow = (
+    <View style={[styles.quoteRowTop, { flexDirection: 'row' }]}>
+      <View
+        style={[
+          styles.rankBadge,
+          { backgroundColor: isOwn ? t.accent : rankStyle(rank).bg },
+        ]}
+      >
+        <Text
+          style={[
+            styles.rankText,
+            { color: isOwn ? t.accentFg : rankStyle(rank).text },
+          ]}
+        >
+          #{rank}
+        </Text>
+      </View>
+
+      <View style={[styles.statusChip, { backgroundColor: statusBg }]}>
+        <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
+        <Text style={[styles.statusChipText, { color: statusTextColor }]}>
+          {quoteStatusLabel(quote.status, translate)}
+        </Text>
+      </View>
+
+      {isOwn && (
+        <View
+          style={[
+            styles.ownBadge,
+            {
+              backgroundColor: t.accent + '12',
+              borderColor: t.accent + '25',
+            },
+          ]}
+        >
+          <Text style={[styles.ownBadgeText, { color: t.accent }]}>
+            {translate('submitQuote.myOffer')}
+          </Text>
+        </View>
+      )}
+
+      <Text
+        style={[
+          styles.quoteTime,
+          {
+            color: t.textSubtle,
+            marginLeft: 'auto',
+          },
+        ]}
+      >
+        {timeAgo(quote.createdAt)}
+      </Text>
+    </View>
+  )
+
   return (
     <View
       style={[
@@ -164,206 +359,16 @@ function QuoteRow({
         },
       ]}
     >
-      {/* Rank + status */}
-      <View
-        style={[
-          styles.quoteRowTop,
-          { flexDirection: 'row' },
-        ]}
-      >
-        <View
-          style={[
-            styles.rankBadge,
-            { backgroundColor: isOwn ? t.accent : rankStyle(rank).bg },
-          ]}
-        >
-          <Text
-            style={[
-              styles.rankText,
-              { color: isOwn ? t.accentFg : rankStyle(rank).text },
-            ]}
-          >
-            #{rank}
-          </Text>
-        </View>
-
-        <View style={[styles.statusChip, { backgroundColor: statusBg }]}>
-          <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
-          <Text style={[styles.statusChipText, { color: statusTextColor }]}>
-            {quoteStatusLabel(quote.status, translate)}
-          </Text>
-        </View>
-
-        {isOwn && (
-          <View
-            style={[
-              styles.ownBadge,
-              {
-                backgroundColor: t.accent + '12',
-                borderColor: t.accent + '25',
-              },
-            ]}
-          >
-            <Text style={[styles.ownBadgeText, { color: t.accent }]}>
-              {translate('submitQuote.myOffer')}
-            </Text>
-          </View>
-        )}
-
-        <Text
-          style={[
-            styles.quoteTime,
-            {
-              color: t.textSubtle,
-              marginLeft: 'auto',
-            },
-          ]}
-        >
-          {timeAgo(quote.createdAt)}
-        </Text>
-      </View>
-
-      {/* Price / masked */}
-      {isOwn ? (
-        <View>
-          <View
-            dir="ltr"
-            style={[
-              styles.ownPriceRow,
-              { backgroundColor: t.bgMuted, borderColor: t.border },
-            ]}
-          >
-            <Text style={[styles.ownPrice, { color: t.text }]}>
-              {quote.price.toLocaleString()}
-            </Text>
-            <Text style={[styles.priceCurrency, { color: t.textMuted }]}>
-              DA
-            </Text>
-            <View
-              style={[styles.condChip, { backgroundColor: t.accent + '10' }]}
-            >
-              <Text style={[styles.condChipText, { color: t.accent }]}>
-                {quote.condition === 'new'
-                  ? translate('submitQuote.conditionNew')
-                  : translate('submitQuote.conditionUsed')}
-              </Text>
-            </View>
-            {quote.warranty && (
-              <View
-                style={[
-                  styles.warrantyChip,
-                  { flexDirection: 'row' },
-                ]}
-              >
-                <Ionicons
-                  name="shield-checkmark-outline"
-                  size={11}
-                  color={C.won}
-                />
-                <Text style={[styles.warrantyText, { color: t.textMuted }]}>
-                  {quote.warranty}
-                </Text>
-              </View>
-            )}
-          </View>
-
-          {/* Edit / Withdraw */}
-          <View
-            style={[
-              styles.ownActions,
-              { flexDirection: 'row' },
-            ]}
-          >
-            <Pressable
-              onPress={onEdit}
-              disabled={isLocked}
-              style={({ pressed }) => [
-                styles.editBtn,
-                { backgroundColor: isLocked ? t.bgMuted : t.accent },
-                pressed && !isLocked && { opacity: 0.85 },
-              ]}
-            >
-              <Ionicons
-                name="pencil-outline"
-                size={13}
-                color={isLocked ? t.textMuted : t.accentFg}
-              />
-              <Text
-                style={[
-                  styles.editBtnText,
-                  { color: isLocked ? t.textMuted : t.accentFg },
-                ]}
-              >
-                {translate('submitQuote.edit')}
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={onWithdraw}
-              disabled={isLocked}
-              style={({ pressed }) => [
-                styles.withdrawBtn,
-                { borderColor: isLocked ? t.border : t.border },
-                pressed && !isLocked && { opacity: 0.7 },
-              ]}
-            >
-              <Ionicons
-                name="close-outline"
-                size={13}
-                color={isLocked ? t.textSubtle + '50' : t.textMuted}
-              />
-              <Text
-                style={[
-                  styles.withdrawBtnText,
-                  { color: isLocked ? t.textSubtle + '50' : t.textMuted },
-                ]}
-              >
-                {translate('submitQuote.withdraw')}
-              </Text>
-            </Pressable>
-          </View>
-
-          {/* Locked callout */}
-          {isLocked && (
-            <View
-              style={[
-                styles.lockedCallout,
-                {
-                  backgroundColor: C.pending + '10',
-                  borderColor: C.pending + '20',
-                },
-              ]}
-            >
-              <Ionicons
-                name="chatbubble-ellipses-outline"
-                size={12}
-                color={C.pending}
-              />
-              <Text style={[styles.lockedCalloutText, { color: C.pending }]}>
-                {quote.status === 'accepted'
-                  ? translate('submitQuote.lockedInDiscussion')
-                  : translate('submitQuote.lockedCannotEdit')}
-              </Text>
-            </View>
-          )}
-        </View>
+      {isRTL ? (
+        <>
+          {priceContent}
+          {statusRow}
+        </>
       ) : (
-        <View
-          dir="ltr"
-          style={[
-            styles.maskedRow,
-            { backgroundColor: t.bgMuted, borderColor: t.border },
-          ]}
-        >
-          <Text style={[styles.maskedPrice, { color: t.textSubtle }]}>
-            ••••
-          </Text>
-          <Text style={[styles.priceCurrency, { color: t.textSubtle + '60' }]}>
-            DA
-          </Text>
-          <Text style={[styles.maskedMeta, { color: t.textSubtle + '50' }]}>
-            · •••• · ••••
-          </Text>
-        </View>
+        <>
+          {statusRow}
+          {priceContent}
+        </>
       )}
     </View>
   )
@@ -425,13 +430,20 @@ export function SubmitQuoteScreen() {
 
   function syncSlider(tab: Tab) {
     const renderIdx = orderedTabs.indexOf(tab)
-    tabSlide.setValue(segWidth.current > 0 ? (renderIdx * segWidth.current) / orderedTabs.length : 0)
+    tabSlide.setValue(
+      segWidth.current > 0
+        ? (renderIdx * segWidth.current) / orderedTabs.length
+        : 0,
+    )
   }
 
   function switchTab(tab: Tab, renderIdx: number) {
     setActiveTab(tab)
     Animated.spring(tabSlide, {
-      toValue: segWidth.current > 0 ? (renderIdx * segWidth.current) / orderedTabs.length : 0,
+      toValue:
+        segWidth.current > 0
+          ? (renderIdx * segWidth.current) / orderedTabs.length
+          : 0,
       friction: 8,
       tension: 60,
       useNativeDriver: false,
@@ -445,9 +457,17 @@ export function SubmitQuoteScreen() {
   // ── Quote actions ──
 
   async function invalidateParentQueries() {
-    await queryClient.invalidateQueries({ queryKey: ['anonymous-quotes', request.id] })
-    await queryClient.refetchQueries({ queryKey: ['open-requests'], type: 'all' })
-    await queryClient.refetchQueries({ queryKey: ['seller-quotes'], type: 'all' })
+    await queryClient.invalidateQueries({
+      queryKey: ['anonymous-quotes', request.id],
+    })
+    await queryClient.refetchQueries({
+      queryKey: ['open-requests'],
+      type: 'all',
+    })
+    await queryClient.refetchQueries({
+      queryKey: ['seller-quotes'],
+      type: 'all',
+    })
   }
 
   async function handleSubmitSuccess() {
@@ -530,7 +550,10 @@ export function SubmitQuoteScreen() {
           ]}
         >
           <View
-            style={[styles.contextIconBox, { backgroundColor: t.accent + '12' }]}
+            style={[
+              styles.contextIconBox,
+              { backgroundColor: t.accent + '12' },
+            ]}
           >
             <Ionicons name="cube-outline" size={18} color={t.accent} />
           </View>
@@ -548,7 +571,9 @@ export function SubmitQuoteScreen() {
               </Text>
               {request.oemNumber && (
                 <>
-                  <Text style={[styles.contextMetaDot, { color: t.textSubtle }]}>
+                  <Text
+                    style={[styles.contextMetaDot, { color: t.textSubtle }]}
+                  >
                     ·
                   </Text>
                   <Text style={[styles.contextMeta, { color: t.textMuted }]}>
@@ -620,7 +645,9 @@ export function SubmitQuoteScreen() {
     {
       icon: 'car-sport-outline' as const,
       label: translate('submitQuote.vehicle'),
-      value: [request.vehicleBrand, request.modelYear].filter(Boolean).join(' · '),
+      value: [request.vehicleBrand, request.modelYear]
+        .filter(Boolean)
+        .join(' · '),
       imageUrl: request.brand?.imageUrl ?? null,
     },
     request.oemNumber
@@ -736,18 +763,38 @@ export function SubmitQuoteScreen() {
         <View style={styles.infoGrid}>
           {infoSpecs.map((spec, i) => (
             <View key={i} style={styles.infoCellWrap}>
-              <View style={[styles.infoCell, { backgroundColor: t.surface, borderColor: t.border }]}>
-                <View style={[styles.infoCellIconBox, { backgroundColor: t.accent + '12' }]}>
+              <View
+                style={[
+                  styles.infoCell,
+                  { backgroundColor: t.surface, borderColor: t.border },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.infoCellIconBox,
+                    { backgroundColor: t.accent + '12' },
+                  ]}
+                >
                   {spec.imageUrl ? (
-                    <Image source={{ uri: spec.imageUrl }} style={styles.logoIcon} contentFit="contain" />
+                    <Image
+                      source={{ uri: spec.imageUrl }}
+                      style={styles.logoIcon}
+                      contentFit="contain"
+                    />
                   ) : (
                     <Ionicons name={spec.icon} size={20} color={t.accent} />
                   )}
                 </View>
-                <Text style={[styles.infoCellLabel, { color: t.textMuted }]} numberOfLines={1}>
+                <Text
+                  style={[styles.infoCellLabel, { color: t.textMuted }]}
+                  numberOfLines={1}
+                >
                   {spec.label}
                 </Text>
-                <Text style={[styles.infoCellValue, { color: t.text }]} numberOfLines={2}>
+                <Text
+                  style={[styles.infoCellValue, { color: t.text }]}
+                  numberOfLines={2}
+                >
                   {spec.value}
                 </Text>
               </View>
@@ -758,7 +805,16 @@ export function SubmitQuoteScreen() {
 
       {/* Buyer notes — card with accent border */}
       {request.notes && (
-        <View style={[styles.notesCard, { backgroundColor: t.surface, borderColor: t.border, borderLeftColor: t.accent }]}>
+        <View
+          style={[
+            styles.notesCard,
+            {
+              backgroundColor: t.surface,
+              borderColor: t.border,
+              borderLeftColor: t.accent,
+            },
+          ]}
+        >
           <Text style={[styles.notesCardLabel, { color: t.textMuted }]}>
             {translate('submitQuote.buyerNotes')}
           </Text>
@@ -901,7 +957,10 @@ export function SubmitQuoteScreen() {
                   setEditQuote(quote)
                   switchTab('offer', orderedTabs.indexOf('offer'))
                 }}
-                onWithdraw={() => setShowWithdrawConfirm(true)}
+                onWithdraw={() => {
+                  setEditQuote(quote)
+                  setShowWithdrawConfirm(true)
+                }}
                 t={t}
                 translate={translate}
                 isRTL={isRTL}
@@ -910,7 +969,6 @@ export function SubmitQuoteScreen() {
           })}
         </View>
       )}
-
     </ScrollView>
   )
 
@@ -936,7 +994,7 @@ export function SubmitQuoteScreen() {
           hitSlop={12}
         >
           <Ionicons
-            name={isRTL ? 'arrow-forward' : 'arrow-back'}
+            name="arrow-back"
             size={21}
             color={t.text}
           />
@@ -996,59 +1054,59 @@ export function SubmitQuoteScreen() {
           const isActive = activeTab === tab
           const sliderTarget = (renderIdx * segWidth.current) / 3
           return (
-              <Pressable
-                key={tab}
-                style={styles.segBtn}
-                onPress={() => switchTab(tab, renderIdx)}
+            <Pressable
+              key={tab}
+              style={styles.segBtn}
+              onPress={() => switchTab(tab, renderIdx)}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 5,
+                }}
               >
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 5,
-                  }}
-                >
-                  {isRTL ? (
-                    <>
-                      <Text
-                        style={[
-                          styles.segBtnText,
-                          {
-                            color: isActive ? t.accent : t.textMuted,
-                            fontWeight: isActive ? '800' : '600',
-                          },
-                        ]}
-                      >
-                        {tabLabels[tab]}
-                      </Text>
-                      <Ionicons
-                        name={TAB_ICONS[tab]}
-                        size={14}
-                        color={isActive ? t.accent : t.textSubtle}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <Ionicons
-                        name={TAB_ICONS[tab]}
-                        size={14}
-                        color={isActive ? t.accent : t.textSubtle}
-                      />
-                      <Text
-                        style={[
-                          styles.segBtnText,
-                          {
-                            color: isActive ? t.accent : t.textMuted,
-                            fontWeight: isActive ? '800' : '600',
-                          },
-                        ]}
-                      >
-                        {tabLabels[tab]}
-                      </Text>
-                    </>
-                  )}
-                </View>
-              </Pressable>
+                {isRTL ? (
+                  <>
+                    <Text
+                      style={[
+                        styles.segBtnText,
+                        {
+                          color: isActive ? t.accent : t.textMuted,
+                          fontWeight: isActive ? '800' : '600',
+                        },
+                      ]}
+                    >
+                      {tabLabels[tab]}
+                    </Text>
+                    <Ionicons
+                      name={TAB_ICONS[tab]}
+                      size={14}
+                      color={isActive ? t.accent : t.textSubtle}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Ionicons
+                      name={TAB_ICONS[tab]}
+                      size={14}
+                      color={isActive ? t.accent : t.textSubtle}
+                    />
+                    <Text
+                      style={[
+                        styles.segBtnText,
+                        {
+                          color: isActive ? t.accent : t.textMuted,
+                          fontWeight: isActive ? '800' : '600',
+                        },
+                      ]}
+                    >
+                      {tabLabels[tab]}
+                    </Text>
+                  </>
+                )}
+              </View>
+            </Pressable>
           )
         })}
       </View>
@@ -1237,7 +1295,7 @@ export function SubmitQuoteScreen() {
               }}
               style={({ pressed }) => [
                 styles.overlayBtnFill,
-                { backgroundColor: C.won },
+                { backgroundColor: C.won, width: '100%' },
                 pressed && { opacity: 0.85 },
               ]}
             >
@@ -1657,6 +1715,7 @@ const styles = StyleSheet.create({
   ownPriceRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: spacing.sm,
     borderWidth: 1,
     borderRadius: 10,
@@ -1666,7 +1725,6 @@ const styles = StyleSheet.create({
   ownPrice: { fontSize: 18, fontWeight: '800', letterSpacing: -0.5 },
   priceCurrency: { fontSize: 12, fontWeight: '700' },
   condChip: {
-    marginLeft: 'auto',
     paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 6,
