@@ -623,7 +623,58 @@
     "emptyDesc": "We'll notify you when something arrives",
     "viewDetails": "View Details",
     "priority": "Priority",
-    "unread": "{{count}} unread"
+    "unread": "{{count}} unread",
+    "titles": {
+      "FIRST_QUOTE": "First Offer Received!",
+      "MILESTONE_3_QUOTES": "3 Offers Received!",
+      "NEW_QUOTE": "New Offer Received",
+      "NEW_QUOTE_batched": "New Offers on {{partName}}",
+      "ABANDONED_REQUEST": "No Offers Yet on Your Request",
+      "QUOTE_STATUS_CHANGE": {
+        "price_updated": "Offer Price Updated",
+        "rejected": "Offer Not Selected",
+        "unrejected": "Offer Back in the Running",
+        "revoked": "Offer Back in Consideration",
+        "reminder": "Action Required — Mark Request as Fulfilled",
+        "fulfilled_winner": "Deal Confirmed!",
+        "fulfilled_loser": "Request Fulfilled by Another Seller"
+      },
+      "QUOTE_WON": "You Won the Deal!",
+      "NEW_LEAD": "New Lead Available",
+      "DAILY_DIGEST": "Daily Digest",
+      "ACCOUNT_APPROVED": "Your Store is Live!",
+      "NEW_SELLER_WAITLIST": "New Seller Application",
+      "SPAM_FLAG": "Spam Report — Review Required",
+      "CREDIT_REQUEST": "New Credit Request",
+      "CREDIT_APPROVED": "Credits Added to Your Account!",
+      "CREDIT_REJECTED": "Credit Request Declined",
+      "CREDIT_REJECTED_with_reason": "Credit Request Declined",
+      "SYSTEM": "System Notification"
+    },
+    "messages": {
+      "FIRST_QUOTE": "Good news! A seller has submitted the first offer for {{partName}}. Review it now.",
+      "MILESTONE_3_QUOTES": "You now have 3 competitive offers for {{partName}}. Compare prices and choose the best deal.",
+      "NEW_QUOTE": "A new offer has been submitted for {{partName}}. Open the request to review it.",
+      "NEW_QUOTE_batched": "You now have {{count}} offers on {{partName}}. Open it to compare and choose.",
+      "ABANDONED_REQUEST": "Your request for {{partName}} has been open for over 48 hours with no offers. Consider updating the details or closing it if you no longer need it.",
+      "QUOTE_STATUS_CHANGE": {
+        "price_updated": "A seller revised their offer for {{partName}}. Check the updated price and terms.",
+        "rejected": "The buyer reviewed all offers for {{partName}} and chose a different one. Keep bidding on other requests!",
+        "unrejected": "Good news! The buyer reconsidered and your offer for {{partName}} is back in consideration.",
+        "revoked": "The buyer revoked their acceptance for {{partName}}. Your offer is back in consideration — the request is still open.",
+        "reminder": "The seller is waiting for you to confirm the deal on your request for '{{partName}}'. Please mark it as fulfilled once you receive the part.",
+        "fulfilled_winner": "The buyer confirmed the deal for '{{partName}}'. The request is now fulfilled — contact them to arrange delivery.",
+        "fulfilled_loser": "The request for '{{partName}}' was fulfilled by another seller. Your offer was not selected this time — keep bidding on open requests!"
+      },
+      "QUOTE_WON": "Congratulations! The buyer accepted your offer for {{partName}}. Go to your orders to proceed.",
+      "ACCOUNT_APPROVED": "Your seller account has been reviewed and approved by our team. You can now browse open requests and start bidding.",
+      "NEW_SELLER_WAITLIST": "{{sellerName}} has registered and is waiting for account approval.",
+      "SPAM_FLAG": "Request #{{requestIdPrefix}} has been flagged as potential spam. Please review and take action.",
+      "CREDIT_REQUEST": "{{sellerName}} has requested {{credits}} credits.",
+      "CREDIT_APPROVED": "Your request was approved! {{credits}} credits have been added to your account. You're ready to bid on new requests.",
+      "CREDIT_REJECTED": "Your request for {{credits}} credits was declined. Please contact support for more information.",
+      "CREDIT_REJECTED_with_reason": "Your request for {{credits}} credits was declined. Reason: {{adminNote}}. Please contact support if you have questions."
+    }
   },
   "waitlist": {
     "title": "You're on the waitlist!",

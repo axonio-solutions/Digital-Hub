@@ -134,6 +134,65 @@ function extractRequestId(n: Notification): string | null {
   return n.referenceId ?? null
 }
 
+// ── i18n helpers ───────────────────────────────────────────────
+
+const TITLE_TO_ACTION: Record<string, string> = {
+  'Offer Price Updated': 'price_updated',
+  'Offer Not Selected': 'rejected',
+  'Offer Back in the Running': 'unrejected',
+  'Offer Back in Consideration': 'revoked',
+  'Action Required — Mark Request as Fulfilled': 'reminder',
+  'Deal Confirmed!': 'fulfilled_winner',
+  'Request Fulfilled by Another Seller': 'fulfilled_loser',
+}
+
+function getNotifTypeKey(
+  type: NotificationType,
+  title: string,
+  meta?: Notification['metadata'],
+): string | null {
+  if (type === 'NEW_QUOTE' && meta?.action === 'batched') {
+    return 'NEW_QUOTE_batched'
+  }
+  if (type === 'QUOTE_STATUS_CHANGE') {
+    const action = meta?.action ?? TITLE_TO_ACTION[title]
+    return action ? `QUOTE_STATUS_CHANGE.${action}` : null
+  }
+  if (type === 'CREDIT_REJECTED' && meta?.adminNote) {
+    return 'CREDIT_REJECTED_with_reason'
+  }
+  return type
+}
+
+function lookupTranslation(
+  t: (key: string, opts?: Record<string, any>) => string,
+  base: string,
+  item: Notification,
+  raw: string,
+): string {
+  const rawLookup = t(base)
+  if (rawLookup === base || rawLookup === undefined) return raw
+  return t(base, item.metadata ?? {})
+}
+
+function translateNotificationTitle(
+  item: Notification,
+  t: (key: string, opts?: Record<string, any>) => string,
+): string {
+  const suffix = getNotifTypeKey(item.type, item.title, item.metadata)
+  if (!suffix) return item.title
+  return lookupTranslation(t, `notifications.titles.${suffix}`, item, item.title)
+}
+
+function translateNotificationMessage(
+  item: Notification,
+  t: (key: string, opts?: Record<string, any>) => string,
+): string {
+  const suffix = getNotifTypeKey(item.type, item.title, item.metadata)
+  if (!suffix) return item.message
+  return lookupTranslation(t, `notifications.messages.${suffix}`, item, item.message)
+}
+
 // ── Screen ────────────────────────────────────────────────────────────────────
 
 interface NotificationsScreenProps {
@@ -463,7 +522,7 @@ const NotificationCard = React.memo(function NotificationCard({
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       accessibilityRole="button"
-      accessibilityLabel={item.title}
+      accessibilityLabel={translateNotificationTitle(item, i18n)}
     >
       <Animated.View
           style={[
@@ -489,7 +548,7 @@ const NotificationCard = React.memo(function NotificationCard({
               style={[s.cardTitle, isUnread && s.cardTitleUnread]}
               numberOfLines={1}
             >
-              {item.title}
+              {translateNotificationTitle(item, i18n)}
             </Text>
             <Text style={s.cardTime}>
               {formatTime(item.createdAt, i18n, i18nInst.language)}
@@ -497,7 +556,7 @@ const NotificationCard = React.memo(function NotificationCard({
           </View>
 
           <Text style={s.cardMessage} numberOfLines={2}>
-            {item.message}
+            {translateNotificationMessage(item, i18n)}
           </Text>
 
           {item.isPriority && (

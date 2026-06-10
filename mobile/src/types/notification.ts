@@ -10,6 +10,15 @@ export interface Notification {
     requestId?: string
     status?: string
     quotesCount?: number
+    quoteId?: string
+    quoteStatus?: string
+    action?: string
+    partName?: string
+    sellerName?: string
+    credits?: number
+    count?: number
+    adminNote?: string
+    requestIdPrefix?: string
   } | null
   isRead: boolean
   isPriority: boolean

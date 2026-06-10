@@ -625,7 +625,58 @@
     "emptyDesc": "Nous vous avertirons quand quelque chose arrive",
     "viewDetails": "Voir les Détails",
     "priority": "Priorité",
-    "unread": "{{count}} non lue"
+    "unread": "{{count}} non lue",
+    "titles": {
+      "FIRST_QUOTE": "Première offre reçue !",
+      "MILESTONE_3_QUOTES": "3 offres reçues !",
+      "NEW_QUOTE": "Nouvelle offre reçue",
+      "NEW_QUOTE_batched": "Nouvelles offres pour {{partName}}",
+      "ABANDONED_REQUEST": "Aucune offre sur votre demande",
+      "QUOTE_STATUS_CHANGE": {
+        "price_updated": "Prix de l'offre mis à jour",
+        "rejected": "Offre non retenue",
+        "unrejected": "Offre de nouveau en course",
+        "revoked": "Offre de nouveau en considération",
+        "reminder": "Action requise — marquer comme traitée",
+        "fulfilled_winner": "Affaire conclue !",
+        "fulfilled_loser": "Demande traitée par un autre vendeur"
+      },
+      "QUOTE_WON": "Vous avez gagné l'affaire !",
+      "NEW_LEAD": "Nouveau lead disponible",
+      "DAILY_DIGEST": "Résumé quotidien",
+      "ACCOUNT_APPROVED": "Votre boutique est en ligne !",
+      "NEW_SELLER_WAITLIST": "Nouvelle inscription vendeur",
+      "SPAM_FLAG": "Signalement de spam — Révision requise",
+      "CREDIT_REQUEST": "Nouvelle demande de crédits",
+      "CREDIT_APPROVED": "Crédits ajoutés à votre compte !",
+      "CREDIT_REJECTED": "Demande de crédits refusée",
+      "CREDIT_REJECTED_with_reason": "Demande de crédits refusée",
+      "SYSTEM": "Notification système"
+    },
+    "messages": {
+      "FIRST_QUOTE": "Bonne nouvelle ! Un vendeur a soumis la première offre pour {{partName}}. Consultez-la maintenant.",
+      "MILESTONE_3_QUOTES": "Vous avez maintenant 3 offres concurrentielles pour {{partName}}. Comparez les prix et choisissez la meilleure offre.",
+      "NEW_QUOTE": "Une nouvelle offre a été soumise pour {{partName}}. Ouvrez la demande pour la consulter.",
+      "NEW_QUOTE_batched": "Vous avez maintenant {{count}} offres sur {{partName}}. Ouvrez pour comparer et choisir.",
+      "ABANDONED_REQUEST": "Votre demande pour {{partName}} est ouverte depuis plus de 48h sans offre. Envisagez de la mettre à jour ou de la fermer.",
+      "QUOTE_STATUS_CHANGE": {
+        "price_updated": "Un vendeur a révisé son offre pour {{partName}}. Vérifiez le nouveau prix et les conditions.",
+        "rejected": "L'acheteur a examiné toutes les offres pour {{partName}} et en a choisi une autre. Continuez à enchérir sur d'autres demandes !",
+        "unrejected": "Bonne nouvelle ! L'acheteur a reconsidéré votre offre pour {{partName}}. Elle est de nouveau en course.",
+        "revoked": "L'acheteur a révoqué son acceptation pour {{partName}}. Votre offre est de nouveau en considération — la demande est toujours ouverte.",
+        "reminder": "Le vendeur attend que vous confirmiez l'affaire pour '{{partName}}'. Veuillez la marquer comme traitée une fois la pièce reçue.",
+        "fulfilled_winner": "L'acheteur a confirmé l'affaire pour '{{partName}}'. La demande est traitée — contactez-le pour organiser la livraison.",
+        "fulfilled_loser": "La demande pour '{{partName}}' a été traitée par un autre vendeur. Votre offre n'a pas été retenue cette fois — continuez à enchérir !"
+      },
+      "QUOTE_WON": "Félicitations ! L'acheteur a accepté votre offre pour {{partName}}. Rendez-vous dans vos commandes pour continuer.",
+      "ACCOUNT_APPROVED": "Votre compte vendeur a été examiné et approuvé par notre équipe. Vous pouvez maintenant parcourir les demandes ouvertes et commencer à enchérir.",
+      "NEW_SELLER_WAITLIST": "{{sellerName}} s'est inscrit et attend l'approbation de son compte.",
+      "SPAM_FLAG": "La demande #{{requestIdPrefix}} a été signalée comme spam potentiel. Veuillez examiner et prendre les mesures nécessaires.",
+      "CREDIT_REQUEST": "{{sellerName}} a demandé {{credits}} crédits.",
+      "CREDIT_APPROVED": "Votre demande a été approuvée ! {{credits}} crédits ont été ajoutés à votre compte. Vous êtes prêt à enchérir.",
+      "CREDIT_REJECTED": "Votre demande de {{credits}} crédits a été refusée. Contactez le support pour plus d'informations.",
+      "CREDIT_REJECTED_with_reason": "Votre demande de {{credits}} crédits a été refusée. Raison : {{adminNote}}. Contactez le support si vous avez des questions."
+    }
   },
   "waitlist": {
     "title": "Vous êtes sur la liste d'attente !",
