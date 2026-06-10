@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { and, desc, eq, gte, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, isNull, sql } from 'drizzle-orm'
 import type { User } from '@/lib/auth'
 import { db } from '@/db'
 import { sessions, users } from '@/db/schema/auth'
@@ -163,7 +163,7 @@ async function handleGetSellerStats(request: Request): Promise<Response> {
           SUM(CASE WHEN ${quotes.status} = 'pending' THEN 1 ELSE 0 END) as pending_quotes,
           SUM(CASE WHEN ${quotes.status} = 'accepted' THEN ${quotes.price} ELSE 0 END) as total_revenue
         FROM ${quotes}
-        WHERE ${quotes.sellerId} = ${user.id}
+        WHERE ${quotes.sellerId} = ${user.id} AND ${quotes.deletedAt} IS NULL
       `),
       db.execute(sql`
         SELECT
@@ -172,12 +172,13 @@ async function handleGetSellerStats(request: Request): Promise<Response> {
           SUM(CASE WHEN ${quotes.status} = 'rejected' AND ${quotes.updatedAt} >= ${todayIso} THEN 1 ELSE 0 END) as today_lost,
           SUM(CASE WHEN ${quotes.status} = 'accepted' AND ${quotes.updatedAt} >= ${todayIso} THEN ${quotes.price} ELSE 0 END) as today_revenue
         FROM ${quotes}
-        WHERE ${quotes.sellerId} = ${user.id}
+        WHERE ${quotes.sellerId} = ${user.id} AND ${quotes.deletedAt} IS NULL
       `),
       db.query.quotes.findMany({
         where: and(
           eq(quotes.sellerId, user.id as any),
           eq(quotes.status, 'accepted'),
+          isNull(quotes.deletedAt),
         ),
         with: { request: true },
         orderBy: desc(quotes.updatedAt),
@@ -188,6 +189,7 @@ async function handleGetSellerStats(request: Request): Promise<Response> {
           eq(quotes.sellerId, user.id as any),
           eq(quotes.status, 'accepted'),
           gte(quotes.updatedAt, sevenDaysAgo),
+          isNull(quotes.deletedAt),
         ),
         columns: { price: true, updatedAt: true },
       }),
