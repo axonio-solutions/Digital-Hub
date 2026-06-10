@@ -30,7 +30,16 @@
     "new_seller_waitlist": "Nouvelle candidature vendeur",
     "credit_request": "Nouvelle demande de credits",
     "credit_approved": "Credits approuves !",
-    "credit_rejected": "Demande de credits refusee"
+    "credit_rejected": "Demande de credits refusee",
+    "new_quote_batched": "Nouvelles offres sur {{partName}}",
+    "quote_status_change_price_updated": "Prix de l'offre mis a jour",
+    "quote_status_change_rejected": "Offre non retenue",
+    "quote_status_change_unrejected": "Offre de nouveau en course",
+    "quote_status_change_revoked": "Offre de nouveau en consideration",
+    "quote_status_change_reminder": "Action requise — Marquer comme traitee",
+    "quote_status_change_fulfilled_winner": "Affaire conclue !",
+    "quote_status_change_fulfilled_loser": "Demande traitee par un autre vendeur",
+    "credit_rejected_with_reason": "Demande de credits refusee"
   },
   "messages": {
     "new_offer": "Un vendeur a soumis une nouvelle offre pour votre demande.",
@@ -51,6 +60,15 @@
     "new_seller_waitlist": "Un nouveau vendeur s'est inscrit et attend votre approbation.",
     "credit_request": "Un vendeur a soumis une demande d'achat de credits.",
     "credit_approved": "Votre demande de credits a ete approuvee. Les credits ont ete ajoutes a votre compte.",
-    "credit_rejected": "Votre demande de credits a ete refusee. Consultez votre tableau de bord pour plus de details."
+    "credit_rejected": "Votre demande de credits a ete refusee. Consultez votre tableau de bord pour plus de details.",
+    "new_quote_batched": "Vous avez maintenant {{count}} offres sur {{partName}}. Ouvrez pour comparer et choisir.",
+    "quote_status_change_price_updated": "Un vendeur a revise son offre pour {{partName}}. Verifiez le nouveau prix et les conditions.",
+    "quote_status_change_rejected": "L'acheteur a examine toutes les offres pour {{partName}} et en a choisi une autre. Continuez a en cherir sur d'autres demandes !",
+    "quote_status_change_unrejected": "Bonne nouvelle ! L'acheteur a reconsidere votre offre pour {{partName}}. Elle est de nouveau en course.",
+    "quote_status_change_revoked": "L'acheteur a revoque son acceptation pour {{partName}}. Votre offre est de nouveau en consideration — la demande est toujours ouverte.",
+    "quote_status_change_reminder": "Le vendeur attend que vous confirmiez l'affaire pour '{{partName}}'. Veuillez la marquer comme traitee une fois la piece recue.",
+    "quote_status_change_fulfilled_winner": "L'acheteur a confirme l'affaire pour '{{partName}}'. La demande est traitee — contactez-le pour organiser la livraison.",
+    "quote_status_change_fulfilled_loser": "La demande pour '{{partName}}' a ete traitee par un autre vendeur. Votre offre n'a pas ete retenue cette fois — continuez a en cherir !",
+    "credit_rejected_with_reason": "Votre demande de {{credits}} credits a ete refusee. Raison : {{adminNote}}. Contactez le support si vous avez des questions."
   }
 }

@@ -13,7 +13,6 @@ import {
   ShoppingBag,
   Star,
 } from 'lucide-react'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
@@ -168,6 +167,44 @@ function getIconConfig(notif: any) {
   return { icon: Info, iconColor: 'text-muted-foreground', bgColor: 'bg-muted' }
 }
 
+const TITLE_TO_ACTION: Record<string, string> = {
+  'Offer Price Updated': 'price_updated',
+  'Offer Not Selected': 'rejected',
+  'Offer Back in the Running': 'unrejected',
+  'Offer Back in Consideration': 'revoked',
+  'Action Required — Mark Request as Fulfilled': 'reminder',
+  'Deal Confirmed!': 'fulfilled_winner',
+  'Request Fulfilled by Another Seller': 'fulfilled_loser',
+}
+
+function getNotifKey(notif: any): string {
+  const typeKey = (notif.type ?? '').toLowerCase()
+  const action = notif.metadata?.action ?? TITLE_TO_ACTION[notif.title]
+  if (typeKey === 'new_quote' && action === 'batched') return `new_quote_batched`
+  if (typeKey === 'quote_status_change') {
+    return action ? `quote_status_change_${action}` : typeKey
+  }
+  if (typeKey === 'credit_rejected' && notif.metadata?.adminNote) {
+    return 'credit_rejected_with_reason'
+  }
+  return typeKey
+}
+
+function lookupNotifTranslation(
+  t: (key: string, opts?: Record<string, any>) => string,
+  prefix: string,
+  notif: any,
+  raw: string,
+): string {
+  const key = `${prefix}.${getNotifKey(notif)}`
+  const rawLookup = t(key)
+  if (rawLookup === key || rawLookup === undefined) return raw
+  const meta = notif.metadata ?? {}
+  const result = t(key, meta)
+  if (result.includes('{{')) return raw
+  return result
+}
+
 export const NotificationDropdown = ({
   trigger,
   notifications = [],
@@ -183,10 +220,6 @@ export const NotificationDropdown = ({
 }: Props) => {
   const { t, i18n } = useTranslation('notifications')
   const router = useRouter()
-
-  const getTitle = useMemo(() => (notif: any) => notif.title || '', [])
-
-  const getMessage = useMemo(() => (notif: any) => notif.message || '', [])
 
   return (
     <DropdownMenu defaultOpen={defaultOpen}>
@@ -260,7 +293,8 @@ export const NotificationDropdown = ({
             ) : (
               <>
                 {notifications.map((notification) => {
-                  const displayTitle = getTitle(notification)
+                  const displayTitle = lookupNotifTranslation(t, 'types', notification, notification.title || '')
+                  const displayMessage = lookupNotifTranslation(t, 'messages', notification, notification.message || '')
                   const {
                     icon: Icon,
                     iconColor,
@@ -296,7 +330,7 @@ export const NotificationDropdown = ({
                             {displayTitle}
                           </p>
                           <p className="truncate text-[11px] text-muted-foreground mt-0.5 max-w-[180px] sm:max-w-[280px]">
-                            {getMessage(notification)}
+                            {displayMessage}
                           </p>
                         </div>
                       </div>

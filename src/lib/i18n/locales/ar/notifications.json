@@ -30,7 +30,16 @@
     "new_seller_waitlist": "طلب بائع جديد",
     "credit_request": "طلب رصيد جديد",
     "credit_approved": "تمت الموافقة على الرصيد!",
-    "credit_rejected": "تم رفض طلب الرصيد"
+    "credit_rejected": "تم رفض طلب الرصيد",
+    "new_quote_batched": "عروض جديدة على {{partName}}",
+    "quote_status_change_price_updated": "تم تحديث سعر العرض",
+    "quote_status_change_rejected": "لم يتم اختيار العرض",
+    "quote_status_change_unrejected": "العرض عاد للمنافسة",
+    "quote_status_change_revoked": "العرض قيد الدراسة مجددًا",
+    "quote_status_change_reminder": "إجراء مطلوب — حدد كمكتمل",
+    "quote_status_change_fulfilled_winner": "تم الاتفاق!",
+    "quote_status_change_fulfilled_loser": "تم تنفيذ الطلب من قبل بائع آخر",
+    "credit_rejected_with_reason": "تم رفض طلب الرصيد"
   },
   "messages": {
     "new_offer": "قام البائع بتقديم عرض جديد لطلبك.",
@@ -51,6 +60,15 @@
     "new_seller_waitlist": "بائع جديد قام بالتسجيل وينتظر موافقتك.",
     "credit_request": "قام بائع بتقديم طلب شراء رصيد.",
     "credit_approved": "تمت الموافقة على طلب الرصيد الخاص بك. تمت إضافة الرصيد إلى حسابك.",
-    "credit_rejected": "تم رفض طلب الرصيد الخاص بك. تحقق من لوحة التحكم للمزيد من التفاصيل."
+    "credit_rejected": "تم رفض طلب الرصيد الخاص بك. تحقق من لوحة التحكم للمزيد من التفاصيل.",
+    "new_quote_batched": "لديك الآن {{count}} عروض على {{partName}}. افتح للمقارنة والاختيار.",
+    "quote_status_change_price_updated": "قام بائع بمراجعة عرضه لـ {{partName}}. تحقق من السعر والشروط المحدثة.",
+    "quote_status_change_rejected": "راجع المشتري جميع العروض لـ {{partName}} واختار عرضًا آخر. استمر في تقديم العروض على الطلبات الأخرى!",
+    "quote_status_change_unrejected": "أخبار جيدة! أعاد المشتري النظر وعرضك لـ {{partName}} عاد للمنافسة.",
+    "quote_status_change_revoked": "ألغى المشتري قبوله لـ {{partName}}. عرضك قيد الدراسة مجددًا — الطلب لا يزال مفتوحًا.",
+    "quote_status_change_reminder": "البائع ينتظر منك تأكيد الصفقة لـ '{{partName}}'. يرجى تحديده كمكتمل عند استلام القطعة.",
+    "quote_status_change_fulfilled_winner": "أكد المشتري الصفقة لـ '{{partName}}'. الطلب مكتمل الآن — اتصل به لترتيب التسليم.",
+    "quote_status_change_fulfilled_loser": "تم تنفيذ طلب '{{partName}}' بواسطة بائع آخر. لم يتم اختيار عرضك هذه المرة — استمر في تقديم العروض!",
+    "credit_rejected_with_reason": "تم رفض طلبك لـ {{credits}} رصيد. السبب: {{adminNote}}. يرجى الاتصال بالدعم إذا كانت لديك استفسارات."
   }
 }

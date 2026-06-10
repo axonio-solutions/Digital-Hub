@@ -30,7 +30,16 @@
     "new_seller_waitlist": "New Seller Application",
     "credit_request": "New Credit Request",
     "credit_approved": "Credits Approved!",
-    "credit_rejected": "Credit Request Declined"
+    "credit_rejected": "Credit Request Declined",
+    "new_quote_batched": "New Offers on {{partName}}",
+    "quote_status_change_price_updated": "Offer Price Updated",
+    "quote_status_change_rejected": "Offer Not Selected",
+    "quote_status_change_unrejected": "Offer Back in the Running",
+    "quote_status_change_revoked": "Offer Back in Consideration",
+    "quote_status_change_reminder": "Action Required — Mark as Fulfilled",
+    "quote_status_change_fulfilled_winner": "Deal Confirmed!",
+    "quote_status_change_fulfilled_loser": "Request Fulfilled by Another Seller",
+    "credit_rejected_with_reason": "Credit Request Declined"
   },
   "messages": {
     "new_offer": "A seller has submitted a new offer for your request.",
@@ -51,6 +60,15 @@
     "new_seller_waitlist": "A new seller has registered and is waiting for your approval.",
     "credit_request": "A seller has submitted a credit purchase request.",
     "credit_approved": "Your credit request has been approved. Credits have been added to your account.",
-    "credit_rejected": "Your credit request was declined. Check your dashboard for details."
+    "credit_rejected": "Your credit request was declined. Check your dashboard for details.",
+    "new_quote_batched": "You now have {{count}} offers on {{partName}}. Open it to compare and choose.",
+    "quote_status_change_price_updated": "A seller revised their offer for {{partName}}. Check the updated price and terms.",
+    "quote_status_change_rejected": "The buyer reviewed all offers for {{partName}} and chose a different one. Keep bidding on other requests!",
+    "quote_status_change_unrejected": "Good news! The buyer reconsidered and your offer for {{partName}} is back in consideration.",
+    "quote_status_change_revoked": "The buyer revoked their acceptance for {{partName}}. Your offer is back in consideration — the request is still open.",
+    "quote_status_change_reminder": "The seller is waiting for you to confirm the deal for '{{partName}}'. Please mark it as fulfilled once you receive the part.",
+    "quote_status_change_fulfilled_winner": "The buyer confirmed the deal for '{{partName}}'. The request is now fulfilled — contact them to arrange delivery.",
+    "quote_status_change_fulfilled_loser": "The request for '{{partName}}' was fulfilled by another seller. Your offer was not selected this time — keep bidding on open requests!",
+    "credit_rejected_with_reason": "Your request for {{credits}} credits was declined. Reason: {{adminNote}}. Please contact support if you have questions."
   }
 }
