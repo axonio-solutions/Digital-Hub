@@ -97,7 +97,7 @@ export class BackgroundJobs {
         referenceId: request.id,
         linkUrl: BUYER_ROUTES.REQUEST_DETAIL(request.id),
         isPriority: true,
-        metadata: { requestId: request.id },
+        metadata: { requestId: request.id, partName: request.partName, action: 'abandoned' },
       })
     }
   }

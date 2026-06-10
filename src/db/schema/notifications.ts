@@ -79,11 +79,20 @@ export const notifications = pgTable(
     referenceId: text('reference_id'),
     linkUrl: text('link_url'),
 
-    // For real-time UI updates (e.g., { requestId: '...', status: 'open', quotesCount: 5 })
+    // For real-time UI updates and i18n template interpolation
     metadata: jsonb('metadata').$type<{
       requestId?: string
       status?: string
       quotesCount?: number
+      quoteId?: string
+      quoteStatus?: string
+      action?: string
+      partName?: string
+      sellerName?: string
+      credits?: number
+      count?: number
+      adminNote?: string
+      requestIdPrefix?: string
     }>(),
 
     isRead: boolean('is_read').default(false).notNull(),

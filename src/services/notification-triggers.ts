@@ -24,13 +24,16 @@ export class NotificationTriggers {
       .from(quotes)
       .where(eq(quotes.requestId, quote.requestId))
 
+    const count = Number(rowCount.value)
     const metadata = {
       requestId: quote.requestId,
       status: quote.request.status,
-      quotesCount: Number(rowCount.value),
+      quotesCount: count,
+      partName: quote.request.partName,
+      count,
     }
 
-    if (rowCount.value === 1) {
+    if (count === 1) {
       await NotificationService.send(
         {
           userId: quote.request.buyerId,
@@ -39,11 +42,11 @@ export class NotificationTriggers {
           message: `Good news! A seller has submitted the first offer for your ${quote.request.partName}. Review it now.`,
           referenceId: quote.requestId,
           linkUrl: BUYER_ROUTES.REQUEST_DETAIL(quote.requestId),
-          metadata,
+          metadata: { ...metadata, action: 'first_quote' },
         },
         tx,
       )
-    } else if (rowCount.value === 3) {
+    } else if (count === 3) {
       await NotificationService.send(
         {
           userId: quote.request.buyerId,
@@ -53,7 +56,7 @@ export class NotificationTriggers {
           referenceId: quote.requestId,
           linkUrl: BUYER_ROUTES.REQUEST_DETAIL(quote.requestId),
           isPriority: true,
-          metadata,
+          metadata: { ...metadata, action: 'milestone_3' },
         },
         tx,
       )
@@ -75,10 +78,12 @@ export class NotificationTriggers {
         await db
           .update(notifications)
           .set({
-            message: `You now have ${Number(rowCount.value)} offers on your ${quote.request.partName} request. Open it to compare and choose.`,
+            message: `You now have ${count} offers on your ${quote.request.partName} request. Open it to compare and choose.`,
             metadata: {
               ...existing.metadata,
-              quotesCount: Number(rowCount.value),
+              quotesCount: count,
+              count,
+              action: 'batched',
             },
           })
           .where(eq(notifications.id, existing.id))
@@ -91,7 +96,7 @@ export class NotificationTriggers {
             message: `A new offer has been submitted for your ${quote.request.partName}. Open the request to review it.`,
             referenceId: quote.requestId,
             linkUrl: BUYER_ROUTES.REQUEST_DETAIL(quote.requestId),
-            metadata,
+            metadata: { ...metadata, action: 'new_quote' },
           },
           tx,
         )
@@ -124,6 +129,8 @@ export class NotificationTriggers {
           requestId: quote.requestId,
           status: quote.request.status,
           quotesCount: Number(rowCount.value),
+          partName: quote.request.partName,
+          action: 'price_updated',
         },
       },
       tx,
@@ -186,9 +193,10 @@ export class NotificationTriggers {
           requestId: quote.requestId,
           status: quote.request.status,
           quotesCount: Number(rowCount.value),
-          // Seller specific quote tracking
           quoteId: quote.id,
           quoteStatus: 'accepted',
+          partName: quote.request.partName,
+          action: 'won',
         },
       },
       tx,
@@ -222,6 +230,8 @@ export class NotificationTriggers {
           quotesCount: Number(rowCount.value),
           quoteId: quote.id,
           quoteStatus: 'rejected',
+          partName: quote.request.partName,
+          action: 'rejected',
         },
       },
       tx,
@@ -255,6 +265,8 @@ export class NotificationTriggers {
           quotesCount: Number(rowCount.value),
           quoteId: quote.id,
           quoteStatus: 'pending',
+          partName: quote.request.partName,
+          action: 'unrejected',
         },
       },
       tx,
@@ -279,6 +291,8 @@ export class NotificationTriggers {
         requestId: quote.requestId,
         quoteId: quote.id,
         quoteStatus: 'pending',
+        partName: quote.request.partName,
+        action: 'revoked',
       },
     })
   }
@@ -300,6 +314,8 @@ export class NotificationTriggers {
       metadata: {
         requestId: quote.requestId,
         quoteId: quote.id,
+        partName: quote.request.partName,
+        action: 'reminder',
       },
     })
   }
@@ -329,6 +345,8 @@ export class NotificationTriggers {
           requestId,
           quoteId: quote.id,
           quoteStatus: 'accepted',
+          partName: request.partName,
+          action: 'fulfilled_winner',
         },
       })
     }
@@ -344,6 +362,8 @@ export class NotificationTriggers {
         metadata: {
           requestId,
           quoteStatus: 'rejected',
+          partName: request.partName,
+          action: 'fulfilled_loser',
         },
       })
     }
@@ -361,7 +381,7 @@ export class NotificationTriggers {
         title: 'New Seller Application',
         message: `${sellerName} has registered and is waiting for account approval.`,
         linkUrl: ADMIN_ROUTES.USERS,
-        metadata: { requestId: sellerId },
+        metadata: { requestId: sellerId, sellerName },
       })
     }
   }
@@ -399,7 +419,7 @@ export class NotificationTriggers {
         title: 'New Credit Request',
         message: `${sellerName} has requested ${credits} credits.`,
         linkUrl: ADMIN_ROUTES.CREDIT_REQUESTS,
-        metadata: { requestId: sellerId },
+        metadata: { requestId: sellerId, sellerName, credits },
       })
     }
   }
@@ -412,6 +432,7 @@ export class NotificationTriggers {
       message: `Your request was approved! ${credits} credits have been added to your account. You're ready to bid on new requests.`,
       linkUrl: SELLER_ROUTES.ROOT,
       isPriority: true,
+      metadata: { credits },
     })
   }
 
@@ -428,6 +449,7 @@ export class NotificationTriggers {
         ? `Your request for ${credits} credits was declined. Reason: ${adminNote}. Please contact support if you have questions.`
         : `Your request for ${credits} credits was declined. Please contact support for more information.`,
       linkUrl: SELLER_ROUTES.ROOT,
+      metadata: { credits, adminNote },
     })
   }
 
@@ -444,6 +466,7 @@ export class NotificationTriggers {
         title: 'Spam Report — Review Required',
         message: `Request #${requestId.slice(0, 8)} has been flagged as potential spam. Please review and take action.`,
         linkUrl: ADMIN_ROUTES.AUDIT_LOG,
+        metadata: { requestIdPrefix: requestId.slice(0, 8) },
       })
     }
   }
