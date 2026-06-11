@@ -28,7 +28,7 @@ export const storage: {
     } catch {
       // ignore
     }
-    new File(dir, key).write(value)
+    await new File(dir, key).write(value)
   },
 
   async removeItem(key: string): Promise<void> {
