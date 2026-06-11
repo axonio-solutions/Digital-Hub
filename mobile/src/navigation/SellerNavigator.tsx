@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { AppState } from 'react-native'
 
 import { BottomTabBar } from '../components/BottomTabBar'
 import { fetchUnreadNotifications } from '../lib/api-client'
@@ -80,6 +81,8 @@ function SellerNotificationsStackScreen() {
         name="RequestDetails"
         component={RequestDetailsScreen}
       />
+      <NotifStack.Screen name="MyQuotes" component={MyQuotesScreen} />
+      <NotifStack.Screen name="SubmitQuote" component={SubmitQuoteScreen} />
     </NotifStack.Navigator>
   )
 }
@@ -164,6 +167,9 @@ export function SellerNavigator() {
           const requestId = n.metadata?.requestId || n.referenceId
           scheduleLocalNotification(n.title, n.message, {
             ...(requestId ? { requestId } : {}),
+            type: n.type,
+            action: n.metadata?.action,
+            quoteId: n.metadata?.quoteId,
           })
         }
         prevNotifIdsRef.current = new Set(items.map((n: any) => n.id))
@@ -177,9 +183,13 @@ export function SellerNavigator() {
     }
     poll()
     const id = setInterval(poll, POLL_INTERVAL_MS)
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') poll()
+    })
     return () => {
       cancelled = true
       clearInterval(id)
+      sub.remove()
     }
   }, [])
 

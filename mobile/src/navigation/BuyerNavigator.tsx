@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { AppState } from 'react-native'
 
 import { BottomTabBar } from '../components/BottomTabBar'
 import { fetchUnreadNotifications } from '../lib/api-client'
@@ -168,6 +169,9 @@ export function BuyerNavigator() {
           const requestId = n.metadata?.requestId || n.referenceId
           scheduleLocalNotification(n.title, n.message, {
             ...(requestId ? { requestId } : {}),
+            type: n.type,
+            action: n.metadata?.action,
+            quoteId: n.metadata?.quoteId,
           })
         }
         prevNotifIdsRef.current = new Set(items.map((n: any) => n.id))
@@ -181,9 +185,13 @@ export function BuyerNavigator() {
     }
     poll()
     const id = setInterval(poll, POLL_INTERVAL_MS)
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') poll()
+    })
     return () => {
       cancelled = true
       clearInterval(id)
+      sub.remove()
     }
   }, [])
 
