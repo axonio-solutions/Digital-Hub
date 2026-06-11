@@ -287,6 +287,49 @@ export function NotificationsScreen({
       } catch {}
     }
 
+    const requestId = extractRequestId(item)
+
+    if (role === 'seller') {
+      if (item.type === 'QUOTE_STATUS_CHANGE') {
+        const action = item.metadata?.action
+        if (action === 'accepted' || action === 'rejected') {
+          navigation.navigate('MyQuotes')
+          return
+        }
+        if (action === 'order_change' && requestId) {
+          const sellerId = useUserStore.getState().user?.id
+          if (sellerId) {
+            navigation.navigate('SubmitQuote', {
+              requestId,
+              existingQuote: null,
+              sellerId,
+              initialTab: 'offer',
+            })
+            return
+          }
+        }
+      }
+
+      if (requestId) {
+        navigation.navigate('RequestDetails', { requestId })
+        return
+      }
+
+      // Account/credit notifications: no requestId, fall through to tab
+      const SELLER_TAB_ROUTES: Partial<Record<NotificationType, TabId>> = {
+        ACCOUNT_APPROVED: 'profile',
+        NEW_SELLER_WAITLIST: 'profile',
+        CREDIT_APPROVED: 'profile',
+        CREDIT_REJECTED: 'profile',
+      }
+      const tab = SELLER_TAB_ROUTES[item.type]
+      if (tab && onNavigateToTab) {
+        onNavigateToTab(tab)
+      }
+      return
+    }
+
+    // Buyer navigation
     const DETAIL_TYPES: Array<NotificationType> = [
       'FIRST_QUOTE',
       'NEW_QUOTE',
@@ -295,51 +338,28 @@ export function NotificationsScreen({
       'ABANDONED_REQUEST',
     ]
 
-    const TAB_ROUTES: Partial<Record<NotificationType, TabId>> =
-      role === 'seller'
-        ? {
-            FIRST_QUOTE: 'quotes',
-            NEW_QUOTE: 'quotes',
-            QUOTE_STATUS_CHANGE: 'quotes',
-            QUOTE_WON: 'quotes',
-            ABANDONED_REQUEST: 'quotes',
-            NEW_LEAD: 'quotes',
-            BOTTLENECK_ALERT: 'quotes',
-            MILESTONE_3_QUOTES: 'quotes',
-            DAILY_DIGEST: 'quotes',
-            ACCOUNT_APPROVED: 'profile',
-            NEW_SELLER_WAITLIST: 'profile',
-            CREDIT_APPROVED: 'profile',
-            CREDIT_REJECTED: 'profile',
-          }
-        : {
-            NEW_LEAD: 'requests',
-            BOTTLENECK_ALERT: 'requests',
-            MILESTONE_3_QUOTES: 'requests',
-            DAILY_DIGEST: 'requests',
-            ACCOUNT_APPROVED: 'profile',
-            NEW_SELLER_WAITLIST: 'profile',
-            CREDIT_APPROVED: 'profile',
-            CREDIT_REJECTED: 'profile',
-          }
-
-    if (role !== 'seller' && DETAIL_TYPES.includes(item.type)) {
-      const requestId = extractRequestId(item)
-      if (requestId) {
-        if (onSelectRequest) {
-          onSelectRequest(requestId)
-        } else {
-          navigation.navigate('RequestDetails', { requestId })
-        }
-        return
+    if (DETAIL_TYPES.includes(item.type) && requestId) {
+      if (onSelectRequest) {
+        onSelectRequest(requestId)
+      } else {
+        navigation.navigate('RequestDetails', { requestId })
       }
+      return
     }
 
-    const tab = TAB_ROUTES[item.type]
-    if (tab) {
-      if (onNavigateToTab) {
-        onNavigateToTab(tab)
-      }
+    const BUYER_TAB_ROUTES: Partial<Record<NotificationType, TabId>> = {
+      NEW_LEAD: 'requests',
+      BOTTLENECK_ALERT: 'requests',
+      MILESTONE_3_QUOTES: 'requests',
+      DAILY_DIGEST: 'requests',
+      ACCOUNT_APPROVED: 'profile',
+      NEW_SELLER_WAITLIST: 'profile',
+      CREDIT_APPROVED: 'profile',
+      CREDIT_REJECTED: 'profile',
+    }
+    const tab = BUYER_TAB_ROUTES[item.type]
+    if (tab && onNavigateToTab) {
+      onNavigateToTab(tab)
     }
   }
 
