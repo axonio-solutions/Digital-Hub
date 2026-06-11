@@ -4,6 +4,14 @@ import type { OpenRequestRow } from '../types/seller'
 import type { ExistingQuoteData } from '../screens/SubmitQuoteScreen'
 import type { SessionUser } from '../lib/api-client'
 
+export type SubmitQuoteParams = {
+  request?: OpenRequestRow
+  existingQuote?: ExistingQuoteData | null
+  initialTab?: 'details' | 'quotes' | 'offer'
+  sellerId: string
+  requestId?: string
+}
+
 // ── Root stack ────────────────────────────────────────────────────────────────
 
 export type RootStackParamList = {
@@ -82,40 +90,27 @@ export type SellerTabParamList = {
 
 export type SellerHomeStackParamList = {
   SellerHome: undefined
-  SubmitQuote: {
-    request: OpenRequestRow
-    existingQuote: ExistingQuoteData | null
-    initialTab?: 'details' | 'quotes' | 'offer'
-    sellerId: string
-  }
+  SubmitQuote: SubmitQuoteParams
   Credits: undefined
 }
 
 export type SellerMarketplaceStackParamList = {
   Marketplace: undefined
-  SubmitQuote: {
-    request: OpenRequestRow
-    existingQuote: ExistingQuoteData | null
-    initialTab?: 'details' | 'quotes' | 'offer'
-    sellerId: string
-  }
+  SubmitQuote: SubmitQuoteParams
   Credits: undefined
 }
 
 export type SellerQuotesStackParamList = {
   MyQuotes: undefined
-  SubmitQuote: {
-    request: OpenRequestRow
-    existingQuote: ExistingQuoteData | null
-    initialTab?: 'details' | 'quotes' | 'offer'
-    sellerId: string
-  }
+  SubmitQuote: SubmitQuoteParams
   Credits: undefined
 }
 
 export type SellerNotificationsStackParamList = {
   Notifications: { userRole?: string }
   RequestDetails: { requestId: string }
+  MyQuotes: undefined
+  SubmitQuote: SubmitQuoteParams
 }
 
 export type SellerProfileStackParamList = {

@@ -60,17 +60,24 @@ export async function unregisterBackgroundNotificationTask() {
 let responseSubscription: Notifications.EventSubscription | null = null
 let receivedSubscription: Notifications.EventSubscription | null = null
 
+export type NotificationData = {
+  requestId?: string
+  type?: string
+  action?: string
+  quoteId?: string
+}
+
 export function setupNotificationResponseListener(
-  onNavigateToRequest: (requestId: string) => void,
+  onNavigate: (data: NotificationData) => void,
 ) {
   responseSubscription?.remove()
   responseSubscription = Notifications.addNotificationResponseReceivedListener(
     (response) => {
       const data = response.notification.request.content.data as
-        | { requestId?: string }
+        | NotificationData
         | undefined
       if (data?.requestId) {
-        onNavigateToRequest(data.requestId)
+        onNavigate(data)
       }
     },
   )
@@ -147,15 +154,31 @@ export async function registerPushToken(user: SessionUser) {
 export async function scheduleLocalNotification(
   title: string,
   body: string,
-  data?: Record<string, string>,
+  data?: NotificationData,
 ) {
   await Notifications.scheduleNotificationAsync({
     content: {
       title,
       body,
-      data,
+      data: data as Record<string, string | undefined>,
       sound: 'default',
     },
     trigger: null,
   })
+}
+
+export async function getInitialNotificationResponse(): Promise<{
+  data: NotificationData
+} | null> {
+  try {
+    const response = await Notifications.getLastNotificationResponseAsync()
+    if (!response) return null
+    const data = response.notification.request.content
+      .data as NotificationData | null
+    if (!data?.requestId) return null
+    return { data }
+  } catch (e) {
+    console.warn('Failed to get initial notification response:', e)
+    return null
+  }
 }

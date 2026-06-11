@@ -36,7 +36,10 @@ import { SellerQuoteForm } from './SellerQuoteForm'
 import type { SellerQuoteFormHandle } from './SellerQuoteForm'
 import type { Theme } from '../theme/tokens'
 import type { OpenRequestRow } from '../types/seller'
-import type { SellerQuotesStackParamList } from '../navigation/types'
+import type {
+  SellerQuotesStackParamList,
+  SubmitQuoteParams,
+} from '../navigation/types'
 import type { ScrollView as RNScrollView } from 'react-native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
@@ -380,13 +383,52 @@ export function SubmitQuoteScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<SellerQuotesStackParamList>>()
   const route = useRoute<any>()
-  const params = route.params as {
-    request: OpenRequestRow
-    existingQuote: ExistingQuoteData | null
-    initialTab?: Tab
-    sellerId: string
-  }
-  const { request, existingQuote, initialTab, sellerId } = params
+  const params = route.params as SubmitQuoteParams
+  const { request: requestParam, existingQuote, initialTab, sellerId, requestId } = params
+  const [fetchedRequest, setFetchedRequest] = useState<OpenRequestRow | null>(null)
+  const [fetchError, setFetchError] = useState(false)
+
+  useEffect(() => {
+    if (!requestParam && requestId) {
+      fetchRequestDetails(requestId)
+        .then((row) => {
+          if (row) {
+            setFetchedRequest({
+              id: row.id,
+              partName: row.partName,
+              oemNumber: row.oemNumber,
+              vehicleBrand: row.vehicleBrand,
+              modelYear: row.modelYear,
+              imageUrls: row.imageUrls,
+              notes: row.notes,
+              createdAt: row.createdAt,
+              quotesCount: row.quotes?.length ?? 0,
+              isPriority: row.isPriority,
+              category: row.category
+                ? {
+                    id: row.category.id,
+                    name: row.category.name,
+                    imageUrl: row.category.imageUrl,
+                  }
+                : null,
+              brand: row.brand
+                ? {
+                    id: row.brand.id,
+                    brand: row.brand.brand,
+                    imageUrl: row.brand.imageUrl,
+                  }
+                : null,
+            })
+          } else {
+            setFetchError(true)
+          }
+        })
+        .catch(() => setFetchError(true))
+    }
+  }, [requestParam, requestId])
+
+  const request = requestParam ?? fetchedRequest
+
   const insets = useSafeAreaInsets()
   const { t: translate } = useTranslation()
   const t = useTheme()
@@ -417,14 +459,39 @@ export function SubmitQuoteScreen() {
     isLoading: quotesLoading,
     refetch: refetchQuotes,
   } = useQuery({
-    queryKey: ['anonymous-quotes', request.id],
-    queryFn: () => fetchAnonymousQuotes(request.id),
-    enabled: !!request.id,
+    queryKey: ['anonymous-quotes', request?.id ?? 'loading'],
+    queryFn: () => fetchAnonymousQuotes(request!.id),
+    enabled: !!request?.id,
   })
 
-  const images = request.imageUrls ?? []
+  const images = request?.imageUrls ?? []
   const isEditing = editing || !!editQuote || !!existingQuote
   const orderedTabs = isRTL ? [...TABS].reverse() : TABS
+
+  if (!request) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#EEF2FF', padding: 24 }}>
+        {fetchError ? (
+          <>
+            <Ionicons name="alert-circle-outline" size={48} color="#EF4444" />
+            <Text style={{ fontSize: 16, color: '#DC2626', marginTop: 16, textAlign: 'center' }}>
+              Could not load request details
+            </Text>
+            <Text style={{ fontSize: 14, color: '#64748B', marginTop: 8, textAlign: 'center' }}>
+              Please try again from the notifications list
+            </Text>
+          </>
+        ) : (
+          <>
+            <ActivityIndicator size="large" color="#4F46E5" />
+            <Text style={{ fontSize: 15, color: '#64748B', marginTop: 16 }}>
+              Loading request…
+            </Text>
+          </>
+        )}
+      </View>
+    )
+  }
 
   // ── Tab navigation ──
 
@@ -458,7 +525,7 @@ export function SubmitQuoteScreen() {
 
   async function invalidateParentQueries() {
     await queryClient.invalidateQueries({
-      queryKey: ['anonymous-quotes', request.id],
+      queryKey: ['anonymous-quotes', request!.id],
     })
     await queryClient.refetchQueries({
       queryKey: ['open-requests'],

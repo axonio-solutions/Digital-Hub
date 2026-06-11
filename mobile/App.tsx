@@ -19,17 +19,18 @@ import { useUserStore } from './src/lib/stores/user-store'
 import { RootNavigator } from './src/navigation/RootNavigator'
 import {
   cleanupNotificationResponseListener,
+  getInitialNotificationResponse,
   initNotificationHandler,
   registerBackgroundNotificationTask,
   registerPushToken,
-  unregisterBackgroundNotificationTask,
   setupNotificationForegroundListener,
   setupNotificationResponseListener,
+  unregisterBackgroundNotificationTask,
 } from './src/lib/push-notifications'
-import type { RootStackParamList } from './src/navigation/types'
 import { LanguageSelectScreen } from './src/screens/LanguageSelectScreen'
-import { initI18n } from './src/i18n'
-import i18next from './src/i18n'
+import i18next, { initI18n } from './src/i18n'
+import type { NotificationData } from './src/lib/push-notifications'
+import type { RootStackParamList } from './src/navigation/types'
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>()
 
@@ -242,37 +243,94 @@ function AppContent() {
     }
   }, [authState, user])
 
-  useEffect(() => {
-    const onNavigateToRequest = (requestId: string) => {
-      if (!navigationRef.isReady()) return
-      if (user?.role === 'buyer') {
-        navigationRef.navigate('BuyerTabs', {
-          screen: 'BuyerNotificationsStack',
-          params: {
-            screen: 'RequestDetails',
-            params: { requestId },
-            initial: false,
-          },
-        })
-      } else {
-        navigationRef.navigate('SellerTabs', {
-          screen: 'SellerNotificationsStack',
-          params: {
-            screen: 'RequestDetails',
-            params: { requestId },
-            initial: false,
-          },
-        })
+  const pendingNavRef = useRef<Array<() => void>>([])
+
+  const enqueueOrNavigate = useCallback(
+    (notifData: NotificationData) => {
+      const { requestId, type, action } = notifData
+      const doNav = () => {
+        if (!navigationRef.isReady() || !requestId) return false
+
+        // Read role at execution time — the closure runs either immediately or
+        // from the onReady queue, by which point auth must be settled.
+        const currentUser = useUserStore.getState().user
+        if (!currentUser?.role) return false
+
+        if (currentUser.role === 'seller') {
+          const isQuoteAccepted =
+            type === 'QUOTE_STATUS_CHANGE' &&
+            (action === 'accepted' || action === 'rejected')
+          const isOrderChange =
+            type === 'QUOTE_STATUS_CHANGE' && action === 'order_change'
+
+          if (isQuoteAccepted) {
+            navigationRef.navigate('SellerTabs', {
+              screen: 'SellerQuotesStack',
+              params: {
+                screen: 'MyQuotes',
+                initial: false,
+              },
+            })
+          } else if (isOrderChange) {
+            navigationRef.navigate('SellerTabs', {
+              screen: 'SellerNotificationsStack',
+              params: {
+                screen: 'SubmitQuote',
+                params: {
+                  requestId,
+                  existingQuote: null,
+                  sellerId: currentUser.id,
+                  initialTab: 'offer',
+                },
+                initial: false,
+              },
+            })
+          } else {
+            navigationRef.navigate('SellerTabs', {
+              screen: 'SellerNotificationsStack',
+              params: {
+                screen: 'RequestDetails',
+                params: { requestId },
+                initial: false,
+              },
+            })
+          }
+        } else {
+          navigationRef.navigate('BuyerTabs', {
+            screen: 'BuyerNotificationsStack',
+            params: {
+              screen: 'RequestDetails',
+              params: { requestId },
+              initial: false,
+            },
+          })
+        }
+        return true
       }
-    }
-    setupNotificationResponseListener(onNavigateToRequest)
+      if (!doNav()) {
+        pendingNavRef.current.push(doNav)
+      }
+    },
+    [],
+  )
+
+  useEffect(() => {
+    setupNotificationResponseListener(enqueueOrNavigate)
     setupNotificationForegroundListener(() => {
       queryClient.invalidateQueries({ queryKey: ['unread-notifications'] })
     })
+    getInitialNotificationResponse().then((response) => {
+      if (response) {
+        enqueueOrNavigate(response.data)
+      }
+    })
     return () => {
       cleanupNotificationResponseListener()
+      pendingNavRef.current = []
     }
-  }, [user?.role])
+    // enqueueOrNavigate is stable (no deps); queryClient is module-level constant.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const lastResetRef = useRef<string | null>(null)
 
@@ -334,7 +392,14 @@ function AppContent() {
           }
         />
       ) : (
-        <NavigationContainer ref={navigationRef}>
+        <NavigationContainer
+          ref={navigationRef}
+          onReady={() => {
+            const queue = pendingNavRef.current
+            pendingNavRef.current = []
+            for (const fn of queue) fn()
+          }}
+        >
           <StatusBar style="auto" />
           <RootNavigator />
         </NavigationContainer>
