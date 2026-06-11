@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { Animated, Pressable, StyleSheet } from 'react-native'
 import { Text, View } from 'expo-rtl'
 import { useTranslation } from 'react-i18next'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from '../theme/use-theme'
 
 export type TabId =
@@ -260,6 +261,7 @@ export function BottomTabBar({
   variant = 'buyer',
 }: BottomTabBarProps) {
   const t = useTheme()
+  const insets = useSafeAreaInsets()
   const { t: tr } = useTranslation()
   const tabs = variant === 'seller' ? SELLER_TABS : BUYER_TABS
   const isBuyer = variant === 'buyer'
@@ -313,7 +315,14 @@ export function BottomTabBar({
 
   // ── Shared pill ────────────────────────────────────────────────────────────
   return (
-    <View style={[styles.pill, { backgroundColor: t.surface }]}>
+    <View
+      style={[
+        styles.pill,
+        {
+          backgroundColor: t.surface,
+          paddingBottom: insets.bottom > 0 ? insets.bottom + 4 : 12,
+        },
+      ]}>
       {isBuyer ? (
         <>
           {/* Home + Requests */}
@@ -459,8 +468,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
-    borderBottomLeftRadius: BAR_CR,
-    borderBottomRightRadius: BAR_CR,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
 
     shadowColor: C.blue,
     shadowOffset: { width: 0, height: 8 },
